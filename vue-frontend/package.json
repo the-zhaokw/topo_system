@@ -1,0 +1,34 @@
+{
+  "name": "bug-tracker-vue",
+  "version": "1.0.0",
+  "description": "TOPO系统Vue.js前端",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "axios": "^1.13.2",
+    "date-fns": "^4.1.0",
+    "echarts": "^5.4.3",
+    "element-plus": "^2.3.12",
+    "file-saver": "^2.0.5",
+    "marked": "^9.1.6",
+    "pinia": "^2.1.6",
+    "vue": "^3.3.4",
+    "vue-echarts": "^6.6.1",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@vitejs/plugin-vue": "^4.3.4",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "connect-history-api-fallback": "^2.0.0",
+    "eslint": "^8.47.0",
+    "prettier": "^3.0.2",
+    "vite": "^4.4.9"
+  }
+}

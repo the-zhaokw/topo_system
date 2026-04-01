@@ -1,0 +1,9 @@
+任务详情,状态,优先级,基本信息
+标题,状态,优先级,创建者,创建时间,归属版本,客户MR编号,计划解决,问题类型,重现频率,发现构建,严重程度,期限,解决者,模块,计划解决版本,解决构建,指派时间,验证者,解决时间,关闭时间,描述
+数据导出功能错误,验证中,一般,tester1,2025/11/25 19:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/26 19:14:15,tester1,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/25 19:14:15,tester1,2025/11/25 20:14:15,待测,"tester1 操作 status_changed, 数据导出功能错误, 项目: 示例项目"
+数据导出功能错误,验证中,一般,tester1,2025/11/25 13:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/26 13:14:15,tester1,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/25 13:14:15,tester1,2025/11/25 14:14:15,待测,"tester1 操作 status_changed, 数据导出功能错误, 项目: 示例项目"
+数据导出功能错误,验证中,一般,developer2,2025/11/25 01:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/26 01:14:15,developer2,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/25 01:14:15,developer2,2025/11/25 02:14:15,待测,"developer2 操作 status_changed, 数据导出功能错误, 项目: 示例项目"
+商品详情页加载缓慢,验证中,一般,developer2,2025/11/25 01:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/26 01:14:15,developer2,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/25 01:14:15,developer2,2025/11/25 02:14:15,待测,"developer2 操作 status_changed, 商品详情页加载缓慢, 项目: 示例项目"
+用户登录失败,主要,一般,developer1,2025/11/24 01:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/25 01:14:15,developer1,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/24 01:14:15,developer1,2025/11/24 02:14:15,待测,"developer1 操作 assigned, 用户登录失败, 项目: 示例项目"
+商品详情页加载缓慢,一般,一般,tester1,2025/11/24 01:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/25 01:14:15,tester1,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/24 01:14:15,tester1,2025/11/24 02:14:15,待测,"tester1 操作 created, 商品详情页加载缓慢, 项目: 示例项目"
+用户登录失败,一般,一般,tester1,2025/11/23 01:14:15,main,RTN,To Be Resolved,软件,必然复现,dailybuilt,主要,2025/11/24 01:14:15,tester1,TDM,待测,测试版本:T85 v2.2 dev b2707,2025/11/23 01:14:15,tester1,2025/11/23 02:14:15,待测,"tester1 操作 created, 用户登录失败, 项目: 示例项目"

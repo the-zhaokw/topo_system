@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端连接测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f7fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #e4e7ed; border-radius: 6px; }
+        .test-title { font-weight: bold; color: #303133; margin-bottom: 10px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #f0f9ff; color: #1890ff; border: 1px solid #1890ff; }
+        .error { background: #fef0f0; color: #f56c6c; border: 1px solid #f56c6c; }
+        .info { background: #f4f4f5; color: #606266; border: 1px solid #dcdfe6; }
+        button { background: #409EFF; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #66b1ff; }
+        input { padding: 8px; margin: 5px; border: 1px solid #dcdfe6; border-radius: 4px; width: 150px; }
+        .status { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 前端连接测试工具</h1>
+        
+        <div class="test-section">
+            <div class="test-title">1. 后端连接测试</div>
+            <button onclick="testBackendConnection()">测试后端连接</button>
+            <div id="backendResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">2. 用户登录测试</div>
+            <div>
+                <input type="text" id="username" value="admin" placeholder="用户名">
+                <input type="password" id="password" value="admin123" placeholder="密码">
+                <button onclick="testLogin()">登录测试</button>
+            </div>
+            <div id="loginResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">3. 统计API测试</div>
+            <button onclick="testStatisticsAPI()" id="statsBtn" disabled>测试统计API</button>
+            <div id="statsResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">4. 系统状态</div>
+            <div id="systemStatus" class="result info">准备就绪</div>
+        </div>
+    </div>
+
+    <script>
+        let accessToken = null;
+        
+        // 测试后端连接
+        async function testBackendConnection() {
+            const resultDiv = document.getElementById('backendResult');
+            resultDiv.innerHTML = '<div class="result info">正在测试...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/v1/auth/test', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="result success">✅ 后端连接成功！状态码: ' + response.status + '</div>';
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ 后端连接失败！状态码: ' + response.status + '</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="result error">❌ 无法连接到后端: ' + error.message + '</div>';
+                updateSystemStatus('❌ 后端连接失败', 'error');
+            }
+        }
+        
+        // 测试登录
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            if (!username || !password) {
+                resultDiv.innerHTML = '<div class="result error">❌ 请输入用户名和密码</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result info">正在登录...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.access_token) {
+                    accessToken = data.access_token;
+                    resultDiv.innerHTML = '<div class="result success">✅ 登录成功！获取到token: ' + data.access_token.substring(0, 20) + '...</div>';
+                    document.getElementById('statsBtn').disabled = false;
+                    updateSystemStatus('✅ 登录成功', 'success');
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ 登录失败: ' + (data.message || '未知错误') + '</div>';
+                    updateSystemStatus('❌ 登录失败', 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="result error">❌ 登录请求失败: ' + error.message + '</div>';
+                updateSystemStatus('❌ 登录请求失败', 'error');
+            }
+        }
+        
+        // 测试统计API
+        async function testStatisticsAPI() {
+            const resultDiv = document.getElementById('statsResult');
+            
+            if (!accessToken) {
+                resultDiv.innerHTML = '<div class="result error">❌ 请先进行登录测试</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result info">正在获取统计信息...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/v1/statistics/dashboard', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="result success">✅ 统计API调用成功！数据预览: ' + JSON.stringify(data, null, 2) + '</div>';
+                    updateSystemStatus('✅ 统计API正常', 'success');
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ 统计API调用失败: ' + JSON.stringify(data) + '</div>';
+                    updateSystemStatus('❌ 统计API失败', 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="result error">❌ 统计API请求失败: ' + error.message + '</div>';
+                updateSystemStatus('❌ 统计API请求失败', 'error');
+            }
+        }
+        
+        // 更新系统状态
+        function updateSystemStatus(message, type) {
+            const statusDiv = document.getElementById('systemStatus');
+            statusDiv.innerHTML = message;
+            statusDiv.className = 'result ' + type;
+        }
+        
+        // 页面加载完成后自动测试后端连接
+        window.onload = function() {
+            testBackendConnection();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Flask Backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "enhanced_app",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      },
+      "args": [
+        "run",
+        "--no-debugger",
+        "--no-reload",
+        "--port",
+        "5000"
+      ],
+      "jinja": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: Attach to Flask",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/backend",
+          "remoteRoot": "/home/admin/openclaw/workspace/topo_system/backend"
+        }
+      ]
+    },
+    {
+      "name": "Vue: Frontend Dev Server",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3001",
+      "webRoot": "${workspaceFolder}/vue-frontend/src",
+      "runtimeArgs": [
+        "--disable-web-security"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (Backend + Frontend)",
+      "configurations": [
+        "Python: Flask Backend",
+        "Vue: Frontend Dev Server"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "fullstack",
+        "order": 1
+      }
+    }
+  ]
+}

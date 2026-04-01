@@ -1,0 +1,47 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/.git": false
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/__pycache__": true,
+      "**/venv": true,
+      "**/.venv": true
+    },
+    "vetur.validation.template": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[vue]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "Vue.volar",
+      "esbenp.prettier-vscode",
+      "ms-python.debugpy",
+      "ms-python.flake8",
+      "bradlc.vscode-tailwindcss"
+    ]
+  },
+  "files.saveConflictResolution": "overwriteFileOnDisk"
+}

@@ -1,0 +1,87 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Backend",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/backend && python3 run_app.py",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*Error.*$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "* Running on http",
+          "endsPattern": "* Restarting with stat"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Start Frontend",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/vue-frontend && npm run dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*error.*$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE.*ready",
+          "endsPattern": "ready in.*ms"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Install Backend Dependencies",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/backend && pip3 install -r requirements.txt",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Install Frontend Dependencies",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/vue-frontend && npm install",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run All Tests",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/backend && python3 -m pytest",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Restart Backend",
+      "type": "shell",
+      "command": "pkill -f 'python.*run_app.py' && sleep 1 && cd ${workspaceFolder}/backend && python3 run_app.py",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}

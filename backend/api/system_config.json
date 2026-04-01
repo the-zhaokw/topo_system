@@ -1,0 +1,35 @@
+{
+  "mail_server": {
+    "enabled": true,
+    "host": "smtp.163.com",
+    "port": 465,
+    "use_tls": false,
+    "use_ssl": true,
+    "username": "zhaokangwei0123@163.com",
+    "password": "JAenQ39NreJhjF8r",
+    "from_address": "zhaokangwei0123@163.com",
+    "from_name": "TOPO系统",
+    "max_daily_limit": 80,
+    "max_hourly_limit": 30,
+    "max_per_minute": 5
+  },
+  "upload": {
+    "max_file_size": 16,
+    "allowed_extensions": [
+      "jpg",
+      "jpeg",
+      "png",
+      "gif",
+      "pdf",
+      "doc",
+      "docx",
+      "xls",
+      "xlsx"
+    ]
+  },
+  "backup": {
+    "auto_backup": false,
+    "backup_time": "02:00",
+    "retention_days": 7
+  }
+}
