@@ -49,8 +49,8 @@ def migrate():
         from models.permissions import DEFAULT_ROLES, PermissionCodes
         
         role_to_position_map = {
-            'admin': '超级管理员',
-            'manager': '经理',
+            'admin': '系统管理员',
+            'manager': '总经理',
             'project_manager': '项目经理',
             'test_engineer': '测试工程师',
             'software_engineer': '软件工程师',

@@ -62,26 +62,42 @@ class DataExportService:
     def to_pdf(data, columns=None, title='Export'):
         """导出为 PDF"""
         try:
-            from reportlab.lib import colors
+            from io import BytesIO
             from reportlab.lib.pagesizes import A4, landscape
-            from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-            from reportlab.lib.styles import getSampleStyleSheet
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+            from reportlab.lib.units import cm
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+            from reportlab.lib import colors
+            from reportlab.lib.enums import TA_CENTER
             from reportlab.pdfbase import pdfmetrics
             from reportlab.pdfbase.ttfonts import TTFont
+            import platform
             
-            # 注册中文字体（尝试常见路径）
-            font_paths = [
-                'C:/Windows/Fonts/simhei.ttf',  # 黑体
-                'C:/Windows/Fonts/simsun.ttc',  # 宋体
-                'C:/Windows/Fonts/msyh.ttc',    # 微软雅黑
-            ]
+            chinese_font = 'Helvetica'
+            system_name = platform.system()
             
-            font_name = 'Helvetica'
-            for font_path in font_paths:
+            if system_name == 'Windows':
+                font_paths = [
+                    (r'C:\Windows\Fonts\simhei.ttf', 'SimHei'),
+                    (r'C:\Windows\Fonts\msyh.ttc', 'Microsoft YaHei'),
+                    (r'C:\Windows\Fonts\simsun.ttc', 'SimSun'),
+                ]
+            elif system_name == 'Darwin':
+                font_paths = [
+                    ('/System/Library/Fonts/STHeiti Light.ttc', 'STHeiti'),
+                    ('/System/Library/Fonts/PingFang.ttc', 'PingFang'),
+                ]
+            else:
+                font_paths = [
+                    ('/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc', 'WenQuanYi'),
+                    ('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', 'NotoSansCJK'),
+                ]
+            
+            for font_path, font_name in font_paths:
                 if os.path.exists(font_path):
                     try:
-                        font_name = 'ChineseFont'
                         pdfmetrics.registerFont(TTFont(font_name, font_path))
+                        chinese_font = font_name
                         break
                     except:
                         continue
@@ -89,16 +105,20 @@ class DataExportService:
             output = BytesIO()
             doc = SimpleDocTemplate(output, pagesize=landscape(A4))
             
-            elements = []
             styles = getSampleStyleSheet()
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontName=chinese_font,
+                fontSize=16,
+                alignment=TA_CENTER,
+                spaceAfter=20
+            )
             
-            # 标题
-            title_style = styles['Heading1']
-            title_style.fontName = font_name
+            elements = []
             elements.append(Paragraph(title, title_style))
             elements.append(Spacer(1, 20))
             
-            # 表格数据
             if data:
                 headers = columns if columns else list(data[0].keys())
                 table_data = [headers]
@@ -108,16 +128,20 @@ class DataExportService:
                 
                 table = Table(table_data)
                 table.setStyle(TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.Color(0.25, 0.62, 1.0)),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                    ('FONTNAME', (0, 0), (-1, 0), font_name),
-                    ('FONTSIZE', (0, 0), (-1, 0), 12),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 0), (-1, 0), chinese_font),
+                    ('FONTSIZE', (0, 0), (-1, 0), 11),
                     ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ('FONTNAME', (0, 1), (-1, -1), font_name),
-                    ('FONTSIZE', (0, 1), (-1, -1), 10),
+                    ('TOPPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                    ('FONTNAME', (0, 1), (-1, -1), chinese_font),
+                    ('FONTSIZE', (0, 1), (-1, -1), 9),
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 8),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 8),
                 ]))
                 
                 elements.append(table)

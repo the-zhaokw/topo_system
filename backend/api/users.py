@@ -299,6 +299,7 @@ def get_user(user_id):
         'is_active': user.is_active,
         'created_at': user.created_at.isoformat() if user.created_at else None,
         'last_login': user.last_login.isoformat() if user.last_login else None,
+        'avatar': getattr(user, 'avatar', ''),
         'email_notification_enabled': getattr(user, 'email_notification_enabled', True),
         'email_on_bug_assigned': getattr(user, 'email_on_bug_assigned', True),
         'email_on_bug_closed': getattr(user, 'email_on_bug_closed', True),
@@ -480,14 +481,23 @@ def create_user():
         position_obj = Position.query.filter_by(name=position).first()
         if not position_obj:
             try:
-                new_pos = Position(name=position, is_admin=False, is_manager=False, permissions='[]')
+                # 判断职位是否为管理员或经理
+                admin_position_names = ['admin', 'manager', 'administrator', '系统管理员', '经理', '管理员', '部门经理']
+                manager_position_names = ['manager', 'project_manager', 'department_manager', '经理', '项目经理', '部门经理', '主管']
+                position_lower = position.lower()
+                is_admin = any(admin_name in position_lower or position_lower in admin_name
+                              for admin_name in admin_position_names)
+                is_manager = any(manager_name in position_lower or position_lower in manager_name
+                                for manager_name in manager_position_names)
+
+                new_pos = Position(name=position, is_admin=is_admin, is_manager=is_manager, permissions='[]')
                 db.session.add(new_pos)
                 db.session.commit()
                 log_manager = get_log_manager()
                 log_manager.log_business(
                     operation='position_auto_created',
                     user_id=current_user_id,
-                    details={'position': position}
+                    details={'position': position, 'is_admin': is_admin, 'is_manager': is_manager}
                 )
             except Exception as e:
                 db.session.rollback()
@@ -1983,7 +1993,7 @@ def update_user_permissions(user_id):
         return jsonify({'error': '无法修改管理员的权限'}), 403
 
     if target_user.is_super_admin:
-        return jsonify({'error': '无法修改超级管理员的权限'}), 403
+        return jsonify({'error': '无法修改系统管理员的权限'}), 403
 
     if 'allowed' in data:
         if not isinstance(data['allowed'], list):
@@ -2077,7 +2087,7 @@ def batch_update_user_role():
                 failed_users.append({'id': user_id, 'reason': '用户不存在'})
                 continue
             if user.is_super_admin:
-                failed_users.append({'id': user_id, 'reason': '无法修改超级管理员职位'})
+                failed_users.append({'id': user_id, 'reason': '无法修改系统管理员职位'})
                 continue
             user.position = new_position
             success_count += 1

@@ -121,8 +121,7 @@ def get_todo_summary():
             models['BugStatus'].ASSIGNED.value,
             models['BugStatus'].IN_PROGRESS.value,
             models['BugStatus'].REOPENED.value,
-            models['BugStatus'].OPEN.value,
-            models['BugStatus'].FIXED.value
+            models['BugStatus'].OPEN.value
         ]
 
         to_resolve_count = models['Bug'].query.filter(

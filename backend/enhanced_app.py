@@ -338,7 +338,7 @@ class User(db.Model):
     email_on_bug_assigned = Column(Boolean, default=True)  # Bug分配时邮件通知
     email_on_bug_closed = Column(Boolean, default=True)  # Bug关闭时邮件通知
     custom_permissions = Column(Text, default='{}')  # 用户自定义权限（JSON格式）
-    is_super_admin = Column(Boolean, default=False)  # 是否为超级管理员（不可被修改）
+    is_super_admin = Column(Boolean, default=False)  # 是否为系统管理员（拥有所有系统权限，不可被修改）
     
     # 关系
     projects = relationship("ProjectMember", back_populates="user", cascade="all, delete-orphan")
@@ -360,8 +360,22 @@ class User(db.Model):
         return Position.query.filter_by(name=self.position).first()
 
     def is_system_admin(self):
-        """是否为系统管理员（可查看所有部门）"""
-        return self.is_super_admin
+        """是否为系统管理员（可查看所有部门）
+
+        系统管理员包括：
+        1. 系统管理员（is_super_admin=True）- 拥有所有系统权限
+        2. 管理员用户（is_admin=True）
+        3. 拥有管理员职位的用户（Position.is_admin=True）
+        4. 拥有经理职位的用户（Position.is_manager=True）
+        """
+        if self.is_super_admin:
+            return True
+        if self.is_admin:
+            return True
+        position_info = self.get_position_info()
+        if position_info:
+            return position_info.is_admin or position_info.is_manager
+        return False
 
     def is_department_manager(self):
         """是否为部门经理（可查看自己部门的成员）"""
@@ -3265,6 +3279,10 @@ def migrate_database():
                     db.text("SELECT DISTINCT position FROM users WHERE position IS NOT NULL AND position != ''")
                 ).fetchall()
 
+                # 定义常见管理职位名称（中英文）
+                admin_position_names = ['admin', 'manager', 'administrator', '系统管理员', '经理', '管理员', '部门经理']
+                manager_position_names = ['manager', 'project_manager', 'department_manager', '经理', '项目经理', '部门经理', '主管']
+
                 for pos in existing_positions:
                     pos_name = pos[0]
                     if pos_name:
@@ -3274,13 +3292,58 @@ def migrate_database():
                             {'name': pos_name}
                         ).fetchone()
                         if not existing:
+                            # 判断职位是否为管理员或经理
+                            pos_name_lower = pos_name.lower()
+                            is_admin = any(admin_name in pos_name_lower or pos_name_lower in admin_name
+                                         for admin_name in admin_position_names)
+                            is_manager = any(manager_name in pos_name_lower or pos_name_lower in manager_position_names
+                                           for manager_name in manager_position_names)
+
                             db.session.execute(
-                                db.text("INSERT INTO positions (name, created_at, updated_at) VALUES (:name, datetime('now'), datetime('now'))"),
-                                {'name': pos_name}
+                                db.text("INSERT INTO positions (name, is_admin, is_manager, permissions, created_at, updated_at) VALUES (:name, :is_admin, :is_manager, :permissions, datetime('now'), datetime('now'))"),
+                                {
+                                    'name': pos_name,
+                                    'is_admin': is_admin,
+                                    'is_manager': is_manager,
+                                    'permissions': '[]'
+                                }
                             )
+                            logger.info(f"创建职位: {pos_name}, is_admin={is_admin}, is_manager={is_manager}")
 
                 db.session.commit()
                 logger.info("职位数据迁移成功")
+
+                # 修复已存在职位的权限（为Manager等职位设置正确的is_admin和is_manager）
+                try:
+                    all_positions = db.session.execute(
+                        db.text("SELECT id, name, is_admin, is_manager FROM positions")
+                    ).fetchall()
+
+                    for pos_id, pos_name, current_is_admin, current_is_manager in all_positions:
+                        pos_name_lower = pos_name.lower()
+                        should_be_admin = any(admin_name in pos_name_lower or pos_name_lower in admin_name
+                                             for admin_name in admin_position_names)
+                        should_be_manager = any(manager_name in pos_name_lower or pos_name_lower in manager_name
+                                               for manager_name in manager_position_names)
+
+                        # 如果当前权限与应该有的权限不一致，则更新
+                        if current_is_admin != should_be_admin or current_is_manager != should_be_manager:
+                            db.session.execute(
+                                db.text("UPDATE positions SET is_admin = :is_admin, is_manager = :is_manager WHERE id = :id"),
+                                {
+                                    'id': pos_id,
+                                    'is_admin': should_be_admin,
+                                    'is_manager': should_be_manager
+                                }
+                            )
+                            logger.info(f"更新职位权限: {pos_name}, is_admin={should_be_admin}, is_manager={should_be_manager}")
+
+                    db.session.commit()
+                    logger.info("职位权限修复完成")
+                except Exception as e:
+                    db.session.rollback()
+                    logger.warning(f"职位权限修复失败: {str(e)}")
+
             except Exception as e:
                 db.session.rollback()
                 logger.warning(f"职位数据迁移失败: {str(e)}")
@@ -3290,7 +3353,7 @@ def migrate_database():
                 import json
 
                 default_positions = [
-                    {'name': '超级管理员', 'is_admin': True, 'is_manager': True, 'permissions': 'all'},
+                    {'name': '系统管理员', 'is_admin': True, 'is_manager': True, 'permissions': 'all'},
                     {'name': '经理', 'is_admin': True, 'is_manager': True, 'permissions': 'all'},
                     {'name': '项目经理', 'is_admin': False, 'is_manager': True, 'permissions': json.dumps(DEFAULT_ROLES.get('project_manager', {}).get('permissions', []))},
                     {'name': '测试工程师', 'is_admin': False, 'is_manager': False, 'permissions': json.dumps(DEFAULT_ROLES.get('test_engineer', {}).get('permissions', []))},
@@ -3358,16 +3421,27 @@ def init_db():
                         email='admin@example.com',
                         role=UserRole.ADMIN.value,
                         is_admin=True,
+                        is_super_admin=True,
+                        position='系统管理员',
+                        department='',
                         salt=salt
                     )
                     admin_user.set_password('admin123')
-                    
+
                     # 添加到数据库
                     db.session.add(admin_user)
                     db.session.commit()
-                    
+
                     logger.info("默认管理员用户创建成功: username=admin, email=admin@example.com, password=admin123")
                 else:
+                    # 更新已存在的admin用户为系统管理员
+                    if not existing_admin.is_super_admin:
+                        existing_admin.is_super_admin = True
+                        existing_admin.is_admin = True
+                        existing_admin.position = '系统管理员'
+                        existing_admin.department = ''
+                        db.session.commit()
+                        logger.info("已更新admin用户为系统管理员")
                     logger.info("管理员用户已存在，跳过创建")
                     
             except Exception as e:

@@ -2061,3 +2061,532 @@ ValueError: too many values to unpack (expected 2)
 2026-04-01 06:29:12,132 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 136.86ms
 2026-04-01 06:29:12,188 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-04-01 06:29:12,188 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 204.16ms
+2026-04-01 08:30:28,322 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 08:30:28,327 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 08:30:28,335 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 08:30:28,336 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 08:30:28,336 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 08:30:28,455 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 08:30:28,455 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 08:30:28,463 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 08:30:28,467 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 08:30:28,471 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 08:30:28,482 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 08:30:38,039 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:30:38,040 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:30:38,045 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:30:38,053 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:30:38,243 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:30:38,245 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 192.63ms
+2026-04-01 08:30:38,299 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:30:38,299 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 259.36ms
+2026-04-01 08:30:42,197 - enhanced_app - INFO - log - 用户ID: 18, 操作: user_login, 资源类型: user, 资源ID: 18, 详情: 用户登录: zhaokangwei, IP: 127.0.0.1
+2026-04-01 08:30:42,329 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:30:42,332 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:30:42,332 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:30:42,346 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:30:42,395 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:30:42,399 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 52.31ms
+2026-04-01 08:30:42,424 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:30:42,424 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 91.84ms
+2026-04-01 08:31:07,479 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:31:07,480 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:31:07,483 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:31:07,483 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:31:07,520 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:31:07,524 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 41.69ms
+2026-04-01 08:31:07,553 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:31:07,554 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 70.92ms
+2026-04-01 08:31:08,846 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:31:08,849 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:31:08,888 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:31:08,890 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 41.18ms
+2026-04-01 08:31:16,490 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:31:16,491 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:31:16,498 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:31:16,501 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:31:16,536 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:31:16,537 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 36.25ms
+2026-04-01 08:31:16,561 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:31:16,562 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 71.03ms
+2026-04-01 08:31:23,696 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:31:23,698 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:31:23,705 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:31:23,709 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:31:23,741 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:31:23,742 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 33.66ms
+2026-04-01 08:31:23,767 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:31:23,767 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 69.61ms
+2026-04-01 08:32:25,162 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-04-01 08:32:25,232 - enhanced_app - INFO - log - 用户ID: 18, 操作: bug_status_transition, 资源类型: bug, 资源ID: 27, 详情: Bug状态变更: resolved -> closed, IP: 127.0.0.1
+2026-04-01 08:32:25,314 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-04-01 08:32:36,399 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:32:36,400 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:32:36,410 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:32:36,478 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:32:36,514 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:32:36,515 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 36.70ms
+2026-04-01 08:32:36,543 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:32:36,543 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 142.85ms
+2026-04-01 08:33:51,609 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-01 08:33:51,610 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:33:51,610 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:33:51,611 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:33:51,623 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:33:51,623 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 12.77ms
+2026-04-01 08:33:51,626 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:33:51,627 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 16.43ms
+2026-04-01 08:34:02,036 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects
+2026-04-01 08:34:02,037 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-04-01 08:34:02,037 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:34:02,038 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:34:02,049 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:34:02,050 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:34:02,050 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 12.99ms
+2026-04-01 08:34:02,050 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 12.47ms
+2026-04-01 08:34:32,080 - enhanced_app - INFO - log - 用户ID: 18, 操作: create_bug, 资源类型: bug, 资源ID: 491, 详情: 创建缺陷: 9999, IP: 127.0.0.1
+2026-04-01 08:34:57,887 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects
+2026-04-01 08:34:57,888 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-04-01 08:34:57,888 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:34:57,889 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:34:57,901 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:34:57,902 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:34:57,902 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.73ms
+2026-04-01 08:34:57,902 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 14.25ms
+2026-04-01 08:35:01,006 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-04-01 08:35:01,007 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:35:01,020 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:35:01,025 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 17.27ms
+2026-04-01 08:35:03,756 - enhanced_app - INFO - log - 用户ID: 18, 操作: clock_in, 资源类型: attendance, 资源ID: 7, 详情: 上班打卡: 2026-04-01 00:00:00, IP: 127.0.0.1, 迟到: 0分钟, IP: 127.0.0.1
+2026-04-01 08:35:29,161 - enhanced_app - INFO - log - 用户ID: 18, 操作: create_leave_application, 资源类型: leave_application, 资源ID: 2, 详情: 创建请假申请: annual, IP: 127.0.0.1
+2026-04-01 08:35:55,792 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-04-01 08:35:55,793 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:35:55,799 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:35:55,799 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 5.74ms
+2026-04-01 08:36:28,225 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-04-01 08:36:28,353 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:36:28,358 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:36:28,361 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:36:28,361 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:36:28,422 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:36:28,424 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 62.94ms
+2026-04-01 08:36:28,453 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:36:28,454 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 92.99ms
+2026-04-01 08:37:40,627 - enhanced_app - INFO - log - 用户ID: 1, 操作: approve_leave_application, 资源类型: leave_application, 资源ID: 1, 详情: 审批请假申请: approved_level_2, IP: 127.0.0.1
+2026-04-01 08:37:44,711 - enhanced_app - INFO - log - 用户ID: 1, 操作: approve_leave_application, 资源类型: leave_application, 资源ID: 2, 详情: 审批请假申请: approved_level_1, IP: 127.0.0.1
+2026-04-01 08:37:54,208 - enhanced_app - INFO - log - 用户ID: 1, 操作: approve_leave_application, 资源类型: leave_application, 资源ID: 2, 详情: 审批请假申请: approved_level_2, IP: 127.0.0.1
+2026-04-01 08:38:08,391 - enhanced_app - INFO - log - 用户ID: 1, 操作: approve_leave_application, 资源类型: leave_application, 资源ID: 2, 详情: 审批请假申请: approved, IP: 127.0.0.1
+2026-04-01 08:38:12,313 - enhanced_app - INFO - log - 用户ID: 1, 操作: approve_leave_application, 资源类型: leave_application, 资源ID: 1, 详情: 审批请假申请: approved, IP: 127.0.0.1
+2026-04-01 08:38:16,981 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-01 08:38:16,982 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-01 08:38:16,988 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:38:16,992 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:38:17,030 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:38:17,032 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 39.96ms
+2026-04-01 08:38:17,072 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-01 08:38:17,074 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 91.65ms
+2026-04-01 08:40:22,578 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-01 08:40:22,579 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:40:22,597 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:40:22,598 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 18.03ms
+2026-04-01 08:42:02,617 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-04-01 08:42:02,617 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:42:02,623 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:42:02,626 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.89ms
+2026-04-01 08:42:22,160 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-01 08:42:22,160 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:42:22,173 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:42:22,174 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.01ms
+2026-04-01 08:45:22,286 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-01 08:45:22,287 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-01 08:45:22,288 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-01 08:45:22,289 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-01 08:45:22,307 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-01 08:45:22,308 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-01 08:45:22,308 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 19.89ms
+2026-04-01 08:45:22,309 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 19.88ms
+2026-04-01 08:53:45,138 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 08:53:45,143 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 08:53:45,148 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 08:53:45,148 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 08:53:45,148 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 08:53:45,261 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 08:53:45,262 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 08:53:45,269 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 08:53:45,272 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 08:53:45,276 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 08:53:45,276 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 08:57:33,335 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 08:57:33,339 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 08:57:33,344 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 08:57:33,344 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 08:57:33,345 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 08:57:33,458 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 08:57:33,458 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 08:57:33,465 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 08:57:33,468 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 08:57:33,471 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 08:57:33,471 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 09:00:24,826 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 09:00:24,830 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 09:00:24,834 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 09:00:24,835 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 09:00:24,835 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 09:00:24,948 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 09:00:24,949 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 09:00:24,955 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 09:00:24,957 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 09:00:24,961 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 09:00:24,961 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 09:03:02,543 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 09:03:02,548 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 09:03:02,552 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 09:03:02,552 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 09:03:02,552 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 09:03:02,661 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 09:03:02,662 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 09:03:02,668 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 09:03:02,670 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 09:03:02,675 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 09:03:02,676 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 09:03:32,651 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 09:03:32,656 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 09:03:32,659 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 09:03:32,660 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 09:03:32,660 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 09:03:32,771 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 09:03:32,772 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 09:03:32,779 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 09:03:32,781 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 09:03:32,785 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 09:03:32,786 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 09:14:10,241 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 09:14:10,244 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 09:14:10,250 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 09:14:10,251 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 09:14:10,251 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 09:14:10,356 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 09:14:10,356 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 09:14:10,363 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 09:14:10,366 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 09:14:10,371 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 09:14:10,372 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 09:16:30,053 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-01 09:16:30,056 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-01 09:16:30,061 - enhanced_app - INFO - 默认职位创建成功
+2026-04-01 09:16:30,061 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-01 09:16:30,061 - enhanced_app - INFO - 数据库表创建完成
+2026-04-01 09:16:30,176 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-01 09:16:30,176 - enhanced_app - INFO - 数据库初始化完成
+2026-04-01 09:16:30,185 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-01 09:16:30,188 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-01 09:16:30,192 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-01 09:16:30,192 - enhanced_app - INFO - 测试数据创建完成
+2026-04-01 09:29:57,380 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 09:30:37,831 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 09:31:27,978 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:10:44,566 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:12:46,273 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:13:48,292 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:14:50,030 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:15:44,344 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:16:56,924 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:20:49,220 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-04-01 11:21:09,409 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-01 11:28:44,611 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-04-01 11:29:06,013 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-02 00:27:39,050 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:27:39,054 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:27:39,057 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:27:39,059 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:27:39,059 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:27:39,172 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:27:39,173 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:27:39,181 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:27:39,184 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:27:39,189 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:27:39,190 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:30:05,687 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:30:05,691 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:30:05,695 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:30:05,696 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:30:05,696 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:30:05,803 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:30:05,803 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:30:05,810 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:30:05,814 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:30:05,819 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:30:05,820 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:30:30,835 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:30:30,839 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:30:30,844 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:30:30,845 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:30:30,846 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:30:30,963 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:30:30,964 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:30:30,970 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:30:30,974 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:30:30,978 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:30:30,979 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:32:02,697 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-02 00:33:45,496 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 172.18.36.249
+2026-04-02 00:43:59,235 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:43:59,241 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:43:59,247 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:43:59,247 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:43:59,248 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:43:59,369 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:43:59,369 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:43:59,376 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:43:59,378 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:43:59,382 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:43:59,382 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:44:07,670 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:44:07,670 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:44:07,678 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:44:07,684 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:44:07,810 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:44:07,817 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 139.25ms
+2026-04-02 00:44:07,877 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:44:07,877 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 193.47ms
+2026-04-02 00:45:54,520 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-02 00:45:54,524 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-02 00:45:54,551 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-02 00:45:54,551 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 27.06ms
+2026-04-02 00:46:01,569 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:46:01,571 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:46:01,583 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:46:01,589 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:46:01,635 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:46:01,637 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 47.73ms
+2026-04-02 00:46:01,674 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:46:01,674 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 102.80ms
+2026-04-02 00:46:10,252 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:46:10,254 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:46:10,267 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:46:10,271 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:46:10,314 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:46:10,321 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 49.83ms
+2026-04-02 00:46:10,366 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:46:10,368 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 113.96ms
+2026-04-02 00:49:23,912 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:49:23,915 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:49:23,923 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:49:23,923 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:49:23,923 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:49:24,035 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:49:24,035 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:49:24,042 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:49:24,045 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:49:24,048 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:49:24,048 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:49:27,756 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:49:27,757 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:49:27,759 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:49:27,762 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:49:27,806 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:49:27,808 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 46.43ms
+2026-04-02 00:49:27,845 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:49:27,845 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 85.31ms
+2026-04-02 00:51:27,188 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:51:27,191 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:51:27,194 - enhanced_app - INFO - 更新职位权限: 项目经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,194 - enhanced_app - INFO - 更新职位权限: 人事经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,194 - enhanced_app - INFO - 更新职位权限: 软件部经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,196 - enhanced_app - INFO - 更新职位权限: 测试部经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,196 - enhanced_app - INFO - 更新职位权限: FPGA经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,196 - enhanced_app - INFO - 更新职位权限: 超级管理员, is_admin=True, is_manager=False
+2026-04-02 00:51:27,197 - enhanced_app - INFO - 更新职位权限: 经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,197 - enhanced_app - INFO - 更新职位权限: 部门经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,198 - enhanced_app - INFO - 更新职位权限: 总经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,198 - enhanced_app - INFO - 更新职位权限: 副总经理, is_admin=True, is_manager=True
+2026-04-02 00:51:27,259 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 00:51:27,265 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:51:27,266 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:51:27,266 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:51:27,377 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:51:27,377 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:51:27,383 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:51:27,387 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:51:27,391 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:51:27,391 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:53:51,261 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:53:51,265 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:53:51,267 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 00:53:51,271 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:53:51,271 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:53:51,272 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:53:51,385 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:53:51,385 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:53:51,393 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:53:51,397 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:53:51,402 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:53:51,402 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:53:58,580 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:53:58,581 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:53:58,586 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:53:58,590 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:53:58,638 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:53:58,641 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 50.45ms
+2026-04-02 00:53:58,785 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:53:58,785 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 204.74ms
+2026-04-02 00:54:03,175 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:54:03,178 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:54:03,181 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:54:03,182 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:54:03,225 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:54:03,227 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 45.69ms
+2026-04-02 00:54:03,280 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:54:03,280 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 101.80ms
+2026-04-02 00:59:20,906 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 00:59:20,911 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 00:59:20,913 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 00:59:20,917 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 00:59:20,918 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 00:59:20,918 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 00:59:21,041 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 00:59:21,042 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 00:59:21,049 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 00:59:21,051 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 00:59:21,055 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 00:59:21,056 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 00:59:38,698 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:59:38,699 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:59:38,704 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:59:38,705 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:59:38,769 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:59:38,770 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 65.25ms
+2026-04-02 00:59:38,810 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:59:38,812 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 113.04ms
+2026-04-02 00:59:43,801 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-04-02 00:59:43,938 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 00:59:43,940 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 00:59:43,948 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 00:59:43,959 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 00:59:44,007 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 00:59:44,008 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 49.50ms
+2026-04-02 00:59:44,042 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 00:59:44,043 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 102.85ms
+2026-04-02 01:02:49,365 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 01:02:49,370 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 01:02:49,371 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 01:02:49,374 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 01:02:49,375 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 01:02:49,375 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 01:02:49,488 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 01:02:49,488 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 01:02:49,495 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 01:02:49,499 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 01:02:49,504 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 01:02:49,504 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 01:03:00,191 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 01:03:00,193 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 01:03:00,204 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 01:03:00,212 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 01:03:00,252 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 01:03:00,253 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.92ms
+2026-04-02 01:03:00,293 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 01:03:00,294 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 100.39ms
+2026-04-02 01:03:09,783 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-04-02 01:03:09,920 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 01:03:09,922 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 01:03:09,939 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 01:03:09,949 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 01:03:09,995 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 01:03:09,997 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 47.70ms
+2026-04-02 01:03:10,036 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 01:03:10,036 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 114.56ms
+2026-04-02 01:17:46,360 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 01:17:46,366 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 01:17:46,367 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 01:17:46,458 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 01:17:46,460 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 01:17:46,461 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 01:17:46,700 - enhanced_app - INFO - 已更新admin用户为系统管理员
+2026-04-02 01:17:46,700 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 01:17:46,701 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 01:17:46,716 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 01:17:46,721 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 01:17:46,724 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 01:17:46,725 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 01:17:53,399 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 01:17:53,401 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 01:17:53,401 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 01:17:53,408 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 01:17:53,474 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 01:17:53,477 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 69.24ms
+2026-04-02 01:17:53,516 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 01:17:53,517 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 115.51ms
+2026-04-02 01:17:54,534 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 01:17:54,537 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 01:17:54,540 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 01:17:54,548 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 01:17:54,592 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 01:17:54,593 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 44.93ms
+2026-04-02 01:17:54,625 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 01:17:54,626 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 89.03ms
+2026-04-02 01:22:31,226 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 01:22:31,230 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 01:22:31,234 - enhanced_app - INFO - 更新职位权限: 系统管理员, is_admin=True, is_manager=False
+2026-04-02 01:22:31,300 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 01:22:31,309 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 01:22:31,309 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 01:22:31,310 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 01:22:31,478 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 01:22:31,478 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 01:22:31,486 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 01:22:31,489 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 01:22:31,494 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 01:22:31,494 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 01:22:34,620 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 01:22:34,622 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 01:22:34,627 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 01:22:34,635 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 01:22:34,710 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 01:22:34,716 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 81.07ms
+2026-04-02 01:22:34,809 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 01:22:34,809 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 187.31ms
+2026-04-02 01:29:07,683 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 01:29:07,686 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 01:29:07,689 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 01:29:07,694 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 01:29:07,694 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 01:29:07,694 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 01:29:07,840 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 01:29:07,841 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 01:29:07,848 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 01:29:07,849 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 01:29:07,854 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 01:29:07,854 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 01:46:38,968 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 01:46:38,971 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 01:46:38,973 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 01:46:38,979 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 01:46:38,980 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 01:46:38,980 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 01:46:39,123 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 01:46:39,125 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 01:46:39,132 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 01:46:39,135 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 01:46:39,139 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 01:46:39,139 - enhanced_app - INFO - 测试数据创建完成
+2026-04-02 01:46:45,958 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-02 01:46:45,958 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-02 01:46:45,965 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-02 01:46:45,974 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-02 01:46:46,110 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-02 01:46:46,114 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 140.27ms
+2026-04-02 01:46:46,164 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-02 01:46:46,165 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 206.81ms
+2026-04-02 01:48:16,353 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-02 01:48:16,357 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-02 01:48:16,359 - enhanced_app - INFO - 职位权限修复完成
+2026-04-02 01:48:16,362 - enhanced_app - INFO - 默认职位创建成功
+2026-04-02 01:48:16,363 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-02 01:48:16,363 - enhanced_app - INFO - 数据库表创建完成
+2026-04-02 01:48:16,504 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-02 01:48:16,504 - enhanced_app - INFO - 数据库初始化完成
+2026-04-02 01:48:16,512 - enhanced_app - INFO - 创建测试Bug: 3个
+2026-04-02 01:48:16,515 - enhanced_app - INFO - 创建物料分类: 3个
+2026-04-02 01:48:16,519 - enhanced_app - INFO - 创建测试物料: 3个
+2026-04-02 01:48:16,520 - enhanced_app - INFO - 测试数据创建完成

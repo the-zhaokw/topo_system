@@ -12,8 +12,8 @@ export const isAdmin = (user) => {
   if (!user) return false
   if (user.is_super_admin) return true
   if (user.is_admin) return true
-  return user.position === '管理员' ||
-         user.position === '超级管理员' ||
+  return user.position === '系统管理员' ||
+         user.position === '管理员' ||
          user.position === '经理' ||
          user.position === '项目经理' ||
          user.position === '部门经理' ||
@@ -78,15 +78,15 @@ export const isDeveloperOrManager = (user) => {
 }
 
 /**
- * 检查用户是否具有管理权限（管理员、项目经理或超级管理员）
+ * 检查用户是否具有管理权限（管理员、项目经理或系统管理员）
  * @param {Object} user - 用户对象
  * @returns {boolean} - 是否具有管理权限
  */
 export const hasManagementPermission = (user) => {
   if (!user) return false
   if (user.is_super_admin) return true
-  return user.position === '管理员' ||
-         user.position === '超级管理员' ||
+  return user.position === '系统管理员' ||
+         user.position === '管理员' ||
          user.position === '经理' ||
          user.position === '项目经理' ||
          user.position === '部门经理' ||
@@ -105,20 +105,23 @@ export const getPositionName = (user) => {
 }
 
 /**
- * 检查用户是否为超级管理员
+ * 检查用户是否为系统管理员
  * @param {Object} user - 用户对象
- * @returns {boolean} - 是否为超级管理员
+ * @returns {boolean} - 是否为系统管理员
  */
-export const isSuperAdmin = (user) => {
+export const isSystemAdmin = (user) => {
   if (!user) return false
-  return !!user.is_super_admin
+  return !!user.is_super_admin || 
+         user.position === '系统管理员' || 
+         user.position === '超级管理员' ||
+         user.position === '总经理'
 }
 
 /**
  * 职位分类
  */
 export const PositionCategory = {
-  MANAGEMENT: ['超级管理员', '经理', '项目经理', '部门经理', '部门负责人', '人事专员', '管理员'],
+  MANAGEMENT: ['系统管理员', '总经理', '项目经理', '部门经理', '部门负责人', '人事专员', '管理员'],
   ENGINEERING: ['软件工程师', '测试工程师', '开发工程师', '前端工程师', '后端工程师', '全栈工程师'],
   GENERAL: ['普通用户', '实习生', '外包人员', '兼职人员']
 }

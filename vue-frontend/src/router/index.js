@@ -68,6 +68,9 @@ const RequirementDocumentDetail = () => import('@/views/RequirementDocumentDetai
 const RequirementTraceMatrix = () => import('@/views/RequirementTraceMatrix.vue')
 const RequirementDashboard = () => import('@/views/RequirementDashboard.vue')
 
+// 独立需求详情路由（用于处理 /requirements/requirement_4 这类路径）
+const RequirementDetail = () => import('@/views/RequirementDocumentDetail.vue')
+
 // 工作统计详情组件
 const WorkStatisticsDetail = () => import('@/views/WorkStatisticsDetail.vue')
 
@@ -534,6 +537,13 @@ const routes = [
     component: ActivityList,
     meta: { requiresAuth: true }
   },
+  // 独立需求路由（用于处理 /requirements/requirement_4 这类路径）
+  {
+    path: '/requirements/:id',
+    name: 'RequirementDetail',
+    component: RequirementDetail,
+    meta: { requiresAuth: true }
+  },
   // 知识库模块（新版）
   {
     path: '/knowledge',
@@ -674,6 +684,14 @@ function continueHandleRoute(to, next, userStore) {
   
   // 检查用户权限
   const userRole = userStore.currentUser?.role
+  const isSuperAdmin = userStore.currentUser?.is_super_admin
+  const isAdmin = userStore.currentUser?.is_admin
+
+  // 系统管理员和管理员拥有所有权限，直接放行
+  if (isSuperAdmin || isAdmin) {
+    next()
+    return
+  }
 
   // 首先检查路由的meta.allowedRoles配置
   if (to.meta?.allowedRoles) {

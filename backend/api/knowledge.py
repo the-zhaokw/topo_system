@@ -16,6 +16,15 @@ import uuid
 import logging
 import json
 
+# 导入PDF导出HTML解析器
+try:
+    from .knowledge_pdf_fix import html_to_pdf_elements
+except ImportError:
+    # 如果相对导入失败，尝试绝对导入
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from knowledge_pdf_fix import html_to_pdf_elements
+
 logger = logging.getLogger(__name__)
 knowledge_bp = Blueprint('knowledge', __name__, url_prefix='/knowledge')
 
@@ -876,6 +885,9 @@ def get_related_articles(art_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+
+
+
 @knowledge_bp.route('/articles/<int:art_id>/export/<export_type>', methods=['GET'])
 @jwt_required()
 def export_article(art_id, export_type):
@@ -893,85 +905,94 @@ def export_article(art_id, export_type):
 
         if export_type == 'pdf':
             try:
+                from io import BytesIO
                 from reportlab.lib.pagesizes import A4
-                from reportlab.lib.styles import getSampleStyleSheet
-                from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+                from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
                 from reportlab.lib.units import cm
-                from reportlab.lib.enums import TA_LEFT
+                from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+                from reportlab.lib import colors
+                from reportlab.lib.enums import TA_LEFT, TA_CENTER
                 from reportlab.pdfbase import pdfmetrics
                 from reportlab.pdfbase.ttfonts import TTFont
-                from io import BytesIO
+                import platform
                 import re
 
                 buffer = BytesIO()
-                doc = SimpleDocTemplate(buffer, pagesize=A4, leftMargin=2*cm, rightMargin=2*cm)
+                doc = SimpleDocTemplate(
+                    buffer,
+                    pagesize=A4,
+                    leftMargin=2*cm,
+                    rightMargin=2*cm,
+                    topMargin=2*cm,
+                    bottomMargin=2*cm
+                )
+
+                chinese_font = 'Helvetica'
+                system_name = platform.system()
+
+                if system_name == 'Windows':
+                    font_paths = [
+                        (r'C:\Windows\Fonts\simhei.ttf', 'SimHei'),
+                        (r'C:\Windows\Fonts\msyh.ttc', 'Microsoft YaHei'),
+                        (r'C:\Windows\Fonts\simsun.ttc', 'SimSun'),
+                    ]
+                elif system_name == 'Darwin':
+                    font_paths = [
+                        ('/System/Library/Fonts/STHeiti Light.ttc', 'STHeiti'),
+                        ('/System/Library/Fonts/PingFang.ttc', 'PingFang'),
+                    ]
+                else:
+                    font_paths = [
+                        ('/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc', 'WenQuanYi'),
+                        ('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', 'NotoSansCJK'),
+                    ]
+
+                for font_path, font_name in font_paths:
+                    if os.path.exists(font_path):
+                        try:
+                            pdfmetrics.registerFont(TTFont(font_name, font_path))
+                            chinese_font = font_name
+                            logger.info(f"成功注册中文字体: {font_name}")
+                            break
+                        except Exception as e:
+                            logger.warning(f"注册字体失败 {font_path}: {e}")
+                            continue
+
                 styles = getSampleStyleSheet()
+
+                meta_style = ParagraphStyle(
+                    'CustomMeta',
+                    parent=styles['Normal'],
+                    fontName=chinese_font,
+                    fontSize=10,
+                    textColor=colors.grey,
+                    spaceAfter=12
+                )
+
                 story = []
 
-                # 尝试注册中文字体
-                try:
-                    # 尝试使用系统字体
-                    import platform
-                    system_name = platform.system()
-                    if system_name == 'Windows':
-                        font_path = r'C:\Windows\Fonts\simhei.ttf'
-                        if os.path.exists(font_path):
-                            pdfmetrics.registerFont(TTFont('Chinese', font_path))
-                            chinese_font = 'Chinese'
-                        else:
-                            chinese_font = 'Helvetica'
-                    elif system_name == 'Darwin':
-                        font_path = '/System/Library/Fonts/STHeiti Light.ttc'
-                        if os.path.exists(font_path):
-                            pdfmetrics.registerFont(TTFont('Chinese', font_path))
-                            chinese_font = 'Chinese'
-                        else:
-                            chinese_font = 'Helvetica'
-                    else:
-                        chinese_font = 'Helvetica'
-                except Exception as font_error:
-                    logger.warning(f"字体加载失败：{font_error}")
-                    chinese_font = 'Helvetica'
-
-                # 标题样式
-                title_style = styles['Title']
-                title_style.fontSize = 18
-                title_style.fontName = chinese_font
-                title_style.alignment = TA_LEFT
-                story.append(Paragraph(article.title, title_style))
-                story.append(Spacer(1, 0.5*cm))
-
-                # 元信息样式
-                meta_style = styles['Normal']
-                meta_style.fontSize = 10
-                meta_style.fontName = chinese_font
                 try:
                     category_name = article.category.name if article.category else '未分类'
                 except Exception:
                     category_name = '未分类'
-                meta = f"作者：{article.author_name or '未知'} | 分类：{category_name}"
-                story.append(Paragraph(meta, meta_style))
+
+                story.append(Paragraph(article.title, ParagraphStyle(
+                    'ArticleTitle',
+                    parent=styles['Heading1'],
+                    fontName=chinese_font,
+                    fontSize=20,
+                    textColor=colors.black,
+                    spaceAfter=8,
+                    alignment=TA_LEFT
+                )))
+
+                meta_text = f"作者：{article.author_name or '未知'} | 分类：{category_name} | 创建时间：{article.created_at.strftime('%Y-%m-%d %H:%M:%S') if article.created_at else '未知'}"
+                story.append(Paragraph(meta_text, meta_style))
                 story.append(Spacer(1, 0.5*cm))
-                story.append(PageBreak())
 
-                # 内容样式
-                content_style = styles['Normal']
-                content_style.fontSize = 12
-                content_style.fontName = chinese_font
+                content = article.content or ''
 
-                # 处理文章内容 - 清理 HTML 标签
-                content_text = article.content or ''
-                # 移除 HTML 标签
-                clean_content = re.sub(r'<[^>]+>', '', content_text)
-                # 替换常见的 HTML 实体
-                clean_content = clean_content.replace('&nbsp;', ' ').replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&')
-                
-                # 分段处理内容
-                paragraphs = clean_content.split('\n')
-                for para in paragraphs:
-                    if para.strip():
-                        story.append(Paragraph(para.strip(), content_style))
-                        story.append(Spacer(1, 0.2*cm))
+                story.extend(html_to_pdf_elements(content, chinese_font, styles))
 
                 doc.build(story)
                 buffer.seek(0)
@@ -984,9 +1005,16 @@ def export_article(art_id, export_type):
                 return response
             except ImportError as ie:
                 logger.error(f"PDF 导出库未安装：{ie}")
-                return jsonify({'success': False, 'error': 'PDF 导出功能未安装 reportlab 库'}), 500
+                import traceback
+                tb_str = traceback.format_exc()
+                logger.error(tb_str)
+                print(f"[PDF EXPORT ERROR] ImportError: {ie}")
+                print(f"[PDF EXPORT ERROR] Traceback: {tb_str}")
+                return jsonify({'success': False, 'error': f'PDF 导出功能未安装必要的库: {str(ie)}'}), 500
             except Exception as pdf_error:
                 logger.error(f"PDF 生成失败：{pdf_error}")
+                import traceback
+                logger.error(traceback.format_exc())
                 return jsonify({'success': False, 'error': f'PDF 生成失败：{str(pdf_error)}'}), 500
 
         elif export_type == 'docx':
@@ -1801,4 +1829,232 @@ def get_stats():
         })
     except Exception as e:
         logger.error(f"获取统计错误：{str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ==================== 分享功能 ====================
+@knowledge_bp.route('/articles/<int:art_id>/shares', methods=['POST'])
+@jwt_required()
+def create_article_share(art_id):
+    """创建文章分享链接"""
+    try:
+        article = KnowledgeArticle.query.get(art_id)
+        if not article:
+            return jsonify({'success': False, 'error': '文章不存在'}), 404
+
+        if not can_edit_article(article):
+            return jsonify({'success': False, 'error': '无权限分享此文章'}), 403
+
+        current_user_id = get_jwt_identity()
+        data = request.get_json() or {}
+
+        import secrets
+        share_token = secrets.token_urlsafe(16)
+
+        password = data.get('password')
+        expire_at = data.get('expire_at')
+        allow_download = data.get('allow_download', True)
+
+        if expire_at:
+            try:
+                expire_at = datetime.fromisoformat(expire_at.replace('Z', '+00:00'))
+            except:
+                expire_at = None
+
+        from enhanced_app import KnowledgeShare
+        share = KnowledgeShare(
+            article_id=art_id,
+            share_token=share_token,
+            password=password,
+            created_by=current_user_id,
+            expire_at=expire_at,
+            allow_download=allow_download
+        )
+        db.session.add(share)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': '分享链接创建成功',
+            'share_url': f'/knowledge/share/{share_token}',
+            'share_token': share_token,
+            'has_password': bool(password)
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"创建分享链接错误：{str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@knowledge_bp.route('/articles/<int:art_id>/shares', methods=['GET'])
+@jwt_required()
+def get_article_shares(art_id):
+    """获取文章的分享列表"""
+    try:
+        article = KnowledgeArticle.query.get(art_id)
+        if not article:
+            return jsonify({'success': False, 'error': '文章不存在'}), 404
+
+        current_user_id = get_jwt_identity()
+        is_admin = check_admin()
+
+        from enhanced_app import KnowledgeShare
+        query = KnowledgeShare.query.filter_by(article_id=art_id)
+
+        if not is_admin and article.author_id != current_user_id:
+            query = query.filter_by(created_by=current_user_id)
+
+        shares = query.order_by(KnowledgeShare.created_at.desc()).all()
+
+        items = []
+        for share in shares:
+            items.append({
+                'id': share.id,
+                'share_token': share.share_token,
+                'has_password': bool(share.password),
+                'created_at': share.created_at.isoformat() if share.created_at else None,
+                'expire_at': share.expire_at.isoformat() if share.expire_at else None,
+                'allow_download': share.allow_download,
+                'view_count': share.view_count or 0,
+                'is_active': share.is_active
+            })
+
+        return jsonify({
+            'success': True,
+            'items': items
+        })
+    except Exception as e:
+        logger.error(f"获取分享列表错误：{str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@knowledge_bp.route('/enhanced/share/<string:share_token>', methods=['GET'])
+def access_shared_article(share_token):
+    """通过分享链接访问文章（公开访问，无需登录）"""
+    try:
+        from enhanced_app import KnowledgeShare
+        share = KnowledgeShare.query.filter_by(share_token=share_token, is_active=True).first()
+
+        if not share:
+            return jsonify({'success': False, 'error': '分享链接不存在或已失效'}), 404
+
+        if share.expire_at and share.expire_at < datetime.now():
+            return jsonify({'success': False, 'error': '分享链接已过期'}), 410
+
+        password = request.args.get('password')
+        if share.password:
+            if not password or password != share.password:
+                return jsonify({
+                    'success': False,
+                    'require_password': True,
+                    'error': '需要访问密码'
+                }), 403
+
+        article = KnowledgeArticle.query.get(share.article_id)
+        if not article:
+            return jsonify({'success': False, 'error': '文章不存在'}), 404
+
+        share.view_count = (share.view_count or 0) + 1
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'article': {
+                'id': article.id,
+                'title': article.title,
+                'content': article.content,
+                'author': article.author_name or '未知',
+                'category': article.category.name if article.category else '未分类',
+                'updated_at': article.updated_at.isoformat() if article.updated_at else None
+            },
+            'allow_download': share.allow_download
+        })
+    except Exception as e:
+        logger.error(f"访问分享文章错误：{str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@knowledge_bp.route('/shares/<int:share_id>', methods=['DELETE'])
+@jwt_required()
+def delete_article_share(share_id):
+    """删除分享链接"""
+    try:
+        from enhanced_app import KnowledgeShare
+        share = KnowledgeShare.query.get(share_id)
+
+        if not share:
+            return jsonify({'success': False, 'error': '分享链接不存在'}), 404
+
+        article = KnowledgeArticle.query.get(share.article_id)
+        current_user_id = get_jwt_identity()
+        is_admin = check_admin()
+
+        if not is_admin and share.created_by != current_user_id:
+            if not article or article.author_id != current_user_id:
+                return jsonify({'success': False, 'error': '无权限删除此分享链接'}), 403
+
+        db.session.delete(share)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': '分享链接已删除'
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"删除分享链接错误：{str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@knowledge_bp.route('/enhanced/share/<string:share_token>/download', methods=['GET'])
+def download_shared_article(share_token):
+    """下载分享的文章（公开访问，无需登录）"""
+    try:
+        from enhanced_app import KnowledgeShare
+        share = KnowledgeShare.query.filter_by(share_token=share_token, is_active=True).first()
+
+        if not share:
+            return jsonify({'success': False, 'error': '分享链接不存在或已失效'}), 404
+
+        if not share.allow_download:
+            return jsonify({'success': False, 'error': '此分享链接不允许下载'}), 403
+
+        if share.expire_at and share.expire_at < datetime.now():
+            return jsonify({'success': False, 'error': '分享链接已过期'}), 410
+
+        password = request.args.get('password')
+        if share.password:
+            if not password or password != share.password:
+                return jsonify({
+                    'success': False,
+                    'require_password': True,
+                    'error': '需要访问密码'
+                }), 403
+
+        article = KnowledgeArticle.query.get(share.article_id)
+        if not article:
+            return jsonify({'success': False, 'error': '文章不存在'}), 404
+
+        from flask import make_response
+        from io import BytesIO
+
+        content = f"# {article.title}\n\n"
+        content += f"作者：{article.author_name or '未知'}\n"
+        content += f"分类：{article.category.name if article.category else '未分类'}\n"
+        content += f"更新时间：{article.updated_at.strftime('%Y-%m-%d %H:%M:%S') if article.updated_at else '未知'}\n\n"
+        content += "---\n\n"
+        content += article.content or ''
+
+        buffer = BytesIO(content.encode('utf-8'))
+        buffer.seek(0)
+
+        response = make_response(buffer.read())
+        response.headers['Content-Type'] = 'text/markdown; charset=utf-8'
+        from urllib.parse import quote
+        safe_filename = quote(article.title, safe='')
+        response.headers['Content-Disposition'] = f'attachment; filename={safe_filename}.md'
+
+        return response
+    except Exception as e:
+        logger.error(f"下载分享文章错误：{str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500

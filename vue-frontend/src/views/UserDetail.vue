@@ -326,8 +326,8 @@ const canEdit = computed(() => {
   if (isSelf.value) return true
   if (user.is_super_admin) return true
   if (user.is_admin) return true
-  return user.position === '管理员' ||
-         user.position === '超级管理员' ||
+  return user.position === '系统管理员' ||
+         user.position === '管理员' ||
          user.position === '经理' ||
          user.position === '项目经理' ||
          user.position === '部门经理' ||

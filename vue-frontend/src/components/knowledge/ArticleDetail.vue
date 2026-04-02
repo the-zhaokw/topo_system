@@ -292,10 +292,45 @@ const handleFavorite = async () => {
   }
 }
 
-// 分享
-const handleShare = () => {
-  // TODO: 实现分享功能
-  ElMessage.info('分享功能开发中')
+// 分享 - 直接创建分享链接并复制
+const handleShare = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      ElMessage.warning('请先登录')
+      return
+    }
+
+    // 创建分享链接
+    const response = await fetch(
+      `${API_BASE_URL}/api/knowledge/articles/${props.article.id}/shares`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          allow_download: true
+        })
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || '创建分享失败')
+    }
+
+    const data = await response.json()
+    const shareUrl = `${window.location.origin}${data.share_url}`
+
+    // 复制到剪贴板
+    await navigator.clipboard.writeText(shareUrl)
+    ElMessage.success('分享链接已复制到剪贴板')
+  } catch (error) {
+    console.error('分享失败:', error)
+    ElMessage.error(error.message || '分享失败')
+  }
 }
 
 // 导出
@@ -373,7 +408,7 @@ const getUserAvatar = (avatar) => {
   if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
     return avatar
   }
-  return `${API_BASE_URL}/uploads/${avatar}`
+  return `${API_BASE_URL}${avatar}`
 }
 
 onMounted(() => {

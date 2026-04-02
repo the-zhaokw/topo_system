@@ -707,9 +707,9 @@
         <div v-else-if="permissionUser" class="permission-content">
           <el-alert
             v-if="permissionUser.is_super_admin"
-            title="超级管理员"
+            title="系统管理员"
             type="warning"
-            description="此用户为超级管理员，拥有系统全部权限，无法修改"
+            description="此用户为系统管理员，拥有系统全部权限，无法修改"
             :closable="false"
             show-icon
             style="margin-bottom: 16px;"
@@ -888,8 +888,8 @@ const isAdmin = computed(() => {
   if (!user) return false
   if (user.is_super_admin) return true
   if (user.is_admin) return true
-  return user.position === '管理员' ||
-         user.position === '超级管理员' ||
+  return user.position === '系统管理员' ||
+         user.position === '管理员' ||
          user.position === '经理' ||
          user.position === '项目经理' ||
          user.position === '部门经理' ||
@@ -1553,7 +1553,7 @@ const openPermissionDialog = async (user) => {
 // 保存用户权限
 const saveUserPermissions = async () => {
   if (!permissionUser.value || permissionUser.value.is_super_admin) {
-    ElMessage.warning('无法修改超级管理员的权限')
+    ElMessage.warning('无法修改系统管理员的权限')
     return
   }
 

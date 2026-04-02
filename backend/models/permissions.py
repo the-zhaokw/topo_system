@@ -63,14 +63,14 @@ class PermissionCodes:
 
 DEFAULT_ROLES = {
     'admin': {
-        'name': '超级管理员',
+        'name': '系统管理员',
         'description': '系统最高权限：拥有系统所有功能的完全控制权，可管理所有用户、角色、权限和系统配置',
         'scope': 'system',
         'permissions': 'all'
     },
     'manager': {
-        'name': '经理',
-        'description': '系统管理员：拥有系统绝大部分权限，可管理系统用户、项目、业务流程等',
+        'name': '总经理',
+        'description': '总经理：拥有系统所有功能的完全控制权，可管理所有用户、角色、权限和系统配置',
         'scope': 'system',
         'permissions': 'all'
     },

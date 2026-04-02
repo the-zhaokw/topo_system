@@ -869,7 +869,7 @@ const getRoleType = (role) => {
 
 const getRoleText = (role) => {
   const textMap = {
-    'manager': '超级管理员',
+    'manager': '系统管理员',
     'project_manager': '项目经理',
     'software_engineer': '软件工程师',
     'test_engineer': '测试工程师'

@@ -9,7 +9,7 @@
         </el-tag>
       </p>
       <p v-else-if="canViewAll">
-        <el-tag type="danger" size="small">管理员视图</el-tag>
+        <el-tag type="danger" size="small">系统管理员</el-tag>
       </p>
     </div>
 

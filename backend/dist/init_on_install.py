@@ -221,7 +221,7 @@ def init_database():
     user_count = cursor.fetchone()[0]
 
     if user_count == 0:
-        print("[INFO] 创建默认管理员账户...")
+        print("[INFO] 创建默认系统管理员账户...")
         import hashlib
         import secrets
         salt = secrets.token_hex(16)
@@ -234,7 +234,7 @@ def init_database():
         ''', ('admin', password_hash, 'admin@topo.local', salt, 'admin', 1, 1, '系统'))
 
         conn.commit()
-        print("[INFO] 默认管理员账户已创建")
+        print("[INFO] 默认系统管理员账户已创建")
         print("       用户名: admin")
         print("       密码: admin123")
 
@@ -264,7 +264,7 @@ def main():
         print("   初始化完成！")
         print("=" * 50)
         print()
-        print("默认管理员账户:")
+        print("默认系统管理员账户:")
         print("  用户名: admin")
         print("  密码: admin123")
         print()

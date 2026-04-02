@@ -17,3 +17,6 @@ APScheduler==3.10.4
 SQLAlchemy==2.0.23
 Werkzeug==2.3.7
 python-dateutil==2.8.2
+reportlab
+python-docx==1.1.0
+html2text==2020.1.16

@@ -163,7 +163,11 @@ const loadShares = async () => {
   }
   loading.value = true
   try {
-    const res = await fetch(`/api/knowledge/articles/${props.articleId}/shares`)
+    const res = await fetch(`/api/knowledge/articles/${props.articleId}/shares`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
     const data = await res.json()
     if (isMounted.value) {
       shares.value = (data.items || []).map(item => ({
@@ -203,7 +207,10 @@ const createShare = async () => {
     
     const res = await fetch(`/api/knowledge/articles/${props.articleId}/shares`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify(body)
     })
     
@@ -223,6 +230,9 @@ const createShare = async () => {
       
       loadShares()
       emit('refresh')
+    } else {
+      const errorData = await res.json()
+      ElMessage.error(errorData.error || '创建分享失败')
     }
   } catch (error) {
     ElMessage.error('创建分享失败')
@@ -236,12 +246,21 @@ const deleteShare = async (row) => {
       type: 'warning'
     })
     
-    // 这里需要后端提供删除接口
-    // await fetch(`/api/knowledge/enhanced/shares/${row.id}`, { method: 'DELETE' })
+    const res = await fetch(`/api/knowledge/shares/${row.id}`, { 
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
     
-    ElMessage.success('删除成功')
-    loadShares()
-    emit('refresh')
+    if (res.ok) {
+      ElMessage.success('删除成功')
+      loadShares()
+      emit('refresh')
+    } else {
+      const data = await res.json()
+      ElMessage.error(data.error || '删除失败')
+    }
   } catch (error) {
     if (error !== 'cancel') {
       ElMessage.error('删除失败')
@@ -256,11 +275,40 @@ const copyLink = (row) => {
 }
 
 const copyToClipboard = (text) => {
-  navigator.clipboard.writeText(text).then(() => {
-    ElMessage.success('链接已复制到剪贴板')
-  }).catch(() => {
+  if (!text) {
+    ElMessage.error('没有可复制的内容')
+    return
+  }
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      ElMessage.success('链接已复制到剪贴板')
+    }).catch(() => {
+      fallbackCopyToClipboard(text)
+    })
+  } else {
+    fallbackCopyToClipboard(text)
+  }
+}
+
+const fallbackCopyToClipboard = (text) => {
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.style.position = 'fixed'
+  textarea.style.opacity = '0'
+  document.body.appendChild(textarea)
+  textarea.select()
+  try {
+    const successful = document.execCommand('copy')
+    if (successful) {
+      ElMessage.success('链接已复制到剪贴板')
+    } else {
+      ElMessage.error('复制失败')
+    }
+  } catch (err) {
     ElMessage.error('复制失败')
-  })
+  }
+  document.body.removeChild(textarea)
 }
 
 // 禁用过去的日期
