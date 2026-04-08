@@ -8307,3 +8307,27 @@ TypeError: '<' not supported between instances of 'BugStatus' and 'BugStatus'
 2026-04-08 08:16:21,797 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 147.05ms
 2026-04-08 08:16:21,824 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-04-08 08:16:21,825 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 177.78ms
+2026-04-08 08:40:25,464 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-08 08:40:25,467 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-08 08:40:25,475 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-08 08:40:25,478 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-08 08:40:25,530 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-08 08:40:25,533 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 54.18ms
+2026-04-08 08:40:25,571 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-08 08:40:25,572 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 97.21ms
+2026-04-08 09:04:23,055 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-08 09:04:23,056 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-08 09:04:23,058 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-08 09:04:23,059 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-08 09:04:23,242 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-08 09:04:23,244 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 184.35ms
+2026-04-08 09:04:23,264 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-08 09:04:23,265 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 207.14ms
+2026-04-08 09:10:25,182 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-08 09:10:25,183 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-08 09:10:25,186 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-08 09:10:25,188 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-08 09:10:25,232 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-08 09:10:25,233 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 45.84ms
+2026-04-08 09:10:25,248 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-08 09:10:25,248 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 61.99ms

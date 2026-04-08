@@ -85,12 +85,7 @@ const RiskList = () => import('@/views/RiskList.vue')
 const MyTodos = () => import('@/views/MyTodos.vue')
 
 // 个人工作计划组件
-const PlanLayout = () => import('@/views/PersonalPlan/PlanLayout.vue')
-const DashboardView = () => import('@/views/PersonalPlan/DashboardView.vue')
-const PlansView = () => import('@/views/PersonalPlan/PlansView.vue')
-const GanttView = () => import('@/views/PersonalPlan/GanttView.vue')
-const ReviewView = () => import('@/views/PersonalPlan/ReviewView.vue')
-const SettingsView = () => import('@/views/PersonalPlan/SettingsView.vue')
+const PersonalPlan = () => import('@/views/PersonalPlan.vue')
 
 const MyDepartment = () => import('@/views/MyDepartment.vue')
 
@@ -132,41 +127,8 @@ const routes = [
   {
     path: '/personal-plan',
     name: 'PersonalPlan',
-    component: PlanLayout,
-    meta: { requiresAuth: true },
-    redirect: '/personal-plan/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        name: 'PlanDashboard',
-        component: DashboardView,
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'plans',
-        name: 'PlanList',
-        component: PlansView,
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'gantt',
-        name: 'PlanGantt',
-        component: GanttView,
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'review',
-        name: 'PlanReview',
-        component: ReviewView,
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'settings',
-        name: 'PlanSettings',
-        component: SettingsView,
-        meta: { requiresAuth: true }
-      }
-    ]
+    component: PersonalPlan,
+    meta: { requiresAuth: true }
   },
   {
     path: '/my-department',
