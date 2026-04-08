@@ -41,33 +41,10 @@
         </el-card>
 
         <el-card class="project-tech-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>技术信息</span>
-            </div>
-          </template>
-
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="技术栈" :span="2">
-              <div v-if="project.technology_stack">{{ project.technology_stack }}</div>
-              <span v-else class="text-muted">未设置</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="标签" :span="2">
-              <div v-if="project.tags" class="tags-container">
-                <el-tag v-for="(tag, index) in parseTags(project.tags)" :key="index" size="small" style="margin-right: 5px;">{{ tag }}</el-tag>
-              </div>
-              <span v-else class="text-muted">未设置</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="里程碑" :span="2">
-              <div v-if="project.milestones" class="milestones-container">
-                <div v-for="(milestone, index) in parseMilestones(project.milestones)" :key="index" class="milestone-item">
-                  <el-icon><Flag /></el-icon>
-                  <span>{{ milestone }}</span>
-                </div>
-              </div>
-              <span v-else class="text-muted">未设置</span>
-            </el-descriptions-item>
-          </el-descriptions>
+          <div class="tech-stack-info">
+            <span class="tech-label">技术栈：</span>
+            <span class="tech-value">{{ project.technology_stack || '未设置' }}</span>
+          </div>
         </el-card>
 
         <el-card class="project-client-card" shadow="hover" v-if="project.client_name || project.project_type === 'client'">
@@ -419,6 +396,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Document, CircleCheck, Warning, Plus, Edit, Delete, Flag, ArrowRight } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import bugStatisticsService from '@/services/bugStatisticsService'
 import { formatDate } from '@/utils/dateUtils'
 
 console.log('===== ProjectDetail组件加载 =====')
@@ -646,7 +624,7 @@ const navigateToSubfunction = (subfunction) => {
       router.push(`/projects/${projectId}/tests/suites`)
       break
     case 'risks':
-      ElMessage.info('风险管理功能开发中...')
+      router.push(`/projects/${projectId}/risks`)
       break
     case 'logs':
       router.push(`/projects/${projectId}/logs`)
@@ -659,6 +637,43 @@ const navigateToSubfunction = (subfunction) => {
 // 新建Bug
 const createNewBug = () => {
   router.push(`/projects/${projectId}/bugs/new`)
+}
+
+// 获取项目缺陷统计数据
+const fetchProjectBugStats = async () => {
+  try {
+    const result = await bugStatisticsService.getProjectStats(projectId.value || projectId)
+    if (result.success && result.data) {
+      const data = result.data
+      bugStats.value = {
+        total: data.status_summary?.total || 0,
+        open: data.status_summary?.open || 0,
+        in_progress: data.status_summary?.in_progress || 0,
+        closed: data.status_summary?.closed || 0,
+        severity: {
+          critical: data.severity_distribution?.critical || 0,
+          high: data.severity_distribution?.high || 0,
+          medium: data.severity_distribution?.medium || 0,
+          low: data.severity_distribution?.low || 0
+        },
+        priority: {
+          high: data.priority_distribution?.high || 0,
+          medium: data.priority_distribution?.medium || 0,
+          low: data.priority_distribution?.low || 0
+        }
+      }
+    }
+  } catch (error) {
+    console.error('获取项目缺陷统计数据失败:', error)
+    bugStats.value = {
+      total: 0,
+      open: 0,
+      in_progress: 0,
+      closed: 0,
+      severity: { critical: 0, high: 0, medium: 0, low: 0 },
+      priority: { high: 0, medium: 0, low: 0 }
+    }
+  }
 }
 
 // 加载项目详情
@@ -704,26 +719,10 @@ const loadProjectDetail = async () => {
     
     // 直接从项目数据中获取成员信息，不需要单独调用API
     members.value = projectData.members || []
-    
-    // 初始化缺陷统计数据
-    bugStats.value = {
-      total: projectData.bug_count || 0,
-      open: 0,
-      in_progress: 0,
-      closed: 0,
-      severity: {
-        critical: 0,
-        high: 0,
-        medium: 0,
-        low: 0
-      },
-      priority: {
-        high: 0,
-        medium: 0,
-        low: 0
-      }
-    }
-    
+
+    // 获取项目缺陷统计数据
+    await fetchProjectBugStats()
+
     console.log('项目详情加载完成')
   } catch (error) {
     console.error('加载项目详情失败:', error)
@@ -895,38 +894,22 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.tech-stack-info {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tech-label {
+  font-weight: bold;
+  color: #303133;
+}
+
+.tech-value {
+  color: #606266;
+}
+
 .project-client-card {
   margin-bottom: 20px;
-}
-
-.text-muted {
-  color: #909399;
-  font-style: italic;
-}
-
-.tags-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.milestones-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.milestone-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-}
-
-.milestone-item .el-icon {
-  color: #409EFF;
 }
 
 .project-header {
@@ -1226,7 +1209,6 @@ onMounted(() => {
   }
 
   .project-info-card,
-  .project-tech-card,
   .project-client-card,
   .project-intro-card,
   .project-versions-card,
@@ -1253,19 +1235,9 @@ onMounted(() => {
     justify-content: space-between;
   }
 
-  .tags-container {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
   .tag-item {
     font-size: 11px;
     padding: 2px 6px;
-  }
-
-  .milestone-item {
-    padding: 6px;
-    font-size: 12px;
   }
 
   .milestone-header {

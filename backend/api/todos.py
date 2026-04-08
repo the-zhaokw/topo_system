@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def get_models():
     """延迟获取模型，避免循环导入"""
     from enhanced_app import (
-        db, User, Bug, BugStatus, Task, Project, TaskStatus,
+        db, User, Bug, BugStatus, Project,
         LeaveApplication, OvertimeApplication, AttendanceException,
         Contract, ContractApproval, ContractDelivery, ContractRisk, ContractPayment,
         RequirementDocument, RequirementItem,
@@ -24,8 +24,6 @@ def get_models():
         'User': User,
         'Bug': Bug,
         'BugStatus': BugStatus,
-        'Task': Task,
-        'TaskStatus': TaskStatus,
         'Project': Project,
         'LeaveApplication': LeaveApplication,
         'OvertimeApplication': OvertimeApplication,
@@ -61,11 +59,6 @@ def get_todo_summary():
             'bugs': {
                 'to_resolve': 0,
                 'to_verify': 0,
-                'total': 0
-            },
-            'tasks': {
-                'my_tasks': 0,
-                'overdue': 0,
                 'total': 0
             },
             'reviews': {
@@ -142,23 +135,6 @@ def get_todo_summary():
         
         summary['bugs']['total'] = to_resolve_count + to_verify_count
         
-        task_statuses = ['todo', 'in_progress', 'review', 'blocked']
-        
-        my_tasks_count = models['Task'].query.filter(
-            models['Task'].assigned_to == current_user_id,
-            models['Task'].status.in_(task_statuses)
-        ).count()
-        summary['tasks']['my_tasks'] = my_tasks_count
-        
-        overdue_count = models['Task'].query.filter(
-            models['Task'].assigned_to == current_user_id,
-            models['Task'].status.in_(task_statuses),
-            models['Task'].due_date < datetime.utcnow()
-        ).count()
-        summary['tasks']['overdue'] = overdue_count
-        
-        summary['tasks']['total'] = my_tasks_count
-        
         requirement_count = models['RequirementItem'].query.filter(
             models['RequirementItem'].status == 'pending_review',
             models['RequirementItem'].owner_id == current_user_id
@@ -193,7 +169,6 @@ def get_todo_summary():
         summary['total'] = (
             summary['approvals']['total'] +
             summary['bugs']['total'] +
-            summary['tasks']['total'] +
             summary['reviews']['total'] +
             summary['contracts']['total']
         )
@@ -424,61 +399,6 @@ def get_bug_todos():
     except Exception as e:
         logger.error(f"获取Bug待办失败: {str(e)}")
         return jsonify({'success': False, 'message': f'获取Bug待办失败: {str(e)}'}), 500
-
-@todos_bp.route('/tasks', methods=['GET'])
-@jwt_required()
-def get_task_todos():
-    """获取任务相关待办事项"""
-    models = get_models()
-    db = models['db']
-    current_user_id = get_jwt_identity()
-    
-    try:
-        current_user = db.session.get(models['User'], current_user_id)
-        if not current_user:
-            return jsonify({'success': False, 'message': '用户不存在'}), 404
-        
-        tasks = []
-        
-        task_statuses = ['todo', 'in_progress', 'review', 'blocked']
-        
-        my_tasks = models['Task'].query.filter(
-            models['Task'].assigned_to == current_user_id,
-            models['Task'].status.in_(task_statuses)
-        ).all()
-        
-        now = datetime.utcnow()
-        
-        for task in my_tasks:
-            is_overdue = task.due_date and task.due_date < now and task.status != 'done'
-            tasks.append({
-                'id': task.id,
-                'title': task.title,
-                'status': task.status.value if hasattr(task.status, 'value') else str(task.status),
-                'priority': task.priority.value if hasattr(task.priority, 'value') else str(task.priority),
-                'project_id': task.project_id,
-                'due_date': task.due_date.isoformat() if task.due_date else None,
-                'start_date': task.start_date.isoformat() if task.start_date else None,
-                'progress': task.progress if hasattr(task, 'progress') else 0,
-                'is_overdue': is_overdue,
-                'created_at': task.created_at.isoformat() if task.created_at else None,
-                'link': f'/tasks/{task.id}'
-            })
-        
-        tasks.sort(key=lambda x: (x['is_overdue'], x['due_date'] or ''))
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'tasks': tasks,
-                'total': len(tasks),
-                'overdue_count': sum(1 for t in tasks if t['is_overdue'])
-            }
-        })
-        
-    except Exception as e:
-        logger.error(f"获取任务待办失败: {str(e)}")
-        return jsonify({'success': False, 'message': f'获取任务待办失败: {str(e)}'}), 500
 
 @todos_bp.route('/reviews', methods=['GET'])
 @jwt_required()
@@ -762,38 +682,6 @@ def get_all_todos():
                 'priority': 'medium',
                 'created_at': bug.resolved_at.isoformat() if bug.resolved_at else None,
                 'link': f'/bugs/{bug.id}'
-            })
-        
-        task_statuses = ['todo', 'in_progress', 'review', 'blocked']
-        
-        my_tasks = models['Task'].query.filter(
-            models['Task'].assigned_to == current_user_id,
-            models['Task'].status.in_(task_statuses)
-        ).all()
-        
-        now = datetime.utcnow()
-        
-        for task in my_tasks:
-            is_overdue = task.due_date and task.due_date < now
-            priority_map = {
-                'urgent': 'urgent',
-                'high': 'high',
-                'medium': 'medium',
-                'low': 'low'
-            }
-            task_priority = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
-            all_todos.append({
-                'id': f'task_{task.id}',
-                'category': 'task',
-                'type': 'my_task',
-                'type_name': '我的任务',
-                'title': task.title,
-                'status': task.status.value if hasattr(task.status, 'value') else str(task.status),
-                'priority': 'urgent' if is_overdue else priority_map.get(task_priority, 'medium'),
-                'due_date': task.due_date.isoformat() if task.due_date else None,
-                'is_overdue': is_overdue,
-                'created_at': task.created_at.isoformat() if task.created_at else None,
-                'link': f'/tasks/{task.id}'
             })
         
         pending_requirements = models['RequirementItem'].query.filter(

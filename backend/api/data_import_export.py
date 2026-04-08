@@ -20,9 +20,6 @@ data_bp = Blueprint('data', __name__, url_prefix='/data')
 # 允许的导入文件类型
 ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'csv'}
 
-# 导入任务存储（实际应使用数据库）
-import_tasks = {}
-export_tasks = {}
 
 def allowed_file(filename):
     """检查文件类型是否允许"""
@@ -60,20 +57,6 @@ def get_import_templates():
                 {'name': 'severity', 'label': '严重程度', 'required': True, 'type': 'enum', 'options': ['critical', 'major', 'minor', 'trivial']},
                 {'name': 'module', 'label': '模块', 'required': False, 'type': 'string'},
                 {'name': 'reporter', 'label': '报告人', 'required': False, 'type': 'string'}
-            ]
-        },
-        {
-            'id': 'tasks',
-            'name': '任务导入模板',
-            'description': '导入任务数据',
-            'fields': [
-                {'name': 'title', 'label': '标题', 'required': True, 'type': 'string'},
-                {'name': 'description', 'label': '描述', 'required': False, 'type': 'text'},
-                {'name': 'project_id', 'label': '项目ID', 'required': True, 'type': 'number'},
-                {'name': 'status', 'label': '状态', 'required': True, 'type': 'enum', 'options': ['todo', 'in_progress', 'review', 'done']},
-                {'name': 'priority', 'label': '优先级', 'required': False, 'type': 'enum', 'options': ['high', 'medium', 'low']},
-                {'name': 'assignee', 'label': '指派人', 'required': False, 'type': 'string'},
-                {'name': 'due_date', 'label': '截止日期', 'required': False, 'type': 'date'}
             ]
         },
         {
@@ -194,18 +177,6 @@ def import_data():
         if not template_id:
             return jsonify({'success': False, 'error': '请选择导入模板'}), 400
         
-        # 创建导入任务
-        task_id = f"import_{len(import_tasks) + 1}"
-        import_tasks[task_id] = {
-            'id': task_id,
-            'status': 'processing',
-            'template_id': template_id,
-            'filename': secure_filename(file.filename),
-            'created_by': current_user_id,
-            'created_at': datetime.now().isoformat(),
-            'result': None
-        }
-        
         # 读取文件
         filename = file.filename.lower()
         if filename.endswith('.csv'):
@@ -312,8 +283,6 @@ def execute_import(template_id, df, user_id):
         result = import_projects(df, user_id)
     elif template_id == 'bugs':
         result = import_bugs(df, user_id)
-    elif template_id == 'tasks':
-        result = import_tasks_data(df, user_id)
     elif template_id == 'users':
         result = import_users(df, user_id)
     elif template_id == 'materials':
@@ -379,35 +348,6 @@ def import_bugs(df, user_id):
             )
             
             db.session.add(bug)
-            result['success'] += 1
-        except Exception as e:
-            result['failed'] += 1
-            result['errors'].append(f'第{index+2}行: {str(e)}')
-    
-    db.session.commit()
-    return result
-
-def import_tasks_data(df, user_id):
-    """导入任务"""
-    from enhanced_app import db, Task
-    
-    result = {'total': len(df), 'success': 0, 'failed': 0, 'errors': []}
-    
-    for index, row in df.iterrows():
-        try:
-            task = Task(
-                title=row['title'],
-                description=row.get('description', ''),
-                project_id=int(row['project_id']),
-                status=row.get('status', 'todo'),
-                priority=row.get('priority', 'medium'),
-                created_by=user_id
-            )
-            
-            if 'due_date' in row and pd.notna(row['due_date']):
-                task.due_date = row['due_date']
-            
-            db.session.add(task)
             result['success'] += 1
         except Exception as e:
             result['failed'] += 1
@@ -494,18 +434,6 @@ def import_materials(df, user_id):
     db.session.commit()
     return result
 
-@data_bp.route('/import/tasks/<task_id>', methods=['GET'])
-@jwt_required()
-def get_import_task(task_id):
-    """获取导入任务状态"""
-    if task_id not in import_tasks:
-        return jsonify({'success': False, 'error': '任务不存在'}), 404
-    
-    return jsonify({
-        'success': True,
-        'data': import_tasks[task_id]
-    })
-
 # ==================== 数据导出 ====================
 @data_bp.route('/export', methods=['POST'])
 @jwt_required()
@@ -517,23 +445,11 @@ def export_data():
         format_type = data.get('format', 'excel')  # excel, csv, json
         filters = data.get('filters', {})
         
-        # 创建导出任务
-        task_id = f"export_{len(export_tasks) + 1}"
-        export_tasks[task_id] = {
-            'id': task_id,
-            'status': 'processing',
-            'type': export_type,
-            'format': format_type,
-            'created_at': datetime.now().isoformat()
-        }
-        
         # 执行导出
         if export_type == 'projects':
             result = export_projects(filters, format_type)
         elif export_type == 'bugs':
             result = export_bugs(filters, format_type)
-        elif export_type == 'tasks':
-            result = export_tasks_data(filters, format_type)
         elif export_type == 'users':
             result = export_users(filters, format_type)
         elif export_type == 'materials':
@@ -621,36 +537,6 @@ def export_bugs(filters, format_type):
     
     return generate_export_file(df, format_type, 'bugs')
 
-def export_tasks_data(filters, format_type):
-    """导出任务"""
-    from enhanced_app import Task, Project
-    
-    query = Task.query
-    
-    if filters.get('project_id'):
-        query = query.filter_by(project_id=filters['project_id'])
-    if filters.get('status'):
-        query = query.filter_by(status=filters['status'])
-    
-    tasks = query.all()
-    
-    data = []
-    for t in tasks:
-        project = Project.query.get(t.project_id)
-        data.append({
-            'ID': t.id,
-            '标题': t.title,
-            '项目': project.name if project else '未知',
-            '状态': t.status,
-            '优先级': t.priority,
-            '进度': f"{t.progress or 0}%",
-            '截止日期': t.due_date,
-            '创建时间': t.created_at
-        })
-    
-    df = pd.DataFrame(data)
-    
-    return generate_export_file(df, format_type, 'tasks')
 
 def export_users(filters, format_type):
     """导出用户"""
@@ -747,39 +633,17 @@ def generate_export_file(df, format_type, filename_prefix):
             'data': json.dumps(df.to_dict('records'), ensure_ascii=False, indent=2).encode('utf-8')
         }
 
-@data_bp.route('/export/download/<task_id>', methods=['GET'])
-@jwt_required()
-def download_export(task_id):
-    """下载导出文件"""
-    if task_id not in export_tasks:
-        return jsonify({'success': False, 'error': '任务不存在'}), 404
-    
-    task = export_tasks[task_id]
-    
-    if task['status'] != 'completed':
-        return jsonify({'success': False, 'error': '导出未完成'}), 400
-    
-    result = task['result']
-    
-    return send_file(
-        io.BytesIO(result['data']),
-        mimetype=result['content_type'],
-        as_attachment=True,
-        download_name=result['filename']
-    )
-
 # ==================== 统计 ====================
 @data_bp.route('/statistics', methods=['GET'])
 @jwt_required()
 def get_data_statistics():
     """获取数据统计"""
     try:
-        from enhanced_app import Project, Bug, Task, User, Material
+        from enhanced_app import Project, Bug, User, Material
         
         stats = {
             'projects': Project.query.count(),
             'bugs': Bug.query.count(),
-            'tasks': Task.query.count(),
             'users': User.query.count(),
             'materials': Material.query.count(),
             'import_tasks': len(import_tasks),

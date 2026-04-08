@@ -38,7 +38,7 @@
                 <span class="nav-text">待办事项</span>
                 <span v-if="todoCount > 0" class="todo-badge">{{ todoCount > 99 ? '99+' : todoCount }}</span>
               </div>
-              <div class="nav-item" @click="$router.push('/tasks')">
+              <div class="nav-item" @click="$router.push('/personal-plan')">
                 <el-icon><List /></el-icon>
                 <span class="nav-text">工作计划</span>
               </div>
@@ -68,42 +68,6 @@
       </el-row>
     </div>
     
-    <!-- 项目进度概览 -->
-    <div class="project-progress-section">
-      <el-card shadow="hover">
-        <template #header>
-          <div class="card-header">
-            <span>项目进度概览</span>
-          </div>
-        </template>
-        <div class="project-progress-grid">
-          <div v-for="project in statistics.project_progress || []" :key="project.id" class="project-item">
-            <div class="project-name">
-              <el-button type="primary" link @click="$router.push(`/projects/${project.id}`)">
-                {{ project.name }}
-              </el-button>
-            </div>
-            <div class="project-status">
-              <el-tag :type="project.status === 'active' ? 'success' : 'warning'">
-                {{ project.status === 'active' ? '活跃' : '进行中' }}
-              </el-tag>
-            </div>
-            <div class="project-progress">
-              <el-progress 
-                :percentage="project.progress || 0" 
-                :stroke-width="8"
-                :color="project.progress >= 80 ? '#67C23A' : project.progress >= 50 ? '#E6A23C' : '#F56C6C'"
-              />
-            </div>
-            <div class="project-percentage">{{ project.progress || 0 }}%</div>
-          </div>
-          <div v-if="!statistics.project_progress || statistics.project_progress.length === 0" class="no-projects">
-            暂无项目数据
-          </div>
-        </div>
-      </el-card>
-    </div>
-
     <!-- 快速入口 -->
     <div class="quick-access-section">
       <el-card shadow="hover">
@@ -113,10 +77,6 @@
           </div>
         </template>
         <div class="quick-access-grid">
-          <div class="access-item" @click="$router.push('/tasks')">
-            <i class="el-icon-s-order"></i>
-            <span>任务管理</span>
-          </div>
           <div class="access-item" @click="$router.push('/bugs')">
             <i class="el-icon-warning-outline"></i>
             <span>缺陷管理</span>
@@ -170,16 +130,7 @@
                   <span class="activity-user">{{ activity.user }}</span>
                   <span class="activity-action">{{ activity.action }}</span>
                   <el-link 
-                    v-if="activity.target_type === 'task' && activity.target_id" 
-                    type="primary" 
-                    @click="$router.push(`/tasks/${activity.target_id}`)"
-                    style="cursor: pointer;"
-                    class="activity-details"
-                  >
-                    {{ activity.details }}
-                  </el-link>
-                  <el-link 
-                    v-else-if="activity.target_type === 'bug' && activity.target_id" 
+                    v-if="activity.target_type === 'bug' && activity.target_id" 
                     type="primary" 
                     @click="$router.push(`/bugs/${activity.target_id}`)"
                     style="cursor: pointer;"
@@ -214,24 +165,7 @@
               </div>
             </template>
             <div class="stats-icon-grid">
-              <div class="stat-icon-item" @click="$router.push('/tasks')">
-                <div class="stat-icon-wrapper" style="background: #E3F2FD;">
-                  <i class="el-icon-s-order stat-icon" style="color: #2196F3;"></i>
-                </div>
-                <div class="stat-info">
-                  <div class="stat-number">{{ statistics.summary?.my_tasks || 0 }}</div>
-                  <div class="stat-desc">我的任务</div>
-                </div>
-              </div>
-              <div class="stat-icon-item" @click="$router.push('/tasks?status=overdue')">
-                <div class="stat-icon-wrapper" style="background: #FFEBEE;">
-                  <i class="el-icon-warning-outline stat-icon" style="color: #F44336;"></i>
-                </div>
-                <div class="stat-info">
-                  <div class="stat-number">{{ statistics.summary?.overdue_tasks || 0 }}</div>
-                  <div class="stat-desc">逾期任务</div>
-                </div>
-              </div>
+
               <div class="stat-icon-item" @click="$router.push('/bugs?assignee=me&status=open,in_progress')">
                 <div class="stat-icon-wrapper" style="background: #FFF3E0;">
                   <i class="el-icon-bug stat-icon" style="color: #FF9800;"></i>
@@ -539,7 +473,6 @@ const fetchTodoCount = async () => {
     const summary = response || {}
     todoCount.value = (summary.approvals?.total || 0) +
       (summary.bugs?.total || 0) +
-      (summary.tasks?.total || 0) +
       (summary.reviews?.total || 0) +
       (summary.contracts?.total || 0)
   } catch (error) {
@@ -639,7 +572,7 @@ const updateCharts = () => {
         trigger: 'axis'
       },
       legend: {
-        data: ['任务活动', '缺陷活动']
+        data: ['缺陷活动']
       },
       xAxis: {
         type: 'category',
@@ -649,14 +582,6 @@ const updateCharts = () => {
         type: 'value'
       },
       series: [
-        {
-          name: '任务活动',
-          type: 'line',
-          data: statistics.value.activity_chart?.task_activity || [],
-          itemStyle: {
-            color: '#67C23A'
-          }
-        },
         {
           name: '缺陷活动',
           type: 'line',
@@ -915,57 +840,6 @@ watch(statistics, () => {
   color: #606266;
 }
 
-/* 项目进度概览 */
-.project-progress-section {
-  margin-bottom: 24px;
-}
-
-.project-progress-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-}
-
-.project-item {
-  padding: 16px;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  background: #fafafa;
-}
-
-.project-name {
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.project-status {
-  margin-bottom: 12px;
-}
-
-.project-progress {
-  margin-bottom: 8px;
-}
-
-.project-percentage {
-  text-align: right;
-  font-weight: 600;
-  color: #409EFF;
-  font-size: 13px;
-}
-
-.no-projects {
-  text-align: center;
-  color: #909399;
-  padding: 20px;
-  font-style: italic;
-}
-
-.quick-access-section {
-  margin-bottom: 24px;
-}
-
 .quick-access-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1221,43 +1095,6 @@ watch(statistics, () => {
     font-size: 9px;
   }
 
-  .project-progress-section {
-    margin-bottom: 16px;
-  }
-
-  .project-progress-grid {
-    grid-template-columns: 1fr !important;
-    gap: 12px;
-  }
-
-  .project-item {
-    padding: 12px;
-  }
-
-  .project-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .project-name {
-    font-size: 13px;
-  }
-
-  .project-meta {
-    font-size: 11px;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .project-percentage {
-    font-size: 12px;
-  }
-
-  .quick-access-section {
-    margin-bottom: 16px;
-  }
-
   .quick-access-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1429,14 +1266,6 @@ watch(statistics, () => {
 
   .nav-item .nav-text {
     font-size: 11px;
-  }
-
-  .project-item {
-    padding: 10px;
-  }
-
-  .project-name {
-    font-size: 12px;
   }
 
   .access-item {

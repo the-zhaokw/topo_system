@@ -219,8 +219,10 @@ def login():
                 'code': 'AUTHENTICATION_ERROR'
             }), 401
         
-        # 更新用户的last_login时间
+        # 更新用户的last_login时间和状态为在线
         user.last_login = datetime.utcnow()
+        user.status = 'online'
+        user.last_activity = datetime.utcnow()
         
         # 创建访问令牌
         access_token = create_access_token(identity=user.id)
@@ -267,6 +269,7 @@ def login():
                     'gender': user.gender,
                     'work_language': user.work_language,
                     'avatar': user.avatar,
+                    'status': user.status or 'online',
                     'created_at': user.created_at.isoformat() if user.created_at else None,
                     'updated_at': user.updated_at.isoformat() if user.updated_at else None,
                     'last_login': user.last_login.isoformat() if user.last_login else None
@@ -321,6 +324,7 @@ def get_current_user():
                     'gender': user.gender,
                     'work_language': user.work_language,
                     'avatar': user.avatar,
+                    'status': user.status or 'online',
                     'created_at': user.created_at.isoformat() if user.created_at else None,
                     'updated_at': user.updated_at.isoformat() if user.updated_at else None,
                     'last_login': user.last_login.isoformat() if user.last_login else None

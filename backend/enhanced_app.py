@@ -272,40 +272,6 @@ class Severity(enum.Enum):
                     return member
         return super()._missing_(value)
 
-class TaskStatus(enum.Enum):
-    """任务状态枚举"""
-    TODO = "todo"
-    IN_PROGRESS = "in_progress"
-    REVIEW = "review"
-    DONE = "done"
-    BLOCKED = "blocked"
-    CANCELLED = "cancelled"
-    
-    @classmethod
-    def _missing_(cls, value):
-        """Handle case-insensitive enum matching"""
-        if isinstance(value, str):
-            for member in cls:
-                if member.value == value.lower():
-                    return member
-        return super()._missing_(value)
-
-class TaskPriority(enum.Enum):
-    """任务优先级枚举"""
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    URGENT = "urgent"
-    
-    @classmethod
-    def _missing_(cls, value):
-        """Handle case-insensitive enum matching"""
-        if isinstance(value, str):
-            for member in cls:
-                if member.value == value.lower():
-                    return member
-        return super()._missing_(value)
-
 # 定义User模型（在模块级别定义）
 class User(db.Model):
     __tablename__ = 'users'
@@ -331,9 +297,11 @@ class User(db.Model):
     gender = Column(String(20))  # 性别
     work_language = Column(String(50))  # 工作语言
     avatar = Column(String(255))  # 头像
+    status = Column(String(20), default='online')  # 用户设置的状态: online, busy, away, offline
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = Column(DateTime)  # 记录上次登录时间
+    last_activity = Column(DateTime)  # 记录最后活动时间，用于判断用户是否在线
     email_notification_enabled = Column(Boolean, default=True)  # 是否启用邮箱通知
     email_on_bug_assigned = Column(Boolean, default=True)  # Bug分配时邮件通知
     email_on_bug_closed = Column(Boolean, default=True)  # Bug关闭时邮件通知
@@ -480,6 +448,34 @@ class User(db.Model):
 
         return False
 
+    def get_online_status(self):
+        """获取用户的实际在线状态
+        
+        逻辑：
+        - 如果用户设置的状态是 offline，则返回 offline
+        - 如果用户最近5分钟有活动，则根据用户设置的状态返回 (online/busy/away)
+        - 如果用户超过5分钟没有活动，则返回 offline
+        """
+        from datetime import datetime, timedelta
+        
+        # 如果用户设置的状态是 offline，直接返回
+        if self.status == 'offline':
+            return 'offline'
+        
+        # 检查最后活动时间
+        if self.last_activity:
+            five_minutes_ago = datetime.utcnow() - timedelta(minutes=5)
+            if self.last_activity >= five_minutes_ago:
+                # 用户在5分钟内有活动，返回用户设置的状态
+                return self.status or 'online'
+        
+        # 用户超过5分钟没有活动，视为离线
+        return 'offline'
+
+    def update_activity(self):
+        """更新用户最后活动时间"""
+        self.last_activity = datetime.utcnow()
+
 class Department(db.Model):
     __tablename__ = 'departments'
     __table_args__ = {'extend_existing': True}
@@ -520,6 +516,248 @@ class Position(db.Model):
             'permissions': self.permissions,
             'is_admin': self.is_admin,
             'is_manager': self.is_manager,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+class PersonalTask(db.Model):
+    __tablename__ = 'personal_tasks'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    parent_id = Column(Integer, ForeignKey('personal_tasks.id'), nullable=True)
+    title = Column(String(500), nullable=False)
+    description = Column(Text)
+    status = Column(String(20), default='todo', nullable=False)
+    priority = Column(String(20), default='medium')
+    progress = Column(Integer, default=0)
+    quadrant = Column(Integer)
+    scheduled_date = Column(String(20))
+    scheduled_time = Column(String(10))
+    due_date = Column(String(20))
+    estimated_minutes = Column(Integer)
+    actual_minutes = Column(Integer)
+    tags = Column(String(500))
+    is_habit = Column(Boolean, default=False)
+    habit_frequency = Column(String(20))
+    source = Column(String(20), default='manual')
+    dependencies = Column(Text)  # JSON格式存储依赖任务ID列表
+    is_pinned = Column(Boolean, default=False)
+    order_index = Column(Integer, default=0)
+    reminder_config = Column(Text)  # JSON格式: {"before_hours": 1, "channels": ["browser", "email"]}
+    completed = Column(Boolean, default=False)
+    started_at = Column(DateTime)
+    completed_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # 关系定义
+    subtasks = db.relationship('PersonalTask', backref=db.backref('parent', remote_side=[id]),
+                               lazy='dynamic', foreign_keys=[parent_id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'parent_id': self.parent_id,
+            'title': self.title,
+            'description': self.description,
+            'status': self.status,
+            'priority': self.priority,
+            'progress': self.progress,
+            'quadrant': self.quadrant,
+            'scheduled_date': self.scheduled_date,
+            'scheduled_time': self.scheduled_time,
+            'due_date': self.due_date,
+            'estimated_minutes': self.estimated_minutes,
+            'actual_minutes': self.actual_minutes,
+            'tags': self.tags,
+            'is_habit': self.is_habit,
+            'habit_frequency': self.habit_frequency,
+            'source': self.source,
+            'dependencies': json.loads(self.dependencies) if self.dependencies else [],
+            'is_pinned': self.is_pinned,
+            'order_index': self.order_index,
+            'reminder_config': json.loads(self.reminder_config) if self.reminder_config else None,
+            'completed': self.completed,
+            'started_at': self.started_at.isoformat() if self.started_at else None,
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'subtask_count': self.subtasks.count() if self.subtasks else 0,
+            'completed_subtasks': self.subtasks.filter_by(completed=True).count() if self.subtasks else 0
+        }
+
+class FocusSession(db.Model):
+    __tablename__ = 'focus_sessions'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    task_id = Column(Integer, ForeignKey('personal_tasks.id'))
+    focus_type = Column(String(20), default='pomodoro')
+    planned_duration = Column(Integer, default=25)
+    actual_duration = Column(Integer)
+    started_at = Column(DateTime, nullable=False)
+    ended_at = Column(DateTime)
+    completed = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'task_id': self.task_id,
+            'focus_type': self.focus_type,
+            'planned_duration': self.planned_duration,
+            'actual_duration': self.actual_duration,
+            'started_at': self.started_at.isoformat() if self.started_at else None,
+            'ended_at': self.ended_at.isoformat() if self.ended_at else None,
+            'completed': self.completed,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+class HabitRecord(db.Model):
+    __tablename__ = 'habit_records'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    task_id = Column(Integer, ForeignKey('personal_tasks.id'))
+    completed_date = Column(Date, nullable=False)
+    duration_minutes = Column(Integer)
+    note = Column(String(200))
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'task_id': self.task_id,
+            'completed_date': self.completed_date.isoformat() if self.completed_date else None,
+            'duration_minutes': self.duration_minutes,
+            'note': self.note,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+class PlanTemplate(db.Model):
+    """计划模板 - 用于快速创建重复性任务计划"""
+    __tablename__ = 'plan_templates'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    name = Column(String(200), nullable=False)
+    description = Column(Text)
+    template_type = Column(String(20), default='daily')  # daily/weekly/project
+    tasks_template = Column(Text, nullable=False)  # JSON格式: 任务模板列表
+    is_default = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'name': self.name,
+            'description': self.description,
+            'template_type': self.template_type,
+            'tasks_template': json.loads(self.tasks_template) if self.tasks_template else [],
+            'is_default': self.is_default,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+class ReviewRecord(db.Model):
+    """复盘记录 - 存储用户的复盘数据"""
+    __tablename__ = 'review_records'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    title = Column(String(200))
+    date_range_start = Column(String(20), nullable=False)
+    date_range_end = Column(String(20), nullable=False)
+    review_type = Column(String(20), default='weekly')  # weekly/monthly/custom
+
+    # 核心指标
+    total_planned = Column(Integer, default=0)
+    total_completed = Column(Integer, default=0)
+    total_planned_hours = Column(Float, default=0.0)
+    total_actual_hours = Column(Float, default=0.0)
+    overdue_count = Column(Integer, default=0)
+    avg_overdue_days = Column(Float, default=0.0)
+
+    # 复盘内容
+    summary_text = Column(Text)  # 自动生成的周报文案
+    key_achievements = Column(Text)  # 重点工作成果
+    challenges = Column(Text)  # 遇到的挑战和问题
+    lessons_learned = Column(Text)  # 经验教训
+    next_week_plan = Column(Text)  # 下周计划
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'date_range_start': self.date_range_start,
+            'date_range_end': self.date_range_end,
+            'review_type': self.review_type,
+            'total_planned': self.total_planned,
+            'total_completed': self.total_completed,
+            'completion_rate': round((self.total_completed / self.total_planned * 100) if self.total_planned > 0 else 0, 1),
+            'total_planned_hours': self.total_planned_hours,
+            'total_actual_hours': self.total_actual_hours,
+            'hours_variance': round((self.total_actual_hours - self.total_planned_hours), 1),
+            'overdue_count': self.overdue_count,
+            'avg_overdue_days': round(self.avg_overdue_days, 1),
+            'summary_text': self.summary_text,
+            'key_achievements': self.key_achievements,
+            'challenges': self.challenges,
+            'lessons_learned': self.lessons_learned,
+            'next_week_plan': self.next_week_plan,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+class PersonalSettings(db.Model):
+    __tablename__ = 'personal_settings'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, unique=True)
+    default_view = Column(String(20), default='list')
+    pomodoro_duration = Column(Integer, default=25)
+    break_duration = Column(Integer, default=5)
+    long_break_duration = Column(Integer, default=15)
+    work_streak_alert = Column(Integer, default=60)
+    custom_tags = Column(String(500))
+    tag_colors = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        import json
+        tag_colors_dict = {}
+        if self.tag_colors:
+            try:
+                tag_colors_dict = json.loads(self.tag_colors)
+            except:
+                pass
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'default_view': self.default_view,
+            'pomodoro_duration': self.pomodoro_duration,
+            'break_duration': self.break_duration,
+            'long_break_duration': self.long_break_duration,
+            'work_streak_alert': self.work_streak_alert,
+            'custom_tags': self.custom_tags.split(',') if self.custom_tags else [],
+            'tag_colors': tag_colors_dict,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
@@ -975,68 +1213,6 @@ class Bug(db.Model):
             'verified_by': self.verified_by
         }
 
-# 定义Task相关模型
-class Task(db.Model):
-    __tablename__ = 'tasks'
-    
-    id = Column(Integer, primary_key=True)
-    title = Column(String(255), nullable=False)  # 任务标题
-    description = Column(Text, nullable=False)  # 任务描述
-    status = Column(SQLEnum(TaskStatus, values_callable=lambda x: [e.value for e in x]), default=TaskStatus.TODO, nullable=False)  # 任务状态
-    priority = Column(SQLEnum(TaskPriority, values_callable=lambda x: [e.value for e in x]), default=TaskPriority.MEDIUM, nullable=False)  # 任务优先级
-    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)  # 所属项目ID
-    assigned_to = Column(Integer, ForeignKey('users.id'))  # 分配给ID
-    created_by = Column(Integer, ForeignKey('users.id'), nullable=False)  # 创建人ID
-    due_date = Column(DateTime)  # 截止日期
-    start_date = Column(DateTime)  # 开始日期
-    estimated_hours = Column(Float)  # 预计工时
-    actual_hours = Column(Float)  # 实际工时
-    progress = Column(Integer, default=0)  # 进度（0-100）
-    parent_task_id = Column(Integer, ForeignKey('tasks.id'))  # 父任务ID
-    related_bug_id = Column(Integer, ForeignKey('bugs.id'))  # 关联的缺陷ID
-    milestone = Column(String(100))  # 里程碑
-    tags = Column(Text)  # 标签
-    participants = Column(Text)  # 参与者（JSON格式存储用户ID列表）
-    notes = Column(Text)  # 备注
-    depends_on = Column(Text)  # 依赖任务ID列表（JSON格式存储）
-    created_at = Column(DateTime, default=datetime.utcnow)  # 创建时间
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # 更新时间
-    completed_at = Column(DateTime)  # 完成时间
-    
-    # 关系
-    project = relationship("Project", backref="tasks")
-    assignee = relationship("User", foreign_keys=[assigned_to], backref="assigned_tasks")
-    creator = relationship("User", foreign_keys=[created_by], backref="created_tasks")
-    parent_task = relationship("Task", remote_side=[id], backref="subtasks")
-    related_bug = relationship("Bug", backref="related_tasks")
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'status': self.status.value if hasattr(self.status, 'value') else str(self.status),
-            'priority': self.priority.value if hasattr(self.priority, 'value') else str(self.priority),
-            'project_id': self.project_id,
-            'assigned_to': self.assigned_to,
-            'created_by': self.created_by,
-            'due_date': self.due_date.isoformat() if self.due_date else None,
-            'start_date': self.start_date.isoformat() if self.start_date else None,
-            'estimated_hours': self.estimated_hours,
-            'actual_hours': self.actual_hours,
-            'progress': self.progress,
-            'parent_task_id': self.parent_task_id,
-            'related_bug_id': self.related_bug_id,
-            'milestone': self.milestone,
-            'tags': self.tags,
-            'participants': self.participants,
-            'notes': self.notes,
-            'depends_on': self.depends_on,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
-            'completed_at': self.completed_at.isoformat() if self.completed_at else None
-        }
-
 # 定义评论模型
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -1182,6 +1358,140 @@ class ProjectLog(db.Model):
             'logged_at': self.logged_at.isoformat() if self.logged_at else None,
             'start_date': self.start_date.isoformat() if self.start_date else None,
             'end_date': self.end_date.isoformat() if self.end_date else None,
+            'creator_name': self.creator.username if self.creator else None,
+            'project_name': self.project.name if self.project else None
+        }
+
+class RiskStatus(enum.Enum):
+    """风险状态枚举"""
+    IDENTIFIED = "identified"
+    ANALYZED = "analyzed"
+    MITIGATING = "mitigating"
+    RESOLVED = "resolved"
+    CLOSED = "closed"
+    ACCEPTED = "accepted"
+
+class RiskLevel(enum.Enum):
+    """风险等级枚举"""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+class RiskCategory(enum.Enum):
+    """风险类别枚举"""
+    TECHNICAL = "technical"
+    SCHEDULE = "schedule"
+    BUDGET = "budget"
+    RESOURCE = "resource"
+    REQUIREMENT = "requirement"
+    QUALITY = "quality"
+    EXTERNAL = "external"
+    OTHER = "other"
+
+class IssueStatus(enum.Enum):
+    """问题状态枚举"""
+    OPEN = "open"
+    IN_PROGRESS = "in_progress"
+    RESOLVED = "resolved"
+    CLOSED = "closed"
+    DUPLICATE = "duplicate"
+
+class IssuePriority(enum.Enum):
+    """问题优先级枚举"""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+class Risk(db.Model):
+    """风险和问题管理模型"""
+    __tablename__ = 'risks'
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    risk_type = Column(String(20), default='risk')  # risk 或 issue
+
+    title = Column(String(255), nullable=False)  # 标题
+    description = Column(Text)  # 描述
+
+    status = Column(String(50), default='identified')  # 状态
+    priority = Column(String(50), default='medium')  # 优先级
+    level = Column(String(50), default='medium')  # 风险等级
+
+    category = Column(String(50))  # 类别
+
+    identified_by = Column(Integer, ForeignKey('users.id'))  # 识别人
+    assigned_to = Column(Integer, ForeignKey('users.id'))  # 负责人
+
+    probability = Column(Float, default=0.0)  # 发生概率 0-1
+    impact = Column(Float, default=0.0)  # 影响程度 0-1
+    exposure = Column(Float, default=0.0)  # 风险暴露度
+
+    mitigation_strategy = Column(Text)  # 应对策略
+    contingency_plan = Column(Text)  # 应急预案
+    resolution = Column(Text)  # 解决方案
+
+    identified_date = Column(Date)  # 识别日期
+    due_date = Column(Date)  # 截止日期
+    resolved_date = Column(Date)  # 解决日期
+    closed_date = Column(Date)  # 关闭日期
+
+    trigger_condition = Column(Text)  # 触发条件
+    indicator = Column(String(255))  # 监控指标
+
+    related_risk_id = Column(Integer, ForeignKey('risks.id'))  # 相关风险ID
+    related_bug_id = Column(Integer, ForeignKey('bugs.id'))  # 相关缺陷ID
+
+    created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    project = relationship("Project", backref="risks")
+    identifier = relationship("User", foreign_keys=[identified_by], backref="identified_risks")
+    assignee = relationship("User", foreign_keys=[assigned_to], backref="assigned_risks")
+    creator = relationship("User", foreign_keys=[created_by], backref="created_risks")
+    related_risk = relationship("Risk", remote_side=[id], backref="related_risks")
+    related_bug = relationship("Bug", backref="related_risks")
+
+    def calculate_exposure(self):
+        """计算风险暴露度"""
+        if self.probability is not None and self.impact is not None:
+            return round(self.probability * self.impact, 2)
+        return 0.0
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'project_id': self.project_id,
+            'risk_type': self.risk_type,
+            'title': self.title,
+            'description': self.description,
+            'status': self.status,
+            'priority': self.priority,
+            'level': self.level,
+            'category': self.category,
+            'identified_by': self.identified_by,
+            'assigned_to': self.assigned_to,
+            'probability': self.probability,
+            'impact': self.impact,
+            'exposure': self.calculate_exposure(),
+            'mitigation_strategy': self.mitigation_strategy,
+            'contingency_plan': self.contingency_plan,
+            'resolution': self.resolution,
+            'identified_date': self.identified_date.isoformat() if self.identified_date else None,
+            'due_date': self.due_date.isoformat() if self.due_date else None,
+            'resolved_date': self.resolved_date.isoformat() if self.resolved_date else None,
+            'closed_date': self.closed_date.isoformat() if self.closed_date else None,
+            'trigger_condition': self.trigger_condition,
+            'indicator': self.indicator,
+            'related_risk_id': self.related_risk_id,
+            'related_bug_id': self.related_bug_id,
+            'created_by': self.created_by,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'identifier_name': self.identifier.username if self.identifier else None,
+            'assignee_name': self.assignee.username if self.assignee else None,
             'creator_name': self.creator.username if self.creator else None,
             'project_name': self.project.name if self.project else None
         }
@@ -2541,7 +2851,6 @@ class WorkLog(db.Model):
     log_date = Column(DateTime, nullable=False)
     work_type = Column(String(50), default='daily')
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=True)
-    task_id = Column(Integer, ForeignKey('tasks.id'), nullable=True)
     hours_spent = Column(Float, default=0.0)
     status = Column(String(20), default='draft')
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -2549,7 +2858,6 @@ class WorkLog(db.Model):
 
     user = relationship('User', backref='work_logs', lazy=True)
     project = relationship('Project', backref='work_logs', lazy=True)
-    task = relationship('Task', backref='work_logs', lazy=True)
 
     def to_dict(self):
         return {
@@ -2562,8 +2870,6 @@ class WorkLog(db.Model):
             'work_type': self.work_type,
             'project_id': self.project_id,
             'project_name': self.project.name if self.project else None,
-            'task_id': self.task_id,
-            'task_title': self.task.title if self.task else None,
             'hours_spent': self.hours_spent,
             'status': self.status,
             'created_at': self.created_at.isoformat() if self.created_at else None,
@@ -3450,170 +3756,13 @@ def init_db():
                 # 继续执行，不中断应用启动
             
             logger.info("数据库初始化完成")
-            
-            # 创建测试数据
-            create_test_data()
+
+            # 创建测试数据 - 已禁用
+            # create_test_data()
             
     except Exception as e:
         logger.error(f"数据库初始化失败: {str(e)}")
         # 不抛出异常，让应用能够继续启动
-
-def create_test_data():
-    """创建测试数据，用于自动化测试"""
-    try:
-        with app.app_context():
-            # 1. 创建项目经理用户
-            manager = User.query.filter_by(username='project_manager').first()
-            if not manager:
-                import secrets
-                salt = secrets.token_hex(16)
-                manager = User(
-                    username='project_manager',
-                    email='pm@test.com',
-                    role=UserRole.PROJECT_MANAGER.value,
-                    first_name='项目',
-                    last_name='经理',
-                    is_active=True,
-                    salt=salt
-                )
-                manager.set_password('manager123')
-                db.session.add(manager)
-                db.session.commit()
-                logger.info("创建测试用户: project_manager / manager123")
-            
-            # 2. 创建测试开发人员
-            developer = User.query.filter_by(username='test_developer').first()
-            if not developer:
-                import secrets
-                salt = secrets.token_hex(16)
-                developer = User(
-                    username='test_developer',
-                    email='dev@test.com',
-                    role=UserRole.SOFTWARE_ENGINEER.value,
-                    first_name='测试',
-                    last_name='开发',
-                    is_active=True,
-                    salt=salt
-                )
-                developer.set_password('dev123')
-                db.session.add(developer)
-                db.session.commit()
-                logger.info("创建测试用户: test_developer / dev123")
-            
-            # 3. 创建测试项目
-            test_project = Project.query.filter_by(code='TEST-001').first()
-            if not test_project:
-                admin = User.query.filter_by(username='admin').first()
-                creator_id = admin.id if admin else manager.id
-                
-                test_project = Project(
-                    name='自动化测试项目',
-                    code='TEST-001',
-                    description='用于自动化测试的项目',
-                    status='active',
-                    created_by=creator_id,
-                    owner_id=creator_id,
-                    manager_id=creator_id,
-                    priority='high',
-                    project_type='development'
-                )
-                db.session.add(test_project)
-                db.session.commit()
-                logger.info("创建测试项目: TEST-001")
-            
-            # 4. 创建测试Bug
-            test_bugs = [
-                {
-                    'title': '测试Bug-功能测试用',
-                    'description': '这是一个用于功能测试的Bug',
-                    'priority': 'medium',
-                    'issue_type': 'bug',
-                    'module': '测试模块'
-                },
-                {
-                    'title': '测试Bug-高优先级',
-                    'description': '高优先级Bug测试',
-                    'priority': 'high',
-                    'issue_type': 'critical',
-                    'module': '核心模块'
-                },
-                {
-                    'title': '测试Bug-UI问题',
-                    'description': 'UI界面问题测试',
-                    'priority': 'low',
-                    'issue_type': 'ui',
-                    'module': 'UI模块'
-                }
-            ]
-            
-            admin = User.query.filter_by(username='admin').first()
-            reporter_id = admin.id if admin else manager.id
-            
-            for bug_data in test_bugs:
-                existing = Bug.query.filter_by(title=bug_data['title']).first()
-                if not existing:
-                    bug = Bug(
-                        title=bug_data['title'],
-                        description=bug_data['description'],
-                        project_id=test_project.id,
-                        reported_by=reporter_id,
-                        status=BugStatus.NEW,
-                        priority=bug_data['priority'],
-                        issue_type=bug_data['issue_type'],
-                        module=bug_data['module']
-                    )
-                    db.session.add(bug)
-            db.session.commit()
-            logger.info(f"创建测试Bug: {len(test_bugs)}个")
-            
-            # 5. 创建物料分类
-            categories = [
-                ('电子元器件', 'DZCL', '电子类原材料'),
-                ('机械零件', 'JXLF', '机械类零部件'),
-                ('包装材料', 'BZCL', '包装相关材料')
-            ]
-
-            for name, code, desc in categories:
-                cat = MaterialCategory.query.filter_by(name=name).first()
-                if not cat:
-                    cat = MaterialCategory(
-                        name=name,
-                        code=code,
-                        description=desc
-                    )
-                    db.session.add(cat)
-            db.session.commit()
-            logger.info(f"创建物料分类: {len(categories)}个")
-            
-            # 6. 创建测试物料
-            electronic_cat = MaterialCategory.query.filter_by(name='电子元器件').first()
-            if electronic_cat:
-                materials = [
-                    ('电阻10k', 'RES-10K', '10kΩ 0603贴片电阻', 1000, 0.01),
-                    ('电容10uF', 'CAP-10UF', '10uF 0805贴片电容', 500, 0.02),
-                    ('红色LED', 'LED-RED', '5mm红色LED', 200, 0.05),
-                ]
-                for name, code, desc, qty, price in materials:
-                    mat = Material.query.filter_by(code=code).first()
-                    if not mat:
-                        mat = Material(
-                            name=name,
-                            code=code,
-                            category_id=electronic_cat.id,
-                            description=desc,
-                            unit='个',
-                            unit_cost=price,
-                            safety_stock=50
-                        )
-                        db.session.add(mat)
-                db.session.commit()
-                logger.info(f"创建测试物料: {len(materials)}个")
-            
-            logger.info("测试数据创建完成")
-            
-    except Exception as e:
-        logger.error(f"创建测试数据失败: {str(e)}")
-        db.session.rollback()
 
 # JWT装饰器延迟导入函数
 def get_jwt_required():

@@ -14,25 +14,13 @@
       <el-col :span="6">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-icon-box" style="background: #E3F2FD;">
-            <i class="el-icon-s-order" style="color: #2196F3;"></i>
+            <i class="el-icon-bug" style="color: #2196F3;"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">{{ statistics.summary?.my_tasks || 0 }}</div>
-            <div class="stat-label">我的任务</div>
+            <div class="stat-value">{{ statistics.summary?.my_bugs || 0 }}</div>
+            <div class="stat-label">我的缺陷</div>
           </div>
-          <el-button type="primary" size="small" @click="$router.push('/tasks')">查看详情</el-button>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-icon-box" style="background: #E3F2FD;">
-            <i class="el-icon-warning-outline" style="color: #2196F3;"></i>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ statistics.summary?.overdue_tasks || 0 }}</div>
-            <div class="stat-label">逾期任务</div>
-          </div>
-          <el-button type="primary" size="small" @click="$router.push('/tasks?status=overdue')">查看详情</el-button>
+          <el-button type="primary" size="small" @click="$router.push('/bugs')">查看详情</el-button>
         </el-card>
       </el-col>
       <el-col :span="6">

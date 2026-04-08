@@ -400,7 +400,7 @@ server {
 ```
 topo_system/
 ├── backend/                    # 后端Flask应用
-│   ├── api/                   # API路由目录 (28个API模块)
+│   ├── api/                   # API路由目录 (33个API模块)
 │   ├── models/                # 数据模型定义
 │   ├── services/              # 业务服务
 │   ├── uploads/               # 文件上传目录
@@ -414,7 +414,7 @@ topo_system/
 │   └── logging_config.py     # 日志配置
 ├── vue-frontend/             # 前端Vue应用
 │   ├── src/                  # 源代码
-│   │   ├── views/           # 页面组件 (61个页面)
+│   │   ├── views/           # 页面组件 (63个页面)
 │   │   ├── components/      # 通用组件
 │   │   ├── router/          # 路由配置
 │   │   ├── services/        # API服务

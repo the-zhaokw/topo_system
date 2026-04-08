@@ -120,6 +120,8 @@ def get_users():
     # 构建响应数据
     users_data = []
     for user in pagination.items:
+        # 获取用户的实际在线状态
+        online_status = user.get_online_status()
         # 普通用户只能看到基本信息，管理员可以看到完整信息
         if is_admin:
             users_data.append({
@@ -131,6 +133,7 @@ def get_users():
                 'position': user.position,
                 'department': user.department,
                 'is_active': user.is_active,
+                'status': online_status,
                 'created_at': user.created_at.isoformat() if user.created_at else None,
                 'last_login': user.last_login.isoformat() if user.last_login else None,
                 'employee_id': getattr(user, 'employee_id', ''),
@@ -151,7 +154,8 @@ def get_users():
                 'last_name': user.last_name,
                 'position': user.position,
                 'department': user.department,
-                'is_active': user.is_active
+                'is_active': user.is_active,
+                'status': online_status
             })
     
     # 使用增强日志系统记录业务操作
@@ -288,6 +292,9 @@ def get_user(user_id):
     if not user:
         return jsonify({'error': '用户不存在'}), 404
 
+    # 获取用户的实际在线状态
+    online_status = user.get_online_status()
+
     user_data = {
         'id': user.id,
         'username': user.username,
@@ -309,7 +316,9 @@ def get_user(user_id):
         'mobile_phone': getattr(user, 'mobile_phone', ''),
         'birthday': user.birthday.strftime('%Y-%m-%d') if user.birthday else '',
         'gender': getattr(user, 'gender', ''),
-        'work_language': getattr(user, 'work_language', '')
+        'work_language': getattr(user, 'work_language', ''),
+        'status': online_status,  # 使用实际在线状态
+        'user_set_status': getattr(user, 'status', 'online')  # 用户设置的状态
     }
 
     return jsonify(user_data), 200
@@ -321,7 +330,7 @@ def get_user_home(user_id):
     from datetime import timedelta
 
     db, User, UserRole, create_audit_log = get_db_and_models()
-    Activity, Bug, Project, Task = get_activity_models()
+    Activity, Bug, Project = get_activity_models()
 
     current_user_id = get_jwt_identity()
 
@@ -337,6 +346,9 @@ def get_user_home(user_id):
     if not user:
         return jsonify({'error': '用户不存在'}), 404
 
+    # 获取用户的实际在线状态
+    online_status = user.get_online_status()
+    
     user_data = {
         'id': user.id,
         'username': user.username,
@@ -355,7 +367,9 @@ def get_user_home(user_id):
         'mobile_phone': getattr(user, 'mobile_phone', ''),
         'birthday': user.birthday.strftime('%Y-%m-%d') if user.birthday else '',
         'gender': getattr(user, 'gender', ''),
-        'work_language': getattr(user, 'work_language', '')
+        'work_language': getattr(user, 'work_language', ''),
+        'status': online_status,  # 使用实际在线状态
+        'user_set_status': getattr(user, 'status', 'online')  # 用户设置的状态
     }
 
     response_data = {
@@ -388,8 +402,7 @@ def get_user_home(user_id):
             project = Project.query.get(activity.target_id)
             activity_dict['resource_name'] = project.name if project else '未知项目'
         elif activity.target_type == 'task':
-            task = Task.query.get(activity.target_id)
-            activity_dict['resource_name'] = task.title if task else '未知任务'
+            activity_dict['resource_name'] = f'任务 #{activity.target_id}'
         else:
             activity_dict['resource_name'] = f'{activity.target_type} #{activity.target_id}'
         
@@ -403,8 +416,7 @@ def get_user_home(user_id):
             'total_bugs': Bug.query.filter_by(assigned_to=user_id).count() if hasattr(Bug, 'assigned_to') else 0,
             'total_projects': Project.query.filter(
                 (Project.owner_id == user_id) | (Project.manager_id == user_id)
-            ).count() if hasattr(Project, 'owner_id') else 0,
-            'total_tasks': Task.query.filter_by(assigned_to=user_id).count() if hasattr(Task, 'assigned_to') else 0
+            ).count() if hasattr(Project, 'owner_id') else 0
         }
     else:
         response_data['statistics'] = {}
@@ -413,8 +425,82 @@ def get_user_home(user_id):
 
 def get_activity_models():
     """获取活动相关模型"""
-    from enhanced_app import Activity, Bug, Project, Task
-    return Activity, Bug, Project, Task
+    from enhanced_app import Activity, Bug, Project
+    return Activity, Bug, Project
+
+# 更新用户状态
+@users_bp.route('/<int:user_id>/status', methods=['PUT'])
+@jwt_required()
+def update_user_status(user_id):
+    """更新用户在线状态"""
+    db, User, UserRole, create_audit_log = get_db_and_models()
+    
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+    
+    # 只能更新自己的状态
+    if current_user_id != user_id:
+        return jsonify({'error': '只能更新自己的状态'}), 403
+    
+    data = request.get_json()
+    new_status = data.get('status')
+    
+    if not new_status:
+        return jsonify({'error': '状态不能为空'}), 400
+    
+    # 验证状态值
+    valid_statuses = ['online', 'busy', 'away', 'offline']
+    if new_status not in valid_statuses:
+        return jsonify({'error': f'无效的状态值，必须是以下之一: {", ".join(valid_statuses)}'}), 400
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': '用户不存在'}), 404
+    
+    try:
+        user.status = new_status
+        db.session.commit()
+        
+        return jsonify({
+            'message': '状态更新成功',
+            'status': new_status
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"更新用户状态失败: {str(e)}")
+        return jsonify({'error': '更新状态失败'}), 500
+
+# 更新用户活动（心跳）
+@users_bp.route('/<int:user_id>/activity', methods=['POST'])
+@jwt_required()
+def update_user_activity(user_id):
+    """更新用户最后活动时间（心跳）"""
+    db, User, UserRole, create_audit_log = get_db_and_models()
+    
+    current_user_id = get_jwt_identity()
+    
+    # 只能更新自己的活动
+    if current_user_id != user_id:
+        return jsonify({'error': '只能更新自己的活动'}), 403
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': '用户不存在'}), 404
+    
+    try:
+        user.update_activity()
+        db.session.commit()
+        
+        return jsonify({
+            'message': '活动更新成功',
+            'status': user.get_online_status()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"更新用户活动失败: {str(e)}")
+        return jsonify({'error': '更新活动失败'}), 500
 
 # 创建用户（管理员专用）
 @users_bp.route('/', methods=['POST'])

@@ -18,7 +18,6 @@ class GlobalSearchResource(Resource):
     
     def get(self):
         """跨资源类型搜索"""
-        from enhanced_app import db, Bug, Project, User, Task, Material, Contract
         
         # 查询参数
         keyword = request.args.get('q', '').strip()
@@ -107,28 +106,6 @@ class GlobalSearchResource(Resource):
                     'avatar': user.avatar
                 })
             total += user_query.count()
-        
-        # 搜索 Tasks
-        if 'task' in types:
-            task_query = db.session.query(Task).filter(
-                or_(
-                    Task.title.ilike(f'%{keyword}%'),
-                    Task.description.ilike(f'%{keyword}%')
-                )
-            )
-            tasks = task_query.limit(10).all()
-            for task in tasks:
-                results.append({
-                    'type': 'task',
-                    'id': task.id,
-                    'title': task.title,
-                    'description': task.description[:100] if task.description else None,
-                    'status': str(task.status) if task.status else None,
-                    'priority': str(task.priority) if task.priority else None,
-                    'url': f'/tasks/{task.id}',
-                    'created_at': task.created_at.isoformat() if task.created_at else None
-                })
-            total += task_query.count()
         
         # 搜索 Materials
         if 'material' in types:

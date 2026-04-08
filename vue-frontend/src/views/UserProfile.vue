@@ -14,7 +14,10 @@
           <!-- 头像上传 -->
           <div class="avatar-section">
             <div class="avatar-upload">
-              <el-avatar :size="100" :src="avatarUrl" />
+              <div class="avatar-wrapper">
+                <el-avatar :size="100" :src="avatarUrl" />
+                <span class="profile-status-indicator" :class="userStatusStore.status" :title="userStatusStore.statusText"></span>
+              </div>
               <div class="avatar-actions">
                 <el-button type="primary" size="small" @click="triggerFileSelect">修改</el-button>
                 <el-button type="danger" size="small" @click="handleAvatarRemove" :disabled="!profileForm.avatar">移除</el-button>
@@ -25,6 +28,27 @@
                   style="display: none"
                   @change="handleAvatarChange"
                 />
+              </div>
+            </div>
+          </div>
+
+          <!-- 状态设置 -->
+          <div class="status-section">
+            <h4>当前状态</h4>
+            <div class="status-display">
+              <span class="status-dot" :class="userStatusStore.status"></span>
+              <span class="status-text">{{ userStatusStore.statusText }}</span>
+            </div>
+            <div class="status-options">
+              <div
+                v-for="status in userStatusStore.statusOptions"
+                :key="status.value"
+                class="status-option"
+                :class="{ active: userStatusStore.status === status.value }"
+                @click="userStatusStore.setStatus(status.value)"
+              >
+                <span class="status-dot" :class="status.value"></span>
+                <span>{{ status.label }}</span>
               </div>
             </div>
           </div>
@@ -188,9 +212,11 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { useUserStatusStore } from '@/stores/userStatus'
 import { apiService } from '@/services/api'
 
 const userStore = useUserStore()
+const userStatusStore = useUserStatusStore()
 const profileFormRef = ref(null)
 const passwordFormRef = ref(null)
 const fileInput = ref(null)
@@ -549,10 +575,131 @@ onMounted(() => {
   gap: 16px;
 }
 
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-status-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background-color: #67c23a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.profile-status-indicator.online {
+  background-color: #67c23a;
+}
+
+.profile-status-indicator.busy {
+  background-color: #f56c6c;
+}
+
+.profile-status-indicator.away {
+  background-color: #e6a23c;
+}
+
+.profile-status-indicator.offline {
+  background-color: #909399;
+}
+
 .avatar-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* 状态区域样式 */
+.status-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+}
+
+.status-section h4 {
+  margin: 0 0 12px 0;
+  color: #303133;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #e4e7ed;
+}
+
+.status-text {
+  font-size: 14px;
+  color: #606266;
+  font-weight: 500;
+}
+
+.status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
+  font-size: 13px;
+  color: #606266;
+}
+
+.status-option:hover {
+  border-color: #409eff;
+  color: #409eff;
+}
+
+.status-option.active {
+  background-color: #ecf5ff;
+  border-color: #409eff;
+  color: #409eff;
+}
+
+/* 状态点样式 */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #67c23a;
+}
+
+.status-dot.online {
+  background-color: #67c23a;
+}
+
+.status-dot.busy {
+  background-color: #f56c6c;
+}
+
+.status-dot.away {
+  background-color: #e6a23c;
+}
+
+.status-dot.offline {
+  background-color: #909399;
 }
 
 .profile-form,

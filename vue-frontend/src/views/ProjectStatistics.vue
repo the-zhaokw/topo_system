@@ -27,7 +27,7 @@
         <el-col :span="6">
           <div class="kpi-item">
             <div class="kpi-value">{{ kpiData.totalTasks || 0 }}</div>
-            <div class="kpi-label">任务总数</div>
+            <div class="kpi-label">需求总数</div>
           </div>
         </el-col>
         <el-col :span="6">
@@ -54,7 +54,7 @@
         <el-card shadow="never">
           <template #header>
             <div class="card-header">
-              <span>项目任务统计</span>
+              <span>项目需求统计</span>
             </div>
           </template>
           <div ref="taskChart" style="height: 400px;"></div>
@@ -75,9 +75,9 @@
             <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="total_tasks" label="任务总数" />
-        <el-table-column prop="completed_tasks" label="已完成任务" />
-        <el-table-column prop="task_completion_rate" label="任务完成率">
+        <el-table-column prop="total_tasks" label="需求总数" />
+        <el-table-column prop="completed_tasks" label="已完成需求" />
+        <el-table-column prop="task_completion_rate" label="需求完成率">
           <template #default="{ row }">
             <el-progress :percentage="row.task_completion_rate || 0" :color="getProgressColor(row.task_completion_rate)" />
           </template>
@@ -146,20 +146,20 @@ export default {
     const loadData = async () => {
       loading.value = true
       try {
-        const [projectRes, taskRes] = await Promise.all([
+        const [projectRes, reqRes] = await Promise.all([
           apiService.statistics.getProjectStatistics(),
-          apiService.statistics.getTaskStatistics()
+          apiService.statistics.getRequirementStatistics()
         ])
 
         const projectData = projectRes || {}
-        const taskData = taskRes || {}
+        const reqData = reqRes || {}
 
         const projectStats = projectData.project_bug_distribution || []
         const projects = []
         const projectNames = []
         const bugCounts = []
-        const taskCounts = []
-        
+        const reqCounts = []
+
         for (const p of projectStats) {
           projects.push({
             project_name: p.project_name,
@@ -175,13 +175,13 @@ export default {
           bugCounts.push(p.bug_count)
         }
 
-        const taskTotal = taskData.total_tasks || 0
-        const taskCompleted = taskData.completed_tasks || 0
+        const reqTotal = reqData.total_requirements || 0
+        const reqCompleted = reqData.completed_requirements || 0
 
         kpiData.value = {
           totalProjects: projects.length,
           activeProjects: projects.filter(p => p.status === 'active').length,
-          totalTasks: taskTotal,
+          totalTasks: reqTotal,
           totalBugs: projectStats.reduce((sum, p) => sum + p.bug_count, 0)
         }
 
@@ -190,7 +190,7 @@ export default {
 
         nextTick(() => {
           initBugDistributionChart(projectNames, bugCounts)
-          initTaskChart(projectNames, taskCounts)
+          initRequirementChart(projectNames, reqCounts)
           initTrendChart(projectData.project_bug_trends || {})
         })
 
@@ -224,23 +224,23 @@ export default {
       bugChartInstance.setOption(option)
     }
 
-    const initTaskChart = (projectNames, taskCounts) => {
+    const initRequirementChart = (projectNames, reqCounts) => {
       if (!taskChart.value) return
-      
+
       if (taskChartInstance) {
         taskChartInstance.dispose()
       }
-      
+
       taskChartInstance = echarts.init(taskChart.value)
       const option = {
         tooltip: { trigger: 'axis' },
         xAxis: { type: 'category', data: projectNames, axisLabel: { rotate: 45 } },
-        yAxis: { type: 'value', name: '任务数量' },
+        yAxis: { type: 'value', name: '需求数量' },
         series: [
           {
-            name: '任务数量',
+            name: '需求数量',
             type: 'bar',
-            data: taskCounts,
+            data: reqCounts,
             itemStyle: { color: '#409eff' }
           }
         ]

@@ -51,15 +51,6 @@ API_ENDPOINTS = {
             {'path': '/bugs/{id}/assign', 'method': 'PUT', 'desc': '分配Bug', 'auth': True},
         ]
     },
-    'tasks': {
-        'name': '任务管理',
-        'endpoints': [
-            {'path': '/tasks', 'method': 'GET', 'desc': '任务列表', 'auth': True},
-            {'path': '/tasks/{id}', 'method': 'GET', 'desc': '任务详情', 'auth': True},
-            {'path': '/tasks', 'method': 'POST', 'desc': '创建任务', 'auth': True},
-            {'path': '/tasks/{id}', 'method': 'PUT', 'desc': '更新任务', 'auth': True},
-        ]
-    },
     'materials': {
         'name': '物料管理',
         'endpoints': [
@@ -125,7 +116,7 @@ API_ENDPOINTS = {
 
 class ApiDocsResource(Resource):
     """API 文档 HTML 页面"""
-    
+
     def get(self):
         """返回 API 文档 HTML"""
         html = '''
@@ -156,7 +147,7 @@ class ApiDocsResource(Resource):
 <body>
     <h1>🏢 TOPO System API 文档</h1>
     <div class="base-url">Base URL: /api</div>
-    
+
     {% for module_id, module in modules.items() %}
     <div class="module">
         <h2>{{ module.name }}</h2>
@@ -180,7 +171,7 @@ class ApiDocsResource(Resource):
         </table>
     </div>
     {% endfor %}
-    
+
     <div style="margin-top: 40px; padding: 20px; background: #333; color: white; border-radius: 8px;">
         <h3>📋 认证说明</h3>
         <p>需要认证的 API 请在请求头中添加：</p>
@@ -196,7 +187,7 @@ class ApiDocsResource(Resource):
 
 class ApiJsonResource(Resource):
     """API JSON 文档"""
-    
+
     def get(self):
         """返回 API 文档 JSON"""
         return {
@@ -208,7 +199,7 @@ class ApiJsonResource(Resource):
 
 class OpenApiSpecResource(Resource):
     """OpenAPI/Swagger 规范"""
-    
+
     def get(self):
         """返回 OpenAPI 3.0 规范"""
         spec = {
@@ -223,14 +214,14 @@ class OpenApiSpecResource(Resource):
             ],
             'paths': {}
         }
-        
+
         # 生成 paths
         for module_id, module in API_ENDPOINTS.items():
             for endpoint in module['endpoints']:
                 path = endpoint['path']
                 if path not in spec['paths']:
                     spec['paths'][path] = {}
-                
+
                 method = endpoint['method'].lower()
                 spec['paths'][path][method] = {
                     'summary': endpoint['desc'],
@@ -241,7 +232,7 @@ class OpenApiSpecResource(Resource):
                         '403': {'description': '无权限'}
                     }
                 }
-        
+
         # 添加安全定义
         spec['components'] = {
             'securitySchemes': {
@@ -252,7 +243,7 @@ class OpenApiSpecResource(Resource):
                 }
             }
         }
-        
+
         return spec
 
 # 注册路由

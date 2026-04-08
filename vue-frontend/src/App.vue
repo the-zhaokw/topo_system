@@ -40,7 +40,7 @@
           <el-icon><House /></el-icon>
           <span>个人工作台</span>
         </el-menu-item>
-        
+
         <el-sub-menu index="projects">
           <template #title>
             <el-icon><Folder /></el-icon>
@@ -243,17 +243,66 @@
               </template>
             </el-dropdown>
             
-            <el-dropdown>
+            <el-dropdown popper-class="user-dropdown-menu" :show-timeout="0" :hide-timeout="200">
               <span class="user-info">
-                <el-avatar :size="32" :src="userAvatar" />
+                <div class="user-avatar-wrapper">
+                  <el-avatar :size="32" :src="userAvatar" />
+                  <span class="status-indicator" :class="userStatusStore.status"></span>
+                </div>
                 <span class="username">{{ currentUser?.username || '用户' }}</span>
                 <el-icon><ArrowDown /></el-icon>
               </span>
               <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="handleProfile">个人资料</el-dropdown-item>
-                  <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
-                </el-dropdown-menu>
+                <div class="user-dropdown-content">
+                  <!-- 用户信息头部 -->
+                  <div class="user-dropdown-header">
+                    <div class="user-dropdown-avatar">
+                      <el-avatar :size="48" :src="userAvatar" />
+                      <span class="status-indicator-large" :class="userStatusStore.status"></span>
+                    </div>
+                    <div class="user-dropdown-info">
+                      <div class="user-dropdown-name">{{ currentUser?.username || '用户' }}</div>
+                      <div class="user-dropdown-username">@{{ currentUser?.username || 'user' }}</div>
+                      <div class="user-dropdown-status-text">
+                        <span class="status-dot" :class="userStatusStore.status"></span>
+                        {{ userStatusStore.statusText }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 状态设置 -->
+                  <div class="user-dropdown-section">
+                    <div class="section-title">编辑状态</div>
+                    <div class="status-options">
+                      <div
+                        v-for="status in userStatusStore.statusOptions"
+                        :key="status.value"
+                        class="status-option"
+                        :class="{ active: userStatusStore.status === status.value }"
+                        @click="userStatusStore.setStatus(status.value)"
+                      >
+                        <span class="status-dot" :class="status.value"></span>
+                        <span>{{ status.label }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 菜单项 -->
+                  <div class="user-dropdown-section">
+                    <div class="dropdown-menu-item" @click="handleProfile">
+                      <el-icon><User /></el-icon>
+                      <span>编辑个人资料</span>
+                    </div>
+                  </div>
+
+                  <!-- 退出登录 -->
+                  <div class="user-dropdown-footer">
+                    <div class="dropdown-menu-item logout" @click="handleLogout">
+                      <el-icon><SwitchButton /></el-icon>
+                      <span>退出</span>
+                    </div>
+                  </div>
+                </div>
               </template>
             </el-dropdown>
           </div>
@@ -271,8 +320,9 @@
 import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useUserStatusStore } from '@/stores/userStatus'
 import { systemTimeService } from '@/services/systemTimeService'
-import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, ArrowDown, DocumentAdd, Checked, Box, Collection, Goods, OfficeBuilding, TrendCharts, PieChart, Loading, Ticket, Link, FolderAdd, Bell, Check, Warning, Setting, DocumentChecked, Reading, Monitor, Fold } from '@element-plus/icons-vue'
+import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, ArrowDown, DocumentAdd, Checked, Box, Collection, Goods, OfficeBuilding, TrendCharts, PieChart, Loading, Ticket, Link, FolderAdd, Bell, Check, Warning, Setting, DocumentChecked, Reading, Monitor, Fold, SwitchButton } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import { ElMessage } from 'element-plus'
 import MobileMenu from '@/components/mobile/MobileMenu.vue'
@@ -281,8 +331,9 @@ import { useResponsive } from '@/composables/useResponsive'
 const { isMobile, isMobileRef, isMenuOpen, isMenuOpenRef, toggleMenu, closeMenu } = useResponsive()
 
 const route = useRoute()
- const router = useRouter()
- const userStore = useUserStore()
+const router = useRouter()
+const userStore = useUserStore()
+const userStatusStore = useUserStatusStore()
 
 // 初始化状态
 const isInitializing = ref(true)
@@ -312,6 +363,17 @@ onMounted(async () => {
         console.error('Fetch user error:', error)
       }
     }
+    // 从后端获取用户状态
+    try {
+      await userStatusStore.fetchStatusFromBackend()
+    } catch (error) {
+      console.error('Fetch status error:', error)
+    }
+    
+    // 添加用户活动监听
+    window.addEventListener('mousemove', userStatusStore.onUserActivity)
+    window.addEventListener('keydown', userStatusStore.onUserActivity)
+    window.addEventListener('click', userStatusStore.onUserActivity)
   }
   isInitializing.value = false
 
@@ -319,14 +381,22 @@ onMounted(async () => {
   isRouteReady.value = true
 })
 
+// 组件卸载时清理
+onUnmounted(() => {
+  userStatusStore.stopHeartbeat()
+  window.removeEventListener('mousemove', userStatusStore.onUserActivity)
+  window.removeEventListener('keydown', userStatusStore.onUserActivity)
+  window.removeEventListener('click', userStatusStore.onUserActivity)
+})
+
 const currentRouteName = computed(() => {
   const routeMap = {
     '/dashboard': '仪表板',
-    '/bugs/list': 'Bug列表',
-    '/bugs/new': '新建Bug',
-    '/bugs/:id': 'Bug详情',
-    '/bugs/:id/edit': '编辑Bug',
-    '/bugs/statistics': 'Bug统计',
+    '/bugs/list': 'Bug 列表',
+    '/bugs/new': '新建 Bug',
+    '/bugs/:id': 'Bug 详情',
+    '/bugs/:id/edit': '编辑 Bug',
+    '/bugs/statistics': 'Bug 统计',
     '/projects/list': '项目列表',
     '/projects/statistics': '项目统计',
     '/projects/custom-report': '自定义报表',
@@ -343,8 +413,6 @@ const currentRouteName = computed(() => {
     '/users/list': '用户列表',
     '/users/:id': '用户详情',
     '/profile': '个人配置',
-    '/tasks/list': '任务列表',
-    '/tasks/:id': '任务详情',
     '/materials/categories': '物料分类管理',
     '/materials/list': '物料管理',
     '/materials/warehouses': '仓库管理',
@@ -359,7 +427,7 @@ const currentRouteName = computed(() => {
     '/test-management/suites': '测试集管理',
     '/test-management/cases/:suiteId': '测试用例',
     '/test-management/executions/:projectId': '测试执行',
-    '/reports/bug-statistics': 'Bug统计',
+    '/reports/bug-statistics': 'Bug 统计',
     '/activities': '活动记录',
     '/work-logs': '工作日志',
     '/settings': '系统设置',
@@ -643,6 +711,231 @@ onUnmounted(() => {
 .username {
   margin: 0 8px;
   font-size: 14px;
+}
+
+/* 用户头像包装器 */
+.user-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* 状态指示器 - 小 */
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background-color: #67c23a;
+}
+
+.status-indicator.online {
+  background-color: #67c23a;
+}
+
+.status-indicator.busy {
+  background-color: #f56c6c;
+}
+
+.status-indicator.away {
+  background-color: #e6a23c;
+}
+
+.status-indicator.offline {
+  background-color: #909399;
+}
+
+/* 状态指示器 - 大 */
+.status-indicator-large {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background-color: #67c23a;
+}
+
+.status-indicator-large.online {
+  background-color: #67c23a;
+}
+
+.status-indicator-large.busy {
+  background-color: #f56c6c;
+}
+
+.status-indicator-large.away {
+  background-color: #e6a23c;
+}
+
+.status-indicator-large.offline {
+  background-color: #909399;
+}
+
+/* 状态点 */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  background-color: #67c23a;
+}
+
+.status-dot.online {
+  background-color: #67c23a;
+}
+
+.status-dot.busy {
+  background-color: #f56c6c;
+}
+
+.status-dot.away {
+  background-color: #e6a23c;
+}
+
+.status-dot.offline {
+  background-color: #909399;
+}
+
+/* 用户下拉菜单样式 */
+:deep(.user-dropdown-menu) {
+  padding: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+:deep(.user-dropdown-menu .el-dropdown-menu__item) {
+  padding: 0 !important;
+}
+
+.user-dropdown-content {
+  min-width: 240px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 下拉菜单头部 */
+.user-dropdown-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.user-dropdown-avatar {
+  position: relative;
+  margin-right: 12px;
+}
+
+.user-dropdown-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-dropdown-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.user-dropdown-username {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 4px;
+}
+
+.user-dropdown-status-text {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 下拉菜单分区 */
+.user-dropdown-section {
+  padding: 8px 0;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.user-dropdown-section:last-of-type {
+  border-bottom: none;
+}
+
+.section-title {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #909399;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 状态选项 */
+.status-options {
+  padding: 0 8px;
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: #606266;
+}
+
+.status-option:hover {
+  background-color: #f5f7fa;
+}
+
+.status-option.active {
+  background-color: #ecf5ff;
+  color: #409eff;
+}
+
+/* 下拉菜单项 */
+.dropdown-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: #606266;
+}
+
+.dropdown-menu-item:hover {
+  background-color: #f5f7fa;
+  color: #409eff;
+}
+
+.dropdown-menu-item .el-icon {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.dropdown-menu-item.logout {
+  color: #f56c6c;
+}
+
+.dropdown-menu-item.logout:hover {
+  background-color: #fef0f0;
+  color: #f56c6c;
+}
+
+/* 下拉菜单底部 */
+.user-dropdown-footer {
+  padding: 8px 0;
 }
 
 .main-content {

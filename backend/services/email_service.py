@@ -178,46 +178,6 @@ TOPO系统
 '''
         return self.send_email(to_address, subject, body, html_body, from_name='TOPO系统-Bug通知')
 
-    def send_task_notification_email(self, to_address: str, task_title: str, action: str, operator_name: str) -> Dict[str, Any]:
-        """发送任务通知邮件"""
-        subject = f'[任务{action}] {task_title}'
-        body = f'''您有一个任务更新:
-
-任务标题: {task_title}
-操作: {action}
-操作人: {operator_name}
-操作时间: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-
-请及时登录TOPO系统查看。
-
----
-TOPO系统
-'''
-        html_body = f'''
-<html>
-<body style="font-family: Arial, sans-serif;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #409EFF;">任务{action}</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>任务标题</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #eee;">{task_title}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>操作</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #eee;">{action}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>操作人</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #eee;">{operator_name}</td>
-            </tr>
-        </table>
-    </div>
-</body>
-</html>
-'''
-        return self.send_email(to_address, subject, body, html_body, from_name='TOPO系统-任务通知')
-
     def send_review_notification_email(
         self,
         to_address: str,

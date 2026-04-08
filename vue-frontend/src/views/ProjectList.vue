@@ -338,6 +338,14 @@
             <el-option label="已归档" value="archived" />
           </el-select>
         </el-form-item>
+        <el-form-item label="优先级">
+          <el-select v-model="projectForm.priority" placeholder="选择优先级">
+            <el-option label="低" value="low" />
+            <el-option label="中" value="medium" />
+            <el-option label="高" value="high" />
+            <el-option label="紧急" value="urgent" />
+          </el-select>
+        </el-form-item>
         
         <el-form-item label="技术栈">
           <el-input v-model="projectForm.technology_stack" type="textarea" :rows="2" placeholder="请输入项目使用的技术栈" />
@@ -467,51 +475,7 @@
             </el-table>
           </el-tab-pane>
           
-          <el-tab-pane label="任务列表" name="tasks" v-if="currentProject.tasks && currentProject.tasks.length > 0">
-            <div class="list-actions">
-              <el-button 
-                type="danger" 
-                :disabled="selectedTaskIds.length === 0"
-                @click="deleteSelectedTasks"
-              >
-                批量删除选中 ({{ selectedTaskIds.length }})
-              </el-button>
-              <el-button @click="refreshTaskList">
-                刷新列表
-              </el-button>
-            </div>
-            
-            <el-table 
-              :data="currentProject.tasks" 
-              @selection-change="handleTaskSelectionChange"
-              style="width: 100%"
-            >
-              <el-table-column type="selection" width="55" />
-              <el-table-column prop="id" label="ID" width="80" />
-              <el-table-column prop="title" label="任务标题" min-width="200" />
-              <el-table-column prop="status" label="状态" width="120">
-                <template #default="{ row }">
-                  <el-tag :type="getTaskStatusType(row.status)" size="small">
-                    {{ row.status }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="priority" label="优先级" width="100">
-                <template #default="{ row }">
-                  <el-tag :type="getPriorityType(row.priority)" size="small">
-                    {{ row.priority }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="80">
-                <template #default="{ row }">
-                  <el-button type="danger" link size="small" @click="deleteTask(row.id)">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
+
         </el-tabs>
       </div>
       
@@ -520,7 +484,7 @@
           <el-button @click="showProjectItemsDialog = false">关闭</el-button>
           <el-button 
             type="primary" 
-            :disabled="(currentProject?.bugs?.length || 0) > 0 || (currentProject?.tasks?.length || 0) > 0"
+            :disabled="(currentProject?.bugs?.length || 0) > 0"
             @click="retryDeleteProject"
           >
             确认删除项目
@@ -609,78 +573,7 @@
       </template>
     </el-dialog>
     
-    <!-- 任务列表对话框 -->
-    <el-dialog 
-      v-model="showTaskListDialog" 
-      title="项目下的任务列表" 
-      width="800px"
-      :close-on-click-modal="false"
-    >
-      <div v-if="currentProject" class="task-list-container">
-        <div class="task-list-header">
-          <p>项目 <strong>{{ currentProject.name }}</strong> 下还有 {{ currentProject.tasks?.length || 0 }} 个任务未处理。</p>
-          <p class="warning-text">请先删除这些任务后再删除项目。</p>
-        </div>
-        
-        <div class="task-list-actions" v-if="currentProject.tasks && currentProject.tasks.length > 0">
-          <el-button 
-            type="danger" 
-            :disabled="selectedTaskIds.length === 0"
-            @click="deleteSelectedTasks"
-          >
-            批量删除选中 ({{ selectedTaskIds.length }})
-          </el-button>
-          <el-button @click="refreshTaskList">
-            刷新列表
-          </el-button>
-        </div>
-        
-        <el-table 
-          :data="currentProject.tasks || []" 
-          @selection-change="handleTaskSelectionChange"
-          style="width: 100%"
-          v-loading="taskListLoading"
-        >
-          <el-table-column type="selection" width="55" />
-          <el-table-column prop="id" label="ID" width="80" />
-          <el-table-column prop="title" label="任务标题" min-width="200" />
-          <el-table-column prop="status" label="状态" width="120">
-            <template #default="{ row }">
-              <el-tag :type="getTaskStatusType(row.status)" size="small">
-                {{ row.status }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="priority" label="优先级" width="100">
-            <template #default="{ row }">
-              <el-tag :type="getPriorityType(row.priority)" size="small">
-                {{ row.priority }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="120">
-            <template #default="{ row }">
-              <el-button type="danger" link size="small" @click="deleteTask(row.id)">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showTaskListDialog = false">关闭</el-button>
-          <el-button 
-            type="primary" 
-            :disabled="currentProject?.tasks?.length > 0"
-            @click="retryDeleteProject"
-          >
-            确认删除项目
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+
   </div>
 </template>
 
@@ -745,7 +638,8 @@ const projectForm = reactive({
   actual_hours: 0,  // 实际工时
   team_size: 0,  // 团队规模
   tags: '',  // 标签
-  milestones: ''  // 里程碑
+  milestones: '',  // 里程碑
+  priority: 'medium'  // 优先级
 })
 
 // 经理列表（从项目成员中筛选）
@@ -992,17 +886,6 @@ const getBugSeverityType = (severity) => {
   return typeMap[severity] || 'info'
 }
 
-// 任务状态类型
-const getTaskStatusType = (status) => {
-  const typeMap = {
-    '待处理': 'info',
-    '进行中': 'warning',
-    '已完成': 'success',
-    '已取消': 'info'
-  }
-  return typeMap[status] || 'info'
-}
-
 // 通用优先级类型
 const getPriorityType = (priority) => {
   const typeMap = {
@@ -1016,9 +899,6 @@ const getPriorityType = (priority) => {
 
 // bug列表加载状态
 const bugListLoading = ref(false)
-
-// task列表加载状态
-const taskListLoading = ref(false)
 
 // 查看项目详情
 const viewProjectDetail = async (project) => {
@@ -1193,16 +1073,14 @@ const deleteProject = async (project, showBugDialog = false) => {
     }
   } catch (error) {
     if (error.response?.data?.code === 'PROJECT_HAS_ITEMS') {
-      // 项目下还有Bug和任务，显示统一的对话框
+      // 项目下还有Bug，显示统一的对话框
       const bugList = error.response.data.bugs || []
-      const taskList = error.response.data.tasks || []
       currentProject.value = {
         ...project,
-        bugs: bugList,
-        tasks: taskList
+        bugs: bugList
       }
       showProjectItemsDialog.value = true
-      activeItemsTab.value = bugList.length > 0 ? 'bugs' : 'tasks'
+      activeItemsTab.value = 'bugs'
     } else if (error.response?.data?.code === 'PROJECT_HAS_BUGS') {
       // 项目下还有Bug，显示bug列表对话框
       const bugList = error.response.data.bugs || []
@@ -1211,14 +1089,6 @@ const deleteProject = async (project, showBugDialog = false) => {
         bugs: bugList
       }
       showBugListDialog.value = true
-    } else if (error.response?.data?.code === 'PROJECT_HAS_TASKS') {
-      // 项目下还有任务，显示任务列表对话框
-      const taskList = error.response.data.tasks || []
-      currentProject.value = {
-        ...project,
-        tasks: taskList
-      }
-      showTaskListDialog.value = true
     } else if (error.response?.data?.error) {
       ElMessage.error(`删除失败: ${error.response.data.error}`)
     } else if (error.message && error.message.includes('cancel')) {
@@ -1312,14 +1182,7 @@ const retryDeleteProject = async () => {
     return
   }
   
-  // 检查是否还有任务
-  if (currentProject.value.tasks && currentProject.value.tasks.length > 0) {
-    ElMessage.warning('请先删除所有任务后再删除项目')
-    return
-  }
-  
   showBugListDialog.value = false
-  showTaskListDialog.value = false
   showProjectItemsDialog.value = false
   await deleteProject(currentProject.value)
 }
@@ -1330,10 +1193,6 @@ const currentProject = ref(null)
 const showBugListDialog = ref(false)
 const showProjectItemsDialog = ref(false)
 const activeItemsTab = ref('bugs')
-
-// task选择相关
-const selectedTaskIds = ref([])
-const showTaskListDialog = ref(false)
 
 // 处理bug选择
 const handleBugSelectionChange = (selection) => {
@@ -1361,103 +1220,7 @@ const refreshBugList = async () => {
   }
 }
 
-// 处理task选择
-const handleTaskSelectionChange = (selection) => {
-  selectedTaskIds.value = selection.map(task => task.id)
-}
 
-// 批量删除后重新获取项目task列表
-const refreshTaskList = async () => {
-  if (!currentProject.value) return
-  
-  try {
-    const response = await apiService.tasks.getList({ project_id: currentProject.value.id })
-    const tasksData = response.tasks || response || []
-    currentProject.value.tasks = tasksData.map(task => ({
-      id: task.id,
-      title: task.title,
-      status: task.status,
-      priority: task.priority,
-      created_at: task.created_at
-    }))
-    selectedTaskIds.value = []
-  } catch (error) {
-    console.error('刷新任务列表失败:', error)
-  }
-}
-
-// 删除task
-const deleteTask = async (taskId) => {
-  try {
-    await ElMessageBox.confirm(
-      '确定要删除这个任务吗？此操作不可恢复。',
-      '删除确认',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
-    
-    await apiService.tasks.delete(taskId)
-    
-    // 从当前项目的task列表中移除
-    if (currentProject.value && currentProject.value.tasks) {
-      const index = currentProject.value.tasks.findIndex(t => t.id === taskId)
-      if (index !== -1) {
-        currentProject.value.tasks.splice(index, 1)
-      }
-    }
-    
-    ElMessage.success('任务删除成功')
-  } catch (error) {
-    if (error.message && error.message.includes('cancel')) {
-      // 用户取消删除
-    } else {
-      ElMessage.error('删除任务失败: ' + (error.response?.data?.error || error.message || '未知错误'))
-    }
-  }
-}
-
-// 批量删除选中task
-const deleteSelectedTasks = async () => {
-  if (selectedTaskIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的任务')
-    return
-  }
-  
-  try {
-    await ElMessageBox.confirm(
-      `确定要删除选中的 ${selectedTaskIds.value.length} 个任务吗？此操作不可恢复。`,
-      '批量删除确认',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
-    
-    // 批量删除
-    await apiService.tasks.batchDelete(selectedTaskIds.value)
-    
-    // 从当前项目的task列表中移除
-    if (currentProject.value && currentProject.value.tasks) {
-      currentProject.value.tasks = currentProject.value.tasks.filter(
-        t => !selectedTaskIds.value.includes(t.id)
-      )
-    }
-    
-    const deletedCount = selectedTaskIds.value.length
-    selectedTaskIds.value = []
-    ElMessage.success(`成功删除 ${deletedCount} 个任务`)
-  } catch (error) {
-    if (error.message && error.message.includes('cancel')) {
-      // 用户取消删除
-    } else {
-      ElMessage.error('批量删除任务失败: ' + (error.response?.data?.error || error.message || '未知错误'))
-    }
-  }
-}
 
 // 保存项目
 const saveProject = async () => {
@@ -1523,6 +1286,7 @@ const saveProject = async () => {
         team_size: projectForm.team_size ? Number(projectForm.team_size) : null,
         tags: projectForm.tags?.trim() || '',
         milestones: projectForm.milestones?.trim() || '',
+        priority: projectForm.priority || 'medium',
         // 确保 members 是标准数组
         members: processedMembers
       }
@@ -1630,10 +1394,11 @@ const saveProject = async () => {
         team_size: projectForm.team_size ? Number(projectForm.team_size) : null,
         tags: projectForm.tags?.trim() || '',
         milestones: projectForm.milestones?.trim() || '',
+        priority: projectForm.priority || 'medium',
         // 确保 members 是标准数组
         members: processedMembers
       }
-      
+
       // 格式化日期字段为ISO字符串
       if (createData.start_date) {
         const startDate = new Date(createData.start_date)
@@ -2143,35 +1908,6 @@ onMounted(() => {
     padding: 8px 12px;
   }
 
-  .task-list-container {
-    padding: 8px 0;
-  }
-
-  .task-list-header {
-    margin-bottom: 12px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .task-list-header p {
-    font-size: 13px;
-  }
-
-  .task-list-actions {
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .task-list-actions .el-button {
-    flex: 1;
-    min-width: calc(50% - 4px);
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
   .el-table {
     font-size: 11px !important;
   }
@@ -2269,8 +2005,7 @@ onMounted(() => {
     gap: 6px;
   }
 
-  .bug-list-actions .el-button,
-  .task-list-actions .el-button {
+  .bug-list-actions .el-button {
     font-size: 11px;
     padding: 6px 10px;
   }

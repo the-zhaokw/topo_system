@@ -84,7 +84,7 @@ npm run dev
 ```
 topo_system/
 ├── backend/              # Flask 后端
-│   ├── api/             # API 路由 (28个模块)
+│   ├── api/             # API 路由 (33个模块)
 │   │   ├── activities.py      # 活动记录
 │   │   ├── attendance.py      # 考勤管理
 │   │   ├── audit.py           # 审计日志
@@ -105,9 +105,11 @@ topo_system/
 │   │   ├── monitoring.py      # 系统监控
 │   │   ├── notifications.py   # 通知管理
 │   │   ├── performance.py     # 性能监控
+│   │   ├── personal_plan.py   # 个人计划
 │   │   ├── projects.py        # 项目管理
 │   │   ├── project_logs.py    # 项目日志
 │   │   ├── requirements.py    # 需求管理
+│   │   ├── risks.py           # 风险管理
 │   │   ├── search.py          # 搜索
 │   │   ├── statistics.py      # 统计
 │   │   ├── system.py          # 系统管理
@@ -338,8 +340,10 @@ const fetchBugs = async () => {
 29. todos.py - 待办事项
 30. users.py - 用户管理
 31. work_logs.py - 工作日志
+32. personal_plan.py - 个人计划
+33. risks.py - 风险管理
 
-### 前端页面 (61个)
+### 前端页面 (63个)
 - 仪表板：Dashboard
 - 项目管理：ProjectList, ProjectDetail, ProjectForm, ProjectStatistics, ProjectBugList, ProjectLogList
 - Bug管理：BugList, BugDetail, BugForm, BugStatistics
@@ -351,7 +355,8 @@ const fetchBugs = async () => {
 - 测试管理：TestSuiteList, TestSuiteDetail, TestCaseList, TestCaseDetail, TestExecutionList, TestDashboard, TestReport
 - 用户管理：UserList, UserDetail, UserProfile, MyDepartment
 - 知识库：KnowledgeBase, KnowledgeListFinal, KnowledgeEnhanced, KnowledgeShare
-- 个人工作台：MyTodos, WorkLogs, WorkLogList, WorkStatisticsDetail
+- 个人工作台：MyTodos, WorkLogs, WorkLogList, WorkStatisticsDetail, PersonalPlan
+- 风险管理：RiskList
 - 系统功能：NotificationList, MonitoringList, ActivityList, SystemSettings, CustomReport, Login
 
 ---

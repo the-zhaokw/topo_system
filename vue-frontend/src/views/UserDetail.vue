@@ -28,9 +28,12 @@
           
           <div v-else-if="userData" class="user-info">
             <div class="avatar-section">
-              <el-avatar :size="80" :src="userData.avatar || avatarPlaceholder">
-                {{ userData.username?.charAt(0).toUpperCase() }}
-              </el-avatar>
+              <div class="avatar-wrapper">
+                <el-avatar :size="80" :src="userData.avatar || avatarPlaceholder">
+                  {{ userData.username?.charAt(0).toUpperCase() }}
+                </el-avatar>
+                <span class="user-status-indicator" :class="userData.status || 'online'" :title="getStatusText(userData.status)"></span>
+              </div>
               <div class="user-name">
                 <h3>{{ userData.last_name || '' }}{{ userData.first_name || userData.username }}</h3>
                 <el-tag v-if="userData.position" type="info" size="small">
@@ -86,8 +89,19 @@
               <div class="info-value">{{ userData.employee_id || '-' }}</div>
             </div>
             
+            <div class="info-row">
+              <div class="info-label">在线状态</div>
+              <div class="info-value">
+                <span class="status-dot" :class="userData.status || 'online'"></span>
+                <span>{{ getStatusText(userData.status) }}</span>
+                <span v-if="isSelf && userData.status !== 'offline'" class="status-hint">
+                  ({{ getStatusHint(userData.user_set_status) }})
+                </span>
+              </div>
+            </div>
+            
             <div v-if="isAdminView" class="info-row">
-              <div class="info-label">状态</div>
+              <div class="info-label">账号状态</div>
               <div class="info-value">
                 <el-tag :type="userData.is_active ? 'success' : 'danger'" size="small">
                   {{ userData.is_active ? '激活' : '禁用' }}
@@ -119,22 +133,16 @@
           </template>
           
           <el-row :gutter="20">
-            <el-col :span="8">
+            <el-col :span="12">
               <div class="stat-item">
                 <div class="stat-value clickable-link" @click="goToBugList">{{ statistics.total_bugs || 0 }}</div>
                 <div class="stat-label">负责Bug</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="12">
               <div class="stat-item">
                 <div class="stat-value clickable-link" @click="goToProjectList">{{ statistics.total_projects || 0 }}</div>
                 <div class="stat-label">参与项目</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="stat-item">
-                <div class="stat-value clickable-link" @click="goToTaskList">{{ statistics.total_tasks || 0 }}</div>
-                <div class="stat-label">负责任务</div>
               </div>
             </el-col>
           </el-row>
@@ -486,6 +494,25 @@ const getActionText = (action) => {
   return textMap[action] || action
 }
 
+const getStatusText = (status) => {
+  const statusMap = {
+    'online': '在线',
+    'busy': '忙碌',
+    'away': '离开',
+    'offline': '离线'
+  }
+  return statusMap[status] || '在线'
+}
+
+const getStatusHint = (userSetStatus) => {
+  const hintMap = {
+    'online': '已登录',
+    'busy': '忙碌中',
+    'away': '暂时离开'
+  }
+  return hintMap[userSetStatus] || '已登录'
+}
+
 const formatDate = (dateString) => {
   if (!dateString) return '-'
   return new Date(dateString).toLocaleString('zh-CN')
@@ -508,9 +535,6 @@ const goToResource = (activity) => {
     case 'project':
       router.push(`/projects/${activity.target_id}`)
       break
-    case 'task':
-      router.push(`/tasks/${activity.target_id}`)
-      break
     default:
       break
   }
@@ -527,13 +551,6 @@ const goToProjectList = () => {
   router.push({
     path: '/projects/list',
     query: { user_id: route.params.id }
-  })
-}
-
-const goToTaskList = () => {
-  router.push({
-    path: '/tasks',
-    query: { assignee: route.params.id }
   })
 }
 
@@ -595,6 +612,71 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   padding: 20px 0;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.user-status-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background-color: #67c23a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-status-indicator.online {
+  background-color: #67c23a;
+}
+
+.user-status-indicator.busy {
+  background-color: #f56c6c;
+}
+
+.user-status-indicator.away {
+  background-color: #e6a23c;
+}
+
+.user-status-indicator.offline {
+  background-color: #909399;
+}
+
+/* 状态点样式 */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  background-color: #67c23a;
+}
+
+.status-dot.online {
+  background-color: #67c23a;
+}
+
+.status-dot.busy {
+  background-color: #f56c6c;
+}
+
+.status-dot.away {
+  background-color: #e6a23c;
+}
+
+.status-dot.offline {
+  background-color: #909399;
+}
+
+.status-hint {
+  color: #909399;
+  font-size: 12px;
+  margin-left: 4px;
 }
 
 .avatar-section .user-name {

@@ -226,12 +226,11 @@ class PerformanceMetricsResource(Resource):
         
         try:
             # 各表记录数
-            from enhanced_app import Bug, Project, User as UserModel, Task
             metrics['database'] = {
                 'bugs': db.session.query(func.count(Bug.id)).scalar(),
                 'projects': db.session.query(func.count(Project.id)).scalar(),
                 'users': db.session.query(func.count(UserModel.id)).scalar(),
-                'tasks': db.session.query(func.count(Task.id)).scalar()
+                'tasks': 0
             }
         except Exception as e:
             metrics['database_error'] = str(e)

@@ -33,8 +33,8 @@ def get_db():
 
 def get_models():
     """延迟获取数据库模型"""
-    from enhanced_app import User, UserRole, Project, ProjectMember, ProjectStatus
-    return User, UserRole, Project, ProjectMember, ProjectStatus
+    from enhanced_app import User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug
+    return User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug
 
 def get_require_permission():
     from enhanced_app import require_permission
@@ -76,7 +76,7 @@ def get_projects():
     
     # 延迟导入数据库模型
     db = get_db()
-    User, UserRole, Project, ProjectMember, ProjectStatus = get_models()
+    User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
     
     # 直接使用get_jwt_identity函数
     current_user_id = get_jwt_identity()
@@ -528,7 +528,7 @@ def create_project():
                 return jsonify({'error': f'无效的费用状态，可选值: {valid_cost_values}'}), 400
             cost_mapping = {'normal': 0.0, 'over': 1.0, 'under': -1.0}
             cost = cost_mapping.get(cost, 0.0)
-        
+
         new_project = Project(
             name=data['name'],
             code=data['code'],
@@ -542,7 +542,8 @@ def create_project():
             resources=data.get('resources'),
             cost=cost,
             status='active',
-            owner_id=current_user_id
+            owner_id=current_user_id,
+            priority=data.get('priority', 'medium')
         )
         
         db.session.add(new_project)
@@ -1068,6 +1069,81 @@ def get_project_members(project_id):
 
     return jwt_wrapped_function()
 
+# 获取项目的风险列表
+@projects_bp.route('/<int:project_id>/risks', methods=['GET'])
+@jwt_required()
+def get_project_risks(project_id):
+    db = get_db()
+    User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
+
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    project = Project.query.get(project_id)
+    if not project:
+        return jsonify({'error': '项目不存在'}), 404
+
+    risk_type = request.args.get('risk_type')
+    status = request.args.get('status')
+    level = request.args.get('level')
+    priority = request.args.get('priority')
+    category = request.args.get('category')
+    assigned_to = request.args.get('assigned_to', type=int)
+    search = request.args.get('search')
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+
+    query = Risk.query.filter(Risk.project_id == project_id)
+
+    if risk_type:
+        query = query.filter(Risk.risk_type == risk_type)
+
+    if status:
+        query = query.filter(Risk.status == status)
+
+    if level:
+        query = query.filter(Risk.level == level)
+
+    if priority:
+        query = query.filter(Risk.priority == priority)
+
+    if category:
+        query = query.filter(Risk.category == category)
+
+    if assigned_to:
+        query = query.filter(Risk.assigned_to == assigned_to)
+
+    if search:
+        query = query.filter(
+            db.or_(
+                Risk.title.contains(search),
+                Risk.description.contains(search)
+            )
+        )
+
+    pagination = query.order_by(Risk.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+
+    risks_data = []
+    for risk in pagination.items:
+        risk_dict = risk.to_dict()
+        if risk.related_bug:
+            risk_dict['related_bug_title'] = risk.related_bug.title
+        risks_data.append(risk_dict)
+
+    return jsonify({
+        'success': True,
+        'message': '获取风险列表成功',
+        'data': {
+            'risks': risks_data,
+            'total': pagination.total,
+            'page': pagination.page,
+            'pages': pagination.pages,
+            'per_page': pagination.per_page
+        }
+    }), 200
+
 # 添加项目成员
 @projects_bp.route('/<int:project_id>/members', methods=['POST'])
 @log_api_call
@@ -1327,13 +1403,10 @@ def delete_project(project_id):
         print("权限检查通过，开始删除项目...")
         
         try:
-            # 检查项目是否有关联Bug和Task
-            from enhanced_app import Bug, Task
+            # 检查项目是否有关联Bug
             bugs = Bug.query.filter_by(project_id=project_id).all()
-            tasks = Task.query.filter_by(project_id=project_id).all()
             bug_count = len(bugs)
-            task_count = len(tasks)
-            
+
             # 构建bug列表
             bug_list = []
             for bug in bugs:
@@ -1345,33 +1418,14 @@ def delete_project(project_id):
                     'severity': bug.severity.value if hasattr(bug.severity, 'value') else str(bug.severity),
                     'created_at': bug.created_at.isoformat() if bug.created_at else None
                 })
-            
-            # 构建task列表
-            task_list = []
-            for task in tasks:
-                task_list.append({
-                    'id': task.id,
-                    'title': task.title,
-                    'status': task.status.value if hasattr(task.status, 'value') else str(task.status),
-                    'priority': task.priority.value if hasattr(task.priority, 'value') else str(task.priority),
-                    'created_at': task.created_at.isoformat() if task.created_at else None
-                })
-            
-            # 如果有关联Bug或Task，返回列表供前端显示
-            if bug_count > 0 or task_count > 0:
-                error_msg = []
-                if bug_count > 0:
-                    error_msg.append(f'{bug_count}个Bug')
-                if task_count > 0:
-                    error_msg.append(f'{task_count}个任务')
-                
+
+            # 如果有关联Bug，返回列表供前端显示
+            if bug_count > 0:
                 return jsonify({
-                    'error': f'该项目下还有 {"和".join(error_msg)}未处理，请先删除后再删除项目',
+                    'error': f'该项目下还有 {bug_count} 个Bug未处理，请先删除后再删除项目',
                     'code': 'PROJECT_HAS_ITEMS',
                     'bug_count': bug_count,
-                    'task_count': task_count,
-                    'bugs': bug_list,
-                    'tasks': task_list
+                    'bug_list': bug_list
                 }), 400
             
             # 创建log（删除前）

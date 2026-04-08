@@ -20,7 +20,7 @@
           <el-option label="全部" value="" />
           <el-option label="审批类" value="approval" />
           <el-option label="Bug相关" value="bug" />
-          <el-option label="任务相关" value="task" />
+
           <el-option label="评审类" value="review" />
           <el-option label="合同相关" value="contract" />
         </el-select>
@@ -78,22 +78,7 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="3">
-        <el-card class="stat-card" shadow="hover" @click="filterByCategory('task')">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
-              <el-icon :size="24" style="color: white;"><List /></el-icon>
-            </div>
-            <div class="stat-badge-count" :style="{ background: summary.tasks?.total > 0 ? '#F56C6C' : '#409EFF' }">{{ summary.tasks?.total || 0 }}</div>
-            <div v-if="summary.tasks?.overdue > 0" class="stat-badge">
-              <el-tag type="danger" size="small">{{ summary.tasks.overdue }} 逾期</el-tag>
-            </div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-label">我的任务</div>
-          </div>
-        </el-card>
-      </el-col>
+
       <el-col :span="3">
         <el-card class="stat-card" shadow="hover" @click="filterByCategory('review')">
           <div class="stat-icon-wrapper">
@@ -322,58 +307,7 @@
       </el-table>
     </el-card>
 
-    <el-card class="section-card" v-if="taskTodos.length > 0">
-      <template #header>
-        <div class="card-header">
-          <span>我的任务</span>
-          <el-tag>{{ taskTodos.length }}</el-tag>
-        </div>
-      </template>
 
-      <el-table :data="taskTodos" v-loading="loading" stripe :row-class-name="getTaskRowClassName">
-        <el-table-column prop="title" label="任务标题" min-width="200">
-          <template #default="{ row }">
-            <div class="todo-title">
-              <el-icon v-if="row.is_overdue" color="#F56C6C"><WarningFilled /></el-icon>
-              <el-button type="primary" link @click="$router.push(`/tasks/${row.id}`)">
-                {{ row.title }}
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="getTaskStatusTagType(row.status)" size="small">
-              {{ getTaskStatusText(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="priority" label="优先级" width="90">
-          <template #default="{ row }">
-            <el-tag :type="getPriorityTagType(row.priority)" size="small">
-              {{ getPriorityText(row.priority) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="progress" label="进度" width="120">
-          <template #default="{ row }">
-            <el-progress :percentage="row.progress || 0" :stroke-width="6" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="due_date" label="截止日期" width="120">
-          <template #default="{ row }">
-            <span :class="{ 'overdue-text': row.is_overdue }">
-              {{ row.due_date ? formatDate(row.due_date) : '-' }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100" fixed="right">
-          <template #default="{ row }">
-            <el-button type="primary" size="small" @click="$router.push(`/tasks/${row.id}`)">查看</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
 
     <el-card class="section-card" v-if="reviewTodos.length > 0">
       <template #header>
@@ -529,14 +463,13 @@ const loading = ref(false)
 const allTodos = ref([])
 const approvalTodos = ref([])
 const bugTodos = ref([])
-const taskTodos = ref([])
+
 const reviewTodos = ref([])
 const contractTodos = ref([])
 const summary = ref({
   total: 0,
   approvals: { total: 0 },
   bugs: { total: 0 },
-  tasks: { total: 0, overdue: 0 },
   reviews: { total: 0 },
   contracts: { total: 0 }
 })
@@ -595,7 +528,6 @@ const fetchSummary = async () => {
       total: 0,
       approvals: { total: 0 },
       bugs: { total: 0 },
-      tasks: { total: 0, overdue: 0 },
       reviews: { total: 0 },
       contracts: { total: 0 }
     }
@@ -637,15 +569,7 @@ const fetchBugTodos = async () => {
   }
 }
 
-const fetchTaskTodos = async () => {
-  try {
-    const response = await apiService.todos.getTasks()
-    taskTodos.value = response?.todos || response || []
-  } catch (error) {
-    console.error('获取我的任务失败:', error)
-    taskTodos.value = []
-  }
-}
+
 
 const fetchReviewTodos = async () => {
   try {
@@ -675,7 +599,6 @@ const refreshAll = async () => {
       fetchAllTodos(),
       fetchApprovalTodos(),
       fetchBugTodos(),
-      fetchTaskTodos(),
       fetchReviewTodos(),
       fetchContractTodos()
     ])
@@ -706,10 +629,6 @@ const handleTodoAction = (row) => {
     if (row.link) {
       router.push(row.link)
     }
-  } else if (row.category === 'task') {
-    if (row.link) {
-      router.push(row.link)
-    }
   } else if (row.category === 'review') {
     viewDetail(row)
   }
@@ -733,9 +652,7 @@ const viewDetail = (row) => {
         router.push(row.link)
       }
       break
-    case 'my_task':
-      router.push(`/tasks/${row.id}`)
-      break
+
     case 'requirement':
       router.push(`/requirements/${row.id}`)
       break
@@ -835,8 +752,7 @@ const getActionText = (row) => {
       return '审批'
     case 'bug':
       return row.type === 'to_resolve' ? '处理' : '验证'
-    case 'task':
-      return '查看'
+
     case 'review':
       return '评审'
     default:
@@ -850,10 +766,7 @@ const getRowClassName = ({ row }) => {
   return ''
 }
 
-const getTaskRowClassName = ({ row }) => {
-  if (row.is_overdue) return 'overdue-row'
-  return ''
-}
+
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
@@ -977,27 +890,7 @@ const getBugStatusText = (status) => {
   return map[status] || status || '未知'
 }
 
-const getTaskStatusTagType = (status) => {
-  const map = {
-    todo: 'info',
-    in_progress: 'primary',
-    review: 'warning',
-    done: 'success',
-    blocked: 'danger'
-  }
-  return map[status] || 'info'
-}
 
-const getTaskStatusText = (status) => {
-  const map = {
-    todo: '待开始',
-    in_progress: '进行中',
-    review: '待审核',
-    done: '已完成',
-    blocked: '已阻塞'
-  }
-  return map[status] || status || '未知'
-}
 
 const getFieldLabel = (field) => {
   const labels = {
@@ -1059,7 +952,6 @@ onMounted(() => {
   fetchAllTodos()
   fetchApprovalTodos()
   fetchBugTodos()
-  fetchTaskTodos()
   fetchReviewTodos()
   fetchContractTodos()
 })

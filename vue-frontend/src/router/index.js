@@ -12,8 +12,6 @@ const ProjectForm = () => import('@/views/ProjectForm.vue')
 const UserList = () => import('@/views/UserList.vue')
 const UserDetail = () => import('@/views/UserDetail.vue')
 const UserProfile = () => import('@/views/UserProfile.vue')
-const TaskList = () => import('@/views/TaskList.vue')
-const TaskDetail = () => import('@/views/TaskDetail.vue')
 const Login = () => import('@/views/Login.vue')
 const NotificationList = () => import('@/views/NotificationList.vue')
 const AttendanceList = () => import('@/views/AttendanceList.vue')
@@ -80,8 +78,19 @@ const WorkLogList = () => import('@/views/WorkLogList.vue')
 // 项目日志组件
 const ProjectLogList = () => import('@/views/ProjectLogList.vue')
 
+// 风险问题管理组件
+const RiskList = () => import('@/views/RiskList.vue')
+
 // 个人待办事项组件
 const MyTodos = () => import('@/views/MyTodos.vue')
+
+// 个人工作计划组件
+const PlanLayout = () => import('@/views/PersonalPlan/PlanLayout.vue')
+const DashboardView = () => import('@/views/PersonalPlan/DashboardView.vue')
+const PlansView = () => import('@/views/PersonalPlan/PlansView.vue')
+const GanttView = () => import('@/views/PersonalPlan/GanttView.vue')
+const ReviewView = () => import('@/views/PersonalPlan/ReviewView.vue')
+const SettingsView = () => import('@/views/PersonalPlan/SettingsView.vue')
 
 const MyDepartment = () => import('@/views/MyDepartment.vue')
 
@@ -121,12 +130,51 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/personal-plan',
+    name: 'PersonalPlan',
+    component: PlanLayout,
+    meta: { requiresAuth: true },
+    redirect: '/personal-plan/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: 'PlanDashboard',
+        component: DashboardView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'plans',
+        name: 'PlanList',
+        component: PlansView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'gantt',
+        name: 'PlanGantt',
+        component: GanttView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'review',
+        name: 'PlanReview',
+        component: ReviewView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'settings',
+        name: 'PlanSettings',
+        component: SettingsView,
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+  {
     path: '/my-department',
     name: 'MyDepartment',
     component: MyDepartment,
     meta: { requiresAuth: true }
   },
-  // Bug管理模块 - 嵌套路由
+  // Bug 管理模块 - 嵌套路由
   {
     path: '/bugs',
     name: 'BugManagement',
@@ -311,6 +359,12 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
+        path: ':projectId/risks',
+        name: 'ProjectRiskList',
+        component: RiskList,
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'custom-report',
         name: 'ProjectCustomReport',
         component: CustomReport,
@@ -410,27 +464,7 @@ const routes = [
     component: NotificationList,
     meta: { requiresAuth: true }
   },
-  // 任务管理模块 - 嵌套路由
-  {
-    path: '/tasks',
-    name: 'TaskManagement',
-    redirect: '/tasks/list',
-    meta: { requiresAuth: true },
-    children: [
-      {
-        path: 'list',
-        name: 'TaskList',
-        component: TaskList,
-        meta: { requiresAuth: true }
-      },
-      {
-        path: ':id',
-        name: 'TaskDetail',
-        component: TaskDetail,
-        meta: { requiresAuth: true }
-      }
-    ]
-  },
+
   // 物料管理模块 - 嵌套路由
   {
     path: '/materials',
@@ -640,10 +674,10 @@ function getPermissionErrorMessage(path) {
 }
 
 function handleRoute(to, next, userStore) {
-  // 检查是否有token存在（即使currentUser还没加载完成）
+  // 检查是否有 token 存在（即使 currentUser 还没加载完成）
   const hasToken = !!localStorage.getItem('token')
   
-  // 如果有token但用户信息还没加载完成，需要等待
+  // 如果有 token 但用户信息还没加载完成，需要等待
   if (hasToken && !userStore.currentUser && userStore.userLoading) {
     const waitForUserLoad = () => {
       if (!userStore.userLoading) {
@@ -662,7 +696,7 @@ function handleRoute(to, next, userStore) {
 function continueHandleRoute(to, next, userStore) {
   // 对于登录页面，我们总是允许访问，不做自动重定向
   // 这确保即使用户已登录，也能看到登录页面（比如想切换账号）
-  // 只有当用户明确点击登录按钮后才会跳转到dashboard
+  // 只有当用户明确点击登录按钮后才会跳转到 dashboard
   if (to.path === '/login') {
     // 如果用户已经认证，可以显示登录页面但允许用户手动导航到其他页面
     if (userStore.isAuthenticated) {
@@ -693,7 +727,7 @@ function continueHandleRoute(to, next, userStore) {
     return
   }
 
-  // 首先检查路由的meta.allowedRoles配置
+  // 首先检查路由的 meta.allowedRoles 配置
   if (to.meta?.allowedRoles) {
     if (!to.meta.allowedRoles.includes(userRole)) {
       next('/dashboard')

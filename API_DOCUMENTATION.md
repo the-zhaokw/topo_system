@@ -651,6 +651,235 @@ Authorization: Bearer <your_jwt_token>
 }
 ```
 
+## 个人计划API
+
+### 获取任务列表
+
+**Endpoint**: `GET /personal-plan/tasks`
+
+**查询参数**:
+- `status` (可选): 任务状态筛选 (inbox/active/done)
+- `quadrant` (可选): 四象限编号 (1/2/3/4)
+- `tag` (可选): 标签筛选
+- `date_from` (可选): 开始日期
+- `date_to` (可选): 结束日期
+- `is_habit` (可选): 是否为习惯
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": {
+        "tasks": [
+            {
+                "id": 1,
+                "title": "完成任务标题",
+                "status": "todo",
+                "priority": "high",
+                "quadrant": 2,
+                "scheduled_date": "2026-04-10",
+                "scheduled_time": "14:00",
+                "estimated_minutes": 30,
+                "tags": "work,important",
+                "is_habit": false
+            }
+        ],
+        "total": 10
+    }
+}
+```
+
+### 创建任务
+
+**Endpoint**: `POST /personal-plan/tasks`
+
+**请求参数**:
+```json
+{
+    "content": "任务内容",
+    "description": "任务描述",
+    "priority": "high",
+    "scheduled_date": "2026-04-10",
+    "scheduled_time": "14:00",
+    "estimated_minutes": 30,
+    "tags": "work",
+    "is_habit": false
+}
+```
+
+### 获取四象限任务
+
+**Endpoint**: `GET /personal-plan/tasks/quadrant`
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": {
+        "1": [{"id": 1, "title": "紧急且重要", "priority": "urgent"}],
+        "2": [{"id": 2, "title": "重要不紧急", "priority": "high"}],
+        "3": [{"id": 3, "title": "紧急不重要", "priority": "medium"}],
+        "4": [{"id": 4, "title": "不紧急不重要", "priority": "low"}]
+    }
+}
+```
+
+### 获取日历事件
+
+**Endpoint**: `GET /personal-plan/calendar/events`
+
+**查询参数**:
+- `date_from` (可选): 开始日期
+- `date_to` (可选): 结束日期
+
+### 开始专注
+
+**Endpoint**: `POST /personal-plan/focus/start`
+
+**请求参数**:
+```json
+{
+    "task_id": 1,
+    "focus_type": "pomodoro",
+    "duration": 25
+}
+```
+
+### 获取专注统计
+
+**Endpoint**: `GET /personal-plan/focus/stats`
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": {
+        "total_minutes": 350,
+        "completed_sessions": 14,
+        "pomodoro_count": 10,
+        "total_sessions": 15
+    }
+}
+```
+
+### 获取习惯列表
+
+**Endpoint**: `GET /personal-plan/habits`
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "task": {"id": 1, "title": "每日阅读", "is_habit": true},
+            "streak": 7,
+            "total_completions": 30
+        }
+    ]
+}
+```
+
+## 风险管理API
+
+### 获取风险列表
+
+**Endpoint**: `GET /risks`
+
+**查询参数**:
+- `project_id` (可选): 项目ID筛选
+- `risk_type` (可选): 风险类型 (risk/issue)
+- `status` (可选): 状态筛选
+- `level` (可选): 等级筛选
+- `priority` (可选): 优先级筛选
+- `page` (可选): 页码，默认1
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": {
+        "risks": [
+            {
+                "id": 1,
+                "title": "技术风险",
+                "risk_type": "risk",
+                "status": "identified",
+                "level": "high",
+                "priority": "high",
+                "probability": 0.7,
+                "impact": 0.8,
+                "exposure": 0.56
+            }
+        ],
+        "total": 10,
+        "page": 1,
+        "pages": 1
+    }
+}
+```
+
+### 创建风险/问题
+
+**Endpoint**: `POST /risks`
+
+**请求参数**:
+```json
+{
+    "project_id": 1,
+    "title": "风险标题",
+    "description": "风险描述",
+    "risk_type": "risk",
+    "status": "identified",
+    "priority": "high",
+    "level": "high",
+    "category": "technical",
+    "probability": 0.7,
+    "impact": 0.8,
+    "mitigation_strategy": "缓解策略",
+    "contingency_plan": "应急预案"
+}
+```
+
+### 获取风险矩阵
+
+**Endpoint**: `GET /risks/matrix`
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": {
+        "critical_high": [],
+        "critical_medium": [],
+        "high_high": [{"id": 1, "title": "高风险项", "exposure": 0.9}],
+        "high_medium": [],
+        "medium_high": [],
+        "medium_medium": [],
+        "low_low": []
+    }
+}
+```
+
+### 获取风险统计
+
+**Endpoint**: `GET /risks/statistics`
+
+**响应示例**:
+```json
+{
+    "success": true,
+    "data": {
+        "total": 15,
+        "open": 10,
+        "resolved": 5,
+        "high_risk": 3,
+        "by_status": {"identified": 5, "analyzing": 3, "mitigating": 2},
+        "by_level": {"high": 3, "medium": 8, "low": 4}
+    }
+}
+```
+
 ## 错误代码说明
 
 | 错误代码 | 描述 | 解决方案 |
@@ -746,6 +975,6 @@ login().then(token => {
 
 ---
 
-**API版本**: v1.0  
-**最后更新**: 2025年11月  
+**API版本**: v1.4.0
+**最后更新**: 2026-04
 **基础URL**: http://localhost:5000/api/v1

@@ -139,16 +139,7 @@ def notify_bug_status_changed(bug_id, user_ids, old_status, new_status, changer_
             'created_at': datetime.now().isoformat()
         })
 
-def notify_task_assigned(task_id, assignee_id, assigner_name):
-    """任务分配通知"""
-    send_notification_to_user(assignee_id, {
-        'type': 'task_assigned',
-        'title': '任务分配通知',
-        'message': f'{assigner_name} 将任务 #{task_id} 分配给您',
-        'task_id': task_id,
-        'link': f'/tasks/{task_id}',
-        'created_at': datetime.now().isoformat()
-    })
+
 
 def notify_project_update(project_id, user_ids, message):
     """项目更新通知"""

@@ -10,15 +10,15 @@ import json
 activities_bp = Blueprint('activities', __name__, url_prefix='/activities')
 
 def get_models():
-    from enhanced_app import User, Activity, Bug, Project, Task, app
-    return User, Activity, Bug, Project, Task, app
+    from enhanced_app import User, Activity, Bug, Project, app
+    return User, Activity, Bug, Project, app
 
 # 获取活动记录列表
 @activities_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_activities():
     """获取活动记录列表"""
-    User, Activity, Bug, Project, Task, app = get_models()
+    User, Activity, Bug, Project, app = get_models()
     
     with app.app_context():
         page = request.args.get('page', 1, type=int)
@@ -77,8 +77,7 @@ def get_activities():
                 project = Project.query.get(activity.target_id)
                 activity_dict['resource_name'] = project.name if project else '未知'
             elif activity.target_type == 'task':
-                task = Task.query.get(activity.target_id)
-                activity_dict['resource_name'] = task.title if task else '未知'
+                activity_dict['resource_name'] = '任务已删除'
             
             activities.append(activity_dict)
         
@@ -95,7 +94,7 @@ def get_activities():
 @jwt_required()
 def get_recent_activities():
     """获取最近的活動记录"""
-    User, Activity, Bug, Project, Task, app = get_models()
+    User, Activity, Bug, Project, app = get_models()
     
     with app.app_context():
         recent_date = datetime.utcnow() - timedelta(days=7)
@@ -128,7 +127,7 @@ def get_recent_activities():
 @jwt_required()
 def get_activities_by_resource(resource_type, resource_id):
     """获取特定资源的活动记录"""
-    User, Activity, Bug, Project, Task, app = get_models()
+    User, Activity, Bug, Project, app = get_models()
     
     with app.app_context():
         activities = Activity.query.filter(
@@ -162,7 +161,7 @@ def get_activities_by_resource(resource_type, resource_id):
 @jwt_required()
 def get_activity(activity_id):
     """获取单个活动记录详情"""
-    User, Activity, Bug, Project, Task, app = get_models()
+    User, Activity, Bug, Project, app = get_models()
     
     with app.app_context():
         activity = Activity.query.get(activity_id)
@@ -192,7 +191,7 @@ def get_activity(activity_id):
 @jwt_required()
 def create_activity():
     """创建活动记录"""
-    User, Activity, Bug, Project, Task, app = get_models()
+    User, Activity, Bug, Project, app = get_models()
     db = app.extensions.get('sqlalchemy')
     
     with app.app_context():
@@ -224,7 +223,7 @@ def create_activity():
 @jwt_required()
 def delete_activity(activity_id):
     """删除活动记录（仅管理员）"""
-    User, Activity, Bug, Project, Task, app = get_models()
+    User, Activity, Bug, Project, app = get_models()
     db = app.extensions.get('sqlalchemy')
     
     with app.app_context():

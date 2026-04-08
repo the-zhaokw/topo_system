@@ -509,6 +509,8 @@ services:
 | todos.py | 待办事项API |
 | users.py | 用户管理API |
 | work_logs.py | 工作日志API |
+| personal_plan.py | 个人计划API |
+| risks.py | 风险管理API |
 
 ### 前端页面
 | 页面 | 说明 |
@@ -571,6 +573,8 @@ services:
 | ActivityList.vue | 活动记录 |
 | SystemSettings.vue | 系统设置 |
 | CustomReport.vue | 自定义报表 |
+| PersonalPlan.vue | 个人工作计划 |
+| RiskList.vue | 风险与问题管理 |
 | Login.vue | 登录 |
 
 ## 支持联系方式

@@ -316,21 +316,3 @@ def send_bug_notification_email():
 
     result = email_service.send_bug_assigned_email(to_address, bug_title, assignee_name)
     return jsonify(result)
-
-@notifications_bp.route('/email/task-notification', methods=['POST'])
-@jwt_required()
-def send_task_notification_email():
-    """发送任务通知邮件"""
-    from enhanced_app import email_service
-
-    data = request.get_json()
-    to_address = data.get('to_address')
-    task_title = data.get('task_title', '任务通知')
-    action = data.get('action', '更新')
-    operator_name = data.get('operator_name', 'Unknown')
-
-    if not to_address:
-        return jsonify({'error': '请提供收件人邮箱地址'}), 400
-
-    result = email_service.send_task_notification_email(to_address, task_title, action, operator_name)
-    return jsonify(result)

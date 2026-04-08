@@ -290,9 +290,9 @@ def get_api_stats():
             'top_endpoints': [
                 {'endpoint': '/api/projects', 'count': 3200},
                 {'endpoint': '/api/bugs', 'count': 2800},
-                {'endpoint': '/api/tasks', 'count': 2100},
-                {'endpoint': '/api/auth/login', 'count': 1500},
-                {'endpoint': '/api/users', 'count': 1200}
+                {'endpoint': '/api/auth/login', 'count': 2100},
+                {'endpoint': '/api/users', 'count': 1500},
+                {'endpoint': '/api/materials', 'count': 1200}
             ],
             'response_time_distribution': {
                 '0-100ms': 8500,

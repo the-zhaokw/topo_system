@@ -62,10 +62,6 @@ def get_db_and_models():
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 # 延迟导入API蓝图以避免模块导入时的数据库查询
-def get_tasks_bp():
-    from api.tasks import tasks_bp
-    return tasks_bp
-
 def get_avatar_bp():
     from api.avatar import avatar_bp
     return avatar_bp
@@ -126,7 +122,6 @@ def get_roles():
 
 # 注册API路由 - 只注册必要的蓝图，避免路由冲突
 # 暂时禁用其他蓝图，因为它们使用了旧的JWT装饰器模式，会导致端点冲突
-# api_bp.register_blueprint(get_tasks_bp(), url_prefix='/tasks')
 api_bp.register_blueprint(get_avatar_bp(), url_prefix='/avatar')
 
 # 注册头像静态文件路由
@@ -219,9 +214,6 @@ api_bp.register_blueprint(get_delivery_tracking_bp())
 api_bp.register_blueprint(get_contracts_enhanced_bp())
 api_bp.register_blueprint(get_contracts_statistics_bp())
 
-# 注册 tasks 蓝图（tasks_bp 已有 /tasks 前缀）
-api_bp.register_blueprint(get_tasks_bp())
-
 # 注册需求管理蓝图
 api_bp.register_blueprint(get_requirements_bp())
 
@@ -293,3 +285,13 @@ def get_monitoring_bp():
     from api.monitoring import monitoring_bp
     return monitoring_bp
 api_bp.register_blueprint(get_monitoring_bp())
+
+def get_risks_bp():
+    from api.risks import risks_bp
+    return risks_bp
+api_bp.register_blueprint(get_risks_bp())
+
+def get_personal_plan_bp():
+    from api.personal_plan import personal_plan_bp
+    return personal_plan_bp
+api_bp.register_blueprint(get_personal_plan_bp())

@@ -202,7 +202,9 @@ export const apiService = {
     updateUserPermissions: (userId, permissionsData) => api.put(`/users/${userId}/permissions`, permissionsData),
     batchUpdatePosition: (userIds, position) => api.post('/users/batch-update-position', { user_ids: userIds, position }),
     getPositions: () => api.get('/users/positions'),
-    getMyDepartment: (params = {}) => api.get('/users/my-department', { params })
+    getMyDepartment: (params = {}) => api.get('/users/my-department', { params }),
+    updateStatus: (userId, statusData) => api.put(`/users/${userId}/status`, statusData),
+    updateActivity: (userId) => api.post(`/users/${userId}/activity`)
   },
 
   // 通用模块
@@ -217,7 +219,8 @@ export const apiService = {
   // 统计分析
   statistics: {
     getDashboardData: () => api.get('/statistics/dashboard'),
-    getTaskStatistics: (params = {}) => api.get('/statistics/tasks', { params }),
+    getRequirementStatistics: (params = {}) => api.get('/statistics/requirements', { params }),
+
     getBugStatistics: (params = {}) => api.get('/statistics/bugs', { params }),
     getUserStatistics: (params = {}) => api.get('/statistics/users', { params }),
     getProjectStatistics: (params = {}) => api.get('/statistics/projects', { params }),
@@ -244,6 +247,29 @@ export const apiService = {
     delete: (id) => api.delete(`/work-logs/${id}`),
     getMyLogs: (params = {}) => api.get('/work-logs/my', { params }),
     getStats: (params = {}) => api.get('/work-logs/stats', { params })
+  },
+
+  // 风险问题管理
+  risks: {
+    getList: (params = {}) => {
+      const { project_id, ...rest } = params
+      if (project_id) {
+        return api.get(`/projects/${project_id}/risks`, { params: rest })
+      }
+      return api.get('/risks', { params })
+    },
+    getById: (id) => api.get(`/risks/${id}`),
+    create: (riskData) => {
+      const { project_id, ...rest } = riskData
+      if (project_id) {
+        return api.post(`/projects/${project_id}/risks`, rest)
+      }
+      return api.post('/risks', rest)
+    },
+    update: (id, riskData) => api.put(`/risks/${id}`, riskData),
+    delete: (id) => api.delete(`/risks/${id}`),
+    getStatistics: (params = {}) => api.get('/risks/statistics', { params }),
+    getMatrix: (params = {}) => api.get('/risks/matrix', { params })
   },
 
   // 项目日志
@@ -350,30 +376,63 @@ export const apiService = {
     getAll: (params = {}) => api.get('/todos/all', { params }),
     getApprovals: (params = {}) => api.get('/todos/approvals', { params }),
     getBugs: (params = {}) => api.get('/todos/bugs', { params }),
-    getTasks: (params = {}) => api.get('/todos/tasks', { params }),
+
     getReviews: (params = {}) => api.get('/todos/reviews', { params }),
     getContracts: (params = {}) => api.get('/todos/contracts', { params }),
     getMyTodos: () => api.get('/todos/all'),
     getLeaveApprovals: (params = {}) => api.get('/attendance/leave-applications', { params }),
     getOvertimeApprovals: (params = {}) => api.get('/attendance/overtime-applications', { params }),
     getMyBugs: (params = {}) => api.get('/bugs', { params }),
-    getMyTasks: (params = {}) => api.get('/tasks', { params }),
+
     getMyReviews: () => api.get('/todos/reviews')
   },
 
-  // 任务管理
-  tasks: {
-    getList: (params = {}) => api.get('/tasks', { params }),
-    getById: (id) => api.get(`/tasks/${id}`),
-    create: (taskData) => api.post('/tasks', taskData),
-    update: (id, taskData) => api.put(`/tasks/${id}`, taskData),
-    delete: (id) => api.delete(`/tasks/${id}`),
-    batchDelete: (ids) => api.post('/tasks/batch-delete', { ids }),
-    batchUpdateStatus: (ids, status) => api.post('/tasks/batch-update-status', { ids, status }),
-    updateStatus: (id, status) => api.put(`/tasks/${id}/status`, { status }),
-    assignTask: (id, assigneeId) => api.put(`/tasks/${id}/assign`, { assignee_id: assigneeId })
+  // 个人工作计划
+  personalPlan: {
+    getTasks: (params = {}) => api.get('/personal-plan/tasks', { params }),
+    getTask: (id) => api.get(`/personal-plan/tasks/${id}`),
+    createTask: (taskData) => api.post('/personal-plan/tasks', taskData),
+    updateTask: (id, taskData) => api.put(`/personal-plan/tasks/${id}`, taskData),
+    deleteTask: (id) => api.delete(`/personal-plan/tasks/${id}`),
+    toggleComplete: (taskId) => api.post(`/personal-plan/tasks/${taskId}/toggle-complete`),
+    toggleTaskComplete: (taskId) => api.post(`/personal-plan/tasks/${taskId}/toggle-complete`),
+    updateProgress: (taskId, progress) => api.put(`/personal-plan/tasks/${taskId}/progress`, { progress }),
+    batchUpdate: (taskIds, action, updates = {}) => api.put('/personal-plan/tasks/batch', { task_ids: taskIds, action, updates }),
+    createSubtask: (taskId, subtaskData) => api.post(`/personal-plan/tasks/${taskId}/subtasks`, subtaskData),
+    getSubtasks: (taskId) => api.get(`/personal-plan/tasks/${taskId}/subtasks`),
+    getInboxTasks: () => api.get('/personal-plan/tasks/inbox'),
+    processInbox: (data) => api.post('/personal-plan/tasks/inbox/process', data),
+    getQuadrantTasks: () => api.get('/personal-plan/tasks/quadrant'),
+    startTask: (taskId) => api.post('/personal-plan/tasks/start', { task_id: taskId }),
+    completeTask: (taskId, actualMinutes) => api.post('/personal-plan/tasks/complete', { task_id: taskId, actual_minutes: actualMinutes }),
+    getDashboardData: () => api.get('/personal-plan/dashboard'),
+    getCalendarEvents: (params = {}) => api.get('/personal-plan/calendar/events', { params }),
+    getTimeBlocks: (date) => api.get('/personal-plan/time-blocks', { params: { date } }),
+    createTimeBlock: (blockData) => api.post('/personal-plan/time-blocks', blockData),
+    startFocus: (data) => api.post('/personal-plan/focus/start', data),
+    endFocus: (data) => api.post('/personal-plan/focus/end', data),
+    getFocusStats: (days = 7) => api.get('/personal-plan/focus/stats', { params: { days } }),
+    getHabits: () => api.get('/personal-plan/habits'),
+    checkInHabit: (taskId, duration) => api.post('/personal-plan/habits/check-in', { task_id: taskId, duration }),
+    getDailyStats: (date) => api.get('/personal-plan/stats/daily', { params: { date } }),
+    getWeeklyStats: () => api.get('/personal-plan/stats/weekly'),
+
+    // 模板管理
+    getTemplates: () => api.get('/personal-plan/templates'),
+    createTemplate: (templateData) => api.post('/personal-plan/templates', templateData),
+    updateTemplate: (id, templateData) => api.put(`/personal-plan/templates/${id}`, templateData),
+    deleteTemplate: (id) => api.delete(`/personal-plan/templates/${id}`),
+    applyTemplate: (id, date) => api.post(`/personal-plan/templates/${id}/apply`, { date }),
+
+    // 复盘报告
+    getReviews: () => api.get('/personal-plan/reviews'),
+    generateReview: (reviewData) => api.post('/personal-plan/reviews/generate', reviewData),
+    updateReview: (id, reviewData) => api.put(`/personal-plan/reviews/${id}`, reviewData),
+
+    getSettings: () => api.get('/personal-plan/settings'),
+    updateSettings: (settingsData) => api.put('/personal-plan/settings', settingsData)
   },
-  
+
   // 测试管理相关
   tests: {
     getSuites: (projectId, params = {}) => api.get(`/test-management/suites/${projectId}`, { params }),
@@ -432,16 +491,6 @@ export const apiService = {
       responseType: 'blob'
     })
   },
-  
-  // 风险与问题相关
-  risks: {
-    getList: (projectId, params = {}) => api.get(`/projects/${projectId}/risks`, { params }),
-    getById: (id) => api.get(`/risks/${id}`),
-    create: (projectId, riskData) => api.post(`/projects/${projectId}/risks`, riskData),
-    update: (id, riskData) => api.put(`/risks/${id}`, riskData),
-    delete: (id) => api.delete(`/risks/${id}`)
-  },
-  
   issues: {
     getList: (projectId, params = {}) => api.get(`/projects/${projectId}/issues`, { params }),
     getById: (id) => api.get(`/issues/${id}`),

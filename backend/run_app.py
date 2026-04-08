@@ -54,6 +54,7 @@ def ensure_columns():
         'work_language': 'VARCHAR(50)',
         'avatar': 'VARCHAR(255)',
         'last_login': 'DATETIME',
+        'last_activity': 'DATETIME',
         'custom_permissions': 'TEXT DEFAULT \'{}\'',
         'is_super_admin': 'INTEGER DEFAULT 0'
     }

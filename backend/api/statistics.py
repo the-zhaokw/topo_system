@@ -29,8 +29,8 @@ def get_app():
 
 def get_models():
     """延迟获取数据库模型"""
-    from enhanced_app import Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus
-    return Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus
+    from enhanced_app import Bug, Project, ProjectMember, User, BugStatus, RequirementDocument, RequirementItem
+    return Bug, Project, ProjectMember, User, BugStatus, RequirementDocument, RequirementItem
 
 statistics_bp = Blueprint('statistics', __name__, url_prefix='/statistics')
 
@@ -40,14 +40,12 @@ statistics_bp = Blueprint('statistics', __name__, url_prefix='/statistics')
 @log_business_operation
 @jwt_required()
 def get_dashboard_stats():
-    # 延迟导入数据库模型
     db = get_db()
-    Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
-    
+    Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
+
     current_user_id = get_jwt_identity()
     current_user = User.query.get(int(current_user_id))
-    
-    # 记录请求日志
+
     log_manager = get_log_manager()
     try:
         log_manager.log_request(
@@ -60,342 +58,185 @@ def get_dashboard_stats():
         )
     except Exception as e:
         log_manager.log_error(f"记录请求日志失败: {str(e)}")
-    
-    # 默认时间范围为最近30天
+
     days = request.args.get('days', 30, type=int)
     start_date = datetime.utcnow() - timedelta(days=days)
-    
-    # 管理员可以查看所有数据，其他用户只能查看自己参与项目的数据
+
     if current_user.role == 'admin':
-        # 获取所有项目ID
         project_ids = [p.id for p in Project.query.all()]
     else:
-        # 获取用户参与的项目ID
         project_ids = [m.project_id for m in ProjectMember.query.filter_by(user_id=current_user_id).all()]
-    
-    # 任务统计
-    # 待我处理的任务
-    my_tasks = Task.query.filter(
-        Task.assigned_to == current_user_id,
-        Task.status != TaskStatus.DONE.value,
-        Task.status != TaskStatus.BLOCKED.value
-    ).count()
-    
-    # 逾期任务
-    overdue_tasks = Task.query.filter(
-        Task.assigned_to == current_user_id,
-        Task.status != TaskStatus.DONE.value,
-        Task.status != TaskStatus.BLOCKED.value,
-        Task.due_date < datetime.utcnow()
-    ).count()
-    
-    # 我的任务进度
-    my_tasks_total = Task.query.filter(
-        Task.assigned_to == current_user_id,
-        Task.created_at >= start_date
-    ).count()
-    
-    my_tasks_completed = Task.query.filter(
-        Task.assigned_to == current_user_id,
-        Task.status == TaskStatus.DONE.value,
-        Task.created_at >= start_date
-    ).count()
-    
-    my_completion_rate = round((my_tasks_completed / my_tasks_total * 100) if my_tasks_total > 0 else 0, 1)
-    
-    # 缺陷统计
-    # 待我修复的缺陷
+
     my_bugs = Bug.query.filter(
         Bug.assigned_to == current_user_id,
         Bug.status.in_([BugStatus.NEW.value, BugStatus.IN_PROGRESS.value])
     ).count()
-    
-    # 我创建的缺陷
+
     bugs_created_by_me = Bug.query.filter(
         Bug.reported_by == current_user_id,
         Bug.created_at >= start_date
     ).count()
-    
-    # 最近30天新增缺陷和已修复缺陷
+
     new_bugs = Bug.query.filter(
         Bug.created_at >= start_date,
         Bug.project_id.in_(project_ids)
     ).count()
-    
+
     fixed_bugs = Bug.query.filter(
         Bug.status.in_([BugStatus.RESOLVED.value, BugStatus.VERIFIED.value, BugStatus.CLOSED.value]),
         Bug.updated_at >= start_date,
         Bug.project_id.in_(project_ids)
     ).count()
-    
-    # 项目统计
+
     active_projects = Project.query.filter(
         Project.status.in_(['active', 'in_progress']),
         Project.id.in_(project_ids)
     ).count()
-    
-    # 项目进度概览（针对用户参与的项目）
-    project_progress = []
-    user_projects = Project.query.filter(Project.id.in_(project_ids)).all()
-    
-    for project in user_projects:
-        # 计算项目整体进度
-        total_tasks = Task.query.filter_by(project_id=project.id).count()
-        completed_tasks = Task.query.filter(
-            Task.project_id == project.id,
-            Task.status == TaskStatus.DONE.value
-        ).count()
-        
-        progress = round((completed_tasks / total_tasks * 100) if total_tasks > 0 else 0, 1)
-        
-        project_progress.append({
-            'id': project.id,
-            'name': project.name,
-            'progress': progress,
-            'status': project.status
-        })
-    
-    # 活动日志统计（最近7天）
+
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
-    
-    # 任务活动统计
-    task_activity = defaultdict(int)
-    tasks = Task.query.filter(
-        Task.updated_at >= seven_days_ago,
-        Task.project_id.in_(project_ids)
-    ).all()
-    
-    for task in tasks:
-        date = task.updated_at.strftime('%Y-%m-%d')
-        task_activity[date] += 1
-    
-    # 缺陷活动统计
+
     bug_activity = defaultdict(int)
     bugs = Bug.query.filter(
         Bug.updated_at >= seven_days_ago,
         Bug.project_id.in_(project_ids)
     ).all()
-    
+
     for bug in bugs:
         date = bug.updated_at.strftime('%Y-%m-%d')
         bug_activity[date] += 1
-    
-    # 准备日期序列
+
     dates = [(seven_days_ago + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(8)]
-    
-    task_activity_data = [task_activity.get(date, 0) for date in dates]
+
     bug_activity_data = [bug_activity.get(date, 0) for date in dates]
-    
-    # 获取缺陷严重程度分布
+
     severity_distribution = defaultdict(int)
     all_bugs = Bug.query.filter(Bug.project_id.in_(project_ids)).all()
     for bug in all_bugs:
         severity_distribution[bug.severity.value] += 1
-    
-    # 获取缺陷优先级分布
+
     priority_distribution = defaultdict(int)
     for bug in all_bugs:
         priority_distribution[bug.priority.value] += 1
-    
-    # 记录业务操作日志
+
     try:
         log_manager.log_business(
             "获取仪表盘统计",
             current_user_id=current_user_id,
             details={
-                'my_tasks': my_tasks,
-                'overdue_tasks': overdue_tasks,
                 'my_bugs': my_bugs,
                 'new_bugs': new_bugs,
                 'fixed_bugs': fixed_bugs,
                 'active_projects': active_projects,
-                'my_completion_rate': my_completion_rate,
                 'days': days
             }
         )
     except Exception as e:
         log_manager.log_error(f"记录业务操作日志失败: {str(e)}")
-    
-    # 返回仪表盘数据
+
     return jsonify({
         'summary': {
-            'my_tasks': my_tasks,
-            'overdue_tasks': overdue_tasks,
+            'my_tasks': 0,
+            'overdue_tasks': 0,
             'my_bugs': my_bugs,
             'bugs_created_by_me': bugs_created_by_me,
             'new_bugs': new_bugs,
             'fixed_bugs': fixed_bugs,
             'active_projects': active_projects,
-            'my_completion_rate': my_completion_rate
+            'my_completion_rate': 0
         },
-        'project_progress': project_progress,
-            'activity_chart': {
-                'dates': dates,
-                'task_activity': task_activity_data,
-                'bug_activity': bug_activity_data
-            },
-            'severity_distribution': {
-                'low': severity_distribution.get('low', 0),
-                'medium': severity_distribution.get('medium', 0),
-                'high': severity_distribution.get('high', 0),
-                'critical': severity_distribution.get('critical', 0)
-            },
-            'priority_distribution': {
-                'low': priority_distribution.get('low', 0),
-                'medium': priority_distribution.get('medium', 0),
-                'high': priority_distribution.get('high', 0)
-            }
-        })
+        'project_progress': [],
+        'activity_chart': {
+            'dates': dates,
+            'task_activity': [0] * 8,
+            'bug_activity': bug_activity_data
+        },
+        'severity_distribution': {
+            'low': severity_distribution.get('low', 0),
+            'medium': severity_distribution.get('medium', 0),
+            'high': severity_distribution.get('high', 0),
+            'critical': severity_distribution.get('critical', 0)
+        },
+        'priority_distribution': {
+            'low': priority_distribution.get('low', 0),
+            'medium': priority_distribution.get('medium', 0),
+            'high': priority_distribution.get('high', 0)
+        }
+    })
 
-# 获取任务统计数据
-@statistics_bp.route('/tasks', methods=['GET'])
+# 获取需求统计数据
+@statistics_bp.route('/requirements', methods=['GET'])
 @log_api_call
 @log_business_operation
-def get_task_statistics():
-    # 延迟导入JWT装饰器和数据库模型
+def get_requirements_statistics():
     from flask_jwt_extended import jwt_required as jwt_required_func, get_jwt_identity as get_jwt_identity_func
-    
+
     @jwt_required_func()
     def jwt_wrapped_function():
-        # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus, RequirementDocument, RequirementItem = get_models()
         db = get_db()
         log_manager = get_log_manager()
-        
+
         current_user_id = get_jwt_identity_func()
         current_user = User.query.get(current_user_id)
-        
-        # 记录请求日志
+
         try:
             log_manager.log_request(
-                f"获取任务统计",
+                f"获取需求统计",
                 current_user_id=current_user_id,
-                project_id=request.args.get('project_id'),
-                start_date=request.args.get('start_date'),
-                end_date=request.args.get('end_date'),
-                assignee_id=request.args.get('assignee_id')
+                project_id=request.args.get('project_id')
             )
         except Exception as e:
             log_manager.log_error(f"记录请求日志失败: {str(e)}")
-        
-        # 获取查询参数
+
         project_id = request.args.get('project_id', type=int)
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
-        assignee_id = request.args.get('assignee_id', type=int)
-        
-        # 构建查询
-        query = Task.query
-        
-        # 管理员可以查看所有任务，其他用户只能查看自己参与项目的任务
+
+        query = RequirementDocument.query
+
         if current_user.role != 'admin':
             user_projects = db.session.query(ProjectMember.project_id).filter_by(user_id=current_user_id).subquery()
-            query = query.filter(Task.project_id.in_(user_projects))
-        
-        # 应用过滤条件
+            query = query.filter(RequirementDocument.project_id.in_(user_projects))
+
         if project_id:
             query = query.filter_by(project_id=project_id)
-        
-        if start_date:
-            try:
-                start_dt = datetime.fromisoformat(start_date)
-                query = query.filter(Task.created_at >= start_dt)
-            except ValueError:
-                return jsonify({'error': '开始日期格式不正确'}), 400
-        
-        if end_date:
-            try:
-                end_dt = datetime.fromisoformat(end_date)
-                query = query.filter(Task.created_at <= end_dt)
-            except ValueError:
-                return jsonify({'error': '结束日期格式不正确'}), 400
-        
-        if assignee_id:
-            query = query.filter_by(assigned_to=assignee_id)
-        
-        # 状态分布统计
+
+        documents = query.all()
+
         status_counts = defaultdict(int)
-        tasks = query.all()
-        
-        for task in tasks:
-            status_counts[task.status.value] += 1
-        
-        # 优先级分布统计
         priority_counts = defaultdict(int)
-        for task in tasks:
-            priority_counts[task.priority.value] += 1
-        
-        # 任务完成率统计
-        total_tasks = len(tasks)
-        completed_tasks = sum(1 for t in tasks if t.status == TaskStatus.DONE.value)
-        completion_rate = round((completed_tasks / total_tasks * 100) if total_tasks > 0 else 0, 1)
-        
-        # 任务逾期率统计
-        active_tasks = [t for t in tasks if t.status != TaskStatus.DONE.value and t.status != TaskStatus.BLOCKED.value]
-        overdue_tasks = [t for t in active_tasks if t.due_date and t.due_date < datetime.utcnow()]
-        overdue_rate = round((len(overdue_tasks) / len(active_tasks) * 100) if active_tasks else 0, 1)
-        
-        # 处理人工作量统计（按任务数量）
-        assignee_workload = defaultdict(int)
-        for task in tasks:
-            if task.assigned_to:
-                assignee_workload[task.assigned_to] += 1
-        
-        # 转换assignee_workload为详细信息
-        assignee_workload_detail = []
-        for user_id, task_count in assignee_workload.items():
-            user = User.query.get(user_id)
-            if user:
-                assignee_workload_detail.append({
-                    'user_id': user.id,
-                    'username': user.username,
-                    'full_name': f'{user.first_name} {user.last_name}',
-                    'task_count': task_count
-                })
-        
-        # 按周统计任务创建数量
-        weekly_task_counts = defaultdict(int)
-        for task in tasks:
-            week_start = task.created_at - timedelta(days=task.created_at.weekday())
-            week_key = week_start.strftime('%Y-%W')
-            weekly_task_counts[week_key] += 1
-        
-        # 排序周数据
-        sorted_weeks = sorted(weekly_task_counts.keys())
-        weekly_data = [{
-            'week': week,
-            'count': weekly_task_counts[week]
-        } for week in sorted_weeks]
-        
-        # 记录业务操作日志
+        total_items = 0
+        completed_items = 0
+
+        for doc in documents:
+            status_counts[doc.status] = status_counts.get(doc.status, 0) + 1
+            for item in doc.items:
+                total_items += 1
+                priority_counts[item.priority] = priority_counts.get(item.priority, 0) + 1
+                if item.status in ['completed', 'verified']:
+                    completed_items += 1
+
+        total_requirements = total_items
+        completion_rate = round((completed_items / total_requirements * 100) if total_requirements > 0 else 0, 1)
+
         try:
             log_manager.log_business(
-                f"获取任务统计",
+                f"获取需求统计",
                 current_user_id=current_user_id,
-                total_tasks=total_tasks,
-                completed_tasks=completed_tasks,
+                total_requirements=total_requirements,
+                completed_items=completed_items,
                 completion_rate=completion_rate,
-                overdue_rate=overdue_rate,
-                project_id=project_id,
-                assignee_id=assignee_id,
-                start_date=start_date,
-                end_date=end_date
+                project_id=project_id
             )
         except Exception as e:
             log_manager.log_error(f"记录业务操作日志失败: {str(e)}")
-        
+
         return jsonify({
-            'total_tasks': total_tasks,
-            'completed_tasks': completed_tasks,
+            'total_requirements': total_requirements,
+            'completed_requirements': completed_items,
             'completion_rate': completion_rate,
-            'overdue_rate': overdue_rate,
-            'status_distribution': enum_dict_to_str_dict(status_counts),
-            'priority_distribution': enum_dict_to_str_dict(priority_counts),
-            'assignee_workload': assignee_workload_detail,
-            'weekly_task_creation': weekly_data
+            'status_distribution': dict(status_counts),
+            'priority_distribution': {str(k): v for k, v in priority_counts.items()}
         }), 200
-    
-    # 调用JWT包装的函数
+
     return jwt_wrapped_function()
 
 # 获取缺陷统计数据
@@ -409,7 +250,7 @@ def get_bug_statistics():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         log_manager = get_log_manager()
         
@@ -627,7 +468,7 @@ def get_global_overview():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         log_manager = get_log_manager()
         
@@ -793,7 +634,7 @@ def get_projects_statistics():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -882,7 +723,7 @@ def get_developer_statistics():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -988,7 +829,7 @@ def get_tester_statistics():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1077,7 +918,7 @@ def get_bug_lifecycle():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1156,8 +997,7 @@ def get_bug_root_causes():
     
     @jwt_required_func()
     def jwt_wrapped_function():
-        # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1237,8 +1077,7 @@ def get_reopened_bugs():
     
     @jwt_required_func()
     def jwt_wrapped_function():
-        # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1344,8 +1183,7 @@ def generate_custom_report():
     
     @jwt_required_func()
     def jwt_wrapped_function():
-        # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1500,8 +1338,7 @@ def get_project_statistics(project_id):
     
     @jwt_required_func()
     def jwt_wrapped_function():
-        # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1531,15 +1368,7 @@ def get_project_statistics(project_id):
             ).first()
             if not member:
                 return jsonify({'error': '无权限查看此项目统计'}), 403
-        
-        # 获取项目任务统计
-        total_tasks = Task.query.filter_by(project_id=project_id).count()
-        completed_tasks = Task.query.filter(
-            Task.project_id == project_id,
-            Task.status == TaskStatus.DONE.value
-        ).count()
-        
-        task_completion_rate = round((completed_tasks / total_tasks * 100) if total_tasks > 0 else 0, 1)
+
         
         # 获取项目缺陷统计
         total_bugs = Bug.query.filter_by(project_id=project_id).count()
@@ -1558,16 +1387,9 @@ def get_project_statistics(project_id):
             user = User.query.get(member.user_id)
             if user:
                 # 任务统计
-                assigned_tasks = Task.query.filter(
-                    Task.project_id == project_id,
-                    Task.assigned_to == user.id
-                ).count()
+                assigned_tasks = 0
                 
-                completed_user_tasks = Task.query.filter(
-                    Task.project_id == project_id,
-                    Task.assigned_to == user.id,
-                    Task.status == TaskStatus.DONE.value
-                ).count()
+                completed_user_tasks = 0
                 
                 # 缺陷统计
                 assigned_bugs = Bug.query.filter(
@@ -1599,12 +1421,7 @@ def get_project_statistics(project_id):
             date_str = date.strftime('%Y-%m-%d')
             
             # 当日完成的任务
-            daily_completed_tasks = Task.query.filter(
-                Task.project_id == project_id,
-                Task.status == TaskStatus.DONE.value,
-                Task.updated_at >= date,
-                Task.updated_at < date + timedelta(days=1)
-            ).count()
+            daily_completed_tasks = 0
             
             # 当日解决的缺陷
             daily_resolved_bugs = Bug.query.filter(
@@ -1666,7 +1483,7 @@ def get_user_statistics(user_id):
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -1697,25 +1514,13 @@ def get_user_statistics(user_id):
         start_date = datetime.utcnow() - timedelta(days=days)
         
         # 用户任务统计
-        assigned_tasks = Task.query.filter(
-            Task.assigned_to == user_id
-        ).count()
+        assigned_tasks = 0
         
-        completed_tasks = Task.query.filter(
-            Task.assigned_to == user_id,
-            Task.status == TaskStatus.DONE.value
-        ).count()
+        completed_tasks = 0
         
-        created_tasks = Task.query.filter(
-            Task.creator_id == user_id
-        ).count()
+        created_tasks = 0
         
-        overdue_tasks = Task.query.filter(
-            Task.assigned_to == user_id,
-            Task.status != TaskStatus.DONE.value,
-            Task.status != TaskStatus.BLOCKED.value,
-            Task.due_date < datetime.utcnow()
-        ).count()
+        overdue_tasks = 0
         
         # 用户缺陷统计
         assigned_bugs = Bug.query.filter(
@@ -1737,10 +1542,7 @@ def get_user_statistics(user_id):
         ).count()
         
         # 最近工作统计
-        recent_tasks = Task.query.filter(
-            Task.assigned_to == user_id,
-            Task.updated_at >= start_date
-        ).order_by(Task.updated_at.desc()).limit(5).all()
+        recent_tasks = []
         
         recent_bugs = Bug.query.filter(
             Bug.assigned_to == user_id,
@@ -1772,12 +1574,7 @@ def get_user_statistics(user_id):
             week_end = week_start + timedelta(days=6)
             
             # 本周完成的任务
-            week_completed_tasks = Task.query.filter(
-                Task.assigned_to == user_id,
-                Task.status == TaskStatus.DONE.value,
-                Task.updated_at >= week_start,
-                Task.updated_at <= week_end
-            ).count()
+            week_completed_tasks = 0
             
             # 本周解决的缺陷
             week_resolved_bugs = Bug.query.filter(
@@ -1849,7 +1646,7 @@ def export_data():
     from flask import send_file
     
     # 延迟导入数据库模型
-    Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+    Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
     db = get_db()
     
     # 直接处理导出请求
@@ -1878,7 +1675,7 @@ def export_data():
         # 根据导出类型获取数据
         if export_type == 'tasks':
             # 导出任务数据
-            query = Task.query
+            query = Bug.query
             if project_id:
                 query = query.filter_by(project_id=project_id)
             
@@ -1948,11 +1745,8 @@ def export_data():
             export_data = []
             for project in projects:
                 # 计算项目统计
-                total_tasks = Task.query.filter_by(project_id=project.id).count()
-                completed_tasks = Task.query.filter(
-                    Task.project_id == project.id,
-                    Task.status == TaskStatus.DONE.value
-                ).count()
+                total_tasks = 0
+                completed_tasks = 0
                 
                 total_bugs = Bug.query.filter_by(project_id=project.id).count()
                 resolved_bugs = Bug.query.filter(
@@ -2033,7 +1827,7 @@ def get_scheduled_reports():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -2087,7 +1881,7 @@ def create_scheduled_report():
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -2140,7 +1934,7 @@ def update_scheduled_report(report_id):
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -2193,7 +1987,7 @@ def delete_scheduled_report(report_id):
     @jwt_required_func()
     def jwt_wrapped_function():
         # 延迟导入数据库模型
-        Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+        Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
         db = get_db()
         
         current_user_id = get_jwt_identity_func()
@@ -2242,7 +2036,7 @@ def export_chart_data():
     from flask import send_file
     
     current_user_id = get_jwt_identity()
-    Task, Bug, Project, ProjectMember, User, BugStatus, TaskStatus = get_models()
+    Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
     db = get_db()
     current_user = User.query.get(int(current_user_id))
     
@@ -2313,7 +2107,7 @@ def export_chart_data():
     
     elif chart_type == 'tasks':
         status_distribution = defaultdict(int)
-        tasks = Task.query.filter(Task.project_id.in_(project_ids)).all()
+        tasks = []
         for task in tasks:
             status_distribution[task.status.value] += 1
         
@@ -2329,11 +2123,8 @@ def export_chart_data():
     elif chart_type == 'projects':
         project_stats = []
         for project in Project.query.filter(Project.id.in_(project_ids)).all():
-            total_tasks = Task.query.filter_by(project_id=project.id).count()
-            completed_tasks = Task.query.filter(
-                Task.project_id == project.id,
-                Task.status == TaskStatus.DONE.value
-            ).count()
+            total_tasks = 0
+            completed_tasks = 0
             
             total_bugs = Bug.query.filter_by(project_id=project.id).count()
             resolved_bugs = Bug.query.filter(

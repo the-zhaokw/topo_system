@@ -142,14 +142,26 @@
 - 日志查询和导出
 - 活动记录追踪
 
-#### 16. 个人工作台
+#### 15. 个人工作台
 - 我的待办事项
 - 工作日志记录
 - 活动记录跟踪
 - 个人统计概览
 - 工作统计详情
+- 个人工作计划（收件箱、四象限、日历、专注、习惯追踪）
+- 番茄钟专注模式
 
-#### 17. 数据导入导出
+#### 17. 风险管理
+- 风险/问题创建、编辑、删除
+- 风险状态管理（identified、analyzing、mitigating、resolved、closed等）
+- 风险等级和优先级管理（low、medium、high、critical）
+- 风险类别管理
+- 风险敞口计算（probability × impact）
+- 风险矩阵可视化
+- 风险统计和分布分析
+- 关联Bug和任务
+
+#### 18. 数据导入导出
 - 批量数据导入
 - 批量数据导出
 - 数据格式转换
@@ -534,6 +546,36 @@ VITE_UPLOAD_MAX_SIZE=16             # 上传文件最大大小（MB）
 - `POST /api/work-logs` - 创建工作日志
 - `GET /api/work-logs/statistics` - 工作日志统计
 
+#### 23. 个人计划 API
+- `GET /api/personal-plan/tasks` - 获取任务列表
+- `POST /api/personal-plan/tasks` - 创建任务
+- `GET /api/personal-plan/tasks/{id}` - 获取任务详情
+- `PUT /api/personal-plan/tasks/{id}` - 更新任务
+- `DELETE /api/personal-plan/tasks/{id}` - 删除任务
+- `GET /api/personal-plan/tasks/inbox` - 获取收件箱任务
+- `POST /api/personal-plan/tasks/inbox/process` - 处理收件箱
+- `GET /api/personal-plan/tasks/quadrant` - 获取四象限任务
+- `POST /api/personal-plan/tasks/start` - 开始任务
+- `POST /api/personal-plan/tasks/complete` - 完成任务
+- `GET /api/personal-plan/calendar/events` - 获取日历事件
+- `GET /api/personal-plan/time-blocks` - 获取时间块
+- `POST /api/personal-plan/focus/start` - 开始专注
+- `POST /api/personal-plan/focus/end` - 结束专注
+- `GET /api/personal-plan/focus/stats` - 专注统计
+- `GET /api/personal-plan/habits` - 获取习惯列表
+- `POST /api/personal-plan/habits/check-in` - 打卡习惯
+- `GET /api/personal-plan/stats/daily` - 每日统计
+- `GET /api/personal-plan/stats/weekly` - 每周统计
+
+#### 24. 风险管理 API
+- `GET /api/risks` - 获取风险列表
+- `POST /api/risks` - 创建风险/问题
+- `GET /api/risks/{id}` - 获取风险详情
+- `PUT /api/risks/{id}` - 更新风险/问题
+- `DELETE /api/risks/{id}` - 删除风险/问题
+- `GET /api/risks/statistics` - 风险统计
+- `GET /api/risks/matrix` - 风险矩阵
+
 ## 数据库结构
 
 ### 核心数据表结构
@@ -651,6 +693,8 @@ topo_system/
 │   │   ├── todos.py           # 待办事项API
 │   │   ├── users.py           # 用户管理API
 │   │   ├── work_logs.py       # 工作日志API
+│   │   ├── personal_plan.py   # 个人计划API
+│   │   ├── risks.py           # 风险管理API
 │   │   └── system_config.json # 系统配置
 │   ├── models/                # 数据模型定义
 │   │   ├── __init__.py        # 模型导出
@@ -698,6 +742,13 @@ topo_system/
 ```
 
 ## 更新日志
+
+### v1.5.0 (2026-04)
+- 新增个人工作计划系统（收件箱、四象限视图、日历规划、番茄钟专注模式）
+- 新增习惯追踪功能（打卡记录、连续打卡统计）
+- 新增风险管理模块（风险/问题管理、风险矩阵、敞口计算）
+- 新增个人设置功能
+- 增强每日/每周统计功能
 
 ### v1.4.0 (2026-04)
 - 新增部门管理功能

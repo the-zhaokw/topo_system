@@ -18667,3 +18667,1042 @@ REQUEST:
 None
 USER:
 None
+2026-04-02 08:28:08,140 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 08:28:08,202 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 08:28:08,435 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 08:28:08,436 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_tasks'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 11:18:38,347 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 11:18:38,352 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 11:18:38,360 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_tasks'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 11:18:38,411 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-02 12:05:22,146 - ERROR - update_user_validation_error
+EXCEPTION:
+用户名格式不正确: 张三三
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:30:40,253 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:30:40,254 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:30:40,265 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_tasks'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:30:40,315 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:07,402 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:07,404 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:07,409 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_tasks'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:07,477 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:56,507 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:56,507 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:56,509 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_tasks'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 11:34:56,558 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:01:24,699 - ERROR - API api.projects.get_project_members failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 1070, in get_project_members
+    return jwt_wrapped_function()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\enhanced_app.py", line 3005, in decorated_function
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:02:14,146 - ERROR - API api.projects.get_project_members failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 1070, in get_project_members
+    return jwt_wrapped_function()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\enhanced_app.py", line 3005, in decorated_function
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:03:22,462 - ERROR - API api.projects.get_project_members failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 1070, in get_project_members
+    return jwt_wrapped_function()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\enhanced_app.py", line 3005, in decorated_function
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:03:24,818 - ERROR - API api.projects.get_project_members failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 1070, in get_project_members
+    return jwt_wrapped_function()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\enhanced_app.py", line 3005, in decorated_function
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:03:41,241 - ERROR - API api.projects.get_project_members failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 1070, in get_project_members
+    return jwt_wrapped_function()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\enhanced_app.py", line 3005, in decorated_function
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:03:48,835 - ERROR - API api.projects.get_project_members failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 1070, in get_project_members
+    return jwt_wrapped_function()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\enhanced_app.py", line 3005, in decorated_function
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:04:13,720 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 67, in get_users
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:04:26,282 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:05:52,748 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 47, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:05:52,806 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:05:57,023 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 47, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-07 12:05:57,072 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.status
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 468, in warned
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 951, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2975, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 1717, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1710, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.status
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.password_hash AS users_password_hash, users.salt AS users_salt, users.role AS users_role, users.is_admin AS users_is_admin, users.is_active AS users_is_active, users.first_name AS users_first_name, users.last_name AS users_last_name, users.department AS users_department, users.position AS users_position, users.phone AS users_phone, users.employee_id AS users_employee_id, users.company_phone AS users_company_phone, users.mobile_phone AS users_mobile_phone, users.birthday AS users_birthday, users.gender AS users_gender, users.work_language AS users_work_language, users.avatar AS users_avatar, users.status AS users_status, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.last_login AS users_last_login, users.email_notification_enabled AS users_email_notification_enabled, users.email_on_bug_assigned AS users_email_on_bug_assigned, users.email_on_bug_closed AS users_email_on_bug_closed, users.custom_permissions AS users_custom_permissions, users.is_super_admin AS users_is_super_admin 
+FROM users 
+WHERE users.id = ?]
+[parameters: (1,)]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:43:40,657 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:26,312 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:26,315 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:26,320 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:26,466 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:42,287 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:42,288 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:42,298 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-04-08 07:57:42,351 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
