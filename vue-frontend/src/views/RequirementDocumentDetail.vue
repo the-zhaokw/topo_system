@@ -740,7 +740,7 @@ const itemRules = {
   ]
 }
 
-const docId = computed(() => route.params.docId)
+const docId = computed(() => route.params.docId || route.params.id)
 const projectId = computed(() => route.params.projectId)
 
 const canEdit = computed(() => {
@@ -890,7 +890,12 @@ const fetchVersions = async () => {
 
 const fetchProjectMembers = async () => {
   try {
-    const response = await api.get(`/projects/${projectId.value}`)
+    // 优先从路由参数获取 projectId，如果没有则从文档详情获取
+    const pid = projectId.value || document.value?.project_id
+    if (!pid) {
+      return
+    }
+    const response = await api.get(`/projects/${pid}`)
     if (response.project && response.project.members) {
       projectMembers.value = response.project.members.map(m => m.user || m)
     }
@@ -901,7 +906,12 @@ const fetchProjectMembers = async () => {
 
 const fetchProjectDocuments = async () => {
   try {
-    const response = await api.get(`/projects/${projectId.value}/requirement-documents`)
+    // 优先从路由参数获取 projectId，如果没有则从文档详情获取
+    const pid = projectId.value || document.value?.project_id
+    if (!pid) {
+      return
+    }
+    const response = await api.get(`/projects/${pid}/requirement-documents`)
     if (response.success) {
       projectDocuments.value = response.documents || []
     }
@@ -1456,12 +1466,13 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleString('zh-CN')
 }
 
-onMounted(() => {
+onMounted(async () => {
   canGoBack.value = window.history.length > 1
-  fetchDocument()
-  fetchVersions()
+  await fetchDocument()
+  // 在获取文档详情后再获取项目成员和文档列表（用于处理独立路由 /requirements/:id）
   fetchProjectMembers()
   fetchProjectDocuments()
+  fetchVersions()
 
   const itemId = route.query.itemId
   if (itemId) {

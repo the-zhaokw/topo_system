@@ -8331,3 +8331,1473 @@ TypeError: '<' not supported between instances of 'BugStatus' and 'BugStatus'
 2026-04-08 09:10:25,233 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 45.84ms
 2026-04-08 09:10:25,248 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-04-08 09:10:25,248 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 61.99ms
+2026-04-17 07:55:57,823 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 07:55:57,931 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 07:55:57,934 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 07:55:58,525 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 07:55:58,526 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 07:55:58,526 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 07:55:58,716 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-17 07:55:58,717 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 07:56:13,059 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 07:56:13,062 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 07:56:13,063 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: Missing Authorization Header - Duration: 0.97ms
+2026-04-17 07:56:13,065 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 07:56:13,069 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 07:56:13,071 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 2.14ms
+2026-04-17 07:56:16,854 - enhanced_app - INFO - log - 用户ID: 18, 操作: user_login, 资源类型: user, 资源ID: 18, 详情: 用户登录: zhaokangwei, IP: 127.0.0.1
+2026-04-17 07:56:17,491 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 07:56:17,493 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 07:56:17,494 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 07:56:17,499 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 07:56:17,647 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 07:56:17,664 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 164.94ms
+2026-04-17 07:56:17,709 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 07:56:17,709 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 216.08ms
+2026-04-17 07:56:19,689 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 07:56:19,692 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 07:56:19,731 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 07:56:19,732 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.20ms
+2026-04-17 07:56:22,426 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 07:56:22,428 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 07:56:22,434 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 07:56:22,441 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 07:56:22,474 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 07:56:22,475 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 33.86ms
+2026-04-17 07:56:22,491 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 07:56:22,491 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 63.21ms
+2026-04-17 07:56:28,981 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 07:56:28,986 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 07:56:29,030 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 07:56:29,031 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 45.56ms
+2026-04-17 07:57:33,378 - enhanced_app - ERROR - Exception on /api/work-logs [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 140, in create_work_log
+    work_log = WorkLog(
+               ^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 481, in _initialize_instance
+    with util.safe_reraise():
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 479, in _initialize_instance
+    return manager.original_init(*mixed[1:], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1197, in _declarative_constructor
+    raise TypeError(
+TypeError: 'task_id' is an invalid keyword argument for WorkLog
+2026-04-17 07:57:47,604 - enhanced_app - ERROR - Exception on /api/work-logs [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 140, in create_work_log
+    work_log = WorkLog(
+               ^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 481, in _initialize_instance
+    with util.safe_reraise():
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 479, in _initialize_instance
+    return manager.original_init(*mixed[1:], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1197, in _declarative_constructor
+    raise TypeError(
+TypeError: 'task_id' is an invalid keyword argument for WorkLog
+2026-04-17 07:58:40,434 - enhanced_app - ERROR - Exception on /api/work-logs [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 140, in create_work_log
+    work_log = WorkLog(
+               ^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 481, in _initialize_instance
+    with util.safe_reraise():
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 479, in _initialize_instance
+    return manager.original_init(*mixed[1:], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1197, in _declarative_constructor
+    raise TypeError(
+TypeError: 'task_id' is an invalid keyword argument for WorkLog
+2026-04-17 08:01:04,888 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 08:01:04,895 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 08:01:04,897 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 08:01:04,904 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 08:01:04,904 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 08:01:04,905 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 08:01:05,155 - enhanced_app - WARNING - 创建默认用户失败: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:01:05,156 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 08:02:42,784 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 08:02:42,793 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 08:02:42,795 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 08:02:42,800 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 08:02:42,801 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 08:02:42,801 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 08:02:42,990 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-17 08:02:42,990 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 08:03:19,636 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 08:03:19,648 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 08:03:19,658 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 08:03:19,668 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 08:03:19,670 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 08:03:19,671 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 08:03:19,823 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:03:19,842 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:03:19,906 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:03:19,912 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 69.31ms
+2026-04-17 08:03:20,091 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-17 08:03:20,092 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 08:04:11,297 - enhanced_app - ERROR - Exception on /api/work-logs [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 140, in create_work_log
+    work_log = WorkLog(
+               ^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 481, in _initialize_instance
+    with util.safe_reraise():
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 479, in _initialize_instance
+    return manager.original_init(*mixed[1:], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1197, in _declarative_constructor
+    raise TypeError(
+TypeError: 'task_id' is an invalid keyword argument for WorkLog
+2026-04-17 08:04:44,827 - enhanced_app - ERROR - Exception on /api/work-logs [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 140, in create_work_log
+    work_log = WorkLog(
+               ^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 481, in _initialize_instance
+    with util.safe_reraise():
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\compat.py", line 211, in raise_
+    raise exception
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\state.py", line 479, in _initialize_instance
+    return manager.original_init(*mixed[1:], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1197, in _declarative_constructor
+    raise TypeError(
+TypeError: 'task_id' is an invalid keyword argument for WorkLog
+2026-04-17 08:07:03,859 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 08:07:03,869 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 08:07:03,876 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 08:07:03,891 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 08:07:03,893 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 08:07:03,895 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 08:07:03,834 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:03,988 - enhanced_app - ERROR - Exception on /api/users/18/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 280, in get_user
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:04,304 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-17 08:07:04,305 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 08:07:04,346 - enhanced_app - ERROR - Exception on /api/work-logs [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 39, in get_work_logs
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:04,349 - enhanced_app - ERROR - Exception on /api/work-logs/stats [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 291, in get_work_log_stats
+    if has_full_access and project_id:
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:04,352 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:07:04,354 - enhanced_app - ERROR - Exception on /api/users/department/软件部/members [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 1471, in get_department_members
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:04,358 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:07:04,371 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined. - Duration: 12.67ms
+2026-04-17 08:07:04,385 - enhanced_app - ERROR - Exception on /api/projects/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:09,642 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:09,786 - enhanced_app - ERROR - Exception on /api/users/18/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 280, in get_user
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:10,070 - enhanced_app - ERROR - Exception on /api/work-logs [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 39, in get_work_logs
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:10,072 - enhanced_app - ERROR - Exception on /api/work-logs/stats [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 291, in get_work_log_stats
+    if has_full_access and project_id:
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:10,072 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:07:10,074 - enhanced_app - ERROR - Exception on /api/users/department/软件部/members [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 1471, in get_department_members
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:10,080 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:07:10,086 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined. - Duration: 7.13ms
+2026-04-17 08:07:10,091 - enhanced_app - ERROR - Exception on /api/projects/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:28,597 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:28,732 - enhanced_app - ERROR - Exception on /api/users/18/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 280, in get_user
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:29,005 - enhanced_app - ERROR - Exception on /api/work-logs [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 39, in get_work_logs
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:29,007 - enhanced_app - ERROR - Exception on /api/work-logs/stats [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\work_logs.py", line 291, in get_work_log_stats
+    if has_full_access and project_id:
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:29,008 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:07:29,009 - enhanced_app - ERROR - Exception on /api/users/department/软件部/members [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 1471, in get_department_members
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:29,015 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:07:29,023 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined. - Duration: 7.55ms
+2026-04-17 08:07:29,029 - enhanced_app - ERROR - Exception on /api/projects/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:07:57,512 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:07:57,537 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:07:57,552 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 14.52ms
+2026-04-17 08:08:03,092 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:08:03,100 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:08:03,116 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 16.57ms
+2026-04-17 08:12:29,246 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\__init__.py", line 550, in __get__
+    mapper = orm.class_mapper(type)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 448, in class_mapper
+    mapper = _inspect_mapped_class(class_, configure=configure)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\base.py", line 427, in _inspect_mapped_class
+    mapper._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 1941, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3527, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 3562, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'mapped class WorkLog->work_logs'. Original exception was: When initializing mapper mapped class WorkLog->work_logs, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.WorkLog'> class after both dependent classes have been defined.
+2026-04-17 08:16:33,781 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 08:16:33,788 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 08:16:33,791 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 08:16:33,795 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 08:16:33,795 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 08:16:33,796 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 08:16:33,954 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-17 08:16:33,955 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 08:21:18,641 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:21:18,642 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:21:18,642 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Not enough segments - Duration: 0.00ms
+2026-04-17 08:25:23,827 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-17 08:25:23,832 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-17 08:25:23,834 - enhanced_app - INFO - 职位权限修复完成
+2026-04-17 08:25:23,840 - enhanced_app - INFO - 默认职位创建成功
+2026-04-17 08:25:23,840 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-17 08:25:23,841 - enhanced_app - INFO - 数据库表创建完成
+2026-04-17 08:25:23,998 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-17 08:25:23,999 - enhanced_app - INFO - 数据库初始化完成
+2026-04-17 08:25:29,333 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:25:29,337 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:25:29,394 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:25:29,394 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 56.56ms
+2026-04-17 08:47:21,371 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 08:47:21,373 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 08:47:21,384 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:47:21,423 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:47:21,523 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:47:21,523 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 99.52ms
+2026-04-17 08:47:21,542 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 08:47:21,542 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 169.69ms
+2026-04-17 08:47:27,622 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 08:47:27,624 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 08:47:27,640 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:47:27,643 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:47:27,677 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:47:27,679 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 36.42ms
+2026-04-17 08:47:27,709 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 08:47:27,711 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 87.19ms
+2026-04-17 08:59:33,342 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 08:59:33,343 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:59:33,345 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 08:59:33,348 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:59:33,393 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:59:33,394 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 46.57ms
+2026-04-17 08:59:33,415 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 08:59:33,415 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 70.08ms
+2026-04-17 08:59:34,670 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:59:34,672 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:59:34,702 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:59:34,704 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 32.15ms
+2026-04-17 08:59:43,261 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 08:59:43,262 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 08:59:43,296 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 08:59:43,297 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 35.51ms
+2026-04-17 09:01:22,586 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:01:22,587 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:01:22,613 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:01:22,614 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 26.88ms
+2026-04-17 09:23:39,845 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:23:39,846 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-17 09:23:39,846 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:23:39,846 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-17 09:23:39,867 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-17 09:23:39,868 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:23:39,869 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 22.48ms
+2026-04-17 09:23:39,870 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 23.66ms
+2026-04-17 09:23:51,298 - enhanced_app - INFO - API Call Start: api.projects.update_project - Method: PUT - Path: /api/projects/4/
+2026-04-17 09:23:51,298 - enhanced_app - INFO - Business Operation Start: api.projects.update_project
+2026-04-17 09:23:51,318 - enhanced_app - INFO - Business Operation Complete: api.projects.update_project
+2026-04-17 09:23:51,319 - enhanced_app - INFO - API Call Complete: api.projects.update_project - Status: Success - Duration: 20.89ms
+2026-04-17 09:24:01,990 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:24:01,990 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-17 09:24:01,990 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:24:01,991 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-17 09:24:02,007 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-17 09:24:02,008 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:24:02,008 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.25ms
+2026-04-17 09:24:02,008 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 17.25ms
+2026-04-17 09:24:21,590 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 09:24:21,590 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 09:24:21,600 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:24:21,603 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:24:21,642 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:24:21,642 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 39.04ms
+2026-04-17 09:24:21,658 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 09:24:21,659 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 68.77ms
+2026-04-17 09:25:30,618 - enhanced_app - ERROR - distribution-analysis 错误: '<' not supported between instances of 'Severity' and 'Severity'
+Traceback (most recent call last):
+  File "D:\topo_system\backend\api\bug_statistics.py", line 1274, in get_distribution_analysis
+    return jsonify({
+           ^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\provider.py", line 215, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\provider.py", line 180, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'Severity' and 'Severity'
+
+2026-04-17 09:25:38,893 - enhanced_app - ERROR - distribution-analysis 错误: '<' not supported between instances of 'Severity' and 'Severity'
+Traceback (most recent call last):
+  File "D:\topo_system\backend\api\bug_statistics.py", line 1274, in get_distribution_analysis
+    return jsonify({
+           ^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\provider.py", line 215, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\provider.py", line 180, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'Severity' and 'Severity'
+
+2026-04-17 09:25:54,417 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 09:25:54,418 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 09:25:54,428 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:25:54,431 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:25:54,530 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:25:54,535 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 104.85ms
+2026-04-17 09:25:54,563 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 09:25:54,574 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 155.49ms
+2026-04-17 09:25:56,113 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:25:56,120 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:25:56,155 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:25:56,161 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.88ms
+2026-04-17 09:26:02,569 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 09:26:02,571 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 09:26:02,579 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:26:02,583 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:26:02,685 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:26:02,689 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 106.19ms
+2026-04-17 09:26:02,856 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 09:26:02,856 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 285.25ms
+2026-04-17 09:26:03,994 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 09:26:03,996 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 09:26:04,004 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:26:04,013 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:26:04,093 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:26:04,094 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 80.77ms
+2026-04-17 09:26:04,139 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 09:26:04,139 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 143.42ms
+2026-04-17 09:26:58,778 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:26:58,779 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-17 09:26:58,779 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:26:58,779 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-17 09:26:58,791 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:26:58,792 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-17 09:26:58,793 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 13.06ms
+2026-04-17 09:26:58,793 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.61ms
+2026-04-17 09:28:26,884 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:28:26,885 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-17 09:28:26,885 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:28:26,885 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-17 09:28:26,900 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-17 09:28:26,900 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:28:26,900 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.75ms
+2026-04-17 09:28:26,901 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 15.73ms
+2026-04-17 09:28:46,993 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-04-17 09:28:46,994 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-17 09:28:47,002 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-17 09:28:47,002 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.04ms
+2026-04-17 09:28:49,320 - enhanced_app - INFO - log - 用户ID: 18, 操作: clock_in, 资源类型: attendance, 资源ID: 10, 详情: 上班打卡: 2026-04-17 00:00:00, IP: 127.0.0.1, 迟到: 0分钟, IP: 127.0.0.1
+2026-04-17 09:28:51,408 - enhanced_app - INFO - log - 用户ID: 18, 操作: clock_out, 资源类型: attendance, 资源ID: 10, 详情: 下班打卡: 2026-04-17 00:00:00, IP: 127.0.0.1, 工作时长: 0.00小时, IP: 127.0.0.1
+2026-04-17 09:28:55,427 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-17 09:28:55,429 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-17 09:28:55,432 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-17 09:28:55,435 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-17 09:28:55,473 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-17 09:28:55,475 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.15ms
+2026-04-17 09:28:55,492 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-17 09:28:55,493 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 61.40ms
+2026-04-17 09:29:41,151 - enhanced_app - ERROR - distribution-analysis 错误: '<' not supported between instances of 'Severity' and 'Severity'
+Traceback (most recent call last):
+  File "D:\topo_system\backend\api\bug_statistics.py", line 1274, in get_distribution_analysis
+    return jsonify({
+           ^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\provider.py", line 215, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\json\provider.py", line 180, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'Severity' and 'Severity'
+

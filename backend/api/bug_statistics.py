@@ -1213,7 +1213,7 @@ def get_distribution_analysis():
         elif dimension == 'severity':
             distribution = defaultdict(lambda: {'total': 0, 'new': 0, 'resolved': 0, 'closed': 0})
             for bug in all_bugs:
-                severity = bug.severity if bug.severity else '未知'
+                severity = bug.severity.value if bug.severity else '未知'
                 distribution[severity]['total'] += 1
                 if bug.status == BugStatus.NEW:
                     distribution[severity]['new'] += 1
@@ -1225,13 +1225,13 @@ def get_distribution_analysis():
         elif dimension == 'status':
             distribution = defaultdict(int)
             for bug in all_bugs:
-                status = bug.status if bug.status else '未知'
+                status = bug.status.value if bug.status else '未知'
                 distribution[status] += 1
 
         elif dimension == 'priority':
             distribution = defaultdict(lambda: {'total': 0, 'new': 0, 'resolved': 0, 'closed': 0})
             for bug in all_bugs:
-                priority = bug.priority if bug.priority else '未知'
+                priority = bug.priority.value if bug.priority else '未知'
                 distribution[priority]['total'] += 1
                 if bug.status == BugStatus.NEW:
                     distribution[priority]['new'] += 1
@@ -1271,9 +1271,16 @@ def get_distribution_analysis():
         else:
             distribution = {}
 
+        # 将 defaultdict 转换为普通字典，确保JSON序列化正常
+        distribution_dict = {}
+        for key, value in distribution.items():
+            # 确保key是字符串类型
+            str_key = str(key) if key is not None else '未知'
+            distribution_dict[str_key] = value
+
         return jsonify({
             'dimension': dimension,
-            'distribution': dict(distribution),
+            'distribution': distribution_dict,
             'total_bugs': len(all_bugs),
             'filters': {
                 'project_ids': project_id_list,

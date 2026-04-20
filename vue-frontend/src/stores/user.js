@@ -90,6 +90,11 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('user')
     },
 
+    setUser(userData) {
+      this.currentUser = userData
+      localStorage.setItem('user', JSON.stringify(userData))
+    },
+
     async updateProfile(profileData) {
       try {
         const response = await apiService.auth.updateProfile(profileData)

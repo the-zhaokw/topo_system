@@ -137,18 +137,19 @@ def create_work_log():
     if not data.get('log_date'):
         return jsonify({'error': '日期不能为空'}), 400
 
+    allowed_fields = {'title', 'content', 'log_date', 'work_type', 'project_id', 'hours_spent', 'status'}
+    filtered_data = {k: v for k, v in data.items() if k in allowed_fields}
+
     work_log = WorkLog(
         user_id=int(current_user_id),
-        title=data.get('title'),
-        content=data.get('content'),
-        log_date=datetime.fromisoformat(data.get('log_date')),
-        work_type=data.get('work_type', 'daily'),
-        project_id=data.get('project_id'),
-        task_id=data.get('task_id'),
-        hours_spent=data.get('hours_spent', 0.0),
-        status=data.get('status', 'draft')
+        title=filtered_data.get('title'),
+        content=filtered_data.get('content'),
+        log_date=datetime.fromisoformat(filtered_data.get('log_date')),
+        work_type=filtered_data.get('work_type', 'daily'),
+        project_id=filtered_data.get('project_id'),
+        hours_spent=filtered_data.get('hours_spent', 0.0),
+        status=filtered_data.get('status', 'draft')
     )
-
     db.session.add(work_log)
     db.session.commit()
 
@@ -214,13 +215,6 @@ def update_work_log(log_id):
         if old_project != new_project:
             field_changes.append({'field': 'project_id', 'old_value': str(old_project) if old_project else None, 'new_value': str(new_project) if new_project else None})
             work_log.project_id = new_project
-
-    if 'task_id' in data:
-        old_task = work_log.task_id
-        new_task = data['task_id']
-        if old_task != new_task:
-            field_changes.append({'field': 'task_id', 'old_value': str(old_task) if old_task else None, 'new_value': str(new_task) if new_task else None})
-            work_log.task_id = new_task
 
     if 'hours_spent' in data and data['hours_spent'] != work_log.hours_spent:
         field_changes.append({'field': 'hours_spent', 'old_value': work_log.hours_spent, 'new_value': data['hours_spent']})
