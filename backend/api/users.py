@@ -330,7 +330,7 @@ def get_user_home(user_id):
     from datetime import timedelta
 
     db, User, UserRole, create_audit_log = get_db_and_models()
-    Activity, Bug, Project = get_activity_models()
+    Activity, Bug, Project, WorkLog = get_activity_models()
 
     current_user_id = get_jwt_identity()
 
@@ -403,6 +403,13 @@ def get_user_home(user_id):
             activity_dict['resource_name'] = project.name if project else '未知项目'
         elif activity.target_type == 'task':
             activity_dict['resource_name'] = f'任务 #{activity.target_id}'
+        elif activity.target_type == 'work_log':
+            work_log = WorkLog.query.get(activity.target_id)
+            if work_log:
+                activity_dict['resource_name'] = work_log.title
+            else:
+                match = re.search(r'工作日志[：:](.+)', activity.description)
+                activity_dict['resource_name'] = match.group(1) if match else f'工作日志 #{activity.target_id}'
         else:
             activity_dict['resource_name'] = f'{activity.target_type} #{activity.target_id}'
         
@@ -425,8 +432,8 @@ def get_user_home(user_id):
 
 def get_activity_models():
     """获取活动相关模型"""
-    from enhanced_app import Activity, Bug, Project
-    return Activity, Bug, Project
+    from enhanced_app import Activity, Bug, Project, WorkLog
+    return Activity, Bug, Project, WorkLog
 
 # 更新用户状态
 @users_bp.route('/<int:user_id>/status', methods=['PUT'])

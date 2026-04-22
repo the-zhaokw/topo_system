@@ -463,7 +463,10 @@ def get_articles():
         favorites = request.args.get('favorites', 'false').lower() == 'true'
         is_pinned = request.args.get('is_pinned', 'false').lower() == 'true'
 
-        query = KnowledgeArticle.query
+        query = KnowledgeArticle.query.options(
+            joinedload(KnowledgeArticle.author),
+            joinedload(KnowledgeArticle.category)
+        )
 
         if category_id:
             child_ids = get_all_child_category_ids(category_id)
@@ -1170,7 +1173,10 @@ def delete_attachment(art_id, att_id):
 def get_article(art_id):
     """获取文章详情"""
     try:
-        article = KnowledgeArticle.query.get(art_id)
+        article = KnowledgeArticle.query.options(
+            joinedload(KnowledgeArticle.author),
+            joinedload(KnowledgeArticle.category)
+        ).get(art_id)
         if not article:
             return jsonify({'success': False, 'error': '文章不存在'}), 404
 

@@ -2966,6 +2966,7 @@ class KnowledgeArticle(db.Model):
             'tags': self._parse_tags(),
             'author_id': self.author_id,
             'author_name': self.author_name or '未知',
+            'author_avatar': self.author.avatar if self.author else None,
             'status': self.status or 'draft',
             'view_count': self.view_count,
             'like_count': self.like_count,

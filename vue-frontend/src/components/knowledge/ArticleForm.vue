@@ -98,7 +98,7 @@
           <!-- 作者（仅管理员可见，可编辑） -->
           <el-form-item v-if="isAdmin" label="文章作者">
             <div class="author-selector">
-              <el-avatar :size="24" :src="selectedAuthor?.avatar" />
+              <el-avatar :size="24" :src="getUserAvatar(selectedAuthor?.avatar)" />
               <span class="author-name">{{ selectedAuthor?.username || '请选择作者' }}</span>
               <el-button size="small" @click="showUserSelector = true">选择</el-button>
             </div>
@@ -107,7 +107,7 @@
           <!-- 非管理员显示真实作者（不可编辑） -->
           <el-form-item v-else label="文章作者">
             <div class="author-display">
-              <el-avatar :size="24" :src="article?.author_avatar" />
+              <el-avatar :size="24" :src="getUserAvatar(article?.author_avatar)" />
               <span class="author-name">{{ article?.author_name || userStore.currentUser?.username }}</span>
             </div>
           </el-form-item>
@@ -125,7 +125,7 @@
               <el-table-column label="用户" min-width="150">
                 <template #default="{ row }">
                   <div class="user-option">
-                    <el-avatar :size="32" :src="row.avatar" />
+                    <el-avatar :size="32" :src="getUserAvatar(row.avatar)" />
                     <span>{{ row.username }}</span>
                   </div>
                 </template>
@@ -193,7 +193,19 @@ const emit = defineEmits(['save', 'cancel', 'refresh-categories'])
 const userStore = useUserStore()
 
 // API 基础 URL
-const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+
+// 获取用户头像URL
+const getUserAvatar = (avatar) => {
+  if (!avatar) {
+    // 使用绝对路径确保头像能正确显示
+    return `${window.location.origin}/avatar-placeholder.png`
+  }
+  if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+    return avatar
+  }
+  return `${API_BASE_URL}${avatar}`
+}
 
 // 表单引用
 const formRef = ref(null)

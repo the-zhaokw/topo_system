@@ -128,7 +128,7 @@
                 <div class="activity-time">{{ activity.time }}</div>
                 <div class="activity-content">
                   <span class="activity-user">{{ activity.user }}</span>
-                  <span class="activity-action">{{ activity.action }}</span>
+                  <span class="activity-action">{{ getActionText(activity.action) }}</span>
                   <el-link 
                     v-if="activity.target_type === 'bug' && activity.target_id" 
                     type="primary" 
@@ -142,6 +142,15 @@
                     v-else-if="activity.target_type === 'project' && activity.target_id" 
                     type="primary" 
                     @click="$router.push(`/projects/${activity.target_id}`)"
+                    style="cursor: pointer;"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link 
+                    v-else-if="activity.target_type === 'work_log' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/work-logs?highlight=${activity.target_id}`)"
                     style="cursor: pointer;"
                     class="activity-details"
                   >
@@ -407,15 +416,23 @@ const fetchMyActivities = async () => {
 
     const response = await apiService.users.getUserHome(currentUser.id)
     if (response && response.activities) {
-      activities.value = response.activities.map(activity => ({
-        id: activity.id,
-        time: activity.created_at,
-        user: currentUser.username,
-        action: activity.action,
-        details: activity.resource_name || activity.description,
-        target_type: activity.target_type,
-        target_id: activity.target_id
-      }))
+      activities.value = response.activities.map(activity => {
+        // 处理标题显示：如果是 work_log 类型，显示为中文"工作日志"
+        let details = activity.resource_name || activity.description
+        if (activity.target_type === 'work_log' && details) {
+          // 将 "work_log #6" 替换为 "工作日志 #6"
+          details = details.replace(/^work_log/i, '工作日志')
+        }
+        return {
+          id: activity.id,
+          time: activity.created_at,
+          user: currentUser.username,
+          action: activity.action,
+          details: details,
+          target_type: activity.target_type,
+          target_id: activity.target_id
+        }
+      })
     }
   } catch (error) {
     console.error('获取活动记录失败:', error)
@@ -691,6 +708,37 @@ onUnmounted(() => {
 watch(statistics, () => {
   updateCharts()
 }, { deep: true })
+
+// 获取操作类型文本
+const getActionText = (action) => {
+  const texts = {
+    'create': '创建',
+    'create_bug': '创建Bug',
+    'create_work_log': '创建工作日志',
+    'create_leave_application': '创建请假申请',
+    'apply_leave': '提交请假',
+    'apply_overtime': '提交加班',
+    'update': '更新',
+    'update_bug': '更新Bug',
+    'update_work_log': '更新工作日志',
+    'delete': '删除',
+    'delete_work_log': '删除工作日志',
+    'status_change': '状态变更',
+    'bug_status_update': 'Bug状态更新',
+    'bug_status_transition': 'Bug状态转换',
+    'assign': '分配',
+    'assign_bug': '分配Bug',
+    'approve': '审批',
+    'approve_leave_application': '审批请假',
+    'approve_overtime_application': '审批加班',
+    'approve_exception': '审批异常',
+    'clock_in': '上班打卡',
+    'clock_out': '下班打卡',
+    'upload_attachment': '上传附件',
+    'delete_attachment': '删除附件'
+  }
+  return texts[action] || action
+}
 </script>
 
 <style scoped>

@@ -253,7 +253,7 @@
               <el-table-column label="作者" width="120">
                 <template #default="{ row }">
                   <router-link :to="`/users/${row.author_id}`" class="author-link">
-                    <el-avatar :size="24" :src="row.author_avatar" />
+                    <el-avatar :size="24" :src="getUserAvatar(row.author_avatar)" />
                     <span class="author-name">{{ row.author_name }}</span>
                   </router-link>
                 </template>
@@ -320,7 +320,8 @@
                   <div class="card-meta">
                     <span><el-icon><Folder /></el-icon> {{ article.category_name }}</span>
                     <router-link :to="`/users/${article.author_id}`" class="card-author-link">
-                      <el-icon><User /></el-icon> {{ article.author_name }}
+                      <el-avatar :size="16" :src="getUserAvatar(article.author_avatar)" />
+                      {{ article.author_name }}
                     </router-link>
                   </div>
                   <div class="card-stats">
@@ -404,7 +405,7 @@ import ArticleDetail from '@/components/knowledge/ArticleDetail.vue'
 import ArticleForm from '@/components/knowledge/ArticleForm.vue'
 
 // API 基础 URL
-const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
 
 const userStore = useUserStore()
 
@@ -770,6 +771,18 @@ const formatRelativeTime = (date) => {
   if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
   if (diff < 604800) return `${Math.floor(diff / 86400)}天前`
   return formatDate(date)
+}
+
+// 获取用户头像URL
+const getUserAvatar = (avatar) => {
+  if (!avatar) {
+    // 使用绝对路径确保头像能正确显示
+    return `${window.location.origin}/avatar-placeholder.png`
+  }
+  if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+    return avatar
+  }
+  return `${API_BASE_URL}${avatar}`
 }
 
 // 初始化

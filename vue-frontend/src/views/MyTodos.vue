@@ -539,8 +539,8 @@ const fetchSummary = async () => {
 const fetchAllTodos = async () => {
   loading.value = true
   try {
-    const data = await apiService.todos.getAll()
-    allTodos.value = data?.todos || []
+    const response = await apiService.todos.getAll()
+    allTodos.value = response?.todos || []
   } catch (error) {
     console.error('获取待办事项失败:', error)
     ElMessage.error('获取待办事项失败')
@@ -552,7 +552,7 @@ const fetchAllTodos = async () => {
 const fetchApprovalTodos = async () => {
   try {
     const response = await apiService.todos.getApprovals()
-    approvalTodos.value = response?.todos || response || []
+    approvalTodos.value = response?.approvals || []
   } catch (error) {
     console.error('获取待我审批失败:', error)
     approvalTodos.value = []
@@ -562,7 +562,7 @@ const fetchApprovalTodos = async () => {
 const fetchBugTodos = async () => {
   try {
     const response = await apiService.todos.getBugs()
-    bugTodos.value = response?.todos || response || []
+    bugTodos.value = response?.bugs || []
   } catch (error) {
     console.error('获取Bug待办失败:', error)
     bugTodos.value = []
@@ -574,7 +574,9 @@ const fetchBugTodos = async () => {
 const fetchReviewTodos = async () => {
   try {
     const response = await apiService.todos.getReviews()
-    reviewTodos.value = response?.todos || response || []
+    console.log('getReviews response:', response)
+    reviewTodos.value = response?.reviews || []
+    console.log('reviewTodos:', reviewTodos.value)
   } catch (error) {
     console.error('获取待我评审失败:', error)
     reviewTodos.value = []
@@ -584,7 +586,7 @@ const fetchReviewTodos = async () => {
 const fetchContractTodos = async () => {
   try {
     const response = await apiService.todos.getContracts()
-    contractTodos.value = response?.todos || response || []
+    contractTodos.value = response?.contracts || []
   } catch (error) {
     console.error('获取合同待办失败:', error)
     contractTodos.value = []
@@ -654,7 +656,15 @@ const viewDetail = (row) => {
       break
 
     case 'requirement':
-      router.push(`/requirements/${row.id}`)
+      console.log('requirement row:', row)
+      console.log('doc_id:', row.doc_id, 'project_id:', row.project_id)
+      if (row.doc_id && row.project_id) {
+        router.push(`/projects/${row.project_id}/requirements/${row.doc_id}`)
+      } else if (row.doc_id) {
+        router.push(`/requirements/${row.doc_id}`)
+      } else {
+        ElMessage.info('无法查看需求文档：缺少文档ID')
+      }
       break
     case 'test_case':
       router.push(`/test-cases/${row.id}`)

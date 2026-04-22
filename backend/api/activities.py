@@ -5,20 +5,21 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
+import re
 
 # 创建活动记录蓝图
 activities_bp = Blueprint('activities', __name__, url_prefix='/activities')
 
 def get_models():
-    from enhanced_app import User, Activity, Bug, Project, app
-    return User, Activity, Bug, Project, app
+    from enhanced_app import User, Activity, Bug, Project, WorkLog, app
+    return User, Activity, Bug, Project, WorkLog, app
 
 # 获取活动记录列表
 @activities_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_activities():
     """获取活动记录列表"""
-    User, Activity, Bug, Project, app = get_models()
+    User, Activity, Bug, Project, WorkLog, app = get_models()
     
     with app.app_context():
         page = request.args.get('page', 1, type=int)
@@ -78,6 +79,13 @@ def get_activities():
                 activity_dict['resource_name'] = project.name if project else '未知'
             elif activity.target_type == 'task':
                 activity_dict['resource_name'] = '任务已删除'
+            elif activity.target_type == 'work_log':
+                work_log = WorkLog.query.get(activity.target_id)
+                if work_log:
+                    activity_dict['resource_name'] = work_log.title
+                else:
+                    match = re.search(r'工作日志[：:](.+)', activity.description)
+                    activity_dict['resource_name'] = match.group(1) if match else '未知'
             
             activities.append(activity_dict)
         

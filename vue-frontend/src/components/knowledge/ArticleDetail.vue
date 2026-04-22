@@ -5,7 +5,7 @@
       <div class="detail-meta">
         <div class="meta-item">
           <router-link :to="`/users/${article.author_id}`" class="detail-author-link">
-            <el-avatar :size="32" :src="article.author_avatar" />
+            <el-avatar :size="32" :src="getUserAvatar(article.author_avatar)" />
             <span class="meta-text">{{ article.author_name }}</span>
           </router-link>
         </div>
@@ -187,7 +187,7 @@ const props = defineProps({
 
 const emit = defineEmits(['edit', 'close'])
 
-const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
 
 const isAdmin = computed(() => {
   const user = userStore.currentUser
@@ -404,7 +404,10 @@ const formatRelativeTime = (date) => {
 
 // 获取用户头像URL
 const getUserAvatar = (avatar) => {
-  if (!avatar) return '/avatar-placeholder.png'
+  if (!avatar) {
+    // 使用绝对路径确保头像能正确显示
+    return `${window.location.origin}/avatar-placeholder.png`
+  }
   if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
     return avatar
   }

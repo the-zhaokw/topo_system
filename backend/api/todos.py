@@ -424,6 +424,7 @@ def get_review_todos():
             doc = db.session.get(models['RequirementDocument'], req.doc_id)
             reviews.append({
                 'id': req.id,
+                'doc_id': req.doc_id,
                 'type': 'requirement',
                 'type_name': '需求评审',
                 'title': req.title,
@@ -688,10 +689,13 @@ def get_all_todos():
             models['RequirementItem'].status == 'pending_review',
             models['RequirementItem'].owner_id == current_user_id
         ).all()
-        
+
         for req in pending_requirements:
+            doc = db.session.get(models['RequirementDocument'], req.doc_id)
             all_todos.append({
-                'id': f'requirement_{req.id}',
+                'id': req.id,
+                'doc_id': req.doc_id,
+                'project_id': doc.project_id if doc else None,
                 'category': 'review',
                 'type': 'requirement',
                 'type_name': '需求评审',

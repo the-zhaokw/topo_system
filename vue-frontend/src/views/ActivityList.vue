@@ -216,7 +216,9 @@ const getActionType = (action) => {
     'approve_overtime_application': 'warning',
     'approve_exception': 'warning',
     'clock_in': 'primary',
-    'clock_out': 'primary'
+    'clock_out': 'primary',
+    'upload_attachment': 'primary',
+    'delete_attachment': 'danger'
   }
   return types[action] || 'info'
 }
@@ -242,7 +244,9 @@ const getActionText = (action) => {
     'approve_overtime_application': '审批加班',
     'approve_exception': '审批异常',
     'clock_in': '上班打卡',
-    'clock_out': '下班打卡'
+    'clock_out': '下班打卡',
+    'upload_attachment': '上传附件',
+    'delete_attachment': '删除附件'
   }
   return texts[action] || action
 }
@@ -258,7 +262,8 @@ const getResourceType = (resourceType) => {
     'overtime_application': 'warning',
     'attendance': 'primary',
     'material': 'info',
-    'contract': 'success'
+    'contract': 'success',
+    'work_log': 'success'
   }
   return types[resourceType] || 'info'
 }
@@ -274,7 +279,8 @@ const getResourceText = (resourceType) => {
     'overtime_application': '加班申请',
     'attendance': '考勤',
     'material': '物料',
-    'contract': '合同'
+    'contract': '合同',
+    'work_log': '工作日志'
   }
   return texts[resourceType] || resourceType
 }

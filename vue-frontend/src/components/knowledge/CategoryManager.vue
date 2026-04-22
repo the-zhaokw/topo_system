@@ -165,7 +165,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change', 'refresh'])
 
 // API 基础 URL
-const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
 
 // 通用 API 请求函数
 const apiRequest = async (url, options = {}) => {
