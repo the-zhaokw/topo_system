@@ -76,6 +76,8 @@ import { marked } from 'marked'
 const route = useRoute()
 const router = useRouter()
 
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+
 const article = ref(null)
 const requirePassword = ref(false)
 const password = ref('')
@@ -92,7 +94,7 @@ const renderedContent = computed(() => {
 // 加载分享内容
 const loadShare = async (pwd = null) => {
   try {
-    let url = `/api/knowledge/enhanced/share/${shareToken}`
+    let url = `${API_BASE_URL}/api/knowledge/enhanced/share/${shareToken}`
     if (pwd) {
       url += `?password=${encodeURIComponent(pwd)}`
     }
@@ -128,18 +130,41 @@ const verifyPassword = () => {
 // 下载文章
 const downloadArticle = async () => {
   try {
-    const res = await fetch(`/api/knowledge/enhanced/share/${shareToken}/download`)
+    const res = await fetch(`${API_BASE_URL}/api/knowledge/enhanced/share/${shareToken}/download`)
     if (res.ok) {
       const blob = await res.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${article.value.title}.md`
+
+      // 从响应头中获取文件名
+      const contentDisposition = res.headers.get('Content-Disposition')
+      let filename = `${article.value.title}.md`
+      if (contentDisposition) {
+        // 优先尝试匹配 filename* (RFC 5987)
+        const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i)
+        if (filenameStarMatch && filenameStarMatch[1]) {
+          filename = decodeURIComponent(filenameStarMatch[1])
+        } else {
+          // 回退到普通 filename
+          const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+          if (filenameMatch && filenameMatch[1]) {
+            filename = decodeURIComponent(filenameMatch[1].replace(/['"]/g, ''))
+          }
+        }
+      }
+      a.download = filename
+      document.body.appendChild(a)
       a.click()
+      document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
+      ElMessage.success('下载成功')
+    } else {
+      const data = await res.json().catch(() => ({}))
+      ElMessage.error(data.error || '下载失败')
     }
   } catch (e) {
-    ElMessage.error('下载失败')
+    ElMessage.error('下载失败：网络错误')
   }
 }
 

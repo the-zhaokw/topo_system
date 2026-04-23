@@ -312,6 +312,19 @@ def get_approval_todos():
         logger.error(f"获取审批待办失败: {str(e)}")
         return jsonify({'success': False, 'message': f'获取审批待办失败: {str(e)}'}), 500
 
+def _get_enum_value(enum_or_str, default=''):
+    """Safely extract value from enum or return string as-is"""
+    if hasattr(enum_or_str, 'value'):
+        return enum_or_str.value
+    return str(enum_or_str) if enum_or_str else default
+
+def _get_user_name(user):
+    """Safely get user display name"""
+    if not user:
+        return '未知'
+    name = f"{user.first_name or ''} {user.last_name or ''}".strip()
+    return name or user.username or '未知'
+
 @todos_bp.route('/bugs', methods=['GET'])
 @jwt_required()
 def get_bug_todos():
@@ -351,9 +364,9 @@ def get_bug_todos():
                 'type': 'to_resolve',
                 'type_name': '待解决',
                 'title': bug.title,
-                'status': bug.status.value if hasattr(bug.status, 'value') else str(bug.status),
-                'severity': bug.severity.value if hasattr(bug.severity, 'value') else str(bug.severity),
-                'priority': bug.priority.value if hasattr(bug.priority, 'value') else str(bug.priority),
+                'status': _get_enum_value(bug.status),
+                'severity': _get_enum_value(bug.severity),
+                'priority': _get_enum_value(bug.priority),
                 'project_id': bug.project_id,
                 'project_name': project.name if project else '未知项目',
                 'created_at': bug.created_at.isoformat() if bug.created_at else None,
@@ -375,14 +388,15 @@ def get_bug_todos():
                 'type': 'to_verify',
                 'type_name': '待验证',
                 'title': bug.title,
-                'status': bug.status.value if hasattr(bug.status, 'value') else str(bug.status),
-                'severity': bug.severity.value if hasattr(bug.severity, 'value') else str(bug.severity),
-                'priority': bug.priority.value if hasattr(bug.priority, 'value') else str(bug.priority),
+                'status': _get_enum_value(bug.status),
+                'severity': _get_enum_value(bug.severity),
+                'priority': _get_enum_value(bug.priority),
                 'project_id': bug.project_id,
                 'project_name': project.name if project else '未知项目',
                 'resolved_by': bug.resolved_by,
-                'resolver_name': f"{resolver.first_name or ''} {resolver.last_name or ''}".strip() or resolver.username if resolver else '未知',
+                'resolver_name': _get_user_name(resolver),
                 'resolved_at': bug.resolved_at.isoformat() if bug.resolved_at else None,
+                'created_at': bug.created_at.isoformat() if bug.created_at else None,
                 'link': f'/bugs/{bug.id}'
             })
         
@@ -653,14 +667,14 @@ def get_all_todos():
                 'medium': 'medium',
                 'low': 'low'
             }
-            bug_priority = bug.priority.value if hasattr(bug.priority, 'value') else str(bug.priority)
+            bug_priority = _get_enum_value(bug.priority)
             all_todos.append({
                 'id': f'bug_resolve_{bug.id}',
                 'category': 'bug',
                 'type': 'to_resolve',
                 'type_name': '待解决Bug',
                 'title': bug.title,
-                'status': bug.status.value if hasattr(bug.status, 'value') else str(bug.status),
+                'status': _get_enum_value(bug.status),
                 'priority': priority_map.get(bug_priority, 'medium'),
                 'created_at': bug.created_at.isoformat() if bug.created_at else None,
                 'link': f'/bugs/{bug.id}'
@@ -679,7 +693,7 @@ def get_all_todos():
                 'type': 'to_verify',
                 'type_name': '待验证Bug',
                 'title': bug.title,
-                'status': bug.status.value if hasattr(bug.status, 'value') else str(bug.status),
+                'status': _get_enum_value(bug.status),
                 'priority': 'medium',
                 'created_at': bug.resolved_at.isoformat() if bug.resolved_at else None,
                 'link': f'/bugs/{bug.id}'

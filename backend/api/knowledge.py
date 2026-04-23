@@ -2044,12 +2044,48 @@ def download_shared_article(share_token):
         from flask import make_response
         from io import BytesIO
 
+        # 将HTML内容转换为Markdown格式
+        article_content = article.content or ''
+        try:
+            import html2text
+            h = html2text.HTML2Text()
+            h.ignore_links = False
+            h.ignore_images = False
+            h.ignore_tables = False
+            h.body_width = 0  # 不自动换行
+            article_content = h.handle(article_content)
+        except ImportError:
+            # 如果没有html2text，使用简单的HTML标签清理
+            import re
+            from html import unescape
+            # 移除script和style标签及其内容
+            article_content = re.sub(r'<script[^>]*>.*?</script>', '', article_content, flags=re.DOTALL | re.IGNORECASE)
+            article_content = re.sub(r'<style[^>]*>.*?</style>', '', article_content, flags=re.DOTALL | re.IGNORECASE)
+            # 将<br>, <br/>等转换为换行
+            article_content = re.sub(r'<br\s*/?>', '\n', article_content, flags=re.IGNORECASE)
+            # 将<p>标签转换为段落
+            article_content = re.sub(r'</p>', '\n\n', article_content, flags=re.IGNORECASE)
+            article_content = re.sub(r'<p[^>]*>', '', article_content, flags=re.IGNORECASE)
+            # 将标题标签转换为Markdown格式
+            for i in range(6, 0, -1):
+                article_content = re.sub(rf'<h{i}[^>]*>(.*?)</h{i}>', rf'{"#" * i} \1\n\n', article_content, flags=re.DOTALL | re.IGNORECASE)
+            # 将<li>标签转换为列表项
+            article_content = re.sub(r'<li[^>]*>(.*?)</li>', r'* \1\n', article_content, flags=re.DOTALL | re.IGNORECASE)
+            article_content = re.sub(r'<ul[^>]*>|</ul>|<ol[^>]*>|</ol>', '', article_content, flags=re.IGNORECASE)
+            # 移除其他HTML标签
+            article_content = re.sub(r'<[^>]+>', '', article_content)
+            # 解码HTML实体
+            article_content = unescape(article_content)
+            # 规范化空白
+            article_content = re.sub(r'\n{3,}', '\n\n', article_content)
+            article_content = article_content.strip()
+
         content = f"# {article.title}\n\n"
         content += f"作者：{article.author_name or '未知'}\n"
         content += f"分类：{article.category.name if article.category else '未分类'}\n"
         content += f"更新时间：{article.updated_at.strftime('%Y-%m-%d %H:%M:%S') if article.updated_at else '未知'}\n\n"
         content += "---\n\n"
-        content += article.content or ''
+        content += article_content
 
         buffer = BytesIO(content.encode('utf-8'))
         buffer.seek(0)
@@ -2058,7 +2094,8 @@ def download_shared_article(share_token):
         response.headers['Content-Type'] = 'text/markdown; charset=utf-8'
         from urllib.parse import quote
         safe_filename = quote(article.title, safe='')
-        response.headers['Content-Disposition'] = f'attachment; filename={safe_filename}.md'
+        # 使用 filename* 支持 UTF-8 编码的文件名（RFC 5987）
+        response.headers['Content-Disposition'] = f"attachment; filename*=UTF-8''{safe_filename}.md"
 
         return response
     except Exception as e:

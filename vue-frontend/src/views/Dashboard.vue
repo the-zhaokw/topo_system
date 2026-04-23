@@ -156,6 +156,24 @@
                   >
                     {{ activity.details }}
                   </el-link>
+                  <el-link 
+                    v-else-if="activity.target_type === 'leave_application' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/attendance/leave-application`)"
+                    style="cursor: pointer;"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link 
+                    v-else-if="activity.target_type === 'overtime_application' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/attendance/overtime-application`)"
+                    style="cursor: pointer;"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
                   <span v-else class="activity-details">{{ activity.details }}</span>
                 </div>
               </div>
@@ -417,11 +435,13 @@ const fetchMyActivities = async () => {
     const response = await apiService.users.getUserHome(currentUser.id)
     if (response && response.activities) {
       activities.value = response.activities.map(activity => {
-        // 处理标题显示：如果是 work_log 类型，显示为中文"工作日志"
+        // 处理标题显示：将英文类型转换为中文
         let details = activity.resource_name || activity.description
-        if (activity.target_type === 'work_log' && details) {
-          // 将 "work_log #6" 替换为 "工作日志 #6"
+        if (details) {
+          // 将各种英文类型替换为中文
           details = details.replace(/^work_log/i, '工作日志')
+          details = details.replace(/^overtime_application/i, '加班申请')
+          details = details.replace(/^leave_application/i, '请假申请')
         }
         return {
           id: activity.id,

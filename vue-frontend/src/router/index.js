@@ -550,7 +550,7 @@ const routes = [
   {
     path: '/knowledge/articles/:id',
     name: 'KnowledgeArticleDetail',
-    component: () => import('@/views/KnowledgeListFinal.vue'),
+    component: () => import('@/views/KnowledgeArticleDetail.vue'),
     meta: { requiresAuth: true }
   },
   {
@@ -656,6 +656,12 @@ function handleRoute(to, next, userStore) {
 }
 
 function continueHandleRoute(to, next, userStore) {
+  // 检查是否是公开路由（不需要认证即可访问）
+  if (to.meta?.public) {
+    next()
+    return
+  }
+
   // 对于登录页面，我们总是允许访问，不做自动重定向
   // 这确保即使用户已登录，也能看到登录页面（比如想切换账号）
   // 只有当用户明确点击登录按钮后才会跳转到 dashboard

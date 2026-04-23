@@ -170,6 +170,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
   Folder, Clock, Edit, Share, Star, StarFilled,
@@ -177,6 +178,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
+const router = useRouter()
 
 const props = defineProps({
   article: {
@@ -322,10 +324,26 @@ const handleShare = async () => {
     }
 
     const data = await response.json()
-    const shareUrl = `${window.location.origin}${data.share_url}`
+    // 使用 hash 模式的路由格式生成分享链接
+    const shareUrl = `${window.location.origin}/#${data.share_url}`
 
     // 复制到剪贴板
-    await navigator.clipboard.writeText(shareUrl)
+    const copyToClipboard = async (text) => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = text
+        textarea.style.position = 'fixed'
+        textarea.style.opacity = '0'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+    }
+
+    await copyToClipboard(shareUrl)
     ElMessage.success('分享链接已复制到剪贴板')
   } catch (error) {
     console.error('分享失败:', error)
@@ -371,7 +389,7 @@ const downloadAttachment = (att) => {
 const loadRelatedArticle = (id) => {
   emit('close')
   // 通过路由跳转到相关文章
-  window.location.href = `#/knowledge/articles/${id}`
+  router.push(`/knowledge/articles/${id}`)
 }
 
 // 格式化文件大小

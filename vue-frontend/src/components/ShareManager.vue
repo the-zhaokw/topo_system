@@ -216,7 +216,8 @@ const createShare = async () => {
     
     if (res.ok) {
       const data = await res.json()
-      createdShare.url = `${window.location.origin}${data.share_url}`
+      // 使用 hash 模式的路由格式生成分享链接
+      createdShare.url = `${window.location.origin}/#${data.share_url}`
       createdShare.password = shareForm.enablePassword ? shareForm.password : ''
       
       showCreateDialog.value = false
@@ -270,7 +271,8 @@ const deleteShare = async (row) => {
 
 // 复制链接
 const copyLink = (row) => {
-  const url = `${window.location.origin}/knowledge/share/${row.share_token}`
+  // 使用 hash 模式的路由格式生成分享链接
+  const url = `${window.location.origin}/#/knowledge/share/${row.share_token}`
   copyToClipboard(url)
 }
 

@@ -1088,7 +1088,7 @@ export default {
     }
 
     const viewBugDetail = (row) => {
-      window.location.href = `/#/bug/${row.id}`
+      window.location.href = `/#/bugs/${row.id}`
     }
 
     const handleSizeChange = (val) => {
@@ -1256,6 +1256,8 @@ export default {
       handleDateRangeChange,
       handleSelectAllProjects,
       loadAllData,
+      loadTrendData,
+      loadDistributionData,
       resetFilters,
       refreshData,
       exportReport,
