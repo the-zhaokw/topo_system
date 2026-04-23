@@ -54,12 +54,54 @@
               {{ tag }}
             </el-tag>
           </div>
+          <!-- 操作按钮 -->
+          <div class="article-actions">
+            <el-button-group>
+              <el-button v-if="canEdit" @click="editArticle">
+                <el-icon><Edit /></el-icon> 编辑
+              </el-button>
+              <el-button @click="handleShare">
+                <el-icon><Share /></el-icon> 分享
+              </el-button>
+              <el-button @click="handleFavorite">
+                <el-icon><Star :class="{ 'is-favorited': article.is_favorited }" /></el-icon>
+                {{ article.is_favorited ? '已收藏' : '收藏' }}
+              </el-button>
+              <el-dropdown trigger="click" @command="handleExport">
+                <el-button>
+                  <el-icon><Download /></el-icon> 导出
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="pdf">导出为 PDF</el-dropdown-item>
+                    <el-dropdown-item command="docx">导出为 Word</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-button-group>
+          </div>
         </div>
 
         <el-divider />
 
         <!-- 文章内容 -->
         <div class="article-content" v-html="renderedContent"></div>
+
+        <!-- 统计信息 -->
+        <div class="article-stats-bar">
+          <div class="stat-item" @click="handleLike">
+            <el-icon :class="{ 'is-liked': isLiked }"><StarFilled /></el-icon>
+            <span>{{ article.like_count || 0 }} 点赞</span>
+          </div>
+          <div class="stat-item">
+            <el-icon><View /></el-icon>
+            <span>{{ article.view_count || 0 }} 浏览</span>
+          </div>
+          <div class="stat-item">
+            <el-icon><ChatDotRound /></el-icon>
+            <span>{{ comments.length }} 评论</span>
+          </div>
+        </div>
 
         <!-- 附件 -->
         <div v-if="article.attachments?.length" class="article-attachments">
@@ -84,25 +126,7 @@
           </div>
         </div>
 
-        <!-- 相关文章 -->
-        <div v-if="relatedArticles.length > 0" class="article-related">
-          <el-divider />
-          <h3 class="section-title">
-            <el-icon><Link /></el-icon>
-            相关文章
-          </h3>
-          <div class="related-list">
-            <div
-              v-for="rel in relatedArticles"
-              :key="rel.id"
-              class="related-item"
-              @click="loadRelatedArticle(rel.id)"
-            >
-              <el-icon><Document /></el-icon>
-              <span>{{ rel.title }}</span>
-            </div>
-          </div>
-        </div>
+
       </el-card>
 
       <!-- 评论区 -->
@@ -160,8 +184,8 @@ import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
 import { useUserStore } from '@/stores/user'
 import {
-  ArrowLeft, User, Folder, Clock, View, Star,
-  ChatDotRound, Paperclip, Document, Link
+  ArrowLeft, User, Folder, Clock, View, Star, StarFilled,
+  ChatDotRound, Paperclip, Edit, Share, Download, Document
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -174,8 +198,20 @@ const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172
 const loading = ref(true)
 const article = ref(null)
 const comments = ref([])
-const relatedArticles = ref([])
 const newComment = ref('')
+const isLiked = ref(false)
+
+const isAdmin = computed(() => {
+  const user = userStore.currentUser
+  if (!user) return false
+  if (user.is_super_admin) return true
+  return user.position === '管理员' || user.position?.includes('经理')
+})
+
+const canEdit = computed(() => {
+  if (isAdmin.value) return true
+  return userStore.currentUser?.id === article.value?.author_id
+})
 
 // 渲染 Markdown 内容
 const renderedContent = computed(() => {
@@ -211,7 +247,6 @@ const loadArticle = async () => {
     article.value = response?.data || response || null
     if (article.value) {
       loadComments()
-      loadRelatedArticles()
     }
   } catch (error) {
     console.error('加载文章失败:', error)
@@ -229,17 +264,6 @@ const loadComments = async () => {
     comments.value = response.data?.comments || response.data || []
   } catch (error) {
     console.error('加载评论失败:', error)
-  }
-}
-
-// 加载相关文章
-const loadRelatedArticles = async () => {
-  if (!article.value?.id) return
-  try {
-    const response = await apiRequest(`/api/knowledge/articles/${article.value.id}/related`)
-    relatedArticles.value = response.data?.items || response.data || []
-  } catch (error) {
-    console.error('加载相关文章失败:', error)
   }
 }
 
@@ -267,9 +291,126 @@ const downloadAttachment = (att) => {
   window.open(`${API_BASE_URL}/api/knowledge/articles/${article.value.id}/attachments/${att.id}`)
 }
 
-// 加载相关文章详情
-const loadRelatedArticle = (id) => {
-  router.push(`/knowledge/articles/${id}`)
+// 编辑文章
+const editArticle = () => {
+  router.push(`/knowledge/articles/${article.value.id}/edit`)
+}
+
+// 点赞
+const handleLike = async () => {
+  if (!article.value?.id) return
+  try {
+    await apiRequest(`/api/knowledge/articles/${article.value.id}/like`, {
+      method: 'POST'
+    })
+    isLiked.value = !isLiked.value
+    article.value.like_count = (article.value.like_count || 0) + (isLiked.value ? 1 : -1)
+    ElMessage.success(isLiked.value ? '点赞成功' : '取消点赞')
+  } catch (error) {
+    console.error('点赞失败:', error)
+  }
+}
+
+// 收藏
+const handleFavorite = async () => {
+  if (!article.value?.id) return
+  try {
+    await apiRequest(`/api/knowledge/articles/${article.value.id}/favorite`, {
+      method: article.value.is_favorited ? 'DELETE' : 'POST'
+    })
+    article.value.is_favorited = !article.value.is_favorited
+    ElMessage.success(article.value.is_favorited ? '收藏成功' : '取消收藏')
+  } catch (error) {
+    console.error('收藏失败:', error)
+  }
+}
+
+// 分享
+const handleShare = async () => {
+  if (!article.value?.id) return
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      ElMessage.warning('请先登录')
+      return
+    }
+
+    // 创建分享链接
+    const response = await fetch(
+      `${API_BASE_URL}/api/knowledge/articles/${article.value.id}/shares`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          allow_download: true
+        })
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || '创建分享失败')
+    }
+
+    const data = await response.json()
+    // 使用 hash 模式的路由格式生成分享链接
+    const shareUrl = `${window.location.origin}/#${data.share_url}`
+
+    // 复制到剪贴板
+    const copyToClipboard = async (text) => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = text
+        textarea.style.position = 'fixed'
+        textarea.style.opacity = '0'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+    }
+
+    await copyToClipboard(shareUrl)
+    ElMessage.success('分享链接已复制到剪贴板')
+  } catch (error) {
+    console.error('分享失败:', error)
+    ElMessage.error(error.message || '分享失败')
+  }
+}
+
+// 导出
+const handleExport = async (type) => {
+  if (!article.value?.id) return
+  try {
+    const token = localStorage.getItem('token')
+    const url = `${API_BASE_URL}/api/knowledge/articles/${article.value.id}/export/${type}`
+    const response = await fetch(url, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : ''
+      }
+    })
+    if (!response.ok) {
+      throw new Error('导出失败')
+    }
+    const blob = await response.blob()
+    const downloadUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = `${article.value.title}.${type === 'pdf' ? 'pdf' : 'docx'}`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(downloadUrl)
+    ElMessage.success('导出成功')
+  } catch (error) {
+    console.error('导出失败:', error)
+    ElMessage.error('导出失败')
+  }
 }
 
 // 返回知识库
@@ -375,6 +516,42 @@ onMounted(() => {
 
 .tag-item {
   margin-right: 0;
+}
+
+.article-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #ebeef5;
+}
+
+.article-stats-bar {
+  display: flex;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid #ebeef5;
+  border-bottom: 1px solid #ebeef5;
+  margin: 24px 0;
+}
+
+.article-stats-bar .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #606266;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.article-stats-bar .stat-item:hover {
+  color: #409EFF;
+}
+
+.article-stats-bar .is-liked {
+  color: #f56c6c;
+}
+
+.is-favorited {
+  color: #f56c6c;
 }
 
 .article-content {
@@ -498,34 +675,6 @@ onMounted(() => {
 .attachment-size {
   color: #909399;
   font-size: 12px;
-}
-
-/* 相关文章 */
-.article-related {
-  margin-top: 24px;
-}
-
-.related-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.related-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  background: #f5f7fa;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: #606266;
-}
-
-.related-item:hover {
-  background: #ecf5ff;
-  color: #409EFF;
 }
 
 /* 评论区 */

@@ -840,3 +840,34 @@
 2026-04-23 09:06:16,572 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 8, 'new_bugs': 333, 'fixed_bugs': 2, 'active_projects': 3, 'days': 30}
 2026-04-23 09:07:40,051 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
 2026-04-23 09:07:40,078 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 8, 'new_bugs': 333, 'fixed_bugs': 2, 'active_projects': 3, 'days': 30}
+2026-04-23 09:08:44,918 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 09:08:44,939 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 8, 'new_bugs': 333, 'fixed_bugs': 2, 'active_projects': 3, 'days': 30}
+2026-04-23 09:08:47,092 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 100, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 09:09:09,206 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 09:09:09,242 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 8, 'new_bugs': 333, 'fixed_bugs': 2, 'active_projects': 3, 'days': 30}
+2026-04-23 10:43:32,125 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:43:32,155 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 8, 'new_bugs': 333, 'fixed_bugs': 2, 'active_projects': 3, 'days': 30}
+2026-04-23 10:44:48,002 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:44:48,018 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 7, 'new_bugs': 333, 'fixed_bugs': 3, 'active_projects': 3, 'days': 30}
+2026-04-23 10:45:12,236 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-04-23 10:45:12,238 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:46:35,774 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:46:35,793 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 5, 'active_projects': 3, 'days': 30}
+2026-04-23 10:47:42,894 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:47:42,928 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 4, 'active_projects': 3, 'days': 30}
+2026-04-23 10:47:58,023 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 50, 'filtered_by_department': None, 'search_term': ''}
+2026-04-23 10:48:19,854 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:48:19,873 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 4, 'active_projects': 3, 'days': 30}
+2026-04-23 10:48:36,093 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-04-23 10:48:36,095 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 100, 'filtered_by_status': '', 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:48:55,734 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:48:55,774 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 4, 'active_projects': 3, 'days': 30}
+2026-04-23 10:58:51,995 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-04-23 10:58:57,534 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:58:57,551 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 5, 'active_projects': 3, 'days': 30}
+2026-04-23 10:59:08,550 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:59:08,599 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 5, 'active_projects': 3, 'days': 30}
+2026-04-23 10:59:26,569 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-04-23 10:59:26,596 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 6, 'new_bugs': 333, 'fixed_bugs': 5, 'active_projects': 3, 'days': 30}
+2026-04-23 11:00:42,781 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 50, 'filtered_by_department': None, 'search_term': ''}
+2026-04-23 11:01:43,581 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 50, 'filtered_by_department': None, 'search_term': ''}

@@ -1,21 +1,30 @@
 # 系统管理API - F-008
 
 from flask import Blueprint, request, jsonify, send_file
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 import shutil
 import json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-# 系统管理蓝图
 system_bp = Blueprint('system', __name__, url_prefix='/system')
+
+def get_china_now():
+    """获取中国时区当前时间"""
+    try:
+        from enhanced_app import now_china
+        return now_china()
+    except ImportError:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo('Asia/Shanghai'))
 
 @system_bp.route('/time', methods=['GET'])
 def get_system_time():
     """获取系统当前时间"""
+    china_now = get_china_now()
     return jsonify({
-        'server_time': datetime.now().isoformat(),
-        'timestamp': int(datetime.now().timestamp() * 1000),
+        'server_time': china_now.isoformat(),
+        'timestamp': int(china_now.timestamp() * 1000),
         'timezone': 'Asia/Shanghai'
     }), 200
 

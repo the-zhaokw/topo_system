@@ -217,6 +217,7 @@ const closeMenu = () => {
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .mobile-menu-overlay.show {
@@ -236,6 +237,8 @@ const closeMenu = () => {
   transition: transform 0.3s ease;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
 }
 
 .mobile-menu-overlay.show .mobile-menu {
@@ -249,6 +252,9 @@ const closeMenu = () => {
   padding: 16px;
   background: #263445;
   color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .mobile-menu-header .logo {
@@ -263,15 +269,23 @@ const closeMenu = () => {
   font-size: 24px;
   cursor: pointer;
   color: #bfcbd9;
-  padding: 4px;
+  padding: 8px;
+  margin: -8px -8px -8px 0;
+  border-radius: 4px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s;
 }
 
-.close-btn:hover {
+.close-btn:hover,
+.close-btn:active {
   color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .mobile-menu-nav {
   border-right: none;
+  padding-bottom: 20px;
 }
 
 :deep(.el-menu-item),
@@ -281,6 +295,18 @@ const closeMenu = () => {
   padding-left: 16px !important;
   padding-right: 16px !important;
   font-size: 14px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s;
+}
+
+:deep(.el-menu-item:hover),
+:deep(.el-sub-menu__title:hover) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+:deep(.el-menu-item.is-active) {
+  background-color: rgba(64, 158, 255, 0.2) !important;
 }
 
 :deep(.el-menu-item span),
@@ -293,6 +319,19 @@ const closeMenu = () => {
   line-height: 44px;
   padding-left: 32px !important;
   font-size: 13px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+:deep(.el-sub-menu .el-menu-item:hover) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 菜单图标优化 */
+:deep(.el-menu-item .el-icon),
+:deep(.el-sub-menu__title .el-icon) {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
 }
 
 @media screen and (max-width: 480px) {
@@ -306,6 +345,7 @@ const closeMenu = () => {
 
   .mobile-menu-header .logo {
     font-size: 16px;
+    gap: 6px;
   }
 
   :deep(.el-menu-item),
@@ -313,12 +353,20 @@ const closeMenu = () => {
     height: 46px;
     line-height: 46px;
     font-size: 13px;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
   }
 
   :deep(.el-sub-menu .el-menu-item) {
     height: 40px;
     line-height: 40px;
     font-size: 12px;
+    padding-left: 28px !important;
+  }
+
+  .close-btn {
+    font-size: 22px;
+    padding: 6px;
   }
 }
 </style>

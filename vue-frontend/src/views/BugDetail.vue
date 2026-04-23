@@ -194,55 +194,25 @@
               <span>状态时间线</span>
             </div>
           </template>
-          
-          <el-timeline>
-            <el-timeline-item :timestamp="formatDate(bug.created_at)" placement="top">
+
+          <el-timeline v-if="statusTimeline.length > 0">
+            <el-timeline-item
+              v-for="item in statusTimeline"
+              :key="item.id"
+              :timestamp="formatDate(item.timestamp)"
+              placement="top"
+            >
               <el-card>
-                <h4>Bug创建</h4>
-                <p>由 {{ bug.creator_name }} 创建</p>
-              </el-card>
-            </el-timeline-item>
-            
-            <el-timeline-item v-if="bug.resolved_at" :timestamp="formatDate(bug.resolved_at)" placement="top">
-              <el-card>
-                <h4>Bug已解决</h4>
-                <p>由 {{ bug.resolver_name }} 解决</p>
-                <el-alert
-                  v-if="bug.resolution"
-                  :title="bug.resolution"
-                  type="success"
-                  :closable="false"
-                  class="resolution-alert"
-                />
-                <div v-if="bug.resolve_build" class="resolution-meta">
-                  <el-tag size="small">解决构建: {{ bug.resolve_build }}</el-tag>
-                  <el-tag v-if="bug.resolution_version" size="small">解决版本: {{ bug.resolution_version }}</el-tag>
-                </div>
-              </el-card>
-            </el-timeline-item>
-            
-            <el-timeline-item v-if="bug.verified_at" :timestamp="formatDate(bug.verified_at)" placement="top">
-              <el-card>
-                <h4>Bug已验证</h4>
-                <p>由 {{ bug.verifier_name }} 验证</p>
-              </el-card>
-            </el-timeline-item>
-            
-            <el-timeline-item v-if="bug.closed_at" :timestamp="formatDate(bug.closed_at)" placement="top">
-              <el-card>
-                <h4>Bug已关闭</h4>
-                <p>Bug已关闭</p>
-              </el-card>
-            </el-timeline-item>
-            
-            <el-timeline-item v-if="bug.status === 'reopened'" placement="top">
-              <el-card>
-                <h4>Bug重新打开</h4>
-                <p>此Bug已被重新打开，需要重新处理</p>
-                <p>重新打开次数: {{ bug.reopened_count }}</p>
+                <h4>{{ item.title }}</h4>
+                <p>{{ item.description }}</p>
+                <el-tag v-if="item.type === 'resolved'" size="small" type="success">已解决</el-tag>
+                <el-tag v-if="item.type === 'reopened'" size="small" type="warning">重新打开</el-tag>
+                <el-tag v-if="item.type === 'closed'" size="small" type="info">已关闭</el-tag>
+                <el-tag v-if="item.type === 'in_progress'" size="small" type="primary">处理中</el-tag>
               </el-card>
             </el-timeline-item>
           </el-timeline>
+          <el-empty v-else description="暂无状态变更记录" />
         </el-card>
         
         <!-- Bug 活动记录 -->
@@ -608,6 +578,90 @@ const fieldChangeActivities = computed(() => {
   })
 })
 
+// 状态时间线 - 从Activity记录中提取所有状态变更
+const statusTimeline = computed(() => {
+  const timeline = []
+
+  // 1. 添加创建记录
+  timeline.push({
+    id: 'creation',
+    timestamp: bug.value?.created_at,
+    title: 'Bug创建',
+    description: `由 ${bug.value?.creator_name || '未知'} 创建`,
+    type: 'creation'
+  })
+
+  // 2. 从Activity记录中提取状态变更
+  activities.value.forEach(activity => {
+    if (activity.action === 'update_bug' || activity.action === 'bug_status_transition') {
+      let fieldChanges = activity.field_changes
+
+      // 兼容处理：如果field_changes是字符串，尝试解析为数组
+      if (typeof fieldChanges === 'string') {
+        try {
+          fieldChanges = JSON.parse(fieldChanges)
+        } catch (e) {
+          fieldChanges = []
+        }
+      }
+
+      if (!Array.isArray(fieldChanges)) {
+        fieldChanges = []
+      }
+
+      // 检查是否有状态变更
+      const hasStatusChange = fieldChanges.some(
+        change => change.field === 'status'
+      )
+      if (hasStatusChange) {
+        const statusChange = fieldChanges.find(c => c.field === 'status')
+        const oldStatus = statusChange.old_value
+        const newStatus = statusChange.new_value
+        const statusTitles = {
+          'new': '新建',
+          'in_progress': '开始处理',
+          'resolved': '已解决',
+          'verified': '已验证',
+          'closed': '已关闭',
+          'reopened': '重新打开'
+        }
+        timeline.push({
+          id: activity.id,
+          timestamp: activity.created_at,
+          title: statusTitles[newStatus] || newStatus,
+          description: `由 ${activity.user_name || '未知'} 变更: ${statusTitles[oldStatus] || oldStatus} → ${statusTitles[newStatus] || newStatus}`,
+          type: newStatus,
+          oldStatus,
+          newStatus
+        })
+      }
+    }
+  })
+
+  // 3. 如果当前状态是reopened且没有在activities中找到，添加重新打开记录
+  if (bug.value?.status === 'reopened') {
+    const hasReopenedInTimeline = timeline.some(item => item.newStatus === 'reopened')
+    if (!hasReopenedInTimeline) {
+      timeline.push({
+        id: 'reopened-current',
+        timestamp: bug.value.updated_at,
+        title: '重新打开',
+        description: `Bug已被重新打开，需要重新处理。重新打开次数: ${bug.value.reopened_count || 0}`,
+        type: 'reopened'
+      })
+    }
+  }
+
+  // 按时间排序（升序）
+  timeline.sort((a, b) => {
+    if (!a.timestamp) return 1
+    if (!b.timestamp) return -1
+    return new Date(a.timestamp) - new Date(b.timestamp)
+  })
+
+  return timeline
+})
+
 // 状态流转相关
 const showTransitionDialog = ref(false)
 const transitionLoading = ref(false)
@@ -829,7 +883,7 @@ const workflowSuggestions = computed(() => {
   }
 
   if (status === 'reopened') {
-    if (role === 'manager' || role === 'project_manager' || role === 'software_engineer') {
+    if (isManager || isDeveloper) {
       suggestions.push({
         type: 'recommended',
         title: '重新处理Bug',
@@ -1485,9 +1539,30 @@ onMounted(async () => {
 .tags-card,
 .attachments-card,
 .comments-card,
-.timeline-card,
+.timeline-card {
+  margin-bottom: 20px;
+}
+
+.timeline-card :deep(.el-card__body) {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.timeline-card :deep(.el-timeline) {
+  padding-left: 10px;
+}
+
+.timeline-card :deep(.el-timeline-item__content) {
+  min-width: 200px;
+}
+
 .field-changes-card {
   margin-bottom: 20px;
+}
+
+.field-changes-card :deep(.el-card__body) {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .card-header {

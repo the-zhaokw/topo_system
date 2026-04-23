@@ -105,25 +105,6 @@
       </div>
     </div>
 
-    <!-- 相关文章 -->
-    <div class="detail-section" v-if="relatedArticles.length">
-      <h3 class="section-title">
-        <el-icon><Link /></el-icon>
-        相关文章
-      </h3>
-      <div class="related-list">
-        <div
-          v-for="rel in relatedArticles"
-          :key="rel.id"
-          class="related-item"
-          @click="loadRelatedArticle(rel.id)"
-        >
-          <el-icon><Document /></el-icon>
-          <span>{{ rel.title }}</span>
-        </div>
-      </div>
-    </div>
-
     <!-- 评论区 -->
     <div class="detail-section">
       <h3 class="section-title">
@@ -174,7 +155,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
   Folder, Clock, Edit, Share, Star, StarFilled,
-  View, ChatDotRound, Paperclip, Document, Link, Download
+  View, ChatDotRound, Paperclip, Download
 } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
@@ -207,7 +188,6 @@ const canEdit = computed(() => {
 const isLiked = ref(false)
 const newComment = ref('')
 const comments = ref([])
-const relatedArticles = ref([])
 
 // 渲染 Markdown 内容
 const renderedContent = computed(() => {
@@ -236,16 +216,6 @@ const loadComments = async () => {
     comments.value = response.data?.comments || response.data || []
   } catch (error) {
     console.error('加载评论失败:', error)
-  }
-}
-
-// 加载相关文章
-const loadRelatedArticles = async () => {
-  try {
-    const response = await apiRequest(`/api/knowledge/articles/${props.article.id}/related`)
-    relatedArticles.value = response.data?.items || response.data || []
-  } catch (error) {
-    console.error('加载相关文章失败:', error)
   }
 }
 
@@ -385,13 +355,6 @@ const downloadAttachment = (att) => {
   window.open(`${API_BASE_URL}/api/knowledge/articles/${props.article.id}/attachments/${att.id}`)
 }
 
-// 加载相关文章详情
-const loadRelatedArticle = (id) => {
-  emit('close')
-  // 通过路由跳转到相关文章
-  router.push(`/knowledge/articles/${id}`)
-}
-
 // 格式化文件大小
 const formatFileSize = (size) => {
   if (!size) return ''
@@ -434,7 +397,6 @@ const getUserAvatar = (avatar) => {
 
 onMounted(() => {
   loadComments()
-  loadRelatedArticles()
 })
 </script>
 
@@ -663,30 +625,6 @@ onMounted(() => {
 .attachment-size {
   color: #909399;
   font-size: 12px;
-}
-
-/* 相关文章 */
-.related-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.related-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  background: #f5f7fa;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: #606266;
-}
-
-.related-item:hover {
-  background: #ecf5ff;
-  color: #409EFF;
 }
 
 /* 评论 */

@@ -952,22 +952,37 @@ onUnmounted(() => {
     padding: 0 12px;
     height: 50px !important;
     line-height: 50px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   }
 
   .header-left {
     flex: 1;
+    min-width: 0;
   }
 
   .menu-btn {
     border: none;
     background: transparent;
-    padding: 4px 8px;
+    padding: 8px;
     margin-right: 8px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .menu-btn:hover,
+  .menu-btn:active {
+    background-color: rgba(64, 158, 255, 0.1);
+    border-radius: 4px;
   }
 
   .header-right {
     display: flex;
     align-items: center;
+    gap: 4px;
   }
 
   .username {
@@ -975,12 +990,26 @@ onUnmounted(() => {
   }
 
   .notification-dropdown {
-    margin-left: 8px;
+    margin-left: 4px;
+  }
+
+  .notification-icon {
+    padding: 6px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .main-content {
     padding: 12px;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    min-height: calc(100vh - 50px);
+  }
+
+  .user-info {
+    padding: 4px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .user-info .el-avatar {
@@ -998,13 +1027,31 @@ onUnmounted(() => {
     display: none !important;
   }
 
-  .notification-icon {
-    padding: 4px;
-  }
-
   .el-badge__content {
     right: 0 !important;
     top: -2px !important;
+    font-size: 10px !important;
+    height: 16px !important;
+    line-height: 16px !important;
+    padding: 0 4px !important;
+  }
+
+  /* 面包屑移动端优化 */
+  .header-left .el-breadcrumb {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  /* 下拉菜单移动端优化 */
+  :deep(.el-dropdown-menu) {
+    max-width: 280px;
+  }
+
+  :deep(.user-dropdown-content) {
+    min-width: 260px;
   }
 }
 
@@ -1025,6 +1072,14 @@ onUnmounted(() => {
 
   .menu-btn .el-icon {
     font-size: 20px !important;
+  }
+
+  .header-right {
+    gap: 2px;
+  }
+
+  .notification-icon {
+    padding: 4px;
   }
 }
 </style>

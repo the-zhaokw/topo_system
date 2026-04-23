@@ -357,20 +357,7 @@
       </div>
     </div>
 
-    <!-- 文章详情抽屉 -->
-    <el-drawer
-      v-model="detailVisible"
-      :title="currentArticle?.title"
-      size="70%"
-      destroy-on-close
-    >
-      <ArticleDetail
-        v-if="currentArticle"
-        :article="currentArticle"
-        @edit="editArticle(currentArticle)"
-        @close="detailVisible = false"
-      />
-    </el-drawer>
+
 
     <!-- 文章编辑对话框 -->
     <el-dialog
@@ -394,19 +381,20 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
-  Reading, Plus, Refresh, Search, Document, CircleCheck, EditPen,
+  Plus, Refresh, Search, Document, CircleCheck, EditPen,
   User, Star, Clock, Top, List, Grid, View, ChatDotRound,
   ArrowDown, Folder
 } from '@element-plus/icons-vue'
-import ArticleDetail from '@/components/knowledge/ArticleDetail.vue'
 import ArticleForm from '@/components/knowledge/ArticleForm.vue'
 
 // API 基础 URL
 const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
 
+const router = useRouter()
 const userStore = useUserStore()
 
 const isAdmin = computed(() => {
@@ -430,7 +418,6 @@ const pageSize = ref(20)
 const viewMode = ref('list')
 const activeMenu = ref('all')
 const includeSubcategories = ref(true)
-const detailVisible = ref(false)
 const editVisible = ref(false)
 const isEditing = ref(false)
 const currentArticle = ref(null)
@@ -640,20 +627,9 @@ const createArticle = () => {
 }
 
 // 查看文章
-const viewArticle = async (article) => {
-  // 先获取完整的文章详情（包含内容）
-  try {
-    const response = await apiRequest(`/api/knowledge/articles/${article.id}`)
-    if (response.success) {
-      currentArticle.value = response.data
-    } else {
-      currentArticle.value = article
-    }
-  } catch (error) {
-    console.error('获取文章详情失败:', error)
-    currentArticle.value = article
-  }
-  detailVisible.value = true
+const viewArticle = (article) => {
+  // 跳转到文章详情页
+  router.push(`/knowledge/articles/${article.id}`)
 }
 
 // 编辑文章
@@ -672,7 +648,6 @@ const editArticle = async (article) => {
   }
   isEditing.value = true
   editVisible.value = true
-  detailVisible.value = false
 }
 
 // 保存文章

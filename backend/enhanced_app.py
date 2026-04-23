@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 import logging
 import os
 import json
@@ -12,17 +13,20 @@ from email.mime.multipart import MIMEMultipart
 import requests
 from functools import wraps
 
+CHINA_TZ = ZoneInfo('Asia/Shanghai')
+
+def now_china():
+    """获取中国时区(UTC+8)的当前时间"""
+    return datetime.now(CHINA_TZ)
+
+def utcnow():
+    """获取中国时区当前时间（兼容原有 utcnow 用法）"""
+    return datetime.now(CHINA_TZ)
+
 def sync_time_to_china():
     """同步时间到中国时区 (UTC+8)"""
     try:
-        os.environ['TZ'] = 'Asia/Shanghai'
-        try:
-            import time
-            time.tzset()
-        except AttributeError:
-            pass
-        
-        current_time = datetime.now()
+        current_time = now_china()
         logging.info(f"时间已同步到中国时区 (UTC+8)，当前时间: {current_time.strftime('%Y-%m-%d %H:%M:%S')}")
     except Exception as e:
         logging.warning(f"时间同步设置失败: {e}")

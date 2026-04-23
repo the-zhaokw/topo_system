@@ -12,12 +12,13 @@ html, body, #app {
     overflow-x: hidden;
   }
 
-  /* Element Plus 组件全局适配 */
+  /* Element Plus 组件全局适配 - 增加选择器权重 */
   .el-table {
     font-size: 12px !important;
-    max-width: 100%;
+    max-width: 100% !important;
     overflow-x: auto !important;
     display: block !important;
+    width: 100% !important;
   }
 
   .el-table th,
@@ -316,6 +317,511 @@ html, body, #app {
 
   .el-tabs__nav::-webkit-scrollbar {
     display: none !important;
+  }
+
+  /* ===== 通用页面容器适配 ===== */
+  .bug-list,
+  .project-list,
+  .dashboard,
+  .user-list,
+  .test-list,
+  .requirement-list,
+  .work-log-list,
+  .notification-list,
+  .material-list,
+  .attendance-list,
+  .leave-list,
+  .overtime-list,
+  .knowledge-list,
+  .article-detail,
+  .article-form,
+  .test-execution-list,
+  .test-suite-list,
+  .test-dashboard,
+  .test-report,
+  .personal-plan,
+  .my-todos,
+  .activity-list,
+  .user-profile,
+  .user-detail,
+  .project-detail,
+  .project-form,
+  .bug-detail,
+  .bug-form,
+  .requirement-document-detail,
+  .requirement-document-form,
+  .work-logs,
+  .work-log-list,
+  .inventory-list,
+  .warehouse-list,
+  .material-category-list,
+  .material-relationship-list,
+  .serial-number-list,
+  .location-list,
+  .contract-list,
+  .contract-detail,
+  .custom-report,
+  .system-settings,
+  .shift-management,
+  .my-department,
+  .attendance-report,
+  .project-statistics,
+  .bug-statistics,
+  .work-statistics-detail,
+  .requirement-trace-matrix,
+  .requirement-dashboard,
+  .project-log-list,
+  .risk-list,
+  .knowledge-share,
+  .knowledge-enhanced,
+  .notification-list,
+  /* PersonalPlan 页面容器 */
+  .personal-plan-container,
+  .plan-list-view,
+  .plan-dashboard,
+  .review-view,
+  .stats-view,
+  .focus-view,
+  .settings-view,
+  .gantt-view,
+  .plan-layout,
+  .habits-view,
+  .calendar-view,
+  .inbox-view,
+  .quadrant-view,
+  /* 其他页面容器 */
+  .login-container,
+  .monitoring-page,
+  .material-report-page,
+  .leave-application-page,
+  .leave-approval-page,
+  .overtime-application-page,
+  .overtime-approval-page {
+    padding: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 页面头部适配 */
+  .bug-list-header,
+  .project-list-header,
+  .dashboard-header,
+  .page-header,
+  .test-list-header,
+  .requirement-list-header,
+  .user-list-header,
+  .work-log-list-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 0 4px !important;
+  }
+
+  .bug-list-header h2,
+  .project-list-header h2,
+  .dashboard-header h2,
+  .page-header h2,
+  .test-list-header h2,
+  .requirement-list-header h2,
+  .user-list-header h2 {
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .header-actions {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .header-actions .el-button {
+    flex: 1 !important;
+    min-width: 80px !important;
+    max-width: calc(50% - 4px) !important;
+  }
+
+  /* 列表表格容器适配 */
+  .list-table-container,
+  .table-container,
+  .el-table {
+    width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  /* 过滤区域适配 */
+  .filter-controls,
+  .filter-card .el-form {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .filter-controls .el-input,
+  .filter-controls .el-select {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+
+  /* 统计卡片网格适配 */
+  .bug-stats .el-col,
+  .stat-card .el-col,
+  .stats-grid .el-col {
+    width: 50% !important;
+    max-width: 50% !important;
+    flex: 0 0 50% !important;
+    margin-bottom: 12px !important;
+  }
+
+  .bug-stats .el-row,
+  .stats-row .el-row {
+    flex-wrap: wrap !important;
+    margin: 0 -6px !important;
+  }
+
+  .bug-stats .el-row .el-col,
+  .stats-row .el-row .el-col {
+    padding: 0 6px !important;
+  }
+
+  .stat-number {
+    font-size: 24px !important;
+  }
+
+  .stat-label {
+    font-size: 12px !important;
+  }
+
+  /* 图表区域适配 */
+  .charts-section .el-col,
+  .chart-card .el-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    margin-bottom: 16px !important;
+  }
+
+  .chart-container {
+    height: 200px !important;
+    min-height: 200px !important;
+  }
+
+  /* 导航网格适配 */
+  .navigation-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .nav-item {
+    padding: 10px 8px !important;
+  }
+
+  .nav-item .el-icon {
+    font-size: 20px !important;
+  }
+
+  .nav-item .nav-text {
+    font-size: 12px !important;
+  }
+
+  /* 快速入口网格适配 */
+  .quick-access-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .access-item {
+    padding: 12px 8px !important;
+  }
+
+  .access-item i {
+    font-size: 18px !important;
+  }
+
+  .access-item span {
+    font-size: 11px !important;
+  }
+
+  /* 组织架构区域适配 */
+  .organization-section .el-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    margin-bottom: 16px !important;
+  }
+
+  .org-content {
+    max-height: 150px !important;
+    overflow-y: auto !important;
+  }
+
+  /* 批量操作工具栏适配 */
+  .batch-toolbar-content {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .batch-toolbar-content .el-button {
+    flex: 1 !important;
+    min-width: calc(50% - 4px) !important;
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+  }
+
+  .selected-count {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* 分页适配增强 */
+  .pagination-container {
+    justify-content: center !important;
+    overflow-x: auto !important;
+    padding: 8px 0 !important;
+  }
+
+  .el-pagination__sizes,
+  .el-pagination__jump {
+    display: none !important;
+  }
+
+  /* 卡片适配增强 */
+  .el-card {
+    margin-bottom: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  /* 对话框适配增强 */
+  .el-dialog {
+    width: 95% !important;
+    margin: 5vh auto !important;
+  }
+
+  .el-dialog__header {
+    padding: 12px 16px !important;
+  }
+
+  .el-dialog__title {
+    font-size: 16px !important;
+  }
+
+  .el-dialog__body {
+    padding: 16px !important;
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* 表格操作列适配 */
+  .el-table .el-button + .el-button {
+    margin-left: 4px !important;
+  }
+
+  .el-table .el-button--small {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+  }
+
+  /* 消息提示适配 */
+  .el-message {
+    min-width: 280px !important;
+    max-width: 90vw !important;
+  }
+
+  .el-message__content {
+    font-size: 13px !important;
+  }
+
+  /* 确认框适配 */
+  .el-message-box {
+    width: 90% !important;
+    max-width: 360px !important;
+  }
+
+  .el-message-box__title {
+    font-size: 16px !important;
+  }
+
+  .el-message-box__content {
+    font-size: 13px !important;
+  }
+
+  /* 选择器适配增强 */
+  .el-select-dropdown {
+    max-width: 90vw !important;
+  }
+
+  .el-select-dropdown__item {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+  }
+
+  /* 抽屉适配 */
+  .el-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .el-drawer__header {
+    padding: 12px 16px !important;
+  }
+
+  .el-drawer__body {
+    padding: 16px !important;
+  }
+
+  /* 加载/骨架屏适配 */
+  .el-skeleton {
+    font-size: 12px !important;
+  }
+
+  /* 进度条/时间线适配 */
+  .timeline-container {
+    padding-left: 20px !important;
+  }
+
+  .timeline-item {
+    padding-bottom: 20px !important;
+  }
+
+  .timeline-item:last-child {
+    padding-bottom: 0 !important;
+  }
+
+  /* 文件/附件列表适配 */
+  .file-list {
+    gap: 8px !important;
+  }
+
+  .file-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+
+  .file-info {
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .file-actions {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .file-actions .el-button {
+    flex: 1 !important;
+  }
+
+  /* 头像/图片适配 */
+  .avatar-lg {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .avatar-md {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .avatar-sm {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .user-info-card {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+
+  /* 评论/消息区域适配 */
+  .comment-list {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+  }
+
+  .comment-item {
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+
+  .comment-avatar {
+    align-self: flex-start !important;
+  }
+
+  .comment-content {
+    margin-left: 0 !important;
+  }
+
+  .comment-input-area {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .comment-input {
+    width: 100% !important;
+  }
+
+  .comment-submit-btn {
+    width: 100% !important;
+  }
+
+  /* 日期选择器适配 */
+  .el-date-picker {
+    width: 100% !important;
+  }
+
+  .el-date-picker__content {
+    padding: 8px !important;
+  }
+
+  /* 步骤条适配增强 */
+  .el-step {
+    width: 100% !important;
+  }
+
+  .el-step__title {
+    font-size: 12px !important;
+  }
+
+  .el-step__description {
+    font-size: 11px !important;
+  }
+
+  /* 树形控件适配 */
+  .el-tree {
+    font-size: 12px !important;
+  }
+
+  .el-tree-node__content {
+    height: auto !important;
+    padding: 8px 0 !important;
+  }
+
+  /* 标签页横向滚动 */
+  .el-tabs__nav-scroll {
+    overflow-x: auto !important;
+  }
+
+  /* 搜索框适配 */
+  .el-search {
+    width: 100% !important;
+  }
+
+  .el-search__input {
+    width: 100% !important;
   }
 }
 
@@ -1458,5 +1964,569 @@ html, body, #app {
     max-width: 100% !important;
     flex: none !important;
     width: 100% !important;
+  }
+}
+
+/* ===== PersonalPlan 页面特定适配 ===== */
+@media screen and (max-width: 768px) {
+  /* PersonalPlan 主容器 */
+  .personal-plan-container {
+    padding: 8px !important;
+    height: calc(100vh - 50px) !important;
+    overflow-y: auto !important;
+  }
+
+  /* 计划列表视图 */
+  .plan-list-view {
+    padding: 8px !important;
+  }
+
+  .plan-list-view .plan-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 0 4px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .plan-list-view .plan-header h2 {
+    font-size: 18px !important;
+    margin: 0 !important;
+  }
+
+  .plan-list-view .plan-filters {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .plan-list-view .plan-item {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .plan-list-view .plan-item-title {
+    font-size: 14px !important;
+  }
+
+  .plan-list-view .plan-item-meta {
+    font-size: 12px !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* 仪表板视图 */
+  .plan-dashboard {
+    padding: 8px !important;
+  }
+
+  .plan-dashboard .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .plan-dashboard .stat-card {
+    padding: 12px !important;
+  }
+
+  .plan-dashboard .stat-number {
+    font-size: 20px !important;
+  }
+
+  .plan-dashboard .stat-label {
+    font-size: 12px !important;
+  }
+
+  /* 复习视图 */
+  .review-view {
+    padding: 8px !important;
+  }
+
+  .review-view .review-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .review-view .review-list {
+    max-height: none !important;
+  }
+
+  .review-view .review-item {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* 统计视图 */
+  .stats-view {
+    padding: 8px !important;
+  }
+
+  .stats-view .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .stats-view .chart-section {
+    margin-top: 16px !important;
+  }
+
+  .stats-view .chart-container {
+    height: 200px !important;
+  }
+
+  /* 专注视图 */
+  .focus-view {
+    padding: 8px !important;
+  }
+
+  .focus-view .focus-timer {
+    font-size: 36px !important;
+  }
+
+  .focus-view .focus-controls {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .focus-view .focus-task {
+    padding: 12px !important;
+  }
+
+  /* 设置视图 */
+  .settings-view {
+    padding: 8px !important;
+  }
+
+  .settings-view .settings-section {
+    margin-bottom: 16px !important;
+  }
+
+  .settings-view .settings-item {
+    padding: 12px !important;
+  }
+
+  /* 甘特图视图 */
+  .gantt-view {
+    padding: 8px !important;
+    overflow-x: auto !important;
+  }
+
+  .gantt-view .gantt-chart {
+    min-width: 600px !important;
+  }
+
+  .gantt-view .gantt-header {
+    font-size: 12px !important;
+  }
+
+  .gantt-view .gantt-bar {
+    height: 28px !important;
+  }
+
+  /* 布局容器 */
+  .plan-layout {
+    padding: 0 !important;
+    height: 100% !important;
+  }
+
+  .plan-layout .sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 240px !important;
+    z-index: 1000 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  .plan-layout .sidebar.show {
+    transform: translateX(0) !important;
+  }
+
+  .plan-layout .content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .plan-layout .mobile-menu-btn {
+    display: block !important;
+    position: fixed !important;
+    top: 60px !important;
+    left: 8px !important;
+    z-index: 999 !important;
+  }
+
+  /* 习惯视图 */
+  .habits-view {
+    padding: 8px !important;
+  }
+
+  .habits-view .habit-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .habits-view .habit-card {
+    padding: 12px !important;
+  }
+
+  .habits-view .habit-name {
+    font-size: 13px !important;
+  }
+
+  /* 日历视图 */
+  .calendar-view {
+    padding: 8px !important;
+  }
+
+  .calendar-view .calendar-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .calendar-view .calendar-grid {
+    font-size: 12px !important;
+  }
+
+  .calendar-view .calendar-day {
+    min-height: 60px !important;
+    padding: 4px !important;
+  }
+
+  .calendar-view .calendar-event {
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+  }
+
+  /* 收件箱视图 */
+  .inbox-view {
+    padding: 8px !important;
+  }
+
+  .inbox-view .inbox-filters {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .inbox-view .inbox-item {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .inbox-view .inbox-item-title {
+    font-size: 14px !important;
+  }
+
+  .inbox-view .inbox-item-meta {
+    font-size: 11px !important;
+  }
+
+  /* 四象限视图 */
+  .quadrant-view {
+    padding: 8px !important;
+  }
+
+  .quadrant-view .quadrant-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .quadrant-view .quadrant {
+    min-height: 150px !important;
+    padding: 8px !important;
+  }
+
+  .quadrant-view .quadrant-title {
+    font-size: 12px !important;
+  }
+
+  .quadrant-view .task-item {
+    padding: 6px 8px !important;
+    margin-bottom: 4px !important;
+    font-size: 12px !important;
+  }
+
+  /* 通用任务/计划项适配 */
+  .task-item,
+  .plan-item,
+  .habit-card,
+  .inbox-item,
+  .review-item {
+    background: #fff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* 按钮组适配 */
+  .action-buttons {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .action-buttons .el-button {
+    flex: 1 !important;
+    min-width: calc(50% - 3px) !important;
+    font-size: 12px !important;
+  }
+
+  /* 表单区域适配 */
+  .form-section {
+    margin-bottom: 16px !important;
+  }
+
+  .form-section-title {
+    font-size: 15px !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+  }
+
+  /* 标签和状态适配 */
+  .status-tag,
+  .priority-tag {
+    font-size: 11px !important;
+    padding: 2px 6px !important;
+  }
+
+  /* 时间显示适配 */
+  .time-display,
+  .date-display {
+    font-size: 11px !important;
+    color: #909399 !important;
+  }
+
+  /* 进度条适配 */
+  .progress-bar-wrapper {
+    width: 100% !important;
+  }
+
+  .progress-bar-wrapper .el-progress {
+    width: 100% !important;
+  }
+
+  /* 空状态适配 */
+  .empty-state {
+    padding: 40px 20px !important;
+    text-align: center !important;
+  }
+
+  .empty-state-icon {
+    font-size: 48px !important;
+    color: #c0c4cc !important;
+    margin-bottom: 12px !important;
+  }
+
+  .empty-state-text {
+    font-size: 14px !important;
+    color: #909399 !important;
+  }
+}
+
+/* PersonalPlan 超小屏幕额外适配 */
+@media screen and (max-width: 480px) {
+  .personal-plan-container {
+    padding: 4px !important;
+  }
+
+  .plan-dashboard .dashboard-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-view .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .habits-view .habit-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .quadrant-view .quadrant-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .quadrant-view .quadrant {
+    min-height: 120px !important;
+  }
+
+  .calendar-view .calendar-day {
+    min-height: 50px !important;
+  }
+
+  .focus-view .focus-timer {
+    font-size: 28px !important;
+  }
+
+  .action-buttons .el-button {
+    max-width: 100% !important;
+    flex: none !important;
+    width: 100% !important;
+  }
+}
+
+/* ===== 其他页面特定适配 ===== */
+@media screen and (max-width: 768px) {
+  /* 监控页面 */
+  .monitoring-page {
+    padding: 8px !important;
+  }
+
+  .monitoring-page .metric-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .monitoring-page .chart-area {
+    height: 200px !important;
+    margin-top: 12px !important;
+  }
+
+  /* 物料报表页面 */
+  .material-report-page {
+    padding: 8px !important;
+  }
+
+  .material-report-page .report-filters {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .material-report-page .report-table {
+    overflow-x: auto !important;
+  }
+
+  /* 请假申请页面 */
+  .leave-application-page {
+    padding: 8px !important;
+  }
+
+  .leave-application-page .form-container {
+    padding: 12px !important;
+  }
+
+  /* 加班申请页面 */
+  .overtime-application-page {
+    padding: 8px !important;
+  }
+
+  .overtime-application-page .form-container {
+    padding: 12px !important;
+  }
+
+  /* 审批页面通用样式 */
+  .leave-approval-page,
+  .overtime-approval-page {
+    padding: 8px !important;
+  }
+
+  .leave-approval-page .approval-list,
+  .overtime-approval-page .approval-list {
+    overflow-x: auto !important;
+  }
+
+  .leave-approval-page .approval-item,
+  .overtime-approval-page .approval-item {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* 通用表格页面优化 */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .table-responsive .el-table {
+    min-width: 600px !important;
+  }
+
+  /* 卡片列表优化 */
+  .card-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .card-list .card-item {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* 搜索栏优化 */
+  .search-bar {
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .search-bar .el-input {
+    width: 100% !important;
+  }
+
+  .search-bar .el-button {
+    width: 100% !important;
+  }
+
+  /* 操作工具栏优化 */
+  .toolbar {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  .toolbar .el-button {
+    flex: 1 !important;
+    min-width: calc(50% - 4px) !important;
+  }
+
+  /* 详情页布局优化 */
+  .detail-layout {
+    flex-direction: column !important;
+  }
+
+  .detail-layout .detail-main,
+  .detail-layout .detail-sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Tab 页面优化 */
+  .tab-content {
+    padding: 8px !important;
+  }
+
+  .tab-pane {
+    min-height: auto !important;
+  }
+
+  /* 面包屑导航优化 */
+  .breadcrumb-nav {
+    padding: 8px 0 !important;
+    font-size: 12px !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* 页面标题优化 */
+  .page-title {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .page-subtitle {
+    font-size: 13px !important;
+    color: #909399 !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* 返回按钮优化 */
+  .back-button {
+    margin-bottom: 12px !important;
+  }
+
+  .back-button .el-button {
+    font-size: 13px !important;
   }
 }
