@@ -84,8 +84,8 @@ def get_risks():
         risk_dict = risk.to_dict()
         if risk.related_bug:
             risk_dict['related_bug_title'] = risk.related_bug.title
-        if risk.related_task:
-            risk_dict['related_task_title'] = risk.related_task.title
+        # if risk.related_task:
+        #     risk_dict['related_task_title'] = risk.related_task.title
         risks_data.append(risk_dict)
 
     return jsonify({
@@ -115,8 +115,8 @@ def get_risk(risk_id):
     risk_dict = risk.to_dict()
     if risk.related_bug:
         risk_dict['related_bug_title'] = risk.related_bug.title
-    if risk.related_task:
-        risk_dict['related_task_title'] = risk.related_task.title
+    # if risk.related_task:
+    #     risk_dict['related_task_title'] = risk.related_task.title
 
     return jsonify({
         'success': True,

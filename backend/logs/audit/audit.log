@@ -739,3 +739,12 @@
 2026-04-22 01:25:08,136 - INFO - USER:18 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'department_manager'} - IP:unknown
 2026-04-22 01:29:39,086 - INFO - USER:18 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
 2026-04-22 01:29:39,136 - INFO - USER:18 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'department_manager'} - IP:unknown
+2026-04-23 01:12:39,593 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-04-23 01:12:39,593 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-04-23 01:16:21,137 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-04-23 01:16:26,674 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': '50', 'department': None, 'search': ''} - IP:unknown
+2026-04-23 01:16:42,375 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-04-23 01:16:59,083 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-04-23 01:16:59,088 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': '1', 'per_page': '100', 'status': '', 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-04-23 01:17:28,988 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': '1', 'per_page': '100', 'status': '', 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-04-23 01:17:28,991 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown

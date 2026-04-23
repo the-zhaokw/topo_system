@@ -259,13 +259,7 @@ export const apiService = {
       return api.get('/risks', { params })
     },
     getById: (id) => api.get(`/risks/${id}`),
-    create: (riskData) => {
-      const { project_id, ...rest } = riskData
-      if (project_id) {
-        return api.post(`/projects/${project_id}/risks`, rest)
-      }
-      return api.post('/risks', rest)
-    },
+    create: (riskData) => api.post('/risks', riskData),
     update: (id, riskData) => api.put(`/risks/${id}`, riskData),
     delete: (id) => api.delete(`/risks/${id}`),
     getStatistics: (params = {}) => api.get('/risks/statistics', { params }),

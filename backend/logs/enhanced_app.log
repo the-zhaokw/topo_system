@@ -10081,3 +10081,241 @@ TypeError: '<' not supported between instances of 'Severity' and 'Severity'
 2026-04-22 01:29:39,173 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 75.89ms
 2026-04-22 01:29:39,192 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-04-22 01:29:39,192 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 115.06ms
+2026-04-23 01:10:42,449 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-23 01:10:42,569 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-23 01:10:42,572 - enhanced_app - INFO - 职位权限修复完成
+2026-04-23 01:10:42,684 - enhanced_app - INFO - 默认职位创建成功
+2026-04-23 01:10:42,684 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-23 01:10:42,685 - enhanced_app - INFO - 数据库表创建完成
+2026-04-23 01:10:42,912 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-04-23 01:10:42,912 - enhanced_app - INFO - 数据库初始化完成
+2026-04-23 01:12:38,717 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-04-23 01:12:39,475 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-23 01:12:39,477 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-04-23 01:12:39,494 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-23 01:12:39,529 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-04-23 01:12:40,190 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-23 01:12:40,283 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 788.26ms
+2026-04-23 01:12:40,495 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-04-23 01:12:40,503 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 972.93ms
+2026-04-23 01:12:49,367 - enhanced_app - ERROR - Exception on /api/activities/bug/55 [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\activities.py", line 138, in get_activities_by_resource
+    User, Activity, Bug, Project, app = get_models()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 5)
+2026-04-23 01:14:57,851 - enhanced_app - ERROR - Exception on /api/activities/bug/25 [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\activities.py", line 138, in get_activities_by_resource
+    User, Activity, Bug, Project, WorkLog, app = get_models()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 5)
+2026-04-23 01:15:04,594 - enhanced_app - ERROR - Exception on /api/activities/bug/25 [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\activities.py", line 138, in get_activities_by_resource
+    User, Activity, Bug, Project, WorkLog, app = get_models()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 5)
+2026-04-23 01:15:43,045 - enhanced_app - ERROR - Exception on /api/activities/bug/25 [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\activities.py", line 138, in get_activities_by_resource
+    User, Activity, Bug, Project, WorkLog, app = get_models()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 5)
+2026-04-23 01:15:47,164 - enhanced_app - ERROR - Exception on /api/activities/bug/8 [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 8 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\activities.py", line 138, in get_activities_by_resource
+    User, Activity, Bug, Project, WorkLog, app = get_models()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 5)
+2026-04-23 01:15:50,985 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-04-23 01:15:51,079 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 8, 详情: Bug状态变更: new -> in_progress, IP: 127.0.0.1
+2026-04-23 01:15:51,316 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-04-23 01:15:59,753 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-04-23 01:15:59,866 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 8, 详情: Bug状态变更: in_progress -> resolved, IP: 127.0.0.1
+2026-04-23 01:16:00,010 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-04-23 01:16:21,129 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-23 01:16:21,131 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-23 01:16:21,146 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-23 01:16:21,148 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.81ms
+2026-04-23 01:16:26,666 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-23 01:16:26,667 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-23 01:16:26,692 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-23 01:16:26,693 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 26.39ms
+2026-04-23 01:16:42,343 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-23 01:16:42,344 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-23 01:16:42,382 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-23 01:16:42,385 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 41.13ms
+2026-04-23 01:16:53,393 - enhanced_app - INFO - log - 用户ID: 1, 操作: update_bug, 资源类型: bug, 资源ID: 487, 详情: 更新缺陷: T84/T85:STM接口J1字节相关属性建议做到子接口上, IP: 127.0.0.1
+2026-04-23 01:16:59,076 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-23 01:16:59,077 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-23 01:16:59,083 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-23 01:16:59,084 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-23 01:16:59,087 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-23 01:16:59,088 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.75ms
+2026-04-23 01:16:59,094 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-23 01:16:59,095 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 10.70ms
+2026-04-23 01:17:28,983 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-04-23 01:17:28,983 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-04-23 01:17:28,984 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-04-23 01:17:28,986 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-04-23 01:17:28,995 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-04-23 01:17:28,996 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 12.72ms
+2026-04-23 01:17:28,996 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-04-23 01:17:28,997 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.05ms
+2026-04-23 01:17:38,987 - enhanced_app - INFO - API Call Start: api.projects.get_project_members - Method: GET - Path: /api/projects/2/members
+2026-04-23 01:17:39,028 - enhanced_app - INFO - API Call Complete: api.projects.get_project_members - Status: Success - Duration: 36.87ms
+2026-04-23 01:18:56,737 - enhanced_app - INFO - API Call Start: api.projects.get_project_members - Method: GET - Path: /api/projects/2/members
+2026-04-23 01:18:56,755 - enhanced_app - INFO - API Call Complete: api.projects.get_project_members - Status: Success - Duration: 14.75ms
+2026-04-23 01:22:50,911 - enhanced_app - INFO - API Call Start: api.projects.get_project_members - Method: GET - Path: /api/projects/2/members
+2026-04-23 01:22:50,933 - enhanced_app - INFO - API Call Complete: api.projects.get_project_members - Status: Success - Duration: 19.67ms
+2026-04-23 01:22:54,425 - enhanced_app - INFO - 部门数据迁移成功
+2026-04-23 01:22:54,429 - enhanced_app - INFO - 职位数据迁移成功
+2026-04-23 01:22:54,432 - enhanced_app - INFO - 职位权限修复完成
+2026-04-23 01:22:54,435 - enhanced_app - INFO - 默认职位创建成功
+2026-04-23 01:22:54,435 - enhanced_app - INFO - 数据库迁移检查完成
+2026-04-23 01:22:54,436 - enhanced_app - INFO - 数据库表创建完成
+2026-04-23 01:22:54,472 - enhanced_app - WARNING - 创建默认用户失败: When initializing mapper mapped class Risk->risks, expression 'Task' failed to locate a name ('Task'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.Risk'> class after both dependent classes have been defined.
+2026-04-23 01:22:54,472 - enhanced_app - INFO - 数据库初始化完成
+2026-04-23 01:26:48,710 - enhanced_app - INFO - API Call Start: api.projects.get_project_members - Method: GET - Path: /api/projects/2/members
+2026-04-23 01:26:48,729 - enhanced_app - INFO - API Call Complete: api.projects.get_project_members - Status: Success - Duration: 15.25ms

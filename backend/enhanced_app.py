@@ -1442,6 +1442,7 @@ class Risk(db.Model):
 
     related_risk_id = Column(Integer, ForeignKey('risks.id'))  # 相关风险ID
     related_bug_id = Column(Integer, ForeignKey('bugs.id'))  # 相关缺陷ID
+    related_task_id = Column(Integer, ForeignKey('tasks.id'))  # 相关任务ID
 
     created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -1453,6 +1454,7 @@ class Risk(db.Model):
     creator = relationship("User", foreign_keys=[created_by], backref="created_risks")
     related_risk = relationship("Risk", remote_side=[id], backref="related_risks")
     related_bug = relationship("Bug", backref="related_risks")
+    # related_task = relationship("Task", backref="related_risks")  # Task模型不存在，暂时注释
 
     def calculate_exposure(self):
         """计算风险暴露度"""
@@ -1487,6 +1489,7 @@ class Risk(db.Model):
             'indicator': self.indicator,
             'related_risk_id': self.related_risk_id,
             'related_bug_id': self.related_bug_id,
+            'related_task_id': self.related_task_id,
             'created_by': self.created_by,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
