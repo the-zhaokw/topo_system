@@ -2123,4 +2123,187 @@ export default {
 }
 
 .kpi-icon-time .icon-glow {
+  background: #a855f7;
+}
+
+.kpi-content {
+  position: relative;
+  z-index: 1;
+}
+
+.kpi-value-wrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kpi-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.kpi-value.success {
+  color: #16a34a;
+}
+
+.kpi-value.danger {
+  color: #e11d48;
+}
+
+.kpi-change {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.kpi-change.up {
+  color: #e11d48;
+  background: rgba(244, 63, 94, 0.1);
+}
+
+.kpi-change.down {
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.kpi-change.stable {
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+}
+
+.kpi-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.kpi-unit {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.kpi-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.kpi-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  transition: width 0.6s ease;
+}
+
+.kpi-decoration {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 环形进度 */
+.kpi-ring {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+}
+
+.kpi-ring svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.ring-bg {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.05);
+  stroke-width: 3;
+}
+
+.ring-progress {
+  fill: none;
+  stroke: url(#ringGradient);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+/* ============================================
+   图表区域
+   ============================================ */
+.chart-section {
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  height: 100%;
+}
+
+.chart-card :deep(.el-card__header) {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chart-card :deep(.el-card__body) {
+  padding: 20px 24px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.title-icon-bg {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #7c3aed;
+}
+
+.title-icon-bg.icon-project {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0284c7;
+}
+
+.title-icon-bg.icon-type {
   background:

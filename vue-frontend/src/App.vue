@@ -1386,4 +1386,36 @@ onUnmounted(() => {
     max-width: 280px;
   }
 
-  :deep
+  :deep(.user-dropdown-content) {
+    min-width: 260px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header {
+    padding: 0 12px;
+    height: 52px !important;
+    line-height: 52px;
+  }
+
+  .header-left .el-breadcrumb {
+    display: none;
+  }
+
+  .main-content {
+    padding: 12px;
+  }
+
+  .menu-btn .el-icon {
+    font-size: 22px !important;
+  }
+
+  .header-right {
+    gap: 2px;
+  }
+
+  .notification-icon {
+    padding: 6px;
+  }
+}
+</style>
