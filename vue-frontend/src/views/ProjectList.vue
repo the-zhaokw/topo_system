@@ -1,32 +1,98 @@
 <template>
   <div class="project-list">
-    <div class="project-list-header">
-      <h2>项目管理</h2>
-      <div class="header-actions">
-        <el-button type="primary" @click="showCreateDialog = true">
-          <el-icon><Plus /></el-icon>
-          新建项目
-        </el-button>
-        <el-dropdown @command="handleExportCommand" :disabled="exporting">
-          <el-button type="success" :loading="exporting">
-            <el-icon><Download /></el-icon>
-            导出数据
+    <!-- 页面头部 - 玻璃拟态风格 -->
+    <div class="page-header animate-fade-in-down">
+      <div class="header-bg-decoration">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+      </div>
+      <div class="header-content">
+        <div class="header-title">
+          <div class="title-icon-wrapper">
+            <el-icon class="title-icon"><FolderOpened /></el-icon>
+          </div>
+          <div class="title-text">
+            <h1>项目管理</h1>
+            <p class="subtitle">管理和跟踪所有项目进度</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <el-button class="btn-gradient" @click="showCreateDialog = true">
+            <el-icon><Plus /></el-icon>
+            新建项目
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="csv">导出为CSV</el-dropdown-item>
-              <el-dropdown-item command="excel">导出为Excel</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+          <el-dropdown @command="handleExportCommand" :disabled="exporting">
+            <el-button type="success" :loading="exporting" class="btn-success-gradient">
+              <el-icon><Download /></el-icon>
+              导出数据
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="csv">导出为CSV</el-dropdown-item>
+                <el-dropdown-item command="excel">导出为Excel</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </div>
     </div>
     
-    <!-- 状态灯颜色说明 -->
-    <el-card class="status-legend-card" shadow="never">
+    <!-- 统计卡片区域 -->
+    <el-row :gutter="16" class="stats-row animate-fade-in-up">
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-primary">
+          <div class="stat-icon-wrapper stat-icon-wrapper-primary">
+            <el-icon><FolderOpened /></el-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ filteredProjects.length }}</div>
+            <div class="stat-label">项目总数</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-success">
+          <div class="stat-icon-wrapper stat-icon-wrapper-success">
+            <el-icon><Check /></el-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ activeProjectsCount }}</div>
+            <div class="stat-label">活跃项目</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-warning">
+          <div class="stat-icon-wrapper stat-icon-wrapper-warning">
+            <el-icon><Timer /></el-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ completedProjectsCount }}</div>
+            <div class="stat-label">已完成</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-danger">
+          <div class="stat-icon-wrapper stat-icon-wrapper-danger">
+            <el-icon><Warning /></el-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ delayedProjectsCount }}</div>
+            <div class="stat-label">进度滞后</div>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    
+    <!-- 状态灯颜色说明 - 玻璃拟态卡片 -->
+    <el-card class="status-legend-card glass-card" shadow="never">
       <template #header>
         <div class="card-header">
-          <span>状态灯颜色说明</span>
+          <span class="card-title">
+            <el-icon><InfoFilled /></el-icon>
+            状态灯颜色说明
+          </span>
         </div>
       </template>
       <div class="status-legend">
@@ -49,29 +115,32 @@
       </div>
     </el-card>
     
-    <!-- 项目列表 -->
-    <el-card shadow="never">
+    <!-- 项目列表 - 玻璃拟态卡片 -->
+    <el-card class="project-table-card glass-card" shadow="never">
       <template #header>
         <div class="card-header">
-          <span>项目列表</span>
+          <span class="card-title">
+            <el-icon><List /></el-icon>
+            项目列表
+          </span>
           <div class="filter-controls">
             <el-input 
               v-model="filters.keyword" 
               placeholder="搜索项目名称、代码或描述" 
-              style="width: 250px; margin-right: 10px;"
+              class="search-input"
               clearable
             >
               <template #prefix>
                 <el-icon><Search /></el-icon>
               </template>
             </el-input>
-            <el-select v-model="filters.status" placeholder="状态筛选" clearable style="width: 120px;">
+            <el-select v-model="filters.status" placeholder="状态筛选" clearable class="filter-select">
               <el-option label="活跃" value="active" />
               <el-option label="已完成" value="completed" />
               <el-option label="已关闭" value="closed" />
               <el-option label="已归档" value="archived" />
             </el-select>
-            <el-select v-model="filters.project_type" placeholder="类型筛选" clearable style="width: 120px;">
+            <el-select v-model="filters.project_type" placeholder="类型筛选" clearable class="filter-select">
               <el-option label="内部项目" value="internal" />
               <el-option label="客户项目" value="client" />
               <el-option label="研发项目" value="rd" />
@@ -81,7 +150,7 @@
         </div>
       </template>
       
-      <el-table :data="filteredProjects" v-loading="loading" style="width: 100%">
+      <el-table :data="filteredProjects" v-loading="loading" style="width: 100%" class="custom-table">
         <el-table-column prop="id" label="编号" width="80" />
         
         <el-table-column prop="name" label="项目名称" min-width="200">
@@ -93,6 +162,7 @@
                 link 
                 size="small" 
                 @click="viewProjectDetail(row)"
+                class="project-name-link"
               >
                 {{ row.name }}
               </el-button>
@@ -108,6 +178,7 @@
               size="small" 
               @click="viewManagerDetail(row.manager_id)"
               :disabled="!row.manager_id"
+              class="manager-link"
             >
               {{ row.manager }}
             </el-button>
@@ -116,7 +187,7 @@
         
         <el-table-column prop="project_type" label="项目类型" width="120">
           <template #default="{ row }">
-            <el-tag :type="getProjectTypeTag(row.project_type)" size="small">
+            <el-tag :type="getProjectTypeTag(row.project_type)" size="small" effect="light" class="type-tag">
               {{ getProjectTypeText(row.project_type) }}
             </el-tag>
           </template>
@@ -124,13 +195,13 @@
         
         <el-table-column prop="budget" label="预算" width="120">
           <template #default="{ row }">
-            {{ row.budget ? `¥${row.budget.toLocaleString()}` : '未设置' }}
+            <span class="budget-text">{{ row.budget ? `¥${row.budget.toLocaleString()}` : '未设置' }}</span>
           </template>
         </el-table-column>
         
         <el-table-column prop="team_size" label="团队规模" width="100">
           <template #default="{ row }">
-            <el-tag :type="getTeamSizeTag(row.team_size)" size="small">
+            <el-tag :type="getTeamSizeTag(row.team_size)" size="small" effect="light" class="team-tag">
               {{ row.team_size || 0 }}人
             </el-tag>
           </template>
@@ -150,11 +221,12 @@
                   link
                   size="small"
                   @click="viewMemberDetail(member.user_id)"
-                  style="padding: 0; margin-right: 5px; margin-bottom: 5px;"
+                  class="member-avatar-btn"
                 >
                   <el-avatar 
                     :size="32" 
                     :src="getUserAvatar(member.username)"
+                    class="member-avatar"
                   >
                     {{ member.username.charAt(0).toUpperCase() }}
                   </el-avatar>
@@ -166,6 +238,7 @@
                 link 
                 size="small"
                 @click="showAllMembers(row)"
+                class="more-members-btn"
               >
                 +{{ row.members.length - 3 }}人
               </el-button>
@@ -185,14 +258,16 @@
         
         <el-table-column prop="progress" label="当前进度" width="100">
           <template #default="{ row }">
-            <el-progress :percentage="row.progress" :show-text="false" />
-            <span class="progress-text">{{ row.progress }}%</span>
+            <div class="progress-wrapper">
+              <el-progress :percentage="row.progress" :show-text="false" :stroke-width="6" />
+              <span class="progress-text">{{ row.progress }}%</span>
+            </div>
           </template>
         </el-table-column>
         
         <el-table-column label="进展" width="80">
           <template #default="{ row }">
-            <el-tag :type="getProgressType(row.progress)" size="small">
+            <el-tag :type="getProgressType(row.progress)" size="small" effect="light" class="status-tag">
               {{ getProgressText(row.progress) }}
             </el-tag>
           </template>
@@ -200,7 +275,7 @@
         
         <el-table-column label="质量" width="80">
           <template #default="{ row }">
-            <el-tag :type="getQualityType(row.quality)" size="small">
+            <el-tag :type="getQualityType(row.quality)" size="small" effect="light" class="status-tag">
               {{ row.quality }}
             </el-tag>
           </template>
@@ -208,7 +283,7 @@
         
         <el-table-column label="风险" width="80">
           <template #default="{ row }">
-            <el-tag :type="getRiskType(row.risk)" size="small">
+            <el-tag :type="getRiskType(row.risk)" size="small" effect="light" class="status-tag">
               {{ row.risk }}
             </el-tag>
           </template>
@@ -216,7 +291,7 @@
         
         <el-table-column label="资源" width="80">
           <template #default="{ row }">
-            <el-tag :type="getResourceType(row.resources)" size="small">
+            <el-tag :type="getResourceType(row.resources)" size="small" effect="light" class="status-tag">
               {{ row.resources }}
             </el-tag>
           </template>
@@ -224,7 +299,7 @@
         
         <el-table-column label="费用" width="80">
           <template #default="{ row }">
-            <el-tag :type="getCostType(row.cost)" size="small">
+            <el-tag :type="getCostType(row.cost)" size="small" effect="light" class="status-tag">
               {{ row.cost }}
             </el-tag>
           </template>
@@ -232,9 +307,17 @@
         
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link size="small" @click="editProject(row)">编辑</el-button>
-            <el-button type="primary" link size="small" @click="viewProjectDetail(row)">查看</el-button>
-            <el-button type="danger" link size="small" @click="deleteProject(row)">删除</el-button>
+            <div class="action-buttons">
+              <el-button type="primary" link size="small" @click="editProject(row)" class="action-btn">
+                <el-icon><Edit /></el-icon>编辑
+              </el-button>
+              <el-button type="primary" link size="small" @click="viewProjectDetail(row)" class="action-btn">
+                <el-icon><View /></el-icon>查看
+              </el-button>
+              <el-button type="danger" link size="small" @click="deleteProject(row)" class="action-btn">
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -245,8 +328,9 @@
       v-model="showCreateDialog" 
       :title="editingProject ? '编辑项目' : '新建项目'" 
       width="600px"
+      class="custom-dialog"
     >
-      <el-form :model="projectForm" label-width="120px">
+      <el-form :model="projectForm" label-width="120px" class="project-form">
         <el-form-item label="项目名称">
           <el-input v-model="projectForm.name" placeholder="请输入项目名称" />
         </el-form-item>
@@ -406,15 +490,17 @@
               :value="user.id" 
             />
           </el-select>
-          <div style="margin-top: 8px; font-size: 12px; color: #909399;">
+          <div class="selected-members-count">
             已选择 {{ selectedMembers.length }} 名成员
           </div>
         </el-form-item>
       </el-form>
       
       <template #footer>
-        <el-button @click="showCreateDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveProject">保存</el-button>
+        <div class="dialog-footer">
+          <el-button @click="showCreateDialog = false">取消</el-button>
+          <el-button type="primary" @click="saveProject" class="btn-gradient">保存</el-button>
+        </div>
       </template>
     </el-dialog>
     
@@ -424,6 +510,7 @@
       title="项目下的Bug和任务列表" 
       width="900px"
       :close-on-click-modal="false"
+      class="custom-dialog"
     >
       <div v-if="currentProject">
         <p>项目 <strong>{{ currentProject.name }}</strong> 下还有未处理的内容，请先删除后再删除项目。</p>
@@ -486,6 +573,7 @@
             type="primary" 
             :disabled="(currentProject?.bugs?.length || 0) > 0"
             @click="retryDeleteProject"
+            class="btn-gradient"
           >
             确认删除项目
           </el-button>
@@ -499,6 +587,7 @@
       title="项目下的Bug列表" 
       width="800px"
       :close-on-click-modal="false"
+      class="custom-dialog"
     >
       <div v-if="currentProject" class="bug-list-container">
         <div class="bug-list-header">
@@ -566,6 +655,7 @@
             type="primary" 
             :disabled="currentProject?.bugs?.length > 0"
             @click="retryDeleteProject"
+            class="btn-gradient"
           >
             确认删除项目
           </el-button>
@@ -580,7 +670,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, toRaw } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Plus, Search, Download } from '@element-plus/icons-vue'
+import { Plus, Search, Download, FolderOpened, Check, Timer, Warning, InfoFilled, List, Edit, View, Delete } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { apiService } from '@/services/api'
@@ -659,6 +749,19 @@ const allUsers = ref([])
 
 // 项目成员选择
 const selectedMembers = ref([])
+
+// 统计计算属性
+const activeProjectsCount = computed(() => {
+  return filteredProjects.value.filter(p => p.status === 'active').length
+})
+
+const completedProjectsCount = computed(() => {
+  return filteredProjects.value.filter(p => p.status === 'completed').length
+})
+
+const delayedProjectsCount = computed(() => {
+  return filteredProjects.value.filter(p => p.progress < 50 && p.status === 'active').length
+})
 
 // 获取所有用户列表
 const fetchAllUsers = async () => {
@@ -1601,66 +1704,265 @@ onMounted(() => {
   padding: 0;
 }
 
-.project-list-header {
+/* 页面头部样式 */
+.page-header {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-600) 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: var(--accent-400);
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: var(--success-400);
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.title-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-icon {
+  font-size: 28px;
+  color: white;
+}
+
+.title-text h1 {
+  margin: 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-success-gradient {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-success-gradient:hover {
+  background: linear-gradient(135deg, var(--success-600) 0%, var(--success-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-success);
+}
+
+/* 统计卡片区域 */
+.stats-row {
   margin-bottom: 24px;
 }
 
-.project-list-header h2 {
-  margin: 0;
-  color: #303133;
-  font-size: 24px;
+.stat-card {
+  position: relative;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+}
+
+.stat-card-primary .stat-value,
+.stat-card-primary .stat-label {
+  color: white;
+}
+
+.stat-card-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+}
+
+.stat-card-success .stat-value,
+.stat-card-success .stat-label {
+  color: white;
+}
+
+.stat-card-warning {
+  background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
+  color: white;
+}
+
+.stat-card-warning .stat-value,
+.stat-card-warning .stat-label {
+  color: white;
+}
+
+.stat-card-danger {
+  background: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-600) 100%);
+  color: white;
+}
+
+.stat-card-danger .stat-value,
+.stat-card-danger .stat-label {
+  color: white;
+}
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all var(--transition-normal);
+}
+
+.stat-card:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-icon-wrapper-primary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.stat-icon-wrapper-success {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.stat-icon-wrapper-warning {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.stat-icon-wrapper-danger {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card-primary .stat-value,
+.stat-card-success .stat-value,
+.stat-card-warning .stat-value,
+.stat-card-danger .stat-value {
+  -webkit-text-fill-color: white;
+  background: none;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 状态说明卡片 */
 .status-legend-card {
   margin-bottom: 24px;
-}
-
-.status-legend {
-  display: flex;
-  gap: 20px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.status-green {
-  background-color: #67C23A;
-}
-
-.status-yellow {
-  background-color: #E6A23C;
-}
-
-.status-red {
-  background-color: #F56C6C;
-}
-
-.status-gray {
-  background-color: #909399;
-}
-
-.project-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.progress-text {
-  margin-left: 8px;
-  font-size: 12px;
-  color: #909399;
 }
 
 .card-header {
@@ -1669,14 +1971,83 @@ onMounted(() => {
   align-items: center;
 }
 
-.filter-controls {
+.card-title {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.header-actions {
+.status-legend {
   display: flex;
-  gap: 10px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.status-green {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #10b981;
+}
+
+.status-yellow {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: #f59e0b;
+}
+
+.status-red {
+  background: linear-gradient(135deg, #ef4444, #f87171);
+  color: #ef4444;
+}
+
+.status-gray {
+  background: linear-gradient(135deg, #6b7280, #9ca3af);
+  color: #6b7280;
+}
+
+/* 项目列表卡片 */
+.project-table-card {
+  margin-bottom: 24px;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.search-input {
+  width: 280px;
+}
+
+.filter-select {
+  width: 130px;
+}
+
+/* 表格样式 */
+.custom-table {
+  --el-table-header-bg-color: var(--neutral-50);
+  --el-table-row-hover-bg-color: var(--primary-50);
+}
+
+:deep(.el-table th) {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--neutral-50);
 }
 
 :deep(.el-table .cell) {
@@ -1684,34 +2055,232 @@ onMounted(() => {
   align-items: center;
 }
 
+.project-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-name-link {
+  font-weight: 500;
+}
+
+.manager-link {
+  font-weight: 500;
+}
+
+.type-tag,
+.team-tag,
+.status-tag {
+  border-radius: var(--radius-sm);
+}
+
+.budget-text {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 :deep(.el-progress) {
   width: 60px;
 }
 
+.progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.project-members {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.member-avatar-btn {
+  padding: 0;
+}
+
+.member-avatar {
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.member-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.more-members-btn {
+  font-size: 12px;
+  color: var(--primary-500);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 表单样式 */
+.project-form .el-form-item {
+  margin-bottom: 16px;
+}
+
+.selected-members-count {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* 对话框样式 */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* 动画 */
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* 响应式适配 */
 @media (max-width: 768px) {
-  .project-list-header {
+  .page-header {
+    padding: 16px;
+  }
+  
+  .header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
+  }
+  
+  .title-text h1 {
+    font-size: 20px;
+  }
+  
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .stats-row .el-col {
+    margin-bottom: 12px;
+  }
+  
+  .stat-card {
+    padding: 16px;
+  }
+  
+  .stat-value {
+    font-size: 22px;
   }
   
   .filter-controls {
     flex-direction: column;
     width: 100%;
+    gap: 8px;
+  }
+  
+  .search-input,
+  .filter-select {
+    width: 100% !important;
   }
   
   .status-legend {
-    flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
   }
   
   .card-header {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     align-items: flex-start;
   }
 }
 
+@media screen and (max-width: 480px) {
+  .title-icon-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .title-icon {
+    font-size: 22px;
+  }
+  
+  .title-text h1 {
+    font-size: 18px;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+  }
+  
+  .stat-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+}
+
+/* Bug列表样式 */
 .bug-list-container {
   padding: 10px 0;
 }
@@ -1722,11 +2291,11 @@ onMounted(() => {
 
 .bug-list-header p {
   margin: 5px 0;
-  color: #606266;
+  color: var(--text-secondary);
 }
 
 .bug-list-header .warning-text {
-  color: #E6A23C;
+  color: var(--warning-500);
   font-weight: bold;
 }
 
@@ -1736,302 +2305,13 @@ onMounted(() => {
   gap: 10px;
 }
 
-.dialog-footer {
+.list-actions {
+  margin-bottom: 16px;
   display: flex;
-  justify-content: flex-end;
   gap: 10px;
 }
 
-@media screen and (max-width: 768px) {
-  .project-list {
-    padding: 0;
-  }
-
-  .project-list-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 12px;
-  }
-
-  .header-left {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .project-list-header h2 {
-    font-size: 18px;
-  }
-
-  .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
-    min-width: 80px;
-    max-width: calc(50% - 4px);
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
-  .status-legend-card {
-    margin-bottom: 16px;
-  }
-
-  .status-legend {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .legend-item {
-    font-size: 12px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    font-size: 14px;
-  }
-
-  .filter-controls {
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
-  }
-
-  .filter-controls .el-input,
-  .filter-controls .el-select {
-    width: 100% !important;
-    margin-right: 0;
-  }
-
-  .filter-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-start;
-    margin-top: 8px;
-  }
-
-  .filter-actions .el-button {
-    flex: none;
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-
-  .project-card {
-    margin-bottom: 12px;
-  }
-
-  .project-card-body {
-    padding: 12px;
-  }
-
-  .project-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .project-name {
-    font-size: 14px;
-  }
-
-  .project-description {
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .project-meta {
-    flex-wrap: wrap;
-    gap: 8px;
-    font-size: 11px;
-  }
-
-  .project-members {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .project-members .el-avatar {
-    width: 28px;
-    height: 28px;
-  }
-
-  .progress-text {
-    font-size: 11px;
-  }
-
-  .project-tags {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .project-tag {
-    font-size: 10px;
-    padding: 1px 6px;
-  }
-
-  .bug-list-container {
-    padding: 8px 0;
-  }
-
-  .bug-list-header {
-    margin-bottom: 12px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .bug-list-header p {
-    font-size: 13px;
-  }
-
-  .bug-list-actions {
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .bug-list-actions .el-button {
-    flex: 1;
-    min-width: calc(50% - 4px);
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
-  .el-table {
-    font-size: 11px !important;
-  }
-
-  .el-table th,
-  .el-table td {
-    padding: 6px 4px !important;
-  }
-
-  .dialog-footer {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .dialog-footer .el-button {
-    width: 100%;
-    margin: 0;
-  }
-
-  .el-dialog {
-    width: 95% !important;
-    margin: 10px auto !important;
-    max-height: 90vh !important;
-  }
-
-  .el-dialog__header {
-    padding: 12px !important;
-  }
-
-  .el-dialog__body {
-    padding: 12px !important;
-    max-height: 60vh !important;
-    overflow-y: auto !important;
-  }
-
-  .el-dialog__footer {
-    padding: 12px !important;
-  }
-
-  .el-pagination {
-    font-size: 11px !important;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .el-pagination__sizes,
-  .el-pagination__jump {
-    display: none !important;
-  }
-
-  .el-pagination button,
-  .el-pager li {
-    min-width: 26px !important;
-    height: 26px !important;
-    line-height: 26px !important;
-    font-size: 11px !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .project-list-header {
-    padding: 10px;
-  }
-
-  .project-list-header h2 {
-    font-size: 16px;
-  }
-
-  .header-actions .el-button {
-    max-width: 100%;
-    flex: none;
-    width: 100%;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-
-  .status-legend {
-    gap: 8px;
-  }
-
-  .legend-item {
-    font-size: 11px;
-  }
-
-  .project-name {
-    font-size: 13px;
-  }
-
-  .project-description {
-    font-size: 11px;
-  }
-
-  .project-meta {
-    font-size: 10px;
-    gap: 6px;
-  }
-
-  .bug-list-actions .el-button {
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-
-  .el-table {
-    font-size: 10px !important;
-  }
-
-  .el-form-item {
-    margin-bottom: 12px !important;
-  }
-
-  .el-input__inner,
-  .el-textarea__inner {
-    font-size: 14px !important;
-  }
-
-  .el-pagination {
-    font-size: 10px !important;
-  }
-
-  .el-pagination button,
-  .el-pager li {
-    min-width: 24px !important;
-    height: 24px !important;
-    line-height: 24px !important;
-  }
+.items-tabs {
+  margin-top: 16px;
 }
 </style>

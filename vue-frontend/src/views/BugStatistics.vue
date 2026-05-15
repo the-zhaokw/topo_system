@@ -1,35 +1,66 @@
 <template>
   <div class="bug-statistics">
-    <div class="statistics-header">
-      <h2>Bug统计看板</h2>
-      <div class="header-actions">
-        <el-dropdown @command="handleExportCommand">
-          <el-button type="primary">
-            <el-icon><Download /></el-icon>
-            导出
-            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+    <!-- 精致头部区域 -->
+    <div class="statistics-header animate-elegant-fade-in-down">
+      <div class="header-content">
+        <div class="header-title">
+          <div class="title-icon-wrapper">
+            <div class="title-icon">
+              <el-icon><DataAnalysis /></el-icon>
+            </div>
+            <div class="title-glow"></div>
+          </div>
+          <div class="title-text">
+            <h2>Bug统计看板</h2>
+            <p>全面分析Bug数据，洞察项目质量</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <el-dropdown @command="handleExportCommand">
+            <el-button type="primary" class="btn-gradient btn-shine">
+              <el-icon><Download /></el-icon>
+              导出
+              <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu class="elegant-dropdown">
+                <el-dropdown-item command="data">
+                  <el-icon><Document /></el-icon>导出数据 (JSON)
+                </el-dropdown-item>
+                <el-dropdown-item command="trend">
+                  <el-icon><TrendCharts /></el-icon>导出趋势图
+                </el-dropdown-item>
+                <el-dropdown-item command="distribution">
+                  <el-icon><PieChart /></el-icon>导出分布图
+                </el-dropdown-item>
+                <el-dropdown-item command="all">
+                  <el-icon><Collection /></el-icon>导出所有图表
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <el-button @click="refreshData" class="refresh-btn btn-glass">
+            <el-icon class="refresh-icon"><Refresh /></el-icon>
+            刷新
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="data">导出数据 (JSON)</el-dropdown-item>
-              <el-dropdown-item command="trend">导出趋势图</el-dropdown-item>
-              <el-dropdown-item command="distribution">导出分布图</el-dropdown-item>
-              <el-dropdown-item command="all">导出所有图表</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-        <el-button @click="refreshData">
-          <el-icon><Refresh /></el-icon>
-          刷新
-        </el-button>
+        </div>
+      </div>
+      <!-- 装饰性背景元素 -->
+      <div class="header-decoration">
+        <div class="decoration-circle circle-1"></div>
+        <div class="decoration-circle circle-2"></div>
+        <div class="decoration-circle circle-3"></div>
       </div>
     </div>
 
-    <el-card class="filter-panel" shadow="never">
+    <!-- 筛选面板 - 玻璃拟态 -->
+    <el-card class="filter-panel glass-card-elegant animate-elegant-fade-in-up delay-100" shadow="never">
       <div class="filter-row">
         <div class="filter-item">
-          <span class="filter-label">时间范围</span>
-          <el-select v-model="filters.timeRange" @change="handleTimeRangeChange" style="width: 140px;">
+          <span class="filter-label">
+            <el-icon><Calendar /></el-icon>时间范围
+          </span>
+          <el-select v-model="filters.timeRange" @change="handleTimeRangeChange" class="filter-select elegant-select">
             <el-option label="今日" value="today"></el-option>
             <el-option label="本周" value="week"></el-option>
             <el-option label="本月" value="month"></el-option>
@@ -46,19 +77,21 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             @change="handleDateRangeChange"
-            style="width: 260px;"
+            class="date-range-picker elegant-date-picker"
           />
         </div>
 
         <div class="filter-item">
-          <span class="filter-label">所属项目</span>
+          <span class="filter-label">
+            <el-icon><Folder /></el-icon>所属项目
+          </span>
           <el-select 
             v-model="filters.projectIds" 
             multiple 
             collapse-tags
             collapse-tags-tooltip
             placeholder="全部项目" 
-            style="width: 180px;"
+            class="filter-select elegant-select"
             @change="loadAllData"
           >
             <el-option label="全部项目" :value="''" @click="handleSelectAllProjects" />
@@ -72,13 +105,15 @@
         </div>
 
         <div class="filter-item">
-          <span class="filter-label">Bug类型</span>
+          <span class="filter-label">
+            <el-icon><Collection /></el-icon>Bug类型
+          </span>
           <el-select 
             v-model="filters.bugTypes" 
             multiple 
             collapse-tags
             placeholder="全部类型"
-            style="width: 160px;"
+            class="filter-select elegant-select"
             @change="loadAllData"
           >
             <el-option 
@@ -91,13 +126,15 @@
         </div>
 
         <div class="filter-item">
-          <span class="filter-label">严重程度</span>
+          <span class="filter-label">
+            <el-icon><Warning /></el-icon>严重程度
+          </span>
           <el-select 
             v-model="filters.severities" 
             multiple 
             collapse-tags
             placeholder="全部等级"
-            style="width: 140px;"
+            class="filter-select elegant-select"
             @change="loadAllData"
           >
             <el-option label="致命(P0)" value="critical"></el-option>
@@ -109,13 +146,15 @@
         </div>
 
         <div class="filter-item">
-          <span class="filter-label">Bug状态</span>
+          <span class="filter-label">
+            <el-icon><CircleCheck /></el-icon>Bug状态
+          </span>
           <el-select 
             v-model="filters.statuses" 
             multiple 
             collapse-tags
             placeholder="全部状态"
-            style="width: 160px;"
+            class="filter-select elegant-select"
             @change="loadAllData"
           >
             <el-option label="新建" value="new"></el-option>
@@ -128,13 +167,15 @@
         </div>
 
         <div class="filter-item">
-          <span class="filter-label">优先级</span>
+          <span class="filter-label">
+            <el-icon><Flag /></el-icon>优先级
+          </span>
           <el-select 
             v-model="filters.priorities" 
             multiple 
             collapse-tags
             placeholder="全部优先"
-            style="width: 120px;"
+            class="filter-select elegant-select"
             @change="loadAllData"
           >
             <el-option label="紧急" value="urgent"></el-option>
@@ -145,13 +186,15 @@
         </div>
 
         <div class="filter-item">
-          <span class="filter-label">创建人</span>
+          <span class="filter-label">
+            <el-icon><User /></el-icon>创建人
+          </span>
           <el-select 
             v-model="filters.reportedBy" 
             multiple 
             collapse-tags
             placeholder="不限"
-            style="width: 140px;"
+            class="filter-select elegant-select"
             @change="loadAllData"
           >
             <el-option 
@@ -163,110 +206,187 @@
           </el-select>
         </div>
 
-        <el-button type="warning" text @click="resetFilters">
+        <el-button type="warning" text @click="resetFilters" class="reset-btn btn-text-elegant">
           <el-icon><RefreshLeft /></el-icon>
           重置
         </el-button>
       </div>
     </el-card>
 
-    <div class="kpi-cards">
-      <el-row :gutter="16">
-        <el-col :span="4">
-          <el-card class="kpi-card" shadow="hover" :class="{ 'warning': kpiData.total_bugs > 1000 }">
+    <!-- 精致KPI统计卡片 -->
+    <div class="kpi-cards animate-elegant-fade-in-up delay-200">
+      <el-row :gutter="20">
+        <el-col :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <div class="kpi-card-elegant" :class="{ 'warning': kpiData.total_bugs > 1000 }">
+            <div class="kpi-card-bg"></div>
+            <div class="kpi-icon-wrapper kpi-icon-total">
+              <el-icon><WarningFilled /></el-icon>
+              <div class="icon-glow"></div>
+            </div>
             <div class="kpi-content">
-              <div class="kpi-value">
-                {{ kpiData.total_bugs?.toLocaleString() || 0 }}
+              <div class="kpi-value-wrapper">
+                <span class="kpi-value" :class="{ 'animate-count-up': kpiData.total_bugs }">
+                  {{ kpiData.total_bugs?.toLocaleString() || 0 }}
+                </span>
                 <span class="kpi-change" :class="getChangeClass(kpiData.total_change)">
-                  {{ kpiData.total_change > 0 ? '↑' : '↓' }}{{ Math.abs(kpiData.total_change || 0) }}%
+                  <el-icon v-if="kpiData.total_change > 0"><ArrowUp /></el-icon>
+                  <el-icon v-else-if="kpiData.total_change < 0"><ArrowDown /></el-icon>
+                  <el-icon v-else><Minus /></el-icon>
+                  {{ Math.abs(kpiData.total_change || 0) }}%
                 </span>
               </div>
               <div class="kpi-label">总Bug数</div>
             </div>
-          </el-card>
+            <div class="kpi-progress">
+              <div class="progress-bar" :style="{ width: Math.min((kpiData.total_bugs || 0) / 1000 * 100, 100) + '%' }"></div>
+            </div>
+          </div>
         </el-col>
         
-        <el-col :span="4">
-          <el-card class="kpi-card" shadow="hover" :class="{ 'danger': kpiData.new_bugs > 20 }">
+        <el-col :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <div class="kpi-card-elegant" :class="{ 'danger': kpiData.new_bugs > 20 }">
+            <div class="kpi-card-bg"></div>
+            <div class="kpi-icon-wrapper kpi-icon-new">
+              <el-icon><CirclePlusFilled /></el-icon>
+              <div class="icon-glow"></div>
+            </div>
             <div class="kpi-content">
-              <div class="kpi-value">
-                {{ kpiData.new_bugs || 0 }}
+              <div class="kpi-value-wrapper">
+                <span class="kpi-value" :class="{ 'animate-count-up': kpiData.new_bugs }">
+                  {{ kpiData.new_bugs || 0 }}
+                </span>
                 <span class="kpi-sub">{{ filters.timeRange === 'today' ? '今日' : '周期内' }}</span>
               </div>
               <div class="kpi-label">新增Bug</div>
             </div>
-          </el-card>
+            <div class="kpi-decoration"></div>
+          </div>
         </el-col>
         
-        <el-col :span="4">
-          <el-card class="kpi-card" shadow="hover">
+        <el-col :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <div class="kpi-card-elegant kpi-card-success">
+            <div class="kpi-card-bg"></div>
+            <div class="kpi-icon-wrapper kpi-icon-resolved">
+              <el-icon><CircleCheckFilled /></el-icon>
+              <div class="icon-glow"></div>
+            </div>
             <div class="kpi-content">
-              <div class="kpi-value success">{{ kpiData.resolved_bugs || 0 }}</div>
+              <div class="kpi-value-wrapper">
+                <span class="kpi-value success" :class="{ 'animate-count-up': kpiData.resolved_bugs }">
+                  {{ kpiData.resolved_bugs || 0 }}
+                </span>
+              </div>
               <div class="kpi-label">已解决</div>
             </div>
-          </el-card>
+            <div class="kpi-decoration"></div>
+          </div>
         </el-col>
         
-        <el-col :span="4">
-          <el-card class="kpi-card" shadow="hover" :class="{ 'warning': kpiData.unresolved_bugs > 50 }">
+        <el-col :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <div class="kpi-card-elegant" :class="{ 'warning': kpiData.unresolved_bugs > 50 }">
+            <div class="kpi-card-bg"></div>
+            <div class="kpi-icon-wrapper kpi-icon-unresolved">
+              <el-icon><Warning /></el-icon>
+              <div class="icon-glow"></div>
+            </div>
             <div class="kpi-content">
-              <div class="kpi-value danger">{{ kpiData.unresolved_bugs || 0 }}</div>
+              <div class="kpi-value-wrapper">
+                <span class="kpi-value danger" :class="{ 'animate-count-up': kpiData.unresolved_bugs }">
+                  {{ kpiData.unresolved_bugs || 0 }}
+                </span>
+              </div>
               <div class="kpi-label">未解决</div>
             </div>
-          </el-card>
+            <div class="kpi-decoration"></div>
+          </div>
         </el-col>
         
-        <el-col :span="4">
-          <el-card class="kpi-card" shadow="hover" :class="{ 'warning': kpiData.resolution_rate < 80 }">
+        <el-col :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <div class="kpi-card-elegant" :class="{ 'warning': kpiData.resolution_rate < 80 }">
+            <div class="kpi-card-bg"></div>
+            <div class="kpi-icon-wrapper kpi-icon-rate">
+              <el-icon><TrendCharts /></el-icon>
+              <div class="icon-glow"></div>
+            </div>
             <div class="kpi-content">
-              <div class="kpi-value">{{ kpiData.resolution_rate || 0 }}%</div>
+              <div class="kpi-value-wrapper">
+                <span class="kpi-value" :class="{ 'animate-count-up': kpiData.resolution_rate }">
+                  {{ kpiData.resolution_rate || 0 }}
+                </span>
+                <span class="kpi-unit">%</span>
+              </div>
               <div class="kpi-label">解决率</div>
             </div>
-          </el-card>
+            <div class="kpi-ring" :style="{ '--progress': (kpiData.resolution_rate || 0) + '%' }">
+              <svg viewBox="0 0 36 36">
+                <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="ring-progress" :stroke-dasharray="(kpiData.resolution_rate || 0) + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+            </div>
+          </div>
         </el-col>
         
-        <el-col :span="4">
-          <el-card class="kpi-card" shadow="hover" :class="{ 'danger': kpiData.avg_fix_time > 3 }">
+        <el-col :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <div class="kpi-card-elegant" :class="{ 'danger': kpiData.avg_fix_time > 3 }">
+            <div class="kpi-card-bg"></div>
+            <div class="kpi-icon-wrapper kpi-icon-time">
+              <el-icon><Timer /></el-icon>
+              <div class="icon-glow"></div>
+            </div>
             <div class="kpi-content">
-              <div class="kpi-value">
-                {{ kpiData.avg_fix_time || 0 }}
+              <div class="kpi-value-wrapper">
+                <span class="kpi-value" :class="{ 'animate-count-up': kpiData.avg_fix_time }">
+                  {{ kpiData.avg_fix_time || 0 }}
+                </span>
                 <span class="kpi-unit">天</span>
               </div>
               <div class="kpi-label">平均解决时长</div>
             </div>
-          </el-card>
+            <div class="kpi-decoration"></div>
+          </div>
         </el-col>
       </el-row>
     </div>
 
-    <div class="chart-section">
-      <el-row :gutter="16">
+    <!-- 图表区域 -->
+    <div class="chart-section animate-elegant-fade-in-up delay-300">
+      <el-row :gutter="20">
         <el-col :span="24">
-          <el-card shadow="hover">
+          <el-card class="chart-card glass-card-elegant" shadow="hover">
             <template #header>
               <div class="chart-header">
-                <span>Bug趋势分析</span>
-                <el-radio-group v-model="trendGranularity" size="small" @change="loadTrendData">
+                <div class="chart-title">
+                  <div class="title-icon-bg">
+                    <el-icon><TrendCharts /></el-icon>
+                  </div>
+                  <span>Bug趋势分析</span>
+                </div>
+                <el-radio-group v-model="trendGranularity" size="small" @change="loadTrendData" class="chart-controls elegant-radio">
                   <el-radio-button label="day">日</el-radio-button>
                   <el-radio-button label="week">周</el-radio-button>
                   <el-radio-button label="month">月</el-radio-button>
                 </el-radio-group>
               </div>
             </template>
-            <div ref="trendChartRef" class="chart-container" style="height: 350px;"></div>
+            <div ref="trendChartRef" class="chart-container" style="height: 380px;"></div>
           </el-card>
         </el-col>
       </el-row>
     </div>
 
-    <div class="chart-section">
-      <el-row :gutter="16">
-        <el-col :span="12">
-          <el-card shadow="hover">
+    <div class="chart-section animate-elegant-fade-in-up delay-400">
+      <el-row :gutter="20">
+        <el-col :span="12" :xs="24">
+          <el-card class="chart-card glass-card-elegant" shadow="hover">
             <template #header>
               <div class="chart-header">
-                <span>项目Bug分布</span>
-                <el-select v-model="projectChartDimension" size="small" @change="loadDistributionData" style="width: 120px;">
+                <div class="chart-title">
+                  <div class="title-icon-bg icon-project">
+                    <el-icon><PieChart /></el-icon>
+                  </div>
+                  <span>项目Bug分布</span>
+                </div>
+                <el-select v-model="projectChartDimension" size="small" @change="loadDistributionData" class="chart-controls elegant-select-small">
                   <el-option label="按项目" value="project"></el-option>
                   <el-option label="按严重程度" value="severity"></el-option>
                   <el-option label="按优先级" value="priority"></el-option>
@@ -275,65 +395,92 @@
                 </el-select>
               </div>
             </template>
-            <div ref="projectChartRef" class="chart-container" style="height: 320px;"></div>
+            <div ref="projectChartRef" class="chart-container" style="height: 340px;"></div>
           </el-card>
         </el-col>
         
-        <el-col :span="6">
-          <el-card shadow="hover">
+        <el-col :span="6" :xs="24">
+          <el-card class="chart-card glass-card-elegant" shadow="hover">
             <template #header>
               <div class="chart-header">
-                <span>Bug类型占比</span>
+                <div class="chart-title">
+                  <div class="title-icon-bg icon-type">
+                    <el-icon><Histogram /></el-icon>
+                  </div>
+                  <span>Bug类型占比</span>
+                </div>
               </div>
             </template>
-            <div ref="typeChartRef" class="chart-container" style="height: 320px;"></div>
+            <div ref="typeChartRef" class="chart-container" style="height: 340px;"></div>
           </el-card>
         </el-col>
         
-        <el-col :span="6">
-          <el-card shadow="hover">
+        <el-col :span="6" :xs="24">
+          <el-card class="chart-card glass-card-elegant" shadow="hover">
             <template #header>
               <div class="chart-header">
-                <span>存活时长分布</span>
+                <div class="chart-title">
+                  <div class="title-icon-bg icon-time">
+                    <el-icon><Timer /></el-icon>
+                  </div>
+                  <span>存活时长分布</span>
+                </div>
               </div>
             </template>
-            <div ref="survivalChartRef" class="chart-container" style="height: 320px;"></div>
+            <div ref="survivalChartRef" class="chart-container" style="height: 340px;"></div>
           </el-card>
         </el-col>
       </el-row>
     </div>
 
-    <div class="chart-section">
-      <el-row :gutter="16">
-        <el-col :span="12">
-          <el-card shadow="hover">
+    <div class="chart-section animate-elegant-fade-in-up delay-500">
+      <el-row :gutter="20">
+        <el-col :span="12" :xs="24">
+          <el-card class="chart-card glass-card-elegant" shadow="hover">
             <template #header>
               <div class="chart-header">
-                <span>严重程度分布</span>
+                <div class="chart-title">
+                  <div class="title-icon-bg icon-severity">
+                    <el-icon><Warning /></el-icon>
+                  </div>
+                  <span>严重程度分布</span>
+                </div>
               </div>
             </template>
-            <div ref="severityChartRef" class="chart-container" style="height: 300px;"></div>
+            <div ref="severityChartRef" class="chart-container" style="height: 320px;"></div>
           </el-card>
         </el-col>
         
-        <el-col :span="12">
-          <el-card shadow="hover">
+        <el-col :span="12" :xs="24">
+          <el-card class="chart-card glass-card-elegant" shadow="hover">
             <template #header>
               <div class="chart-header">
-                <span>人员工作量分析</span>
+                <div class="chart-title">
+                  <div class="title-icon-bg icon-workload">
+                    <el-icon><UserFilled /></el-icon>
+                  </div>
+                  <span>人员工作量分析</span>
+                </div>
               </div>
             </template>
-            <div ref="workloadChartRef" class="chart-container" style="height: 300px;"></div>
+            <div ref="workloadChartRef" class="chart-container" style="height: 320px;"></div>
           </el-card>
         </el-col>
       </el-row>
     </div>
 
-    <el-card class="data-table-card" shadow="hover">
+    <!-- Bug明细列表 -->
+    <el-card class="data-table-card glass-card-elegant animate-elegant-fade-in-up delay-600" shadow="hover">
       <template #header>
         <div class="table-header">
-          <span>Bug明细列表</span>
-          <el-radio-group v-model="tableView" size="small">
+          <div class="table-title">
+            <div class="title-icon-bg icon-list">
+              <el-icon><List /></el-icon>
+            </div>
+            <span>Bug明细列表</span>
+            <el-badge :value="totalBugs" class="item-count" type="primary" />
+          </div>
+          <el-radio-group v-model="tableView" size="small" class="table-view-toggle elegant-radio">
             <el-radio-button label="all">全部</el-radio-button>
             <el-radio-button label="unresolved">未解决</el-radio-button>
             <el-radio-button label="resolved">已解决</el-radio-button>
@@ -347,27 +494,32 @@
         style="width: 100%"
         @row-click="handleRowClick"
         :default-sort="{ prop: 'created_at', order: 'descending' }"
+        class="custom-table elegant-table"
       >
-        <el-table-column prop="id" label="ID" width="60" />
+        <el-table-column prop="id" label="ID" width="80">
+          <template #default="{ row }">
+            <span class="bug-id">#{{ row.id }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="title" label="标题" min-width="200" show-overflow-tooltip />
         <el-table-column prop="project_name" label="项目" width="120" />
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)" size="small">
+            <el-tag :type="getStatusType(row.status)" size="small" effect="light" class="status-tag elegant-tag">
               {{ getStatusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="severity" label="严重程度" width="100">
           <template #default="{ row }">
-            <el-tag :type="getSeverityType(row.severity)" size="small">
+            <el-tag :type="getSeverityType(row.severity)" size="small" effect="light" class="severity-tag elegant-tag">
               {{ getSeverityLabel(row.severity) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="priority" label="优先级" width="80">
           <template #default="{ row }">
-            <el-tag :type="getPriorityType(row.priority)" size="small">
+            <el-tag :type="getPriorityType(row.priority)" size="small" effect="light" class="priority-tag elegant-tag">
               {{ getPriorityLabel(row.priority) }}
             </el-tag>
           </template>
@@ -380,8 +532,8 @@
         </el-table-column>
         <el-table-column label="操作" width="80" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link @click.stop="viewBugDetail(row)">
-              查看
+            <el-button type="primary" link @click.stop="viewBugDetail(row)" class="view-btn btn-icon-elegant">
+              <el-icon><View /></el-icon>
             </el-button>
           </template>
         </el-table-column>
@@ -395,13 +547,19 @@
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handlePageChange"
+          class="elegant-pagination"
         />
       </div>
     </el-card>
 
+    <!-- 加载遮罩 -->
     <div v-if="loading" class="loading-overlay">
-      <el-icon class="is-loading" size="32"><Loading /></el-icon>
-      <span>数据加载中...</span>
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <span>数据加载中...</span>
+      </div>
     </div>
   </div>
 </template>
@@ -409,14 +567,26 @@
 <script>
 import { ref, reactive, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Refresh, RefreshLeft, Loading, Download, ArrowDown } from '@element-plus/icons-vue'
+import { 
+  Refresh, RefreshLeft, Download, ArrowDown, 
+  DataAnalysis, WarningFilled, CirclePlusFilled, CircleCheckFilled,
+  Warning, TrendCharts, Timer, PieChart, Histogram, List,
+  UserFilled, View, ArrowUp, ArrowDownBold, Minus,
+  Calendar, Folder, Collection, CircleCheck, Flag, User, Document
+} from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import bugStatisticsService from '@/services/bugStatisticsService'
 import { systemTimeService } from '@/services/systemTimeService'
 
 export default {
   name: 'BugStatistics',
-  components: { Refresh, RefreshLeft, Loading, Download, ArrowDown },
+  components: { 
+    Refresh, RefreshLeft, Download, ArrowDown,
+    DataAnalysis, WarningFilled, CirclePlusFilled, CircleCheckFilled,
+    Warning, TrendCharts, Timer, PieChart, Histogram, List,
+    UserFilled, View, ArrowUp, ArrowDownBold, Minus,
+    Calendar, Folder, Collection, CircleCheck, Flag, User, Document
+  },
   setup() {
     const loading = ref(false)
     const trendGranularity = ref('day')
@@ -598,39 +768,93 @@ export default {
       if (!trendChart || !data.length) return
       
       const option = {
-        tooltip: { trigger: 'axis' },
-        legend: { data: ['新增Bug', '解决Bug', '累计未解决'], bottom: 0 },
-        grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
+        tooltip: { 
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderWidth: 1,
+          textStyle: { color: '#1e293b' },
+          padding: [12, 16],
+          extraCssText: 'box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 12px;'
+        },
+        legend: { 
+          data: ['新增Bug', '解决Bug', '累计未解决'], 
+          bottom: 0,
+          textStyle: { color: '#64748b', fontSize: 12 },
+          itemGap: 20
+        },
+        grid: { 
+          left: '3%', 
+          right: '4%', 
+          bottom: '15%', 
+          top: '8%',
+          containLabel: true 
+        },
         xAxis: { 
           type: 'category', 
           data: data.map(d => d.date),
-          axisLabel: { rotate: trendGranularity.value === 'day' ? 45 : 0 }
+          axisLabel: { 
+            rotate: trendGranularity.value === 'day' ? 45 : 0,
+            color: '#64748b',
+            fontSize: 11
+          },
+          axisLine: { lineStyle: { color: '#e2e8f0' } },
+          axisTick: { show: false }
         },
-        yAxis: { type: 'value' },
+        yAxis: { 
+          type: 'value',
+          axisLine: { show: false },
+          splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
+          axisLabel: { color: '#64748b', fontSize: 11 }
+        },
         series: [
           {
             name: '新增Bug',
             type: 'line',
             data: data.map(d => d.new_bugs),
             smooth: true,
-            itemStyle: { color: '#409EFF' },
-            areaStyle: { opacity: 0.1 }
+            symbol: 'circle',
+            symbolSize: 8,
+            itemStyle: { color: '#8b5cf6', borderWidth: 2, borderColor: '#fff' },
+            lineStyle: { width: 3, shadowColor: 'rgba(139, 92, 246, 0.3)', shadowBlur: 10 },
+            areaStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(139, 92, 246, 0.25)' },
+                { offset: 1, color: 'rgba(139, 92, 246, 0.02)' }
+              ])
+            }
           },
           {
             name: '解决Bug',
             type: 'line',
             data: data.map(d => d.resolved_bugs),
             smooth: true,
-            itemStyle: { color: '#67C23A' },
-            areaStyle: { opacity: 0.1 }
+            symbol: 'circle',
+            symbolSize: 8,
+            itemStyle: { color: '#22c55e', borderWidth: 2, borderColor: '#fff' },
+            lineStyle: { width: 3, shadowColor: 'rgba(34, 197, 94, 0.3)', shadowBlur: 10 },
+            areaStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(34, 197, 94, 0.25)' },
+                { offset: 1, color: 'rgba(34, 197, 94, 0.02)' }
+              ])
+            }
           },
           {
             name: '累计未解决',
             type: 'line',
             data: data.map(d => d.cumulative_unresolved),
             smooth: true,
-            itemStyle: { color: '#F56C6C' },
-            areaStyle: { opacity: 0.2, color: '#F56C6C' }
+            symbol: 'circle',
+            symbolSize: 8,
+            itemStyle: { color: '#f43f5e', borderWidth: 2, borderColor: '#fff' },
+            lineStyle: { width: 3, shadowColor: 'rgba(244, 63, 94, 0.3)', shadowBlur: 10 },
+            areaStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(244, 63, 94, 0.25)' },
+                { offset: 1, color: 'rgba(244, 63, 94, 0.02)' }
+              ])
+            }
           }
         ]
       }
@@ -655,7 +879,6 @@ export default {
       if (!projectChart) return
       
       let chartData = []
-      let seriesData = []
       
       if (dimension === 'status') {
         chartData = Object.entries(data).map(([name, value]) => ({ name, value }))
@@ -674,6 +897,12 @@ export default {
       const option = {
         tooltip: { 
           trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderWidth: 1,
+          textStyle: { color: '#1e293b' },
+          padding: [12, 16],
+          extraCssText: 'box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 12px;',
           formatter: (params) => {
             if (dimension === 'status') {
               const p = params[0]
@@ -683,44 +912,100 @@ export default {
             return `${p.name}<br/>总计: ${p.value}<br/>新建: ${p.data?.new || 0}<br/>已解决: ${p.data?.resolved || 0}<br/>已关闭: ${p.data?.closed || 0}`
           }
         },
-        legend: { data: isStacked ? ['新建', '已解决', '已关闭'] : [], bottom: 0 },
-        grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
+        legend: { 
+          data: isStacked ? ['新建', '已解决', '已关闭'] : [], 
+          bottom: 0,
+          textStyle: { color: '#64748b', fontSize: 11 }
+        },
+        grid: { 
+          left: '3%', 
+          right: '4%', 
+          bottom: '15%', 
+          top: '8%',
+          containLabel: true 
+        },
         xAxis: { 
           type: 'category', 
           data: chartData.map(d => d.name),
-          axisLabel: { rotate: 30 }
+          axisLabel: { 
+            rotate: 30,
+            color: '#64748b',
+            fontSize: 11
+          },
+          axisLine: { lineStyle: { color: '#e2e8f0' } },
+          axisTick: { show: false }
         },
-        yAxis: { type: 'value', name: 'Bug数量' },
+        yAxis: { 
+          type: 'value', 
+          name: 'Bug数量',
+          nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+          axisLine: { show: false },
+          splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
+          axisLabel: { color: '#64748b', fontSize: 11 }
+        },
         series: isStacked ? [
           {
             name: '新建',
             type: 'bar',
             stack: 'total',
             data: chartData.map(d => d.new || 0),
-            itemStyle: { color: '#F56C6C' }
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#fb7185' },
+                { offset: 1, color: '#f43f5e' }
+              ]),
+              borderRadius: [6, 6, 0, 0]
+            }
           },
           {
             name: '已解决',
             type: 'bar',
             stack: 'total',
             data: chartData.map(d => d.resolved || 0),
-            itemStyle: { color: '#E6A23C' }
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#fbbf24' },
+                { offset: 1, color: '#f59e0b' }
+              ])
+            }
           },
           {
             name: '已关闭',
             type: 'bar',
             stack: 'total',
             data: chartData.map(d => d.closed || 0),
-            itemStyle: { color: '#67C23A' }
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#4ade80' },
+                { offset: 1, color: '#22c55e' }
+              ]),
+              borderRadius: [0, 0, 6, 6]
+            }
           }
         ] : [
           {
             name: 'Bug状态',
             type: 'pie',
             radius: ['40%', '70%'],
+            center: ['50%', '45%'],
             data: chartData,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 3
+            },
+            label: {
+              show: true,
+              formatter: '{b}\n{c}个 ({d}%)',
+              color: '#64748b',
+              fontSize: 11
+            },
             emphasis: {
-              itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' }
+              itemStyle: { 
+                shadowBlur: 20, 
+                shadowOffsetX: 0, 
+                shadowColor: 'rgba(0, 0, 0, 0.15)' 
+              }
             }
           }
         ]
@@ -744,823 +1029,4 @@ export default {
     const renderTypeChart = (data) => {
       if (!typeChart || !data.length) return
       
-      const option = {
-        tooltip: { 
-          trigger: 'item',
-          formatter: '{b}: {c}个 ({d}%)'
-        },
-        legend: { orient: 'vertical', left: 'left', top: 'middle' },
-        series: [
-          {
-            name: 'Bug类型',
-            type: 'pie',
-            radius: ['40%', '65%'],
-            center: ['60%', '50%'],
-            avoidLabelOverlap: false,
-            itemStyle: {
-              borderRadius: 8,
-              borderColor: '#fff',
-              borderWidth: 2
-            },
-            label: { show: false, position: 'center' },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: 18,
-                fontWeight: 'bold'
-              }
-            },
-            labelLine: { show: false },
-            data: data.map((d, i) => ({
-              name: d.name,
-              value: d.value,
-              itemStyle: {
-                color: ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#909399', '#C0C4CC'][i % 6]
-              }
-            }))
-          }
-        ]
-      }
-      
-      typeChart.setOption(option)
-    }
-
-    const loadSurvivalDuration = async () => {
-      try {
-        const params = buildFilterParams()
-        const response = await bugStatisticsService.getSurvivalDuration(params)
-        if (response.success) {
-          renderSurvivalChart(response.data.duration_distribution || [], response.data.total_resolved || 0)
-        }
-      } catch (error) {
-        console.error('加载存活时长失败:', error)
-      }
-    }
-
-    const renderSurvivalChart = (data, total) => {
-      if (!survivalChart || !data.length) return
-      
-      const option = {
-        tooltip: { 
-          trigger: 'axis',
-          formatter: '{b}: {c}个'
-        },
-        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-        xAxis: { 
-          type: 'category', 
-          data: data.map(d => d.name),
-          axisLabel: { rotate: 15 }
-        },
-        yAxis: { type: 'value', name: 'Bug数量' },
-        series: [
-          {
-            name: '存活时长',
-            type: 'bar',
-            data: data.map((d, i) => ({
-              value: d.value,
-              itemStyle: {
-                color: ['#67C23A', '#409EFF', '#E6A23C', '#F56C6C', '#909399'][i % 5]
-              }
-            })),
-            barWidth: '50%'
-          }
-        ]
-      }
-      
-      survivalChart.setOption(option)
-    }
-
-    const loadSeverityDistribution = async () => {
-      try {
-        const params = buildFilterParams()
-        params.dimension = 'severity'
-        const response = await bugStatisticsService.getDistributionAnalysis(params)
-        if (response.success) {
-          renderSeverityChart(response.data.distribution || {})
-        }
-      } catch (error) {
-        console.error('加载严重程度分布失败:', error)
-      }
-    }
-
-    const renderSeverityChart = (data) => {
-      if (!severityChart || !Object.keys(data).length) return
-      
-      const categories = Object.keys(data)
-      const severityLabels = { critical: 'P0-致命', high: 'P1-严重', medium: 'P2-一般', low: 'P3-轻微', suggestion: 'P4-建议' }
-      
-      const option = {
-        tooltip: { 
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' }
-        },
-        legend: { data: ['新建', '已解决', '已关闭'], bottom: 0 },
-        grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
-        xAxis: { 
-          type: 'category', 
-          data: categories.map(c => severityLabels[c] || c),
-          axisLabel: { rotate: 15 }
-        },
-        yAxis: { type: 'value', name: 'Bug数量' },
-        series: [
-          {
-            name: '新建',
-            type: 'bar',
-            stack: 'total',
-            data: categories.map(c => data[c]?.new || 0),
-            itemStyle: { color: '#F56C6C' }
-          },
-          {
-            name: '已解决',
-            type: 'bar',
-            stack: 'total',
-            data: categories.map(c => data[c]?.resolved || 0),
-            itemStyle: { color: '#E6A23C' }
-          },
-          {
-            name: '已关闭',
-            type: 'bar',
-            stack: 'total',
-            data: categories.map(c => data[c]?.closed || 0),
-            itemStyle: { color: '#67C23A' }
-          }
-        ]
-      }
-      
-      severityChart.setOption(option)
-    }
-
-    const loadWorkloadData = async () => {
-      try {
-        const params = buildFilterParams()
-        const response = await bugStatisticsService.getPersonWorkload(params)
-        if (response.success) {
-          renderWorkloadChart(response.data.workload_data || [])
-        }
-      } catch (error) {
-        console.error('加载工作量数据失败:', error)
-      }
-    }
-
-    const renderWorkloadChart = (data) => {
-      if (!workloadChart || !data.length) return
-      
-      const chartData = data.slice(0, 10)
-      
-      const option = {
-        tooltip: { 
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' }
-        },
-        legend: { data: ['已分配', '处理中', '已解决', '已关闭'], bottom: 0 },
-        grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
-        xAxis: { 
-          type: 'value', 
-          name: 'Bug数量'
-        },
-        yAxis: { 
-          type: 'category', 
-          data: chartData.map(d => d.name),
-          axisLabel: { rotate: 0 }
-        },
-        series: [
-          {
-            name: '已分配',
-            type: 'bar',
-            stack: 'total',
-            data: chartData.map(d => d.assigned - d.in_progress - d.resolved - d.closed),
-            itemStyle: { color: '#909399' }
-          },
-          {
-            name: '处理中',
-            type: 'bar',
-            stack: 'total',
-            data: chartData.map(d => d.in_progress),
-            itemStyle: { color: '#E6A23C' }
-          },
-          {
-            name: '已解决',
-            type: 'bar',
-            stack: 'total',
-            data: chartData.map(d => d.resolved),
-            itemStyle: { color: '#409EFF' }
-          },
-          {
-            name: '已关闭',
-            type: 'bar',
-            stack: 'total',
-            data: chartData.map(d => d.closed),
-            itemStyle: { color: '#67C23A' }
-          }
-        ]
-      }
-      
-      workloadChart.setOption(option)
-    }
-
-    const loadAllData = async () => {
-      loading.value = true
-      try {
-        await Promise.all([
-          loadKpiData(),
-          loadTrendData(),
-          loadDistributionData(),
-          loadTypeDistribution(),
-          loadSurvivalDuration(),
-          loadSeverityDistribution(),
-          loadWorkloadData()
-        ])
-      } finally {
-        loading.value = false
-      }
-      loadBugList()
-    }
-
-    const loadBugList = async () => {
-      tableLoading.value = true
-      try {
-        const params = buildFilterParams()
-        params.page = currentPage.value
-        params.per_page = pageSize.value
-        
-        if (tableView.value === 'unresolved') {
-          params.status = 'new,in_progress,assigned'
-        } else if (tableView.value === 'resolved') {
-          params.status = 'resolved,closed'
-        }
-        
-        const response = await bugStatisticsService.getBugList(params)
-        if (response.success) {
-          bugList.value = response.data.bugs || []
-          totalBugs.value = response.data.total || 0
-        }
-      } catch (error) {
-        console.error('加载Bug列表失败:', error)
-      } finally {
-        tableLoading.value = false
-      }
-    }
-
-    const getStatusType = (status) => {
-      const types = {
-        'new': 'info',
-        'assigned': 'warning',
-        'in_progress': 'warning',
-        'resolved': 'success',
-        'verified': 'success',
-        'closed': 'success',
-        'rejected': 'danger',
-        'reopened': 'danger'
-      }
-      return types[status] || 'info'
-    }
-
-    const getStatusLabel = (status) => {
-      const labels = {
-        'new': '新建',
-        'assigned': '已分配',
-        'in_progress': '处理中',
-        'resolved': '已解决',
-        'verified': '已验证',
-        'closed': '已关闭',
-        'rejected': '已拒绝',
-        'reopened': '重新打开'
-      }
-      return labels[status] || status
-    }
-
-    const getSeverityType = (severity) => {
-      const types = {
-        'critical': 'danger',
-        'high': 'warning',
-        'medium': '',
-        'low': 'info',
-        'suggestion': ''
-      }
-      return types[severity] || 'info'
-    }
-
-    const getSeverityLabel = (severity) => {
-      const labels = {
-        'critical': '致命(P0)',
-        'high': '严重(P1)',
-        'medium': '一般(P2)',
-        'low': '轻微(P3)',
-        'suggestion': '建议(P4)'
-      }
-      return labels[severity] || severity
-    }
-
-    const getPriorityType = (priority) => {
-      const types = {
-        'urgent': 'danger',
-        'high': 'warning',
-        'medium': '',
-        'low': 'info'
-      }
-      return types[priority] || 'info'
-    }
-
-    const getPriorityLabel = (priority) => {
-      const labels = {
-        'urgent': '紧急',
-        'high': '高',
-        'medium': '中',
-        'low': '低'
-      }
-      return labels[priority] || priority
-    }
-
-    const formatDate = (dateStr) => {
-      if (!dateStr) return '-'
-      const date = new Date(dateStr)
-      return date.toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    }
-
-    const handleRowClick = (row) => {
-      viewBugDetail(row)
-    }
-
-    const viewBugDetail = (row) => {
-      window.location.href = `/#/bugs/${row.id}`
-    }
-
-    const handleSizeChange = (val) => {
-      pageSize.value = val
-      currentPage.value = 1
-      loadBugList()
-    }
-
-    const handlePageChange = (val) => {
-      currentPage.value = val
-      loadBugList()
-    }
-
-    const handleTimeRangeChange = () => {
-      currentPage.value = 1
-      loadAllData()
-    }
-
-    const handleDateRangeChange = () => {
-      if (filters.timeRange === 'custom' && filters.customDateRange?.length === 2) {
-        loadAllData()
-      }
-    }
-
-    const handleSelectAllProjects = () => {
-      filters.projectIds = []
-      loadAllData()
-    }
-
-    const resetFilters = () => {
-      filters.timeRange = 'month'
-      filters.customDateRange = []
-      filters.projectIds = []
-      filters.bugTypes = []
-      filters.severities = []
-      filters.statuses = []
-      filters.priorities = []
-      filters.reportedBy = []
-      loadAllData()
-    }
-
-    const refreshData = () => {
-      loadAllData()
-      ElMessage.success('数据已刷新')
-    }
-
-    const exportReport = async () => {
-      const { startDate, endDate } = getDateRange()
-      const exportData = {
-        kpi: kpiData.value,
-        filters: {
-          timeRange: filters.timeRange,
-          startDate,
-          endDate,
-          projects: filters.projectIds,
-          bugTypes: filters.bugTypes,
-          severities: filters.severities,
-          statuses: filters.statuses,
-          priorities: filters.priorities
-        },
-        exportedAt: new Date().toISOString()
-      }
-      
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `bug-statistics-${new Date().toISOString().split('T')[0]}.json`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-      
-      ElMessage.success('报表导出成功')
-    }
-
-    const exportChartAsImage = (chartInstance, chartName) => {
-      if (!chartInstance) {
-        ElMessage.warning('图表未初始化')
-        return
-      }
-      const url = chartInstance.getDataURL({
-        type: 'png',
-        pixelRatio: 2,
-        backgroundColor: '#fff'
-      })
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `${chartName}-${new Date().toISOString().split('T')[0]}.png`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      ElMessage.success(`${chartName} 导出成功`)
-    }
-
-    const exportAllCharts = () => {
-      exportChartAsImage(trendChart, 'bug-trend')
-      setTimeout(() => exportChartAsImage(projectChart, 'bug-distribution'), 300)
-      setTimeout(() => exportChartAsImage(typeChart, 'bug-type'), 600)
-      setTimeout(() => exportChartAsImage(survivalChart, 'bug-survival'), 900)
-      setTimeout(() => exportChartAsImage(severityChart, 'bug-severity'), 1200)
-      setTimeout(() => exportChartAsImage(workloadChart, 'bug-workload'), 1500)
-    }
-
-    const handleExportCommand = (command) => {
-      switch (command) {
-        case 'data':
-          exportReport()
-          break
-        case 'trend':
-          exportChartAsImage(trendChart, 'bug-trend')
-          break
-        case 'distribution':
-          exportChartAsImage(projectChart, 'bug-distribution')
-          break
-        case 'all':
-          exportAllCharts()
-          break
-      }
-    }
-
-    onMounted(() => {
-      initCharts()
-      loadFilterOptions().then(() => {
-        loadAllData()
-      })
-    })
-
-    watch(tableView, () => {
-      currentPage.value = 1
-      loadBugList()
-    })
-
-    onUnmounted(() => {
-      window.removeEventListener('resize', handleResize)
-      trendChart?.dispose()
-      projectChart?.dispose()
-      typeChart?.dispose()
-      survivalChart?.dispose()
-      severityChart?.dispose()
-      workloadChart?.dispose()
-    })
-
-    return {
-      loading,
-      filters,
-      filterOptions,
-      kpiData,
-      trendGranularity,
-      projectChartDimension,
-      trendChartRef,
-      projectChartRef,
-      typeChartRef,
-      survivalChartRef,
-      severityChartRef,
-      workloadChartRef,
-      bugList,
-      tableLoading,
-      tableView,
-      currentPage,
-      pageSize,
-      totalBugs,
-      getChangeClass,
-      handleTimeRangeChange,
-      handleDateRangeChange,
-      handleSelectAllProjects,
-      loadAllData,
-      loadTrendData,
-      loadDistributionData,
-      resetFilters,
-      refreshData,
-      exportReport,
-      exportChartAsImage,
-      exportAllCharts,
-      handleExportCommand,
-      getStatusType,
-      getStatusLabel,
-      getSeverityType,
-      getSeverityLabel,
-      getPriorityType,
-      getPriorityLabel,
-      formatDate,
-      handleRowClick,
-      viewBugDetail,
-      handleSizeChange,
-      handlePageChange
-    }
-  }
-}
-</script>
-
-<style scoped>
-.bug-statistics {
-  padding: 20px;
-  position: relative;
-}
-
-.statistics-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.statistics-header h2 {
-  margin: 0;
-  color: #303133;
-}
-
-.header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.filter-panel {
-  margin-bottom: 20px;
-}
-
-.filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-}
-
-.filter-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.filter-label {
-  font-size: 13px;
-  color: #606266;
-  white-space: nowrap;
-}
-
-.kpi-cards {
-  margin-bottom: 20px;
-}
-
-.kpi-card {
-  text-align: center;
-}
-
-.kpi-card.warning {
-  border-left: 4px solid #E6A23C;
-}
-
-.kpi-card.danger {
-  border-left: 4px solid #F56C6C;
-}
-
-.kpi-content {
-  padding: 10px 0;
-}
-
-.kpi-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 8px;
-}
-
-.kpi-value.success {
-  color: #67C23A;
-}
-
-.kpi-value.danger {
-  color: #F56C6C;
-}
-
-.kpi-change {
-  font-size: 14px;
-  margin-left: 8px;
-}
-
-.kpi-change.up {
-  color: #F56C6C;
-}
-
-.kpi-change.down {
-  color: #67C23A;
-}
-
-.kpi-change.stable {
-  color: #909399;
-}
-
-.kpi-sub {
-  font-size: 14px;
-  color: #909399;
-  font-weight: normal;
-}
-
-.kpi-unit {
-  font-size: 14px;
-  color: #909399;
-  font-weight: normal;
-}
-
-.kpi-label {
-  font-size: 14px;
-  color: #606266;
-}
-
-.chart-section {
-  margin-bottom: 20px;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.chart-container {
-  width: 100%;
-}
-
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  gap: 16px;
-}
-
-.loading-overlay .el-icon {
-  animation: rotating 2s linear infinite;
-}
-
-@keyframes rotating {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.data-table-card {
-  margin-top: 20px;
-}
-
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pagination-container {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.el-table {
-  cursor: pointer;
-}
-
-.el-table:hover {
-  background-color: #f5f7fa;
-}
-
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-  .bug-statistics {
-    padding: 12px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .page-header h2 {
-    font-size: 18px;
-  }
-
-  .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
-    min-width: 80px;
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
-  .filter-card {
-    margin-bottom: 16px;
-  }
-
-  .filter-form {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .filter-form .el-form-item {
-    margin-right: 0;
-    margin-bottom: 8px;
-    width: 100%;
-  }
-
-  .filter-form .el-input,
-  .filter-form .el-select,
-  .filter-form .el-date-picker {
-    width: 100% !important;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .stat-card {
-    padding: 12px;
-  }
-
-  .stat-value {
-    font-size: 20px;
-  }
-
-  .stat-label {
-    font-size: 12px;
-  }
-
-  .chart-container {
-    height: 250px !important;
-  }
-
-  .el-table {
-    font-size: 11px !important;
-  }
-
-  .el-table th,
-  .el-table td {
-    padding: 6px 4px !important;
-  }
-
-  .pagination-container {
-    justify-content: center;
-    margin-top: 16px;
-  }
-
-  .el-dialog {
-    width: 95% !important;
-    margin: 10px auto !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .bug-statistics {
-    padding: 8px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .el-table {
-    font-size: 10px !important;
-  }
-}
-</style>
+      const colors = ['#8b5cf6', '#a78bfa', '#c4b5fd', '#f472b6', '#fb7185', '#

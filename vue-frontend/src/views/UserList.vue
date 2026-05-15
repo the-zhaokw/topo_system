@@ -8,7 +8,7 @@
         sub-title="您没有权限访问用户管理页面"
       >
         <template #extra>
-          <el-button type="primary" @click="$router.push('/dashboard')">
+          <el-button type="primary" @click="$router.push('/dashboard')" class="btn-gradient">
             返回首页
           </el-button>
         </template>
@@ -16,53 +16,121 @@
     </div>
     
     <div v-else>
-      <div class="user-list-header">
-        <h2>用户管理</h2>
-        <div class="header-actions">
-          <el-button type="primary" @click="showCreateDialog = true">
-            <el-icon><Plus /></el-icon>
-            新建用户
-          </el-button>
-          <el-button type="success" @click="exportUsers('csv')">
-            <el-icon><Download /></el-icon>
-            导出CSV
-          </el-button>
-          <el-button type="success" @click="exportUsers('xlsx')">
-            <el-icon><Download /></el-icon>
-            导出Excel
-          </el-button>
-          <el-button type="warning" @click="importUsers">
-            <el-icon><Upload /></el-icon>
-            导入用户
-          </el-button>
-          <el-button type="info" @click="showFilter = !showFilter">
-            <el-icon><Filter /></el-icon>
-            {{ showFilter ? '隐藏筛选' : '显示筛选' }}
-          </el-button>
+      <!-- 页面头部 - 玻璃拟态风格 -->
+      <div class="page-header animate-fade-in-down">
+        <div class="header-bg-decoration">
+          <div class="gradient-orb orb-1"></div>
+          <div class="gradient-orb orb-2"></div>
         </div>
-      </div>
-
-      <!-- 部门列表 -->
-      <el-card shadow="never" class="department-card">
-        <div class="department-header">
-          <span class="department-title">部门列表</span>
-          <div class="department-actions">
-            <el-button type="primary" size="small" @click="showCreateDepartmentDialog">
+        <div class="header-content">
+          <div class="header-title">
+            <div class="title-icon-wrapper">
+              <el-icon class="title-icon"><UserFilled /></el-icon>
+            </div>
+            <div class="title-text">
+              <h1>用户管理</h1>
+              <p class="subtitle">管理系统用户、部门和职位</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <el-button class="btn-gradient" @click="showCreateDialog = true">
               <el-icon><Plus /></el-icon>
-              新建部门
+              新建用户
             </el-button>
-            <el-button type="danger" size="small" @click="showDeleteDepartmentDialog">
-              <el-icon><Delete /></el-icon>
-              删除部门
+            <el-button class="btn-success-gradient" @click="exportUsers('csv')">
+              <el-icon><Download /></el-icon>
+              导出CSV
+            </el-button>
+            <el-button class="btn-success-gradient" @click="exportUsers('xlsx')">
+              <el-icon><Download /></el-icon>
+              导出Excel
+            </el-button>
+            <el-button class="btn-warning-gradient" @click="importUsers">
+              <el-icon><Upload /></el-icon>
+              导入用户
+            </el-button>
+            <el-button class="btn-info-gradient" @click="showFilter = !showFilter">
+              <el-icon><Filter /></el-icon>
+              {{ showFilter ? '隐藏筛选' : '显示筛选' }}
             </el-button>
           </div>
         </div>
+      </div>
+
+      <!-- 统计卡片 -->
+      <el-row :gutter="16" class="stats-row animate-fade-in-up">
+        <el-col :xs="12" :sm="12" :md="6" :lg="6">
+          <div class="stat-card stat-card-primary">
+            <div class="stat-icon-wrapper stat-icon-wrapper-primary">
+              <el-icon><User /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ users.length }}</div>
+              <div class="stat-label">用户总数</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6" :lg="6">
+          <div class="stat-card stat-card-success">
+            <div class="stat-icon-wrapper stat-icon-wrapper-success">
+              <el-icon><CircleCheck /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ activeUsersCount }}</div>
+              <div class="stat-label">活跃用户</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6" :lg="6">
+          <div class="stat-card stat-card-info">
+            <div class="stat-icon-wrapper stat-icon-wrapper-info">
+              <el-icon><OfficeBuilding /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ departments.length }}</div>
+              <div class="stat-label">部门数量</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6" :lg="6">
+          <div class="stat-card stat-card-secondary">
+            <div class="stat-icon-wrapper stat-icon-wrapper-secondary">
+              <el-icon><Postcard /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ positions.length }}</div>
+              <div class="stat-label">职位数量</div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+
+      <!-- 部门列表 - 玻璃拟态卡片 -->
+      <el-card shadow="never" class="department-card glass-card">
+        <template #header>
+          <div class="card-header">
+            <span class="card-title">
+              <el-icon><OfficeBuilding /></el-icon>
+              部门列表
+            </span>
+            <div class="card-actions">
+              <el-button type="primary" size="small" @click="showCreateDepartmentDialog" class="btn-sm-gradient">
+                <el-icon><Plus /></el-icon>
+                新建部门
+              </el-button>
+              <el-button type="danger" size="small" @click="showDeleteDepartmentDialog">
+                <el-icon><Delete /></el-icon>
+                删除部门
+              </el-button>
+            </div>
+          </div>
+        </template>
         <div v-if="departments.length > 0" class="department-list">
           <el-tag 
             v-for="dept in departments" 
             :key="dept" 
-            type="primary" 
             class="department-tag"
+            effect="light"
             @click="viewDepartmentMembers(dept)"
           >
             {{ dept }}
@@ -77,6 +145,7 @@
         v-model="showDeleteDepartmentDialogVisible" 
         title="删除部门"
         width="400px"
+        class="custom-dialog"
       >
         <el-form 
           ref="deleteDepartmentFormRef"
@@ -100,36 +169,42 @@
         </el-form>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showDeleteDepartmentDialogVisible = false">取消</el-button>
             <el-button type="danger" @click="confirmDeleteDepartment">
               删除
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
-      <!-- 职位列表 -->
-      <el-card shadow="never" class="department-card">
-        <div class="department-header">
-          <span class="department-title">职位列表</span>
-          <div class="department-actions">
-            <el-button type="primary" size="small" @click="showCreatePositionDialog">
-              <el-icon><Plus /></el-icon>
-              新建职位
-            </el-button>
-            <el-button type="danger" size="small" @click="showDeletePositionDialog">
-              <el-icon><Delete /></el-icon>
-              删除职位
-            </el-button>
+      <!-- 职位列表 - 玻璃拟态卡片 -->
+      <el-card shadow="never" class="department-card glass-card">
+        <template #header>
+          <div class="card-header">
+            <span class="card-title">
+              <el-icon><Postcard /></el-icon>
+              职位列表
+            </span>
+            <div class="card-actions">
+              <el-button type="primary" size="small" @click="showCreatePositionDialog" class="btn-sm-gradient">
+                <el-icon><Plus /></el-icon>
+                新建职位
+              </el-button>
+              <el-button type="danger" size="small" @click="showDeletePositionDialog">
+                <el-icon><Delete /></el-icon>
+                删除职位
+              </el-button>
+            </div>
           </div>
-        </div>
+        </template>
         <div v-if="positions.length > 0" class="department-list">
           <el-tag 
             v-for="pos in positions" 
             :key="pos" 
-            type="success" 
-            class="department-tag"
+            type="success"
+            class="position-tag"
+            effect="light"
             @click="viewPositionMembers(pos)"
           >
             {{ pos }}
@@ -144,6 +219,7 @@
         v-model="showDeletePositionDialogVisible" 
         title="删除职位"
         width="400px"
+        class="custom-dialog"
       >
         <el-form 
           ref="deletePositionFormRef"
@@ -167,12 +243,12 @@
         </el-form>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showDeletePositionDialogVisible = false">取消</el-button>
             <el-button type="danger" @click="confirmDeletePosition">
               删除
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -181,6 +257,7 @@
         v-model="showPositionFormDialog" 
         :title="editingPosition ? '编辑职位' : '新建职位'"
         width="400px"
+        class="custom-dialog"
       >
         <el-form 
           ref="positionFormRef"
@@ -193,67 +270,93 @@
         </el-form>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showPositionFormDialog = false">取消</el-button>
-            <el-button type="primary" @click="submitPositionForm">
+            <el-button type="primary" @click="submitPositionForm" class="btn-gradient">
               {{ editingPosition ? '更新' : '创建' }}
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
-      <!-- 筛选表单 -->
-      <el-card v-if="showFilter" shadow="never" class="filter-card">
-        <el-form :model="filters" label-width="80px" :inline="true">
-          <el-form-item label="用户名">
-            <el-input v-model="filters.username" placeholder="用户名" clearable @clear="handleFilter" @keyup.enter="handleFilter" />
-          </el-form-item>
-          
-          <el-form-item label="邮箱">
-            <el-input v-model="filters.email" placeholder="邮箱" clearable @clear="handleFilter" @keyup.enter="handleFilter" />
-          </el-form-item>
-          
-          <el-form-item label="职位">
-            <el-select v-model="filters.position" placeholder="选择职位" clearable @change="handleFilter" style="width: 100%">
-              <el-option v-for="pos in positions" :key="pos" :label="pos" :value="pos" />
-            </el-select>
-          </el-form-item>
-          
-          <el-form-item label="状态">
-            <el-select v-model="filters.is_active" placeholder="状态" clearable @clear="handleFilter">
-              <el-option label="激活" :value="true" />
-              <el-option label="禁用" :value="false" />
-            </el-select>
-          </el-form-item>
-          
-          <el-form-item label="部门">
-            <el-input v-model="filters.department" placeholder="部门" clearable @clear="handleFilter" @keyup.enter="handleFilter" />
-          </el-form-item>
+      <!-- 筛选表单 - 玻璃拟态卡片 -->
+      <el-card v-if="showFilter" shadow="never" class="filter-card glass-card">
+        <template #header>
+          <div class="card-header">
+            <span class="card-title">
+              <el-icon><Filter /></el-icon>
+              筛选条件
+            </span>
+          </div>
+        </template>
+        <el-form :model="filters" label-width="80px">
+          <el-row :gutter="20">
+            <el-col :xs="24" :sm="12" :md="8" :lg="6">
+              <el-form-item label="用户名">
+                <el-input v-model="filters.username" placeholder="用户名" clearable @clear="handleFilter" @keyup.enter="handleFilter" />
+              </el-form-item>
+            </el-col>
+            
+            <el-col :xs="24" :sm="12" :md="8" :lg="6">
+              <el-form-item label="邮箱">
+                <el-input v-model="filters.email" placeholder="邮箱" clearable @clear="handleFilter" @keyup.enter="handleFilter" />
+              </el-form-item>
+            </el-col>
+            
+            <el-col :xs="24" :sm="12" :md="8" :lg="6">
+              <el-form-item label="职位">
+                <el-select v-model="filters.position" placeholder="选择职位" clearable @change="handleFilter" style="width: 100%">
+                  <el-option v-for="pos in positions" :key="pos" :label="pos" :value="pos" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            
+            <el-col :xs="24" :sm="12" :md="8" :lg="6">
+              <el-form-item label="状态">
+                <el-select v-model="filters.is_active" placeholder="状态" clearable @clear="handleFilter">
+                  <el-option label="激活" :value="true" />
+                  <el-option label="禁用" :value="false" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            
+            <el-col :xs="24" :sm="12" :md="8" :lg="6">
+              <el-form-item label="部门">
+                <el-input v-model="filters.department" placeholder="部门" clearable @clear="handleFilter" @keyup.enter="handleFilter" />
+              </el-form-item>
+            </el-col>
 
-          <el-form-item>
-            <el-button type="primary" @click="handleFilter">
-              筛选
-            </el-button>
-            <el-button @click="resetFilter">
-              重置
-            </el-button>
-          </el-form-item>
+            <el-col :xs="24" :sm="12" :md="8" :lg="6">
+              <el-form-item label-width="0" class="filter-actions">
+                <el-button @click="resetFilter">重置</el-button>
+                <el-button type="primary" @click="handleFilter" class="btn-gradient">
+                  筛选
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </el-card>
 
-      <!-- 用户表格 -->
-      <el-card shadow="never" class="table-card">
-        <div class="table-header">
-          <span class="total-count">共 {{ users.length }} 个用户</span>
-          <div class="table-actions">
-            <el-button type="text" @click="refreshUsers">
-              <el-icon><Refresh /></el-icon>
-              刷新
-            </el-button>
+      <!-- 用户表格 - 玻璃拟态卡片 -->
+      <el-card shadow="never" class="table-card glass-card">
+        <template #header>
+          <div class="card-header">
+            <span class="card-title">
+              <el-icon><List /></el-icon>
+              用户列表
+              <span class="total-count">共 {{ users.length }} 个用户</span>
+            </span>
+            <div class="card-actions">
+              <el-button type="primary" link @click="refreshUsers" class="refresh-btn">
+                <el-icon><Refresh /></el-icon>
+                刷新
+              </el-button>
+            </div>
           </div>
-        </div>
+        </template>
         
-        <el-table :data="users" v-loading="loading" style="width: 100%" stripe>
+        <el-table :data="users" v-loading="loading" style="width: 100%" class="custom-table">
           <el-table-column prop="id" label="ID" width="80" />
           
           <el-table-column prop="username" label="用户名" width="120">
@@ -263,6 +366,7 @@
                 link 
                 size="small" 
                 @click="viewUserDetail(row)"
+                class="user-link"
               >
                 {{ row.username }}
               </el-button>
@@ -273,25 +377,25 @@
           
           <el-table-column prop="first_name" label="姓名" width="120">
             <template #default="{ row }">
-              {{ row.last_name || '' }} {{ row.first_name || '' }}
+              <span class="user-name">{{ row.last_name || '' }} {{ row.first_name || '' }}</span>
             </template>
           </el-table-column>
           
           <el-table-column prop="department" label="部门" width="120">
             <template #default="{ row }">
-              {{ row.department || '-' }}
+              <span class="dept-text">{{ row.department || '-' }}</span>
             </template>
           </el-table-column>
           
           <el-table-column prop="position" label="职位" width="120">
             <template #default="{ row }">
-              {{ row.position || '-' }}
+              <span class="position-text">{{ row.position || '-' }}</span>
             </template>
           </el-table-column>
           
           <el-table-column prop="is_active" label="状态" width="100">
             <template #default="{ row }">
-              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small">
+              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small" effect="light" class="status-tag">
                 {{ row.is_active ? '激活' : '禁用' }}
               </el-tag>
             </template>
@@ -299,64 +403,72 @@
           
           <el-table-column prop="employee_id" label="工号" width="100">
             <template #default="{ row }">
-              {{ row.employee_id || '-' }}
+              <span class="employee-id">{{ row.employee_id || '-' }}</span>
             </template>
           </el-table-column>
           
           <el-table-column prop="last_login" label="最后登录" width="180">
             <template #default="{ row }">
-              {{ row.last_login ? formatDate(row.last_login) : '从未登录' }}
+              <span class="date-text">{{ row.last_login ? formatDate(row.last_login) : '从未登录' }}</span>
             </template>
           </el-table-column>
           
           <el-table-column prop="created_at" label="创建时间" width="180">
             <template #default="{ row }">
-              {{ formatDate(row.created_at) }}
+              <span class="date-text">{{ formatDate(row.created_at) }}</span>
             </template>
           </el-table-column>
           
           <el-table-column label="操作" width="300" fixed="right">
             <template #default="{ row }">
-              <el-button
-                type="primary"
-                link
-                size="small"
-                @click="editUser(row)"
-              >
-                编辑
-              </el-button>
-              <el-button
-                type="warning"
-                link
-                size="small"
-                @click="openPermissionDialog(row)"
-              >
-                权限
-              </el-button>
-              <el-button
-                type="danger"
-                link
-                size="small"
-                @click="deleteUser(row)"
-              >
-                删除
-              </el-button>
-              <el-button
-                type="warning"
-                link
-                size="small"
-                @click="toggleUserStatus(row)"
-              >
-                {{ row.is_active ? '禁用' : '激活' }}
-              </el-button>
-              <el-button
-                type="info"
-                link
-                size="small"
-                @click="resetUserPassword(row)"
-              >
-                重置密码
-              </el-button>
+              <div class="action-buttons">
+                <el-button
+                  type="primary"
+                  link
+                  size="small"
+                  @click="editUser(row)"
+                  class="action-btn"
+                >
+                  <el-icon><Edit /></el-icon>编辑
+                </el-button>
+                <el-button
+                  type="warning"
+                  link
+                  size="small"
+                  @click="openPermissionDialog(row)"
+                  class="action-btn"
+                >
+                  <el-icon><Key /></el-icon>权限
+                </el-button>
+                <el-button
+                  type="danger"
+                  link
+                  size="small"
+                  @click="deleteUser(row)"
+                  class="action-btn"
+                >
+                  <el-icon><Delete /></el-icon>删除
+                </el-button>
+                <el-button
+                  :type="row.is_active ? 'info' : 'success'"
+                  link
+                  size="small"
+                  @click="toggleUserStatus(row)"
+                  class="action-btn"
+                >
+                  <el-icon><Switch /></el-icon>
+                  {{ row.is_active ? '禁用' : '激活' }}
+                </el-button>
+                <el-button
+                  type="info"
+                  link
+                  size="small"
+                  @click="resetUserPassword(row)"
+                  class="action-btn"
+                >
+                  <el-icon><Lock /></el-icon>重置密码
+                </el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -367,6 +479,7 @@
         v-model="showCreateDialog" 
         :title="editingUser ? '编辑用户' : '新建用户'"
         width="500px"
+        class="custom-dialog"
       >
         <el-form 
           ref="userFormRef" 
@@ -465,12 +578,12 @@
         </el-form>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showCreateDialog = false">取消</el-button>
-            <el-button type="primary" @click="submitUserForm">
+            <el-button type="primary" @click="submitUserForm" class="btn-gradient">
               {{ editingUser ? '更新' : '创建' }}
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -479,9 +592,10 @@
         v-model="showDepartmentDialog" 
         :title="selectedDepartment + ' - 部门成员'"
         width="900px"
+        class="custom-dialog"
       >
-        <div class="department-actions">
-          <el-button type="primary" size="small" @click="showBatchAddDialog">
+        <div class="department-actions-bar">
+          <el-button type="primary" size="small" @click="showBatchAddDialog" class="btn-sm-gradient">
             <el-icon><Plus /></el-icon>
             批量添加成员
           </el-button>
@@ -495,7 +609,7 @@
           v-model:selection="selectedMembers"
           :data="departmentMembers" 
           style="width: 100%; margin-top: 16px;" 
-          stripe
+          class="custom-table"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="50" />
@@ -507,6 +621,7 @@
                 link 
                 size="small" 
                 @click="viewUserDetail(row)"
+                class="user-link"
               >
                 {{ row.username }}
               </el-button>
@@ -515,17 +630,17 @@
           <el-table-column prop="email" label="邮箱" min-width="180" />
           <el-table-column prop="first_name" label="姓名" width="120">
             <template #default="{ row }">
-              {{ row.last_name || '' }} {{ row.first_name || '' }}
+              <span class="user-name">{{ row.last_name || '' }} {{ row.first_name || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="position" label="职位" width="120">
             <template #default="{ row }">
-              {{ row.position || '-' }}
+              <span class="position-text">{{ row.position || '-' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="is_active" label="状态" width="80">
             <template #default="{ row }">
-              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small">
+              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small" effect="light">
                 {{ row.is_active ? '激活' : '禁用' }}
               </el-tag>
             </template>
@@ -533,12 +648,12 @@
         </el-table>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button type="warning" size="small" @click="showEditDepartmentDialog">
               编辑部门
             </el-button>
             <el-button @click="showDepartmentDialog = false">关闭</el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -547,11 +662,12 @@
         v-model="showPositionDialog" 
         :title="selectedPosition + ' - 职位成员'"
         width="900px"
+        class="custom-dialog"
       >
         <el-table 
           :data="positionMembers" 
           style="width: 100%; margin-top: 16px;" 
-          stripe
+          class="custom-table"
         >
           <el-table-column prop="id" label="ID" width="60" />
           <el-table-column prop="username" label="用户名" width="120">
@@ -561,6 +677,7 @@
                 link 
                 size="small" 
                 @click="viewUserDetail(row)"
+                class="user-link"
               >
                 {{ row.username }}
               </el-button>
@@ -569,17 +686,17 @@
           <el-table-column prop="email" label="邮箱" min-width="180" />
           <el-table-column prop="first_name" label="姓名" width="120">
             <template #default="{ row }">
-              {{ row.last_name || '' }} {{ row.first_name || '' }}
+              <span class="user-name">{{ row.last_name || '' }} {{ row.first_name || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="department" label="部门" width="120">
             <template #default="{ row }">
-              {{ row.department || '-' }}
+              <span class="dept-text">{{ row.department || '-' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="is_active" label="状态" width="80">
             <template #default="{ row }">
-              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small">
+              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small" effect="light">
                 {{ row.is_active ? '激活' : '禁用' }}
               </el-tag>
             </template>
@@ -587,9 +704,9 @@
         </el-table>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showPositionDialog = false">关闭</el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -598,6 +715,7 @@
         v-model="showDepartmentFormDialog" 
         :title="editingDepartment ? '编辑部门' : '新建部门'"
         width="400px"
+        class="custom-dialog"
       >
         <el-form 
           ref="departmentFormRef"
@@ -611,12 +729,12 @@
         </el-form>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showDepartmentFormDialog = false">取消</el-button>
-            <el-button type="primary" @click="submitDepartmentForm">
+            <el-button type="primary" @click="submitDepartmentForm" class="btn-gradient">
               {{ editingDepartment ? '更新' : '创建' }}
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -625,6 +743,7 @@
         v-model="showBatchAddDialogVisible" 
         :title="'批量添加成员到 ' + selectedDepartment"
         width="700px"
+        class="custom-dialog"
       >
         <div class="batch-add-content">
           <div class="filter-section">
@@ -633,14 +752,17 @@
               placeholder="搜索用户名或邮箱" 
               clearable 
               @input="filterAvailableUsers"
-              style="width: 200px; margin-bottom: 12px;"
-            />
+            >
+              <template #prefix>
+                <el-icon><Search /></el-icon>
+              </template>
+            </el-input>
           </div>
           <el-table 
             v-model:selection="usersToAdd"
             :data="availableUsers" 
             style="width: 100%" 
-            stripe
+            class="custom-table"
             max-height="400"
           >
             <el-table-column type="selection" width="50" />
@@ -648,24 +770,24 @@
             <el-table-column prop="email" label="邮箱" min-width="180" />
             <el-table-column prop="department" label="当前部门" width="120">
               <template #default="{ row }">
-                {{ row.department || '未分配' }}
+                <span class="dept-text">{{ row.department || '未分配' }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="position" label="职位" width="100">
               <template #default="{ row }">
-                {{ row.position || '-' }}
+                <span class="position-text">{{ row.position || '-' }}</span>
               </template>
             </el-table-column>
           </el-table>
         </div>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showBatchAddDialogVisible = false">取消</el-button>
-            <el-button type="primary" :disabled="usersToAdd.length === 0" @click="submitBatchAdd">
+            <el-button type="primary" :disabled="usersToAdd.length === 0" @click="submitBatchAdd" class="btn-gradient">
               添加 ({{ usersToAdd.length }})
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -674,23 +796,24 @@
         v-model="showBatchRemoveDialogVisible" 
         :title="'确认移除成员'"
         width="400px"
+        class="custom-dialog"
       >
         <div class="batch-remove-content">
           <p>确定要从 <strong>{{ selectedDepartment }}</strong> 部门移除以下 <strong>{{ selectedMembers.length }}</strong> 个成员吗？</p>
           <div class="remove-list">
-            <el-tag v-for="member in selectedMembers" :key="member.id" class="remove-tag">
+            <el-tag v-for="member in selectedMembers" :key="member.id" class="remove-tag" type="danger">
               {{ member.username }}
             </el-tag>
           </div>
         </div>
       
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showBatchRemoveDialogVisible = false">取消</el-button>
             <el-button type="danger" @click="submitBatchRemove">
               确认移除
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
 
@@ -699,6 +822,7 @@
         v-model="showPermissionDialog"
         title="用户权限管理"
         width="800px"
+        class="custom-dialog"
       >
         <div v-if="permissionLoading" class="permission-loading">
           <el-icon class="is-loading"><Loading /></el-icon>
@@ -712,10 +836,10 @@
             description="此用户为系统管理员，拥有系统全部权限，无法修改"
             :closable="false"
             show-icon
-            style="margin-bottom: 16px;"
+            class="admin-alert"
           />
           <div class="permission-user-info">
-            <el-avatar :size="50">
+            <el-avatar :size="50" class="user-avatar">
               {{ permissionUser.username?.charAt(0).toUpperCase() }}
             </el-avatar>
             <div class="user-info-text">
@@ -738,11 +862,12 @@
                 size="small"
                 type="info"
                 class="permission-tag"
+                effect="light"
               >
                 {{ perm.name }}
               </el-tag>
             </div>
-            <el-tag v-else size="small" type="success">拥有全部权限</el-tag>
+            <el-tag v-else size="small" type="success" effect="light">拥有全部权限</el-tag>
           </div>
 
           <el-divider />
@@ -750,7 +875,7 @@
           <div class="permission-section">
             <h4>自定义权限</h4>
             <p class="permission-desc">在职位权限基础上额外添加或移除的权限</p>
-            <el-tabs v-model="permissionTabActive">
+            <el-tabs v-model="permissionTabActive" class="permission-tabs">
               <el-tab-pane label="额外权限" name="allowed">
                 <div class="permission-category" v-for="(category, key) in allPermissions" :key="key">
                   <h5>{{ category.name }}</h5>
@@ -788,16 +913,17 @@
         </div>
 
         <template #footer>
-          <span class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="showPermissionDialog = false">取消</el-button>
             <el-button
               type="primary"
               @click="saveUserPermissions"
               :disabled="permissionUser?.is_super_admin"
+              class="btn-gradient"
             >
               保存
             </el-button>
-          </span>
+          </div>
         </template>
       </el-dialog>
     </div>
@@ -808,7 +934,26 @@
 import { ref, reactive, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Download, Upload, Plus, Filter, Refresh, Delete, Loading, Edit } from '@element-plus/icons-vue'
+import { 
+  Download, 
+  Upload, 
+  Plus, 
+  Filter, 
+  Refresh, 
+  Delete, 
+  Loading, 
+  Edit, 
+  UserFilled, 
+  User, 
+  CircleCheck, 
+  OfficeBuilding, 
+  Postcard, 
+  List,
+  Key,
+  Switch,
+  Lock,
+  Search
+} from '@element-plus/icons-vue'
 import { apiService as api } from '@/services/api'
 import { useUserStore } from '@/stores/user'
 
@@ -897,6 +1042,11 @@ const isAdmin = computed(() => {
          user.position?.includes('经理')
 })
 
+// 统计计算属性
+const activeUsersCount = computed(() => {
+  return users.value.filter(u => u.is_active).length
+})
+
 const userForm = reactive({
   username: '',
   email: '',
@@ -946,7 +1096,6 @@ const userRules = {
 
 // 获取用户列表
 const fetchUsers = async () => {
-  // 权限检查
   if (!isAdmin.value) {
     return
   }
@@ -1084,19 +1233,6 @@ const confirmDeleteDepartment = async () => {
     await api.users.deleteDepartment(deleteDepartmentForm.departmentName)
     ElMessage.success('部门删除成功')
     showDeleteDepartmentDialogVisible.value = false
-    fetchDepartments()
-  } catch (error) {
-    console.error('删除部门失败:', error)
-    ElMessage.error(error.response?.data?.error || '删除部门失败')
-  }
-}
-
-// 删除部门（保留兼容）
-const deleteDepartment = async (departmentName) => {
-  deleteDepartmentForm.departmentName = departmentName
-  try {
-    await api.users.deleteDepartment(departmentName)
-    ElMessage.success('部门删除成功')
     fetchDepartments()
   } catch (error) {
     console.error('删除部门失败:', error)
@@ -1271,7 +1407,6 @@ const refreshUsers = () => {
 
 // 创建用户
 const createUser = async (data) => {
-  // 权限检查
   if (!isAdmin.value) {
     ElMessage.error('权限不足，无法创建用户')
     return
@@ -1295,7 +1430,6 @@ const createUser = async (data) => {
 
 // 更新用户
 const updateUser = async (id, data) => {
-  // 权限检查
   if (!isAdmin.value) {
     ElMessage.error('权限不足，无法更新用户')
     return
@@ -1319,7 +1453,6 @@ const updateUser = async (id, data) => {
 
 // 删除用户
 const deleteUser = async (user) => {
-  // 权限检查
   if (!isAdmin.value) {
     ElMessage.error('权限不足，无法删除用户')
     return
@@ -1353,7 +1486,6 @@ const deleteUser = async (user) => {
 
 // 切换用户状态
 const toggleUserStatus = async (user) => {
-  // 权限检查
   if (!isAdmin.value) {
     ElMessage.error('权限不足，无法修改用户状态')
     return
@@ -1393,7 +1525,6 @@ const toggleUserStatus = async (user) => {
 
 // 查看用户详情
 const viewUserDetail = (user) => {
-  // 跳转到用户详情页面
   router.push(`/users/${user.id}`)
 }
 
@@ -1410,8 +1541,7 @@ const resetUserPassword = async (user) => {
       }
     )
     
-    // 调用重置密码API
-    await api.users.resetPassword(user.id, { password: '123456' }) // 默认密码
+    await api.users.resetPassword(user.id, { password: '123456' })
     ElMessage.success('密码重置成功，新密码为：123456')
   } catch (error) {
     if (error !== 'cancel') {
@@ -1449,13 +1579,7 @@ const submitUserForm = async () => {
     await userFormRef.value.validate()
     
     const formData = { ...userForm }
-
-    // 移除后端不接受的字段
     delete formData.confirmPassword
-
-    // department, position, work_language 为可选项，可以为空字符串
-
-    // 编辑模式下不需要密码字段
     if (editingUser.value) {
       delete formData.password
     }
@@ -1492,16 +1616,6 @@ const resetUserForm = () => {
   if (userFormRef.value) {
     userFormRef.value.resetFields()
   }
-}
-
-// 角色类型映射
-const getRoleType = (role) => {
-  return 'info'
-}
-
-const getRoleText = (role) => {
-  if (!role) return ''
-  return role
 }
 
 // 打开权限管理对话框
@@ -1585,18 +1699,15 @@ const exportUsers = async (format) => {
   try {
     const response = await api.users.exportUsers(format)
     
-    // 创建下载链接
     const blob = new Blob([response.data])
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     
-    // 设置文件名
     const timestamp = new Date().toISOString().slice(0, 10)
     const extension = format === 'csv' ? 'csv' : 'xlsx'
     link.download = `用户数据_${timestamp}.${extension}`
     
-    // 触发下载
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -1612,7 +1723,6 @@ const exportUsers = async (format) => {
 // 导入用户数据
 const importUsers = async () => {
   try {
-    // 创建文件输入元素
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = '.csv,.xlsx'
@@ -1621,14 +1731,12 @@ const importUsers = async () => {
       const file = event.target.files[0]
       if (!file) return
       
-      // 验证文件类型
       const fileExtension = file.name.split('.').pop().toLowerCase()
       if (!['csv', 'xlsx'].includes(fileExtension)) {
         ElMessage.error('请选择CSV或Excel文件')
         return
       }
       
-      // 确认导入
       await ElMessageBox.confirm(
         `确定要导入文件 "${file.name}" 吗？这将批量创建或更新用户数据。`,
         '确认导入',
@@ -1639,22 +1747,19 @@ const importUsers = async () => {
         }
       )
       
-      // 创建FormData
       const formData = new FormData()
       formData.append('file', file)
       
       try {
         const response = await api.users.importUsers(formData)
-        
         ElMessage.success(`用户数据导入成功，共处理 ${response.processed || response.data?.processed} 条记录`)
-        fetchUsers() // 刷新用户列表
+        fetchUsers()
       } catch (error) {
         console.error('导入用户数据失败:', error)
         ElMessage.error('导入用户数据失败')
       }
     }
     
-    // 触发文件选择
     input.click()
   } catch (error) {
     if (error !== 'cancel') {
@@ -1682,77 +1787,397 @@ onMounted(() => {
   padding: 0;
 }
 
-.department-card {
-  margin-bottom: 16px;
+/* 页面头部样式 */
+.page-header {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-600) 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
-.department-header {
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: var(--accent-400);
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: var(--success-400);
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
 }
 
-.department-header .department-actions {
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.title-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-icon {
+  font-size: 28px;
+  color: white;
+}
+
+.title-text h1 {
+  margin: 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-success-gradient {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-success-gradient:hover {
+  background: linear-gradient(135deg, var(--success-600) 0%, var(--success-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-success);
+}
+
+.btn-warning-gradient {
+  background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-warning-gradient:hover {
+  background: linear-gradient(135deg, var(--warning-600) 0%, var(--warning-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-warning);
+}
+
+.btn-info-gradient {
+  background: linear-gradient(135deg, var(--info-500) 0%, var(--info-600) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-info-gradient:hover {
+  background: linear-gradient(135deg, var(--info-600) 0%, var(--info-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-info);
+}
+
+.btn-sm-gradient {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  border: none;
+}
+
+/* 统计卡片 */
+.stats-row {
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  position: relative;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+}
+
+.stat-card-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+}
+
+.stat-card-info {
+  background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+  color: white;
+}
+
+.stat-card-secondary {
+  background: linear-gradient(135deg, var(--neutral-500) 0%, var(--neutral-600) 100%);
+  color: white;
+}
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all var(--transition-normal);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.stat-card:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: white;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 24px;
+}
+
+/* 卡片头部 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.total-count {
+  margin-left: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+.card-actions {
   display: flex;
   gap: 8px;
 }
 
-.department-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-}
-
+/* 部门列表 */
 .department-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.department-tag {
+.department-tag,
+.position-tag {
   cursor: pointer;
   padding: 8px 16px;
   font-size: 14px;
-  transition: all 0.3s;
+  transition: all var(--transition-normal);
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  border-radius: var(--radius-md);
 }
 
-.department-tag:hover {
+.department-tag:hover,
+.position-tag:hover {
   transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
-.department-tag .edit-icon {
+.department-tag .edit-icon,
+.position-tag .edit-icon {
   font-size: 12px;
   opacity: 0.6;
-  transition: all 0.3s;
+  transition: all var(--transition-fast);
 }
 
-.department-tag .edit-icon:hover {
+.department-tag .edit-icon:hover,
+.position-tag .edit-icon:hover {
   opacity: 1;
-  color: #409EFF;
+  color: var(--primary-500);
   transform: scale(1.2);
 }
 
-.department-actions {
+/* 筛选卡片 */
+.filter-card {
+  margin-bottom: 24px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 表格卡片 */
+.table-card {
+  margin-bottom: 24px;
+}
+
+.custom-table {
+  --el-table-header-bg-color: var(--neutral-50);
+  --el-table-row-hover-bg-color: var(--primary-50);
+}
+
+:deep(.el-table th) {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--neutral-50);
+}
+
+.user-link {
+  font-weight: 500;
+}
+
+.user-name,
+.dept-text,
+.position-text,
+.employee-id {
+  color: var(--text-secondary);
+}
+
+.status-tag {
+  border-radius: var(--radius-sm);
+}
+
+.date-text {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 对话框样式 */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.department-actions-bar {
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
 }
 
+/* 批量添加 */
 .batch-add-content {
   min-height: 400px;
 }
 
 .filter-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
+/* 批量移除 */
 .batch-remove-content {
   padding: 16px 0;
 }
@@ -1760,6 +2185,7 @@ onMounted(() => {
 .batch-remove-content p {
   margin-bottom: 16px;
   line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 .remove-list {
@@ -1774,272 +2200,23 @@ onMounted(() => {
   margin: 4px;
 }
 
-.user-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.user-list-header h2 {
-  margin: 0;
-  color: #303133;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.header-actions .el-button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.filter-card {
-  margin-bottom: 16px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-}
-
-.filter-card .el-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.filter-card .el-form-item {
-  margin-bottom: 0;
-}
-
-.table-card {
-  margin-top: 16px;
-}
-
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding: 0 8px;
-}
-
-.total-count {
-  font-size: 14px;
-  color: #606266;
-  font-weight: 500;
-}
-
-.table-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.table-actions .el-button {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-}
-
-.el-table {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.el-table :deep(.el-table__header) {
-  background-color: #f5f7fa;
-}
-
-.el-table :deep(.el-table__header th) {
-  background-color: #f5f7fa;
-  color: #606266;
-  font-weight: 600;
-}
-
-.el-table :deep(.el-table__row:hover) {
-  background-color: #f5f7fa;
-}
-
-.tags-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.permission-denied {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-
-@media (max-width: 768px) {
-  .user-list-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  
-  .header-actions {
-    flex-wrap: wrap;
-  }
-  
-  .filter-card .el-form {
-    flex-direction: column;
-  }
-  
-  .table-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .user-list {
-    padding: 8px;
-  }
-
-  .user-list-header {
-    gap: 12px;
-  }
-
-  .user-list-header h2 {
-    font-size: 16px;
-  }
-
-  .header-actions {
-    gap: 8px;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
-    min-width: calc(50% - 4px);
-    max-width: calc(50% - 4px);
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-
-  .department-card,
-  .filter-card,
-  .table-card {
-    margin-bottom: 12px;
-  }
-
-  .department-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .department-header .department-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .department-header .department-actions .el-button {
-    flex: 1;
-    min-width: calc(50% - 3px);
-    font-size: 11px;
-    padding: 6px 8px;
-  }
-
-  .department-list {
-    gap: 6px;
-  }
-
-  .department-tag {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-
-  .el-table {
-    font-size: 10px !important;
-  }
-
-  .el-table th,
-  .el-table td {
-    padding: 6px 4px !important;
-  }
-
-  .table-header {
-    gap: 8px;
-  }
-
-  .total-count {
-    font-size: 12px;
-  }
-
-  .el-dialog {
-    width: 95% !important;
-    margin: 10px auto !important;
-    max-height: 90vh !important;
-  }
-
-  .el-dialog__header {
-    padding: 10px !important;
-  }
-
-  .el-dialog__body {
-    padding: 10px !important;
-    max-height: 60vh !important;
-    overflow-y: auto !important;
-  }
-
-  .el-dialog__footer {
-    padding: 10px !important;
-  }
-
-  .el-form-item {
-    margin-bottom: 12px !important;
-  }
-
-  .el-form-item__label {
-    font-size: 12px !important;
-  }
-
-  .el-input__inner,
-  .el-textarea__inner {
-    font-size: 14px !important;
-  }
-
-  .permission-content {
-    max-height: 50vh;
-  }
-
-  .permission-user-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .permission-category .el-checkbox {
-    font-size: 12px;
-  }
-
-  .permission-category .el-checkbox .perm-desc {
-    font-size: 11px;
-  }
-}
-
+/* 权限管理 */
 .permission-loading {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   padding: 40px;
-  color: #606266;
+  color: var(--text-secondary);
 }
 
 .permission-content {
   max-height: 60vh;
   overflow-y: auto;
+}
+
+.admin-alert {
+  margin-bottom: 16px;
 }
 
 .permission-user-info {
@@ -2049,9 +2226,15 @@ onMounted(() => {
   padding: 8px 0;
 }
 
+.user-avatar {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  color: white;
+  font-weight: 600;
+}
+
 .user-info-text h4 {
   margin: 0 0 8px 0;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .permission-section {
@@ -2060,13 +2243,24 @@ onMounted(() => {
 
 .permission-section h4 {
   margin: 0 0 4px 0;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .permission-desc {
   margin: 0 0 12px 0;
-  color: #909399;
+  color: var(--text-tertiary);
   font-size: 13px;
+}
+
+.permission-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.permission-tag {
+  margin-bottom: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .permission-category {
@@ -2075,7 +2269,7 @@ onMounted(() => {
 
 .permission-category h5 {
   margin: 0 0 8px 0;
-  color: #606266;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -2089,17 +2283,158 @@ onMounted(() => {
 .permission-category .el-checkbox .perm-desc {
   display: block;
   font-size: 12px;
-  color: #909399;
+  color: var(--text-tertiary);
   margin-left: 20px;
 }
 
-.permission-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.permission-tabs {
+  margin-top: 16px;
 }
 
-.permission-tag {
-  margin-bottom: 4px;
+/* 权限拒绝页面 */
+.permission-denied {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* 动画 */
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 16px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .title-text h1 {
+    font-size: 20px;
+  }
+  
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .stats-row .el-col {
+    margin-bottom: 12px;
+  }
+  
+  .stat-card {
+    padding: 16px;
+  }
+  
+  .stat-value {
+    font-size: 22px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .card-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .filter-actions {
+    width: 100%;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .permission-user-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .title-icon-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .title-icon {
+    font-size: 22px;
+  }
+  
+  .title-text h1 {
+    font-size: 18px;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+  }
+  
+  .stat-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .department-tag,
+  .position-tag {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
 }
 </style>

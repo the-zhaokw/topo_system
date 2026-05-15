@@ -681,4 +681,450 @@ onMounted(() => {
 .is-favorited {
   color: #f56c6c;
 }
+
+/* ========================================
+   移动端响应式适配
+   ======================================== */
+@media screen and (max-width: 768px) {
+  .article-detail {
+    padding: 12px;
+  }
+
+  /* 头部信息 - 移动端优化 */
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light, #e5e7eb);
+  }
+
+  .detail-meta {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    font-size: 13px;
+    width: 100%;
+    padding: 8px 0;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+
+  .meta-item {
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .meta-divider {
+    display: none;
+  }
+
+  .meta-text {
+    font-size: 12px;
+  }
+
+  .detail-author-link .meta-text {
+    color: var(--color-primary, #6366f1);
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .version-tag {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  /* 操作按钮 - 移动端优化 */
+  .detail-actions {
+    width: 100%;
+  }
+
+  .detail-actions .el-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .detail-actions .el-button {
+    flex: 1;
+    min-width: calc(50% - 3px);
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .detail-actions .el-button .el-icon {
+    margin-right: 4px;
+  }
+
+  .detail-actions .el-dropdown {
+    width: 100%;
+  }
+
+  .detail-actions .el-dropdown .el-button {
+    width: 100%;
+  }
+
+  /* 标签 - 移动端优化 */
+  .detail-tags {
+    margin-bottom: 16px;
+    gap: 6px;
+  }
+
+  .detail-tags .el-tag {
+    font-size: 11px;
+    padding: 0 8px;
+    height: 24px;
+    line-height: 22px;
+  }
+
+  /* 文章内容 - 移动端优化 */
+  .detail-content {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: var(--bg-primary, #fff);
+    border-radius: 8px;
+    border: 1px solid var(--border-light, #e5e7eb);
+  }
+
+  .detail-content :deep(h1) {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 12px;
+  }
+
+  .detail-content :deep(h2) {
+    font-size: 18px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+  }
+
+  .detail-content :deep(h3) {
+    font-size: 16px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+
+  .detail-content :deep(h4) {
+    font-size: 15px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  .detail-content :deep(p) {
+    margin-bottom: 12px;
+  }
+
+  .detail-content :deep(code) {
+    font-size: 13px;
+    padding: 2px 4px;
+  }
+
+  .detail-content :deep(pre) {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .detail-content :deep(pre code) {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .detail-content :deep(ul),
+  .detail-content :deep(ol) {
+    padding-left: 20px;
+    margin-bottom: 12px;
+  }
+
+  .detail-content :deep(li) {
+    margin-bottom: 6px;
+  }
+
+  .detail-content :deep(blockquote) {
+    border-left: 3px solid var(--color-primary, #6366f1);
+    padding-left: 12px;
+    margin-left: 0;
+    margin-bottom: 12px;
+  }
+
+  .detail-content :deep(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 8px 0;
+  }
+
+  .detail-content :deep(table) {
+    font-size: 12px;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 12px;
+  }
+
+  .detail-content :deep(th),
+  .detail-content :deep(td) {
+    padding: 6px 8px;
+    white-space: nowrap;
+  }
+
+  /* 统计信息 - 移动端优化 */
+  .detail-stats {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0;
+    margin-bottom: 20px;
+  }
+
+  .detail-stats .stat-item {
+    flex: 1;
+    min-width: calc(33.33% - 8px);
+    justify-content: center;
+    padding: 10px 8px;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+
+  .detail-stats .stat-item .el-icon {
+    font-size: 16px;
+  }
+
+  .detail-stats .stat-item:hover {
+    background: rgba(99, 102, 241, 0.08);
+  }
+
+  /* 区块 - 移动端优化 */
+  .detail-section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light, #e5e7eb);
+  }
+
+  /* 附件 - 移动端优化 */
+  .attachment-list {
+    gap: 8px;
+  }
+
+  .attachment-item {
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .attachment-icon {
+    font-size: 18px;
+    color: var(--color-primary, #6366f1);
+  }
+
+  .attachment-name {
+    flex: 1 1 100%;
+    font-size: 13px;
+    order: 3;
+    padding-left: 26px;
+  }
+
+  .attachment-size {
+    font-size: 11px;
+    order: 2;
+    margin-left: auto;
+  }
+
+  .attachment-item .el-button {
+    order: 1;
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  /* 评论输入 - 移动端优化 */
+  .comment-input-area {
+    margin-bottom: 16px;
+  }
+
+  .comment-input-area .el-textarea {
+    font-size: 14px;
+  }
+
+  .comment-input-area .el-textarea__inner {
+    padding: 10px 12px;
+  }
+
+  .comment-actions {
+    margin-top: 8px;
+    text-align: right;
+  }
+
+  .comment-actions .el-button {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  /* 评论列表 - 移动端优化 */
+  .comment-list {
+    gap: 12px;
+  }
+
+  .comment-item {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .comment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .comment-author {
+    gap: 6px;
+  }
+
+  .author-name {
+    font-size: 13px;
+  }
+
+  .comment-time {
+    font-size: 11px;
+    margin-left: 0;
+  }
+
+  .comment-content {
+    font-size: 13px;
+    line-height: 1.5;
+    padding-left: 0;
+    color: var(--text-secondary, #4b5563);
+  }
+
+  /* 空状态 - 移动端优化 */
+  .el-empty {
+    padding: 24px 16px;
+  }
+
+  .el-empty__image {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .el-empty__description {
+    font-size: 13px;
+  }
+}
+
+/* 超小屏幕额外适配 */
+@media screen and (max-width: 480px) {
+  .article-detail {
+    padding: 8px;
+  }
+
+  .detail-meta {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .detail-actions .el-button {
+    min-width: calc(50% - 3px);
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .detail-actions .el-button span {
+    display: inline;
+  }
+
+  .detail-content {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .detail-content :deep(pre) {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .detail-stats .stat-item {
+    min-width: calc(33.33% - 6px);
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .detail-stats .stat-item .el-icon {
+    font-size: 14px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .attachment-item {
+    padding: 8px;
+  }
+
+  .comment-item {
+    padding: 10px;
+  }
+
+  .comment-content {
+    font-size: 12px;
+  }
+}
+
+/* 触摸友好优化 */
+@media (pointer: coarse) {
+  .detail-stats .stat-item,
+  .detail-actions .el-button,
+  .attachment-item,
+  .comment-item {
+    transition: all 0.15s ease;
+  }
+
+  .detail-stats .stat-item:active,
+  .detail-actions .el-button:active,
+  .attachment-item:active,
+  .comment-item:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+/* 横屏模式适配 */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .article-detail {
+    padding: 8px 16px;
+  }
+
+  .detail-header {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .detail-meta {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .detail-actions .el-button {
+    min-width: auto;
+    padding: 6px 12px;
+  }
+
+  .detail-content {
+    max-height: 50vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
 </style>

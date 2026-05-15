@@ -1,30 +1,44 @@
 <template>
   <div class="bug-list">
-    <div class="bug-list-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          返回项目
-        </el-button>
-        <h2>{{ projectName }} - 缺陷报告</h2>
+    <!-- 页面头部 - 玻璃拟态风格 -->
+    <div class="page-header animate-fade-in-down">
+      <div class="header-bg-decoration">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
       </div>
-      <div class="header-actions">
-        <el-button type="primary" @click="$router.push(`/projects/${projectId}/bugs/new`)">
-          <el-icon><Plus /></el-icon>
-          新建Bug
-        </el-button>
-        <el-button type="success" @click="handleExport">
-          <el-icon><Download /></el-icon>
-          导出缺陷
-        </el-button>
-        <el-button type="warning" @click="showImportDialog = true">
-          <el-icon><Upload /></el-icon>
-          导入缺陷
-        </el-button>
+      <div class="header-content">
+        <div class="header-title">
+          <div class="title-icon-wrapper">
+            <el-icon class="title-icon"><BugIcon /></el-icon>
+          </div>
+          <div class="title-text">
+            <h1>{{ projectName }} - 缺陷报告</h1>
+            <p class="subtitle">管理和跟踪项目缺陷问题</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <el-button text class="btn-back" @click="$router.back()">
+            <el-icon><ArrowLeft /></el-icon>
+            返回项目
+          </el-button>
+          <el-button class="btn-gradient" @click="$router.push(`/projects/${projectId}/bugs/new`)">
+            <el-icon><Plus /></el-icon>
+            新建Bug
+          </el-button>
+          <el-button class="btn-success-gradient" @click="handleExport">
+            <el-icon><Download /></el-icon>
+            导出缺陷
+          </el-button>
+          <el-button class="btn-warning-gradient" @click="showImportDialog = true">
+            <el-icon><Upload /></el-icon>
+            导入缺陷
+          </el-button>
+        </div>
       </div>
     </div>
 
-    <el-dialog v-model="showImportDialog" title="导入缺陷" width="500px">
+    <!-- 导入缺陷对话框 -->
+    <el-dialog v-model="showImportDialog" title="导入缺陷" width="500px" class="custom-dialog">
       <el-upload
         ref="uploadRef"
         :action="''"
@@ -34,8 +48,9 @@
         :before-upload="beforeUpload"
         accept=".xlsx,.xls,.csv"
         drag
+        class="upload-area"
       >
-        <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+        <el-icon class="el-icon--upload upload-icon"><UploadFilled /></el-icon>
         <div class="el-upload__text">
           将文件拖到此处，或<em>点击上传</em>
         </div>
@@ -46,52 +61,76 @@
         </template>
       </el-upload>
       <template #footer>
-        <el-button @click="showImportDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleImport" :loading="importLoading">
-          导入
-        </el-button>
+        <div class="dialog-footer">
+          <el-button @click="showImportDialog = false">取消</el-button>
+          <el-button type="primary" @click="handleImport" :loading="importLoading" class="btn-gradient">
+            导入
+          </el-button>
+        </div>
       </template>
     </el-dialog>
 
-    <el-row :gutter="16" class="bug-stats">
-      <el-col :span="6">
-        <el-card shadow="hover" class="stat-card" @click="filterByStat('assignedToMe')" style="cursor: pointer;">
+    <!-- 缺陷统计卡片 -->
+    <el-row :gutter="16" class="bug-stats animate-fade-in-up">
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-primary" @click="filterByStat('assignedToMe')">
+          <div class="stat-icon-wrapper stat-icon-wrapper-primary">
+            <el-icon><User /></el-icon>
+          </div>
           <div class="stat-content">
-            <div class="stat-number">{{ stats.assignedToMe || 0 }}</div>
+            <div class="stat-value">{{ stats.assignedToMe || 0 }}</div>
             <div class="stat-label">待我处理的</div>
           </div>
-        </el-card>
+        </div>
       </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover" class="stat-card" @click="filterByStat('unassigned')" style="cursor: pointer;">
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-warning" @click="filterByStat('unassigned')">
+          <div class="stat-icon-wrapper stat-icon-wrapper-warning">
+            <el-icon><CircleCheck /></el-icon>
+          </div>
           <div class="stat-content">
-            <div class="stat-number">{{ stats.unassigned || 0 }}</div>
+            <div class="stat-value">{{ stats.unassigned || 0 }}</div>
             <div class="stat-label">待领取的</div>
           </div>
-        </el-card>
+        </div>
       </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover" class="stat-card" @click="filterByStat('openBugs')" style="cursor: pointer;">
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-info" @click="filterByStat('openBugs')">
+          <div class="stat-icon-wrapper stat-icon-wrapper-info">
+            <el-icon><Warning /></el-icon>
+          </div>
           <div class="stat-content">
-            <div class="stat-number">{{ stats.openBugs || 0 }}</div>
+            <div class="stat-value">{{ stats.openBugs || 0 }}</div>
             <div class="stat-label">所有未关闭的</div>
           </div>
-        </el-card>
+        </div>
       </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover" class="stat-card" @click="filterByStat('all')" style="cursor: pointer;">
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <div class="stat-card stat-card-secondary" @click="filterByStat('all')">
+          <div class="stat-icon-wrapper stat-icon-wrapper-secondary">
+            <el-icon><Document /></el-icon>
+          </div>
           <div class="stat-content">
-            <div class="stat-number">{{ stats.totalBugs || 0 }}</div>
+            <div class="stat-value">{{ stats.totalBugs || 0 }}</div>
             <div class="stat-label">所有</div>
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
 
-    <el-card class="filter-card" shadow="never">
+    <!-- 筛选条件 - 玻璃拟态卡片 -->
+    <el-card class="filter-card glass-card" shadow="never">
+      <template #header>
+        <div class="card-header">
+          <span class="card-title">
+            <el-icon><Filter /></el-icon>
+            筛选条件
+          </span>
+        </div>
+      </template>
       <el-form :model="filters" label-width="80px">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="关键词">
               <el-input
                 v-model="filters.keyword"
@@ -107,7 +146,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="状态">
               <el-select v-model="filters.status" placeholder="全部" clearable @change="handleFilter">
                 <el-option label="新建" value="new" />
@@ -123,7 +162,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="严重程度">
               <el-select v-model="filters.severity" placeholder="全部" clearable @change="handleFilter">
                 <el-option label="低" value="low" />
@@ -134,7 +173,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="优先级">
               <el-select v-model="filters.priority" placeholder="全部" clearable @change="handleFilter">
                 <el-option label="低" value="low" />
@@ -145,7 +184,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="版本">
               <el-select
                 v-model="filters.version"
@@ -166,7 +205,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="模块">
               <el-select
                 v-model="filters.module"
@@ -187,7 +226,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <el-form-item label="问题类型">
               <el-select
                 v-model="filters.issue_type"
@@ -205,38 +244,50 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
-            <el-form-item label-width="0">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
+            <el-form-item label-width="0" class="filter-actions">
               <el-button @click="resetFilter">重置</el-button>
-              <el-button type="primary" @click="handleFilter">筛选</el-button>
+              <el-button type="primary" @click="handleFilter" class="btn-gradient">筛选</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
 
-    <el-card v-if="selectedBugs.length > 0" class="batch-toolbar" shadow="never">
+    <!-- 批量操作工具栏 -->
+    <el-card v-if="selectedBugs.length > 0" class="batch-toolbar glass-card-warning" shadow="never">
       <div class="batch-toolbar-content">
-        <span class="selected-count">已选择 {{ selectedBugs.length }} 项</span>
-        <el-button type="primary" size="small" @click="showBatchStatusDialog = true">
-          批量修改状态
-        </el-button>
-        <el-button type="warning" size="small" @click="showBatchPriorityDialog = true">
-          批量修改优先级
-        </el-button>
-        <el-button type="info" size="small" @click="showBatchSeverityDialog = true">
-          批量修改严重程度
-        </el-button>
-        <el-button type="danger" size="small" @click="handleBatchDelete">
-          批量删除
-        </el-button>
-        <el-button size="small" @click="selectedBugs = []">
-          取消选择
-        </el-button>
+        <span class="selected-count">
+          <el-icon><Check /></el-icon>
+          已选择 {{ selectedBugs.length }} 项
+        </span>
+        <div class="batch-actions">
+          <el-button type="primary" size="small" @click="showBatchStatusDialog = true" class="batch-btn">
+            <el-icon><Edit /></el-icon>
+            批量修改状态
+          </el-button>
+          <el-button type="warning" size="small" @click="showBatchPriorityDialog = true" class="batch-btn">
+            <el-icon><Flag /></el-icon>
+            批量修改优先级
+          </el-button>
+          <el-button type="info" size="small" @click="showBatchSeverityDialog = true" class="batch-btn">
+            <el-icon><Warning /></el-icon>
+            批量修改严重程度
+          </el-button>
+          <el-button type="danger" size="small" @click="handleBatchDelete" class="batch-btn">
+            <el-icon><Delete /></el-icon>
+            批量删除
+          </el-button>
+          <el-button size="small" @click="selectedBugs = []" class="batch-btn">
+            <el-icon><Close /></el-icon>
+            取消选择
+          </el-button>
+        </div>
       </div>
     </el-card>
 
-    <el-dialog v-model="showBatchStatusDialog" title="批量修改状态" width="400px">
+    <!-- 批量修改状态对话框 -->
+    <el-dialog v-model="showBatchStatusDialog" title="批量修改状态" width="400px" class="custom-dialog">
       <el-form label-width="80px">
         <el-form-item label="新状态">
           <el-select v-model="batchUpdateData.status" placeholder="请选择状态">
@@ -253,12 +304,15 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showBatchStatusDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleBatchStatusUpdate" :loading="batchLoading">确定</el-button>
+        <div class="dialog-footer">
+          <el-button @click="showBatchStatusDialog = false">取消</el-button>
+          <el-button type="primary" @click="handleBatchStatusUpdate" :loading="batchLoading" class="btn-gradient">确定</el-button>
+        </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showBatchPriorityDialog" title="批量修改优先级" width="400px">
+    <!-- 批量修改优先级对话框 -->
+    <el-dialog v-model="showBatchPriorityDialog" title="批量修改优先级" width="400px" class="custom-dialog">
       <el-form label-width="80px">
         <el-form-item label="新优先级">
           <el-select v-model="batchUpdateData.priority" placeholder="请选择优先级">
@@ -270,12 +324,15 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showBatchPriorityDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleBatchPriorityUpdate" :loading="batchLoading">确定</el-button>
+        <div class="dialog-footer">
+          <el-button @click="showBatchPriorityDialog = false">取消</el-button>
+          <el-button type="primary" @click="handleBatchPriorityUpdate" :loading="batchLoading" class="btn-gradient">确定</el-button>
+        </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showBatchSeverityDialog" title="批量修改严重程度" width="400px">
+    <!-- 批量修改严重程度对话框 -->
+    <el-dialog v-model="showBatchSeverityDialog" title="批量修改严重程度" width="400px" class="custom-dialog">
       <el-form label-width="80px">
         <el-form-item label="严重程度">
           <el-select v-model="batchUpdateData.severity" placeholder="请选择严重程度">
@@ -287,18 +344,22 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showBatchSeverityDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleBatchSeverityUpdate" :loading="batchLoading">确定</el-button>
+        <div class="dialog-footer">
+          <el-button @click="showBatchSeverityDialog = false">取消</el-button>
+          <el-button type="primary" @click="handleBatchSeverityUpdate" :loading="batchLoading" class="btn-gradient">确定</el-button>
+        </div>
       </template>
     </el-dialog>
 
-    <el-card shadow="never" style="position: relative;">
+    <!-- Bug表格 - 玻璃拟态卡片 -->
+    <el-card class="bug-table-card glass-card" shadow="never">
       <el-table
         :data="bugs"
         v-loading="loading"
         style="width: 100%"
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
+        class="custom-table"
       >
         <el-table-column type="selection" width="50" />
         <el-table-column prop="id" label="ID" width="80" sortable="custom" />
@@ -313,7 +374,7 @@
 
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)" size="small">
+            <el-tag :type="getStatusType(row.status)" size="small" effect="light" class="status-tag">
               {{ getStatusText(row.status) }}
             </el-tag>
           </template>
@@ -321,7 +382,7 @@
 
         <el-table-column prop="severity" label="严重程度" width="100">
           <template #default="{ row }">
-            <el-tag :type="getSeverityType(row.severity)" size="small">
+            <el-tag :type="getSeverityType(row.severity)" size="small" effect="light" class="severity-tag">
               {{ getSeverityText(row.severity) }}
             </el-tag>
           </template>
@@ -329,7 +390,7 @@
 
         <el-table-column prop="priority" label="优先级" width="100">
           <template #default="{ row }">
-            <el-tag :type="getPriorityType(row.priority)" size="small">
+            <el-tag :type="getPriorityType(row.priority)" size="small" effect="light" class="priority-tag">
               {{ getPriorityText(row.priority) }}
             </el-tag>
           </template>
@@ -339,9 +400,17 @@
 
         <el-table-column prop="module" label="模块" width="120" />
 
-        <el-table-column prop="issue_type" label="问题类型" width="100" />
+        <el-table-column prop="issue_type" label="问题类型" width="100">
+          <template #default="{ row }">
+            <span class="issue-type">{{ row.issue_type || '-' }}</span>
+          </template>
+        </el-table-column>
 
-        <el-table-column prop="reproduce_frequency" label="重现频率" width="100" />
+        <el-table-column prop="reproduce_frequency" label="重现频率" width="100">
+          <template #default="{ row }">
+            <span class="frequency-text">{{ row.reproduce_frequency || '-' }}</span>
+          </template>
+        </el-table-column>
 
         <el-table-column prop="tags" label="标签" width="150">
           <template #default="{ row }">
@@ -350,67 +419,73 @@
                 v-for="tag in getTagsArray(row.tags)"
                 :key="tag"
                 size="small"
-                type="info"
-                style="margin-right: 4px; margin-bottom: 4px;"
+                class="tag-item"
               >
                 {{ tag }}
               </el-tag>
             </div>
-            <span v-else>-</span>
+            <span v-else class="no-tags">-</span>
           </template>
         </el-table-column>
 
         <el-table-column prop="created_at" label="创建时间" width="180" sortable="custom">
           <template #default="{ row }">
-            {{ formatDate(row.created_at) }}
+            <span class="date-text">{{ formatDate(row.created_at) }}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop="updated_at" label="更新时间" width="180" sortable="custom">
           <template #default="{ row }">
-            {{ formatDate(row.updated_at) }}
+            <span class="date-text">{{ formatDate(row.updated_at) }}</span>
           </template>
         </el-table-column>
 
         <el-table-column label="操作" width="240" fixed="right">
           <template #default="{ row }">
-            <el-button
-              type="primary"
-              link
-              size="small"
-              @click="$router.push(`/projects/${projectId}/bugs/${row.id}`)"
-            >
-              查看
-            </el-button>
-            <el-button
-              type="primary"
-              link
-              size="small"
-              @click="$router.push(`/projects/${projectId}/bugs/${row.id}/edit`)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              type="success"
-              link
-              size="small"
-              @click="handleQuickStatusChange(row, 'resolved')"
-              v-if="row.status !== 'resolved' && row.status !== 'closed' && row.status !== 'verified'"
-            >
-              标记解决
-            </el-button>
-            <el-button
-              type="danger"
-              link
-              size="small"
-              @click="handleDelete(row)"
-            >
-              删除
-            </el-button>
+            <div class="action-buttons">
+              <el-button
+                type="primary"
+                link
+                size="small"
+                @click="$router.push(`/projects/${projectId}/bugs/${row.id}`)"
+                class="action-btn"
+              >
+                <el-icon><View /></el-icon>查看
+              </el-button>
+              <el-button
+                type="primary"
+                link
+                size="small"
+                @click="$router.push(`/projects/${projectId}/bugs/${row.id}/edit`)"
+                class="action-btn"
+              >
+                <el-icon><Edit /></el-icon>编辑
+              </el-button>
+              <el-button
+                type="success"
+                link
+                size="small"
+                @click="handleQuickStatusChange(row, 'resolved')"
+                v-if="row.status !== 'resolved' && row.status !== 'closed' && row.status !== 'verified'"
+                class="action-btn"
+              >
+                <el-icon><Check /></el-icon>标记解决
+              </el-button>
+              <el-button
+                type="danger"
+                link
+                size="small"
+                @click="handleDelete(row)"
+                class="action-btn"
+              >
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
 
+      <!-- 分页 -->
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="pagination.currentPage"
@@ -427,13 +502,58 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue'
+import { ref, onMounted, reactive, computed, h } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Download, Upload, UploadFilled, Search, Plus, ArrowLeft } from '@element-plus/icons-vue'
+import {
+  Download,
+  Upload,
+  UploadFilled,
+  Filter,
+  Plus,
+  Search,
+  User,
+  CircleCheck,
+  Warning,
+  Document,
+  Edit,
+  Flag,
+  Delete,
+  Close,
+  View,
+  Check,
+  ArrowLeft
+} from '@element-plus/icons-vue'
 import { useBugStore } from '@/stores/bug'
 import { useUserStore } from '@/stores/user'
 import { apiService } from '@/services/api'
+
+// 自定义 Bug 图标组件
+const BugIcon = {
+  render() {
+    return h('svg', {
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      'stroke-width': '2',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      class: 'bug-icon'
+    }, [
+      h('path', { d: 'm8 2 1.88 1.88' }),
+      h('path', { d: 'M14.12 3.88 16 2' }),
+      h('path', { d: 'M9 7.13v-1a3.003 3.003 0 1 1 6 0v1' }),
+      h('path', { d: 'M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6' }),
+      h('path', { d: 'M12 20v-9' }),
+      h('path', { d: 'M6.53 9C4.6 8.8 3 7.1 3 5' }),
+      h('path', { d: 'M6 13H2' }),
+      h('path', { d: 'M3 21c0-2.1 1.7-3.9 3.8-4' }),
+      h('path', { d: 'M20.97 5c0 2.1-1.6 3.8-3.5 4' }),
+      h('path', { d: 'M22 13h-4' }),
+      h('path', { d: 'M17.2 17c2.1.1 3.8 1.9 3.8 4' })
+    ])
+  }
+}
 
 const router = useRouter()
 const route = useRoute()
@@ -1124,79 +1244,339 @@ onMounted(() => {
   padding: 0;
 }
 
-.bug-list-header {
+/* 页面头部样式 */
+.page-header {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--danger-500) 0%, var(--warning-600) 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: var(--accent-400);
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: var(--success-400);
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
 }
 
-.header-left {
+.header-title {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.header-left h2 {
+.title-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-icon {
+  font-size: 28px;
+  color: white;
+}
+
+.title-text h1 {
   margin: 0;
-  color: #303133;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
 }
 
 .header-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
+.btn-back {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-success-gradient {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-success-gradient:hover {
+  background: linear-gradient(135deg, var(--success-600) 0%, var(--success-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-success);
+}
+
+.btn-warning-gradient {
+  background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-warning-gradient:hover {
+  background: linear-gradient(135deg, var(--warning-600) 0%, var(--warning-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-warning);
+}
+
+/* 统计卡片区域 */
 .bug-stats {
   margin-bottom: 24px;
 }
 
 .stat-card {
+  position: relative;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+}
+
+.stat-card-warning {
+  background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
+  color: white;
+}
+
+.stat-card-info {
+  background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+  color: white;
+}
+
+.stat-card-secondary {
+  background: linear-gradient(135deg, var(--neutral-500) 0%, var(--neutral-600) 100%);
+  color: white;
+}
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all var(--transition-normal);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.stat-card:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .stat-content {
-  text-align: center;
-  padding: 16px 0;
+  flex: 1;
 }
 
-.stat-number {
-  font-size: 32px;
-  font-weight: bold;
-  color: #409EFF;
-  margin-bottom: 8px;
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: white;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: #606266;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
+  margin-top: 4px;
 }
 
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-card-warning {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* 筛选卡片 */
 .filter-card {
   margin-bottom: 24px;
-  border: 1px solid #EBEEF5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 批量操作工具栏 */
+.batch-toolbar {
+  margin-bottom: 16px;
+}
+
+.batch-toolbar-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.selected-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--warning-600);
+  padding: 6px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.batch-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.batch-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 表格卡片 */
+.bug-table-card {
+  margin-bottom: 24px;
+}
+
+.custom-table {
+  --el-table-header-bg-color: var(--neutral-50);
+  --el-table-row-hover-bg-color: var(--primary-50);
+}
+
+:deep(.el-table th) {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--neutral-50);
 }
 
 .bug-title-link {
-  color: #409EFF;
+  color: var(--primary-500);
   text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
 }
 
 .bug-title-link:hover {
+  color: var(--primary-600);
   text-decoration: underline;
 }
 
-.pagination-container {
-  margin-top: 24px;
-  display: flex;
-  justify-content: flex-end;
+.status-tag,
+.severity-tag,
+.priority-tag {
+  border-radius: var(--radius-sm);
+}
+
+.issue-type,
+.frequency-text {
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .tags-container {
@@ -1205,85 +1585,164 @@ onMounted(() => {
   gap: 4px;
 }
 
-.batch-toolbar {
-  margin-bottom: 16px;
-  background-color: #f0f9ff;
-  border: 1px solid #409EFF;
+.tag-item {
+  border-radius: var(--radius-sm);
 }
 
-.batch-toolbar-content {
+.no-tags {
+  color: var(--text-tertiary);
+}
+
+.date-text {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+.pagination-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 上传区域 */
+.upload-area {
+  border-radius: var(--radius-lg);
+}
+
+.upload-icon {
+  font-size: 48px;
+  color: var(--primary-400);
+}
+
+/* 对话框样式 */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
   gap: 12px;
 }
 
-.selected-count {
-  font-weight: 600;
-  color: #409EFF;
-  margin-right: 8px;
+/* 动画 */
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
 }
 
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-  .project-bug-list {
-    padding: 12px;
-  }
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
 
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
   .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
+    padding: 16px;
   }
 
-  .page-header h2 {
-    font-size: 18px;
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .title-text h1 {
+    font-size: 20px;
   }
 
   .header-actions {
     width: 100%;
     flex-wrap: wrap;
-    gap: 8px;
   }
 
-  .header-actions .el-button {
-    flex: 1;
-    min-width: 80px;
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
-  .filter-card {
-    margin-bottom: 16px;
-  }
-
-  .filter-form {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .filter-form .el-form-item {
-    margin-right: 0;
-    margin-bottom: 8px;
-    width: 100%;
-  }
-
-  .filter-form .el-input,
-  .filter-form .el-select,
-  .filter-form .el-date-picker {
-    width: 100% !important;
-  }
-
-  .stats-row .el-col {
-    width: 50%;
-    max-width: 50%;
-    flex: 0 0 50%;
-    margin-bottom: 8px;
-    padding: 0 6px;
+  .bug-stats .el-col {
+    margin-bottom: 12px;
   }
 
   .stat-card {
-    padding: 12px;
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .batch-toolbar-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .batch-actions {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .title-icon-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+
+  .title-icon {
+    font-size: 22px;
+  }
+
+  .title-text h1 {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .stat-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
   }
 
   .stat-value {
@@ -1292,71 +1751,6 @@ onMounted(() => {
 
   .stat-label {
     font-size: 12px;
-  }
-
-  .el-table {
-    font-size: 11px !important;
-  }
-
-  .el-table th,
-  .el-table td {
-    padding: 6px 4px !important;
-  }
-
-  .pagination-container {
-    justify-content: center;
-    margin-top: 16px;
-  }
-
-  :deep(.el-pagination) {
-    font-size: 11px;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  :deep(.el-pagination__sizes),
-  :deep(.el-pagination__jump) {
-    display: none !important;
-  }
-
-  .el-dialog {
-    width: 95% !important;
-    margin: 10px auto !important;
-    max-height: 90vh !important;
-  }
-
-  .el-dialog__header,
-  .el-dialog__body,
-  .el-dialog__footer {
-    padding: 12px !important;
-  }
-
-  .el-dialog__title {
-    font-size: 16px !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .project-bug-list {
-    padding: 8px;
-  }
-
-  .page-header h2 {
-    font-size: 16px;
-  }
-
-  .stats-row .el-col {
-    width: 100%;
-    max-width: 100%;
-    flex: 0 0 100%;
-  }
-
-  .stat-value {
-    font-size: 18px;
-  }
-
-  .el-table {
-    font-size: 10px !important;
   }
 }
 </style>
