@@ -1029,4 +1029,1098 @@ export default {
     const renderTypeChart = (data) => {
       if (!typeChart || !data.length) return
       
-      const colors = ['#8b5cf6', '#a78bfa', '#c4b5fd', '#f472b6', '#fb7185', '#
+      const colors = ['#8b5cf6', '#a78bfa', '#c4b5fd', '#f472b6', '#fb7185', '#f97316']
+      
+      const option = {
+        tooltip: { 
+          trigger: 'item',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderWidth: 1,
+          textStyle: { color: '#1e293b' },
+          padding: [12, 16],
+          extraCssText: 'box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 12px;',
+          formatter: '{b}: {c}个 ({d}%)'
+        },
+        legend: { 
+          orient: 'vertical', 
+          left: 'left', 
+          top: 'middle',
+          textStyle: { color: '#64748b', fontSize: 11 },
+          itemGap: 12
+        },
+        series: [
+          {
+            name: 'Bug类型',
+            type: 'pie',
+            radius: ['45%', '70%'],
+            center: ['65%', '50%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 3
+            },
+            label: { show: false, position: 'center' },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#1e293b'
+              },
+              itemStyle: {
+                shadowBlur: 20,
+                shadowColor: 'rgba(0,0,0,0.15)'
+              }
+            },
+            labelLine: { show: false },
+            data: data.map((d, i) => ({
+              name: d.name,
+              value: d.value,
+              itemStyle: { color: colors[i % colors.length] }
+            }))
+          }
+        ]
+      }
+      
+      typeChart.setOption(option)
+    }
+
+    const loadSurvivalDuration = async () => {
+      try {
+        const params = buildFilterParams()
+        const response = await bugStatisticsService.getSurvivalDuration(params)
+        if (response.success) {
+          renderSurvivalChart(response.data.duration_distribution || [], response.data.total_resolved || 0)
+        }
+      } catch (error) {
+        console.error('加载存活时长失败:', error)
+      }
+    }
+
+    const renderSurvivalChart = (data, total) => {
+      if (!survivalChart || !data.length) return
+      
+      const colors = ['#22c55e', '#0ea5e9', '#f59e0b', '#f43f5e', '#64748b']
+      
+      const option = {
+        tooltip: { 
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderWidth: 1,
+          textStyle: { color: '#1e293b' },
+          padding: [12, 16],
+          extraCssText: 'box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 12px;',
+          formatter: '{b}: {c}个'
+        },
+        grid: { 
+          left: '3%', 
+          right: '4%', 
+          bottom: '8%', 
+          top: '8%',
+          containLabel: true 
+        },
+        xAxis: { 
+          type: 'category', 
+          data: data.map(d => d.name),
+          axisLabel: { 
+            rotate: 15,
+            color: '#64748b',
+            fontSize: 11
+          },
+          axisLine: { lineStyle: { color: '#e2e8f0' } },
+          axisTick: { show: false }
+        },
+        yAxis: { 
+          type: 'value', 
+          name: 'Bug数量',
+          nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+          axisLine: { show: false },
+          splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
+          axisLabel: { color: '#64748b', fontSize: 11 }
+        },
+        series: [
+          {
+            name: '存活时长',
+            type: 'bar',
+            data: data.map((d, i) => ({
+              value: d.value,
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: colors[i % colors.length] },
+                  { offset: 1, color: colors[i % colors.length] + '80' }
+                ]),
+                borderRadius: [8, 8, 0, 0]
+              }
+            })),
+            barWidth: '55%'
+          }
+        ]
+      }
+      
+      survivalChart.setOption(option)
+    }
+
+    const loadSeverityDistribution = async () => {
+      try {
+        const params = buildFilterParams()
+        params.dimension = 'severity'
+        const response = await bugStatisticsService.getDistributionAnalysis(params)
+        if (response.success) {
+          renderSeverityChart(response.data.distribution || {})
+        }
+      } catch (error) {
+        console.error('加载严重程度分布失败:', error)
+      }
+    }
+
+    const renderSeverityChart = (data) => {
+      if (!severityChart || !Object.keys(data).length) return
+      
+      const categories = Object.keys(data)
+      const severityLabels = { critical: 'P0-致命', high: 'P1-严重', medium: 'P2-一般', low: 'P3-轻微', suggestion: 'P4-建议' }
+      
+      const option = {
+        tooltip: { 
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderWidth: 1,
+          textStyle: { color: '#1e293b' },
+          padding: [12, 16],
+          extraCssText: 'box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 12px;',
+          axisPointer: { type: 'shadow' }
+        },
+        legend: { 
+          data: ['新建', '已解决', '已关闭'], 
+          bottom: 0,
+          textStyle: { color: '#64748b', fontSize: 11 }
+        },
+        grid: { 
+          left: '3%', 
+          right: '4%', 
+          bottom: '15%', 
+          top: '8%',
+          containLabel: true 
+        },
+        xAxis: { 
+          type: 'category', 
+          data: categories.map(c => severityLabels[c] || c),
+          axisLabel: { 
+            rotate: 15,
+            color: '#64748b',
+            fontSize: 11
+          },
+          axisLine: { lineStyle: { color: '#e2e8f0' } },
+          axisTick: { show: false }
+        },
+        yAxis: { 
+          type: 'value', 
+          name: 'Bug数量',
+          nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+          axisLine: { show: false },
+          splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
+          axisLabel: { color: '#64748b', fontSize: 11 }
+        },
+        series: [
+          {
+            name: '新建',
+            type: 'bar',
+            stack: 'total',
+            data: categories.map(c => data[c]?.new || 0),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#fb7185' },
+                { offset: 1, color: '#f43f5e' }
+              ]),
+              borderRadius: [6, 6, 0, 0]
+            }
+          },
+          {
+            name: '已解决',
+            type: 'bar',
+            stack: 'total',
+            data: categories.map(c => data[c]?.resolved || 0),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#fbbf24' },
+                { offset: 1, color: '#f59e0b' }
+              ])
+            }
+          },
+          {
+            name: '已关闭',
+            type: 'bar',
+            stack: 'total',
+            data: categories.map(c => data[c]?.closed || 0),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#4ade80' },
+                { offset: 1, color: '#22c55e' }
+              ]),
+              borderRadius: [0, 0, 6, 6]
+            }
+          }
+        ]
+      }
+      
+      severityChart.setOption(option)
+    }
+
+    const loadWorkloadData = async () => {
+      try {
+        const params = buildFilterParams()
+        const response = await bugStatisticsService.getPersonWorkload(params)
+        if (response.success) {
+          renderWorkloadChart(response.data.workload_data || [])
+        }
+      } catch (error) {
+        console.error('加载工作量数据失败:', error)
+      }
+    }
+
+    const renderWorkloadChart = (data) => {
+      if (!workloadChart || !data.length) return
+      
+      const chartData = data.slice(0, 10)
+      
+      const option = {
+        tooltip: { 
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderWidth: 1,
+          textStyle: { color: '#1e293b' },
+          padding: [12, 16],
+          extraCssText: 'box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 12px;',
+          axisPointer: { type: 'shadow' }
+        },
+        legend: { 
+          data: ['已分配', '处理中', '已解决', '已关闭'], 
+          bottom: 0,
+          textStyle: { color: '#64748b', fontSize: 11 }
+        },
+        grid: { 
+          left: '3%', 
+          right: '4%', 
+          bottom: '15%', 
+          top: '8%',
+          containLabel: true 
+        },
+        xAxis: { 
+          type: 'value', 
+          name: 'Bug数量',
+          nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+          axisLine: { show: false },
+          splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
+          axisLabel: { color: '#64748b', fontSize: 11 }
+        },
+        yAxis: { 
+          type: 'category', 
+          data: chartData.map(d => d.name),
+          axisLabel: { 
+            color: '#64748b',
+            fontSize: 11
+          },
+          axisLine: { lineStyle: { color: '#e2e8f0' } },
+          axisTick: { show: false }
+        },
+        series: [
+          {
+            name: '已分配',
+            type: 'bar',
+            stack: 'total',
+            data: chartData.map(d => d.assigned - d.in_progress - d.resolved - d.closed),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: '#94a3b8' },
+                { offset: 1, color: '#64748b' }
+              ]),
+              borderRadius: [0, 4, 4, 0]
+            }
+          },
+          {
+            name: '处理中',
+            type: 'bar',
+            stack: 'total',
+            data: chartData.map(d => d.in_progress),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: '#fbbf24' },
+                { offset: 1, color: '#f59e0b' }
+              ])
+            }
+          },
+          {
+            name: '已解决',
+            type: 'bar',
+            stack: 'total',
+            data: chartData.map(d => d.resolved),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: '#38bdf8' },
+                { offset: 1, color: '#0ea5e9' }
+              ])
+            }
+          },
+          {
+            name: '已关闭',
+            type: 'bar',
+            stack: 'total',
+            data: chartData.map(d => d.closed),
+            itemStyle: { 
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: '#4ade80' },
+                { offset: 1, color: '#22c55e' }
+              ]),
+              borderRadius: [0, 4, 4, 0]
+            }
+          }
+        ]
+      }
+      
+      workloadChart.setOption(option)
+    }
+
+    const loadAllData = async () => {
+      loading.value = true
+      try {
+        await Promise.all([
+          loadKpiData(),
+          loadTrendData(),
+          loadDistributionData(),
+          loadTypeDistribution(),
+          loadSurvivalDuration(),
+          loadSeverityDistribution(),
+          loadWorkloadData()
+        ])
+      } finally {
+        loading.value = false
+      }
+      loadBugList()
+    }
+
+    const loadBugList = async () => {
+      tableLoading.value = true
+      try {
+        const params = buildFilterParams()
+        params.page = currentPage.value
+        params.per_page = pageSize.value
+        
+        if (tableView.value === 'unresolved') {
+          params.status = 'new,in_progress,assigned'
+        } else if (tableView.value === 'resolved') {
+          params.status = 'resolved,closed'
+        }
+        
+        const response = await bugStatisticsService.getBugList(params)
+        if (response.success) {
+          bugList.value = response.data.bugs || []
+          totalBugs.value = response.data.total || 0
+        }
+      } catch (error) {
+        console.error('加载Bug列表失败:', error)
+      } finally {
+        tableLoading.value = false
+      }
+    }
+
+    const getStatusType = (status) => {
+      const types = {
+        'new': 'info',
+        'assigned': 'warning',
+        'in_progress': 'warning',
+        'resolved': 'success',
+        'verified': 'success',
+        'closed': 'success',
+        'rejected': 'danger',
+        'reopened': 'danger'
+      }
+      return types[status] || 'info'
+    }
+
+    const getStatusLabel = (status) => {
+      const labels = {
+        'new': '新建',
+        'assigned': '已分配',
+        'in_progress': '处理中',
+        'resolved': '已解决',
+        'verified': '已验证',
+        'closed': '已关闭',
+        'rejected': '已拒绝',
+        'reopened': '重新打开'
+      }
+      return labels[status] || status
+    }
+
+    const getSeverityType = (severity) => {
+      const types = {
+        'critical': 'danger',
+        'high': 'warning',
+        'medium': '',
+        'low': 'info',
+        'suggestion': ''
+      }
+      return types[severity] || 'info'
+    }
+
+    const getSeverityLabel = (severity) => {
+      const labels = {
+        'critical': '致命(P0)',
+        'high': '严重(P1)',
+        'medium': '一般(P2)',
+        'low': '轻微(P3)',
+        'suggestion': '建议(P4)'
+      }
+      return labels[severity] || severity
+    }
+
+    const getPriorityType = (priority) => {
+      const types = {
+        'urgent': 'danger',
+        'high': 'warning',
+        'medium': '',
+        'low': 'info'
+      }
+      return types[priority] || 'info'
+    }
+
+    const getPriorityLabel = (priority) => {
+      const labels = {
+        'urgent': '紧急',
+        'high': '高',
+        'medium': '中',
+        'low': '低'
+      }
+      return labels[priority] || priority
+    }
+
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '-'
+      const date = new Date(dateStr)
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    }
+
+    const handleRowClick = (row) => {
+      viewBugDetail(row)
+    }
+
+    const viewBugDetail = (row) => {
+      window.location.href = `/#/bugs/${row.id}`
+    }
+
+    const handleSizeChange = (val) => {
+      pageSize.value = val
+      currentPage.value = 1
+      loadBugList()
+    }
+
+    const handlePageChange = (val) => {
+      currentPage.value = val
+      loadBugList()
+    }
+
+    const handleTimeRangeChange = () => {
+      currentPage.value = 1
+      loadAllData()
+    }
+
+    const handleDateRangeChange = () => {
+      if (filters.timeRange === 'custom' && filters.customDateRange?.length === 2) {
+        loadAllData()
+      }
+    }
+
+    const handleSelectAllProjects = () => {
+      filters.projectIds = []
+      loadAllData()
+    }
+
+    const resetFilters = () => {
+      filters.timeRange = 'month'
+      filters.customDateRange = []
+      filters.projectIds = []
+      filters.bugTypes = []
+      filters.severities = []
+      filters.statuses = []
+      filters.priorities = []
+      filters.reportedBy = []
+      loadAllData()
+    }
+
+    const refreshData = () => {
+      loadAllData()
+      ElMessage.success('数据已刷新')
+    }
+
+    const exportReport = async () => {
+      const { startDate, endDate } = getDateRange()
+      const exportData = {
+        kpi: kpiData.value,
+        filters: {
+          timeRange: filters.timeRange,
+          startDate,
+          endDate,
+          projects: filters.projectIds,
+          bugTypes: filters.bugTypes,
+          severities: filters.severities,
+          statuses: filters.statuses,
+          priorities: filters.priorities
+        },
+        exportedAt: new Date().toISOString()
+      }
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `bug-statistics-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      
+      ElMessage.success('报表导出成功')
+    }
+
+    const exportChartAsImage = (chartInstance, chartName) => {
+      if (!chartInstance) {
+        ElMessage.warning('图表未初始化')
+        return
+      }
+      const url = chartInstance.getDataURL({
+        type: 'png',
+        pixelRatio: 2,
+        backgroundColor: '#fff'
+      })
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${chartName}-${new Date().toISOString().split('T')[0]}.png`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      ElMessage.success(`${chartName} 导出成功`)
+    }
+
+    const exportAllCharts = () => {
+      exportChartAsImage(trendChart, 'bug-trend')
+      setTimeout(() => exportChartAsImage(projectChart, 'bug-distribution'), 300)
+      setTimeout(() => exportChartAsImage(typeChart, 'bug-type'), 600)
+      setTimeout(() => exportChartAsImage(survivalChart, 'bug-survival'), 900)
+      setTimeout(() => exportChartAsImage(severityChart, 'bug-severity'), 1200)
+      setTimeout(() => exportChartAsImage(workloadChart, 'bug-workload'), 1500)
+    }
+
+    const handleExportCommand = (command) => {
+      switch (command) {
+        case 'data':
+          exportReport()
+          break
+        case 'trend':
+          exportChartAsImage(trendChart, 'bug-trend')
+          break
+        case 'distribution':
+          exportChartAsImage(projectChart, 'bug-distribution')
+          break
+        case 'all':
+          exportAllCharts()
+          break
+      }
+    }
+
+    onMounted(() => {
+      initCharts()
+      loadFilterOptions().then(() => {
+        loadAllData()
+      })
+    })
+
+    watch(tableView, () => {
+      currentPage.value = 1
+      loadBugList()
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize)
+      trendChart?.dispose()
+      projectChart?.dispose()
+      typeChart?.dispose()
+      survivalChart?.dispose()
+      severityChart?.dispose()
+      workloadChart?.dispose()
+    })
+
+    return {
+      loading,
+      filters,
+      filterOptions,
+      kpiData,
+      trendGranularity,
+      projectChartDimension,
+      trendChartRef,
+      projectChartRef,
+      typeChartRef,
+      survivalChartRef,
+      severityChartRef,
+      workloadChartRef,
+      bugList,
+      tableLoading,
+      tableView,
+      currentPage,
+      pageSize,
+      totalBugs,
+      getChangeClass,
+      handleTimeRangeChange,
+      handleDateRangeChange,
+      handleSelectAllProjects,
+      loadAllData,
+      loadTrendData,
+      loadDistributionData,
+      resetFilters,
+      refreshData,
+      exportReport,
+      exportChartAsImage,
+      exportAllCharts,
+      handleExportCommand,
+      getStatusType,
+      getStatusLabel,
+      getSeverityType,
+      getSeverityLabel,
+      getPriorityType,
+      getPriorityLabel,
+      formatDate,
+      handleRowClick,
+      viewBugDetail,
+      handleSizeChange,
+      handlePageChange
+    }
+  }
+}
+</script>
+
+<style scoped>
+/* 导入美学主题 */
+@import '@/styles/aesthetic-theme.css';
+
+.bug-statistics {
+  padding: 24px;
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100vh;
+}
+
+/* ============================================
+   精致头部样式
+   ============================================ */
+.statistics-header {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 32px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4c1d95 50%, #7c3aed 100%);
+  border-radius: 24px;
+  color: white;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.statistics-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(109, 40, 217, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.title-icon-wrapper {
+  position: relative;
+}
+
+.title-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.title-icon .el-icon {
+  font-size: 32px;
+  color: #c4b5fd;
+}
+
+.title-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, transparent 70%);
+  filter: blur(10px);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.title-text h2 {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.title-text p {
+  margin: 0;
+  font-size: 15px;
+  opacity: 0.85;
+  color: #ddd6fe;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 装饰性背景元素 */
+.header-decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -50px;
+  animation: breathe 8s ease-in-out infinite;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -60px;
+  right: 100px;
+  animation: breathe 6s ease-in-out infinite reverse;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  right: 200px;
+  opacity: 0.5;
+  animation: breathe 10s ease-in-out infinite;
+}
+
+/* ============================================
+   按钮样式
+   ============================================ */
+.btn-gradient {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-shine:hover::after {
+  left: 100%;
+}
+
+.btn-glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.refresh-icon {
+  transition: transform 0.5s ease;
+}
+
+.btn-glass:hover .refresh-icon {
+  transform: rotate(180deg);
+}
+
+.btn-text-elegant {
+  color: #64748b;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-text-elegant:hover {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
+}
+
+/* ============================================
+   筛选面板
+   ============================================ */
+.filter-panel {
+  margin-bottom: 24px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-label .el-icon {
+  font-size: 14px;
+  color: #8b5cf6;
+}
+
+.filter-select {
+  width: 140px;
+}
+
+.date-range-picker {
+  width: 260px;
+}
+
+.reset-btn {
+  margin-left: auto;
+}
+
+/* 精致下拉菜单 */
+.elegant-dropdown {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   精致KPI统计卡片
+   ============================================ */
+.kpi-cards {
+  margin-bottom: 24px;
+}
+
+.kpi-card-elegant {
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.kpi-card-elegant:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+}
+
+.kpi-card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.kpi-card-elegant:hover .kpi-card-bg {
+  opacity: 1;
+}
+
+.kpi-card-elegant.warning .kpi-card-bg {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  opacity: 1;
+}
+
+.kpi-card-elegant.danger .kpi-card-bg {
+  background: linear-gradient(90deg, #f43f5e, #fb7185);
+  opacity: 1;
+}
+
+.kpi-card-elegant.kpi-card-success .kpi-card-bg {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  opacity: 1;
+}
+
+.kpi-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.kpi-card-elegant:hover .kpi-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.kpi-icon-wrapper .el-icon {
+  font-size: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.icon-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  opacity: 0.3;
+  filter: blur(8px);
+  transition: all 0.4s ease;
+}
+
+.kpi-card-elegant:hover .icon-glow {
+  opacity: 0.5;
+  transform: scale(1.2);
+}
+
+.kpi-icon-total {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #7c3aed;
+}
+
+.kpi-icon-total .icon-glow {
+  background: #8b5cf6;
+}
+
+.kpi-icon-new {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  color: #ea580c;
+}
+
+.kpi-icon-new .icon-glow {
+  background: #f97316;
+}
+
+.kpi-icon-resolved {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #16a34a;
+}
+
+.kpi-icon-resolved .icon-glow {
+  background: #22c55e;
+}
+
+.kpi-icon-unresolved {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+  color: #e11d48;
+}
+
+.kpi-icon-unresolved .icon-glow {
+  background: #f43f5e;
+}
+
+.kpi-icon-rate {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0284c7;
+}
+
+.kpi-icon-rate .icon-glow {
+  background: #0ea5e9;
+}
+
+.kpi-icon-time {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  color: #7c3aed;
+}
+
+.kpi-icon-time .icon-glow {
+  background:
