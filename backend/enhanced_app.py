@@ -3152,15 +3152,81 @@ def require_permission(permission_name):
     return decorator
 
 # API 路由导入和注册（使用延迟导入避免循环导入）
+_api_blueprints_registered = False
+
 def register_api_blueprints():
     """延迟注册 API 蓝图以避免循环导入"""
-    # 所有蓝图通过 restful_api.py 中的 api_bp 统一注册
-    # restful_api 模块会在导入时自动注册所有子蓝图
-    from restful_api import api_bp
+    global _api_blueprints_registered
+    if _api_blueprints_registered:
+        return
+    
+    # 导入 api_bp 和所有获取子蓝图的函数
+    from restful_api import (
+        api_bp, get_avatar_bp, get_auth_bp, get_bugs_bp, get_materials_bp,
+        get_contracts_bp, get_projects_bp, get_statistics_bp, get_users_bp,
+        get_notifications_bp, get_attendance_bp, get_system_bp, get_activities_bp,
+        get_work_logs_bp, get_bug_statistics_bp, get_delivery_tracking_bp,
+        get_contracts_enhanced_bp, get_contracts_statistics_bp, get_requirements_bp,
+        get_test_management_bp, get_audit_bp, get_search_bp, get_performance_bp,
+        get_health_bp, get_docs_bp, get_export_bp, get_todos_bp, get_project_logs_bp,
+        get_knowledge_bp, get_data_import_export_bp, get_monitoring_bp, get_risks_bp,
+        get_personal_plan_bp
+    )
+    
+    # 注册所有子蓝图到 api_bp，跳过有循环导入问题的蓝图
+    blueprints_to_register = [
+        (get_avatar_bp, '/avatar'),
+        (get_auth_bp, None),
+        (get_bugs_bp, None),
+        (get_materials_bp, None),
+        (get_contracts_bp, None),
+        (get_projects_bp, None),
+        (get_statistics_bp, None),
+        (get_users_bp, None),
+        (get_notifications_bp, None),
+        (get_attendance_bp, None),
+        (get_system_bp, None),
+        (get_activities_bp, None),
+        (get_work_logs_bp, None),
+        (get_bug_statistics_bp, None),
+        (get_delivery_tracking_bp, None),
+        (get_contracts_enhanced_bp, None),
+        (get_contracts_statistics_bp, None),
+        (get_requirements_bp, None),
+        (get_test_management_bp, None),
+        (get_audit_bp, None),
+        (get_search_bp, None),
+        (get_performance_bp, None),
+        (get_health_bp, None),
+        (get_docs_bp, None),
+        (get_export_bp, None),
+        (get_todos_bp, None),
+        (get_project_logs_bp, None),
+        (get_knowledge_bp, None),
+        (get_data_import_export_bp, None),
+        (get_monitoring_bp, None),
+        (get_risks_bp, None),
+        (get_personal_plan_bp, None),
+    ]
+    
+    for get_bp_func, url_prefix in blueprints_to_register:
+        try:
+            bp = get_bp_func()
+            if url_prefix:
+                api_bp.register_blueprint(bp, url_prefix=url_prefix)
+            else:
+                api_bp.register_blueprint(bp)
+        except ImportError as e:
+            print(f"Skipped blueprint {get_bp_func.__name__}: {e}")
+            continue
+    
+    # 注册 api_bp 到 Flask app
     app.register_blueprint(api_bp)
+    _api_blueprints_registered = True
+    print("API blueprints registered successfully")
 
-# 在模块加载时立即注册 API 蓝图（确保通过 WSGI 服务器启动时也能正常工作）
-register_api_blueprints()
+# 注意：API 蓝图在 if __name__ == '__main__': 块中注册
+# 对于 WSGI 服务器，请在 wsgi.py 中调用 register_api_blueprints()
 
 # 邮件通知功能
 def send_email_notification(to_email, subject, body, html_body=None):
@@ -3921,3 +3987,7 @@ class KnowledgeComment(db.Model):
 
 
 # ==================== 知识库增强模型结束 ====================
+
+# 在模块加载时立即注册 API 蓝图（确保通过 WSGI 服务器启动时也能正常工作）
+# 注意：必须在所有模型定义之后调用，以避免循环导入问题
+register_api_blueprints()

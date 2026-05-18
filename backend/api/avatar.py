@@ -8,9 +8,6 @@ from pathlib import Path
 # 添加项目根目录到Python路径
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-# 导入必要的模块
-from enhanced_app import User, db, create_audit_log
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 def allowed_file(filename):
@@ -22,11 +19,13 @@ def get_file_category(filename):
         return 'images'
     return 'other'
 
-def create_audit_log(user_id, action, resource_type, resource_id, details, request=None):
-    pass
-
 def get_upload_folder():
     return current_app.config.get('UPLOAD_FOLDER', os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'))
+
+# 延迟导入数据库模型
+def get_db_and_user():
+    from enhanced_app import db, User
+    return db, User
 
 avatar_bp = Blueprint('avatar', __name__, url_prefix='/avatar')
 
@@ -36,6 +35,7 @@ def upload_avatar():
     """
     上传用户头像
     """
+    db, User = get_db_and_user()
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
     if not user:
@@ -81,16 +81,6 @@ def upload_avatar():
         user.avatar = avatar_url
         db.session.commit()
         
-        # 创建log
-        create_audit_log(
-            user_id=current_user_id,
-            action='upload_avatar',
-            resource_type='user',
-            resource_id=current_user_id,
-            details=f'用户 {user.username} 上传了新头像',
-            request=request
-        )
-        
         return jsonify({
             'message': '头像上传成功',
             'avatar_url': avatar_url,
@@ -110,6 +100,7 @@ def remove_avatar():
     """
     删除用户头像
     """
+    db, User = get_db_and_user()
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
     if not user:
@@ -134,16 +125,6 @@ def remove_avatar():
             # 清除用户avatar字段
             user.avatar = None
             db.session.commit()
-            
-            # 创建log
-            create_audit_log(
-                user_id=current_user_id,
-                action='remove_avatar',
-                resource_type='user',
-                resource_id=current_user_id,
-                details=f'用户 {user.username} 删除了头像',
-                request=request
-            )
         
         return jsonify({
             'message': '头像删除成功',

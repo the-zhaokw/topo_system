@@ -45,8 +45,41 @@ def get_db_and_models():
     from enhanced_app import UserRole
     return db, User, Bug, Project, Comment, Activity, ProjectMember, BugStatus, Priority, Severity, create_audit_log, UserRole
 
-# 创建API蓝图 - 注意：不在模块级别注册子蓝图，而是在 enhanced_app.py 中注册
+# 创建 API 蓝图
 api_bp = Blueprint('api', __name__, url_prefix='/api')
+
+# 注册头像静态文件路由
+import os
+from flask import send_from_directory
+
+def get_app():
+    from enhanced_app import app
+    return app
+
+@api_bp.route('/uploads/<path:filepath>')
+def serve_uploads(filepath):
+    """提供上传文件的静态访问"""
+    app = get_app()
+    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+    return send_from_directory(upload_dir, filepath)
+
+@api_bp.route('/roles', methods=['GET'])
+@jwt_required()
+def get_roles():
+    """获取角色列表"""
+    db, User, Bug, Project, Comment, Activity, ProjectMember, BugStatus, Priority, Severity, create_audit_log, UserRole = get_db_and_models()
+
+    roles = [
+        {'value': UserRole.ADMIN.value, 'name': '管理员'},
+        {'value': UserRole.USER.value, 'name': '普通用户'},
+        {'value': UserRole.HR.value, 'name': '人力资源'},
+        {'value': UserRole.DEPARTMENT_MANAGER.value, 'name': '部门经理'},
+        {'value': UserRole.DIVISION_LEADER.value, 'name': '部门领导'}
+    ]
+
+    return jsonify({
+        'roles': roles
+    })
 
 # 延迟导入API蓝图以避免模块导入时的数据库查询
 def get_avatar_bp():
@@ -190,38 +223,3 @@ def require_permission(permission):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
-
-# ==================== 用户管理API ====================
-
-@api_bp.route('/roles', methods=['GET'])
-@jwt_required()
-def get_roles():
-    """获取角色列表"""
-    db, User, Bug, Project, Comment, Activity, ProjectMember, BugStatus, Priority, Severity, create_audit_log, UserRole = get_db_and_models()
-    
-    roles = [
-        {'value': UserRole.ADMIN.value, 'name': '管理员'},
-        {'value': UserRole.USER.value, 'name': '普通用户'},
-        {'value': UserRole.HR.value, 'name': '人力资源'},
-        {'value': UserRole.DEPARTMENT_MANAGER.value, 'name': '部门经理'},
-        {'value': UserRole.DIVISION_LEADER.value, 'name': '部门领导'}
-    ]
-    
-    return jsonify({
-        'roles': roles
-    })
-
-# 注册头像静态文件路由
-import os
-from flask import send_from_directory
-
-def get_app():
-    from enhanced_app import app
-    return app
-
-@api_bp.route('/uploads/<path:filepath>')
-def serve_uploads(filepath):
-    """提供上传文件的静态访问"""
-    app = get_app()
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-    return send_from_directory(upload_dir, filepath)

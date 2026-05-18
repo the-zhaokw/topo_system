@@ -373,8 +373,8 @@ if __name__ == '__main__':
     # 初始化扩展（必须在注册蓝图之前调用）
     init_extensions(app)
     
-    # 延迟注册API蓝图（避免循环导入）
-    register_api_blueprints()
+    # 注意：API蓝图已在 enhanced_app.py 文件末尾自动注册
+    # 无需再次调用 register_api_blueprints()
     
     # 初始化数据库
     with app.app_context():

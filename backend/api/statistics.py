@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from logging_decorators import log_api_call, log_business_operation, handle_validation_errors, handle_error
 from logging_config import get_log_manager
-from enhanced_app import require_permission
 import enum
 
 def get_enum_value(value):
