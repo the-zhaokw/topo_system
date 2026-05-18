@@ -317,3 +317,626 @@ def clock_out():
     except Exception as e:
         logger.error(f"Error clocking out: {str(e)}")
         return jsonify({'error': '下班打卡失败'}), 500
+
+# 获取今日考勤记录
+@attendance_bp.route('/records/today', methods=['GET'])
+@jwt_required()
+def get_today_record():
+    """获取今日考勤记录"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        record = AttendanceRecord.query.filter_by(
+            user_id=current_user_id,
+            record_date=today
+        ).first()
+        
+        if record:
+            user = record.user
+            record_data = {
+                'id': record.id,
+                'user': {
+                    'id': user.id if user else None,
+                    'username': user.username if user else '未知',
+                    'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知'
+                } if user else {'id': None, 'username': '未知', 'name': '未知'},
+                'date': record.record_date.strftime('%Y-%m-%d') if record.record_date else None,
+                'shift': {'name': '正常班'},
+                'clock_in_time': record.clock_in_time.strftime('%H:%M:%S') if record.clock_in_time else None,
+                'clock_in_ip': record.clock_in_ip,
+                'clock_out_time': record.clock_out_time.strftime('%H:%M:%S') if record.clock_out_time else None,
+                'clock_out_ip': record.clock_out_ip,
+                'work_hours': record.work_hours,
+                'overtime_hours': record.overtime_hours,
+                'late_minutes': record.late_minutes,
+                'early_leave_minutes': record.early_leave_minutes,
+                'status': record.status
+            }
+            return jsonify(record_data)
+        else:
+            return jsonify(None)
+    except Exception as e:
+        logger.error(f"Error getting today record: {str(e)}")
+        return jsonify({'error': '获取今日记录失败'}), 500
+
+# 获取请假申请列表
+@attendance_bp.route('/leave-applications', methods=['GET'])
+@jwt_required()
+def get_leave_applications():
+    """获取请假申请列表"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        status = request.args.get('status')
+        user_id = request.args.get('user_id', type=int)
+        
+        query = LeaveApplication.query
+        
+        # 非管理员只能查看自己的申请
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+        elif user_id:
+            query = query.filter_by(user_id=user_id)
+        
+        if status:
+            query = query.filter_by(status=status)
+        
+        query = query.order_by(LeaveApplication.created_at.desc())
+        
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        applications = pagination.items
+        
+        result = []
+        for app in applications:
+            applicant = app.applicant
+            approver = app.approver
+            app_data = {
+                'id': app.id,
+                'user_id': app.user_id,
+                'applicant': {
+                    'id': applicant.id if applicant else None,
+                    'username': applicant.username if applicant else '未知',
+                    'name': f"{applicant.first_name or ''} {applicant.last_name or ''}".strip() or applicant.username if applicant else '未知'
+                } if applicant else None,
+                'leave_type': app.leave_type,
+                'start_date': app.start_date.strftime('%Y-%m-%d') if app.start_date else None,
+                'end_date': app.end_date.strftime('%Y-%m-%d') if app.end_date else None,
+                'days': app.days,
+                'reason': app.reason,
+                'status': app.status,
+                'approver_id': app.approver_id,
+                'approver': {
+                    'id': approver.id if approver else None,
+                    'username': approver.username if approver else None,
+                    'name': f"{approver.first_name or ''} {approver.last_name or ''}".strip() or approver.username if approver else None
+                } if approver else None,
+                'approved_at': app.approved_at.isoformat() if app.approved_at else None,
+                'approval_comment': app.approval_comment,
+                'attachment': app.attachment,
+                'created_at': app.created_at.isoformat() if app.created_at else None
+            }
+            result.append(app_data)
+        
+        return jsonify({
+            'applications': result,
+            'total': pagination.total,
+            'page': page,
+            'per_page': per_page,
+            'pages': pagination.pages
+        })
+    except Exception as e:
+        logger.error(f"Error getting leave applications: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取请假申请失败'}), 500
+
+# 获取加班申请列表
+@attendance_bp.route('/overtime-applications', methods=['GET'])
+@jwt_required()
+def get_overtime_applications():
+    """获取加班申请列表"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        status = request.args.get('status')
+        user_id = request.args.get('user_id', type=int)
+        
+        query = OvertimeApplication.query
+        
+        # 非管理员只能查看自己的申请
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+        elif user_id:
+            query = query.filter_by(user_id=user_id)
+        
+        if status:
+            query = query.filter_by(status=status)
+        
+        query = query.order_by(OvertimeApplication.created_at.desc())
+        
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        applications = pagination.items
+        
+        result = []
+        for app in applications:
+            applicant = app.applicant
+            approver = app.approver
+            app_data = {
+                'id': app.id,
+                'user_id': app.user_id,
+                'applicant': {
+                    'id': applicant.id if applicant else None,
+                    'username': applicant.username if applicant else '未知',
+                    'name': f"{applicant.first_name or ''} {applicant.last_name or ''}".strip() or applicant.username if applicant else '未知'
+                } if applicant else None,
+                'overtime_date': app.overtime_date.strftime('%Y-%m-%d') if hasattr(app, 'overtime_date') and app.overtime_date else None,
+                'start_time': app.start_time.strftime('%H:%M') if hasattr(app, 'start_time') and app.start_time else None,
+                'end_time': app.end_time.strftime('%H:%M') if hasattr(app, 'end_time') and app.end_time else None,
+                'hours': app.hours if hasattr(app, 'hours') else 0,
+                'reason': app.reason if hasattr(app, 'reason') else None,
+                'status': app.status,
+                'approver_id': app.approver_id,
+                'approver': {
+                    'id': approver.id if approver else None,
+                    'username': approver.username if approver else None,
+                    'name': f"{approver.first_name or ''} {approver.last_name or ''}".strip() or approver.username if approver else None
+                } if approver else None,
+                'approved_at': app.approved_at.isoformat() if app.approved_at else None,
+                'approval_comment': app.approval_comment if hasattr(app, 'approval_comment') else None,
+                'created_at': app.created_at.isoformat() if app.created_at else None
+            }
+            result.append(app_data)
+        
+        return jsonify({
+            'applications': result,
+            'total': pagination.total,
+            'page': page,
+            'per_page': per_page,
+            'pages': pagination.pages
+        })
+    except Exception as e:
+        logger.error(f"Error getting overtime applications: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取加班申请失败'}), 500
+
+# 获取用户班次安排
+@attendance_bp.route('/user-shifts', methods=['GET'])
+@jwt_required()
+def get_user_shifts():
+    """获取用户班次安排"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        date_str = request.args.get('date')
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        
+        # 查询所有用户的班次安排
+        user_shifts = UserShift.query.filter(
+            UserShift.effective_date <= target_date,
+            db.or_(
+                UserShift.expire_date == None,
+                UserShift.expire_date >= target_date
+            )
+        ).all()
+        
+        result = []
+        for us in user_shifts:
+            user = us.user
+            shift = us.shift
+            result.append({
+                'id': us.id,
+                'user_id': us.user_id,
+                'user': {
+                    'id': user.id if user else None,
+                    'username': user.username if user else '未知',
+                    'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知'
+                } if user else None,
+                'shift_id': us.shift_id,
+                'shift': {
+                    'id': shift.id if shift else None,
+                    'name': shift.name if shift else '未知',
+                    'start_time': shift.start_time if shift else None,
+                    'end_time': shift.end_time if shift else None,
+                    'shift_type': shift.shift_type if shift else None
+                } if shift else None,
+                'effective_date': us.effective_date.strftime('%Y-%m-%d') if us.effective_date else None,
+                'expire_date': us.expire_date.strftime('%Y-%m-%d') if us.expire_date else None
+            })
+        
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error getting user shifts: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取用户班次安排失败'}), 500
+
+# 获取考勤异常列表
+@attendance_bp.route('/exceptions', methods=['GET'])
+@jwt_required()
+def get_exceptions():
+    """获取考勤异常列表"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        status = request.args.get('status')
+        user_id = request.args.get('user_id', type=int)
+        department = request.args.get('department')
+        period = request.args.get('period', 'daily')
+        date_str = request.args.get('date')
+        
+        query = AttendanceException.query
+        
+        # 非管理员只能查看自己的异常
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+        elif user_id:
+            query = query.filter_by(user_id=user_id)
+        
+        # 按部门筛选
+        if department and current_user.role == 'admin':
+            query = query.join(User).filter(User.department == department)
+        
+        # 按状态筛选
+        if status:
+            query = query.filter_by(status=status)
+        
+        # 按日期筛选
+        if date_str:
+            target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            if period == 'daily':
+                query = query.filter(
+                    db.func.date(AttendanceException.record_date) == target_date
+                )
+            elif period == 'weekly':
+                week_start = target_date - timedelta(days=target_date.weekday())
+                week_end = week_start + timedelta(days=6)
+                query = query.filter(
+                    AttendanceException.record_date >= week_start,
+                    AttendanceException.record_date <= week_end
+                )
+            elif period == 'monthly':
+                query = query.filter(
+                    db.extract('year', AttendanceException.record_date) == target_date.year,
+                    db.extract('month', AttendanceException.record_date) == target_date.month
+                )
+        
+        query = query.order_by(AttendanceException.record_date.desc())
+        
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        exceptions = pagination.items
+        
+        result = []
+        for exc in exceptions:
+            user = exc.user
+            approver = exc.approver
+            result.append({
+                'id': exc.id,
+                'user_id': exc.user_id,
+                'user': {
+                    'id': user.id if user else None,
+                    'username': user.username if user else '未知',
+                    'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知',
+                    'department': user.department if user else None
+                } if user else None,
+                'record_date': exc.record_date.strftime('%Y-%m-%d') if exc.record_date else None,
+                'exception_type': exc.exception_type,
+                'reason': exc.reason,
+                'status': exc.status,
+                'approver_id': exc.approver_id,
+                'approver': {
+                    'id': approver.id if approver else None,
+                    'username': approver.username if approver else None,
+                    'name': f"{approver.first_name or ''} {approver.last_name or ''}".strip() or approver.username if approver else None
+                } if approver else None,
+                'approved_at': exc.approved_at.isoformat() if exc.approved_at else None,
+                'created_at': exc.created_at.isoformat() if exc.created_at else None
+            })
+        
+        return jsonify({
+            'records': result,
+            'total': pagination.total,
+            'page': page,
+            'per_page': per_page,
+            'pages': pagination.pages
+        })
+    except Exception as e:
+        logger.error(f"Error getting exceptions: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取考勤异常失败'}), 500
+
+# 获取考勤统计
+@attendance_bp.route('/statistics', methods=['GET'])
+@jwt_required()
+def get_statistics():
+    """获取考勤统计"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        period = request.args.get('period', 'daily')
+        date_str = request.args.get('date')
+        department = request.args.get('department')
+        
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        
+        # 确定日期范围
+        if period == 'daily':
+            start_date = end_date = target_date
+        elif period == 'weekly':
+            start_date = target_date - timedelta(days=target_date.weekday())
+            end_date = start_date + timedelta(days=6)
+        elif period == 'monthly':
+            start_date = target_date.replace(day=1)
+            if target_date.month == 12:
+                end_date = target_date.replace(year=target_date.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                end_date = target_date.replace(month=target_date.month + 1, day=1) - timedelta(days=1)
+        else:
+            start_date = end_date = target_date
+        
+        # 构建基础查询
+        query = AttendanceRecord.query.filter(
+            AttendanceRecord.record_date >= start_date,
+            AttendanceRecord.record_date <= end_date
+        )
+        
+        # 按部门筛选
+        if department:
+            query = query.join(User).filter(User.department == department)
+        
+        # 非管理员只能查看自己的统计
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+        
+        records = query.all()
+        
+        # 计算统计数据
+        total_employees = len(set(r.user_id for r in records))
+        present_count = len([r for r in records if r.status == AttendanceStatus.PRESENT.value])
+        late_count = len([r for r in records if r.status == AttendanceStatus.LATE.value])
+        absent_count = len([r for r in records if r.status == AttendanceStatus.ABSENT.value])
+        leave_count = len([r for r in records if r.status == AttendanceStatus.LEAVE.value])
+        
+        total_work_hours = sum(r.work_hours for r in records if r.work_hours)
+        total_overtime_hours = sum(r.overtime_hours for r in records if r.overtime_hours)
+        
+        attendance_rate = (present_count / total_employees * 100) if total_employees > 0 else 0
+        
+        # 获取加班统计
+        overtime_query = OvertimeApplication.query.filter(
+            OvertimeApplication.date >= start_date,
+            OvertimeApplication.date <= end_date,
+            OvertimeApplication.status == ApprovalStatus.APPROVED.value
+        )
+        
+        if department and current_user.role == 'admin':
+            overtime_query = overtime_query.join(User).filter(User.department == department)
+        if current_user.role != 'admin':
+            overtime_query = overtime_query.filter_by(user_id=current_user_id)
+        
+        overtime_records = overtime_query.all()
+        
+        return jsonify({
+            'total_employees': total_employees,
+            'attendance_rate': round(attendance_rate, 2),
+            'present_count': present_count,
+            'late_count': late_count,
+            'absent_count': absent_count,
+            'leave_count': leave_count,
+            'total_work_hours': round(total_work_hours, 2),
+            'total_overtime_hours': round(total_overtime_hours, 2),
+            'overtime_count': len(overtime_records),
+            'period': period,
+            'start_date': start_date.strftime('%Y-%m-%d'),
+            'end_date': end_date.strftime('%Y-%m-%d')
+        })
+    except Exception as e:
+        logger.error(f"Error getting statistics: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取考勤统计失败'}), 500
+
+# 获取报告概览
+@attendance_bp.route('/reports/overview', methods=['GET'])
+@jwt_required()
+def get_reports_overview():
+    """获取考勤报告概览"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        period = request.args.get('period', 'daily')
+        date_str = request.args.get('date')
+        department = request.args.get('department')
+        
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        
+        # 确定日期范围
+        if period == 'daily':
+            start_date = end_date = target_date
+        elif period == 'weekly':
+            start_date = target_date - timedelta(days=target_date.weekday())
+            end_date = start_date + timedelta(days=6)
+        elif period == 'monthly':
+            start_date = target_date.replace(day=1)
+            if target_date.month == 12:
+                end_date = target_date.replace(year=target_date.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                end_date = target_date.replace(month=target_date.month + 1, day=1) - timedelta(days=1)
+        else:
+            start_date = end_date = target_date
+        
+        # 构建用户查询
+        user_query = User.query
+        if department:
+            user_query = user_query.filter_by(department=department)
+        
+        total_employees = user_query.count()
+        
+        # 获取考勤记录
+        record_query = AttendanceRecord.query.filter(
+            AttendanceRecord.record_date >= start_date,
+            AttendanceRecord.record_date <= end_date
+        )
+        
+        if department:
+            record_query = record_query.join(User).filter(User.department == department)
+        if current_user.role != 'admin':
+            record_query = record_query.filter_by(user_id=current_user_id)
+        
+        records = record_query.all()
+        
+        # 计算概览数据
+        present_count = len([r for r in records if r.status == AttendanceStatus.PRESENT.value])
+        late_count = len([r for r in records if r.status == AttendanceStatus.LATE.value])
+        early_leave_count = len([r for r in records if r.early_leave_minutes and r.early_leave_minutes > 0])
+        missing_count = len([r for r in records if r.status == AttendanceStatus.ABSENT.value])
+        
+        attendance_rate = (present_count / total_employees * 100) if total_employees > 0 else 0
+        
+        # 计算加班时长
+        total_overtime_hours = sum(r.overtime_hours for r in records if r.overtime_hours)
+        
+        return jsonify({
+            'totalEmployees': total_employees,
+            'attendanceRate': round(attendance_rate, 2),
+            'lateCount': late_count,
+            'earlyLeaveCount': early_leave_count,
+            'missingCount': missing_count,
+            'overtimeHours': round(total_overtime_hours, 2)
+        })
+    except Exception as e:
+        logger.error(f"Error getting reports overview: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取报告概览失败'}), 500
+
+# 获取详细报告
+@attendance_bp.route('/reports/detail', methods=['GET'])
+@jwt_required()
+def get_reports_detail():
+    """获取详细考勤报告"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        period = request.args.get('period', 'daily')
+        date_str = request.args.get('date')
+        department = request.args.get('department')
+        
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        
+        # 确定日期范围
+        if period == 'daily':
+            start_date = end_date = target_date
+        elif period == 'weekly':
+            start_date = target_date - timedelta(days=target_date.weekday())
+            end_date = start_date + timedelta(days=6)
+        elif period == 'monthly':
+            start_date = target_date.replace(day=1)
+            if target_date.month == 12:
+                end_date = target_date.replace(year=target_date.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                end_date = target_date.replace(month=target_date.month + 1, day=1) - timedelta(days=1)
+        else:
+            start_date = end_date = target_date
+        
+        # 构建查询
+        query = AttendanceRecord.query.filter(
+            AttendanceRecord.record_date >= start_date,
+            AttendanceRecord.record_date <= end_date
+        )
+        
+        if department:
+            query = query.join(User).filter(User.department == department)
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+        
+        query = query.order_by(AttendanceRecord.record_date.desc())
+        
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        records = pagination.items
+        
+        result = []
+        for record in records:
+            user = record.user
+            result.append({
+                'id': record.id,
+                'user_id': record.user_id,
+                'user': {
+                    'id': user.id if user else None,
+                    'username': user.username if user else '未知',
+                    'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知',
+                    'department': user.department if user else None
+                } if user else None,
+                'date': record.record_date.strftime('%Y-%m-%d') if record.record_date else None,
+                'clock_in_time': record.clock_in_time.strftime('%H:%M:%S') if record.clock_in_time else None,
+                'clock_out_time': record.clock_out_time.strftime('%H:%M:%S') if record.clock_out_time else None,
+                'work_hours': record.work_hours,
+                'overtime_hours': record.overtime_hours,
+                'late_minutes': record.late_minutes,
+                'early_leave_minutes': record.early_leave_minutes,
+                'status': record.status
+            })
+        
+        return jsonify({
+            'records': result,
+            'total': pagination.total,
+            'page': page,
+            'per_page': per_page,
+            'pages': pagination.pages
+        })
+    except Exception as e:
+        logger.error(f"Error getting reports detail: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取详细报告失败'}), 500

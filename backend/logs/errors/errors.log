@@ -20003,3 +20003,143 @@ REQUEST:
 None
 USER:
 None
+2026-05-18 13:45:38,417 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:38,418 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:38,432 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:38,476 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:40,167 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:40,174 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:40,180 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:45:40,226 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:52,415 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:52,419 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:52,426 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:52,520 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:54,073 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:54,081 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:54,087 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:52:54,130 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:59:46,810 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:59:46,811 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got an unexpected keyword argument 'current_user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:59:46,816 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_requirements'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None
+2026-05-18 13:59:46,868 - ERROR - 记录业务操作日志失败: EnhancedLogger.log_business() got an unexpected keyword argument 'total_projects'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None

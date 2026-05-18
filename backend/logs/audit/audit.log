@@ -888,3 +888,49 @@
 2026-05-18 11:10:27,776 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
 2026-05-18 11:10:43,288 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
 2026-05-18 11:10:43,314 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 11:11:28,515 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 11:11:28,570 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 11:11:54,239 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 11:11:57,169 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': '100', 'department': None, 'search': ''} - IP:unknown
+2026-05-18 11:11:59,935 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 11:12:06,377 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 11:12:11,526 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:40:01,083 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 13:40:01,087 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:41:07,603 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 13:41:07,637 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:41:10,373 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:41:14,440 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': '100', 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:42:09,096 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 13:42:09,148 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:43:13,879 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:43:17,416 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': '100', 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:44:40,489 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': '50', 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:45:24,985 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:45:37,292 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': '1', 'per_page': '100', 'status': '', 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:45:37,294 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:45:39,209 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:45:47,906 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:52:53,275 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:52:57,966 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': '1', 'per_page': '100', 'status': '', 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:52:57,970 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:53:05,204 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 13:53:05,230 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:59:47,779 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': '1', 'per_page': '100', 'status': '', 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 13:59:47,780 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:59:57,082 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-18 13:59:58,352 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 13:59:58,372 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:02:49,211 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 14:02:49,236 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:03:18,879 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 14:03:18,900 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:03:30,686 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 14:03:30,704 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:03:32,077 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': '100', 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:03:43,639 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 14:03:43,663 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:04:37,550 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 14:04:37,600 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-18 14:04:56,293 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
+2026-05-18 14:04:56,316 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown

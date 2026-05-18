@@ -11134,3 +11134,251 @@ ValueError: too many values to unpack (expected 5)
 2026-05-18 11:10:43,343 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 33.51ms
 2026-05-18 11:10:43,353 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-05-18 11:10:43,353 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 70.77ms
+2026-05-18 11:11:28,512 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 11:11:28,512 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 11:11:28,530 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 11:11:28,541 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 11:11:28,783 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 11:11:28,783 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 241.44ms
+2026-05-18 11:11:28,802 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 11:11:28,803 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 291.14ms
+2026-05-18 11:11:54,237 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-18 11:11:54,238 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 11:11:54,246 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 11:11:54,248 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 7.93ms
+2026-05-18 11:11:57,160 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 11:11:57,160 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 11:11:57,173 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 11:11:57,173 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.04ms
+2026-05-18 11:11:59,930 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-18 11:11:59,930 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 11:11:59,937 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 11:11:59,938 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 7.97ms
+2026-05-18 11:12:06,372 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-18 11:12:06,373 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 11:12:06,381 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 11:12:06,382 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 9.36ms
+2026-05-18 11:12:11,524 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-18 11:12:11,525 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 11:12:11,529 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 11:12:11,529 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 4.37ms
+2026-05-18 13:39:56,653 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-18 13:39:56,657 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-18 13:39:56,668 - enhanced_app - INFO - 职位权限修复完成
+2026-05-18 13:39:56,677 - enhanced_app - INFO - 默认职位创建成功
+2026-05-18 13:39:56,679 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-18 13:39:56,684 - enhanced_app - INFO - 数据库表创建完成
+2026-05-18 13:39:57,527 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-18 13:39:57,532 - enhanced_app - INFO - 数据库初始化完成
+2026-05-18 13:40:00,341 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 13:40:00,376 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:40:01,073 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 13:40:01,078 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:40:01,797 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:40:01,819 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 740.17ms
+2026-05-18 13:40:01,888 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 13:40:01,889 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 815.65ms
+2026-05-18 13:41:07,599 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 13:41:07,600 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 13:41:07,615 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:41:07,617 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:41:07,664 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:41:07,664 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 46.62ms
+2026-05-18 13:41:07,676 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 13:41:07,676 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 76.61ms
+2026-05-18 13:41:10,367 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-18 13:41:10,369 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:41:10,384 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:41:10,384 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 15.15ms
+2026-05-18 13:41:14,432 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:41:14,432 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:41:14,444 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:41:14,444 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.76ms
+2026-05-18 13:42:09,083 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 13:42:09,085 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 13:42:09,122 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:42:09,135 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:42:09,201 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:42:09,206 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 70.84ms
+2026-05-18 13:42:09,231 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 13:42:09,241 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 155.77ms
+2026-05-18 13:43:13,849 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-18 13:43:13,854 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:43:13,894 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:43:13,895 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 42.57ms
+2026-05-18 13:43:17,407 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:43:17,409 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:43:17,423 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:43:17,423 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.33ms
+2026-05-18 13:44:40,479 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:44:40,482 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:44:40,502 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:44:40,504 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 21.90ms
+2026-05-18 13:45:24,976 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:45:24,980 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:45:24,990 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:45:24,990 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 9.95ms
+2026-05-18 13:45:37,289 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:45:37,290 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:45:37,290 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:45:37,290 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:45:37,300 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:45:37,302 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:45:37,302 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.20ms
+2026-05-18 13:45:37,302 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 12.30ms
+2026-05-18 13:45:38,412 - enhanced_app - INFO - API Call Start: api.statistics.get_projects_statistics - Method: GET - Path: /api/statistics/projects
+2026-05-18 13:45:38,412 - enhanced_app - INFO - API Call Start: api.statistics.get_requirements_statistics - Method: GET - Path: /api/statistics/requirements
+2026-05-18 13:45:38,414 - enhanced_app - INFO - Business Operation Start: api.statistics.get_projects_statistics
+2026-05-18 13:45:38,414 - enhanced_app - INFO - Business Operation Start: api.statistics.get_requirements_statistics
+2026-05-18 13:45:38,434 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_requirements_statistics
+2026-05-18 13:45:38,435 - enhanced_app - INFO - API Call Complete: api.statistics.get_requirements_statistics - Status: Success - Duration: 20.97ms
+2026-05-18 13:45:38,477 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_projects_statistics
+2026-05-18 13:45:38,477 - enhanced_app - INFO - API Call Complete: api.statistics.get_projects_statistics - Status: Success - Duration: 62.73ms
+2026-05-18 13:45:39,201 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:45:39,202 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:45:39,216 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:45:39,216 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 13.86ms
+2026-05-18 13:45:40,162 - enhanced_app - INFO - API Call Start: api.statistics.get_projects_statistics - Method: GET - Path: /api/statistics/projects
+2026-05-18 13:45:40,164 - enhanced_app - INFO - Business Operation Start: api.statistics.get_projects_statistics
+2026-05-18 13:45:40,169 - enhanced_app - INFO - API Call Start: api.statistics.get_requirements_statistics - Method: GET - Path: /api/statistics/requirements
+2026-05-18 13:45:40,170 - enhanced_app - INFO - Business Operation Start: api.statistics.get_requirements_statistics
+2026-05-18 13:45:40,184 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_requirements_statistics
+2026-05-18 13:45:40,186 - enhanced_app - INFO - API Call Complete: api.statistics.get_requirements_statistics - Status: Success - Duration: 15.70ms
+2026-05-18 13:45:40,227 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_projects_statistics
+2026-05-18 13:45:40,227 - enhanced_app - INFO - API Call Complete: api.statistics.get_projects_statistics - Status: Success - Duration: 63.78ms
+2026-05-18 13:45:47,901 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:45:47,902 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:45:47,914 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:45:47,915 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 12.18ms
+2026-05-18 13:52:52,409 - enhanced_app - INFO - API Call Start: api.statistics.get_projects_statistics - Method: GET - Path: /api/statistics/projects
+2026-05-18 13:52:52,410 - enhanced_app - INFO - Business Operation Start: api.statistics.get_projects_statistics
+2026-05-18 13:52:52,412 - enhanced_app - INFO - API Call Start: api.statistics.get_requirements_statistics - Method: GET - Path: /api/statistics/requirements
+2026-05-18 13:52:52,415 - enhanced_app - INFO - Business Operation Start: api.statistics.get_requirements_statistics
+2026-05-18 13:52:52,427 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_requirements_statistics
+2026-05-18 13:52:52,429 - enhanced_app - INFO - API Call Complete: api.statistics.get_requirements_statistics - Status: Success - Duration: 14.37ms
+2026-05-18 13:52:52,520 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_projects_statistics
+2026-05-18 13:52:52,521 - enhanced_app - INFO - API Call Complete: api.statistics.get_projects_statistics - Status: Success - Duration: 110.76ms
+2026-05-18 13:52:53,268 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:52:53,270 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:52:53,281 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:52:53,282 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 11.55ms
+2026-05-18 13:52:54,069 - enhanced_app - INFO - API Call Start: api.statistics.get_projects_statistics - Method: GET - Path: /api/statistics/projects
+2026-05-18 13:52:54,069 - enhanced_app - INFO - Business Operation Start: api.statistics.get_projects_statistics
+2026-05-18 13:52:54,075 - enhanced_app - INFO - API Call Start: api.statistics.get_requirements_statistics - Method: GET - Path: /api/statistics/requirements
+2026-05-18 13:52:54,078 - enhanced_app - INFO - Business Operation Start: api.statistics.get_requirements_statistics
+2026-05-18 13:52:54,090 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_requirements_statistics
+2026-05-18 13:52:54,092 - enhanced_app - INFO - API Call Complete: api.statistics.get_requirements_statistics - Status: Success - Duration: 14.38ms
+2026-05-18 13:52:54,132 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_projects_statistics
+2026-05-18 13:52:54,132 - enhanced_app - INFO - API Call Complete: api.statistics.get_projects_statistics - Status: Success - Duration: 62.78ms
+2026-05-18 13:52:57,961 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:52:57,962 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:52:57,967 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:52:57,968 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:52:57,973 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:52:57,974 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 11.23ms
+2026-05-18 13:52:57,975 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:52:57,976 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 7.73ms
+2026-05-18 13:53:05,200 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 13:53:05,200 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 13:53:05,213 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:53:05,221 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:53:05,267 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:53:05,268 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 47.14ms
+2026-05-18 13:53:05,280 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 13:53:05,280 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 80.33ms
+2026-05-18 13:53:20,396 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-05-18 13:53:20,453 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 82, 详情: Bug状态变更: new -> in_progress, IP: 127.0.0.1
+2026-05-18 13:53:20,541 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-05-18 13:53:24,815 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-05-18 13:53:24,889 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 82, 详情: Bug状态变更: in_progress -> resolved, IP: 127.0.0.1
+2026-05-18 13:53:24,965 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-05-18 13:53:36,491 - enhanced_app - INFO - Business Operation Start: api.bugs.upload_bug_attachment
+2026-05-18 13:53:37,166 - enhanced_app - INFO - Business Operation Complete: api.bugs.upload_bug_attachment
+2026-05-18 13:59:46,807 - enhanced_app - INFO - API Call Start: api.statistics.get_projects_statistics - Method: GET - Path: /api/statistics/projects
+2026-05-18 13:59:46,807 - enhanced_app - INFO - API Call Start: api.statistics.get_requirements_statistics - Method: GET - Path: /api/statistics/requirements
+2026-05-18 13:59:46,807 - enhanced_app - INFO - Business Operation Start: api.statistics.get_projects_statistics
+2026-05-18 13:59:46,807 - enhanced_app - INFO - Business Operation Start: api.statistics.get_requirements_statistics
+2026-05-18 13:59:46,823 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_requirements_statistics
+2026-05-18 13:59:46,825 - enhanced_app - INFO - API Call Complete: api.statistics.get_requirements_statistics - Status: Success - Duration: 17.66ms
+2026-05-18 13:59:46,869 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_projects_statistics
+2026-05-18 13:59:46,870 - enhanced_app - INFO - API Call Complete: api.statistics.get_projects_statistics - Status: Success - Duration: 62.38ms
+2026-05-18 13:59:47,776 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:59:47,776 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:59:47,777 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:59:47,777 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:59:47,785 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:59:47,786 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:59:47,786 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.92ms
+2026-05-18 13:59:47,786 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 8.92ms
+2026-05-18 13:59:57,074 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-18 13:59:57,078 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-18 13:59:57,088 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-18 13:59:57,089 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 10.41ms
+2026-05-18 13:59:58,346 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 13:59:58,346 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 13:59:58,357 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 13:59:58,362 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 13:59:58,389 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 13:59:58,391 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 28.71ms
+2026-05-18 13:59:58,407 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 13:59:58,408 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 61.24ms
+2026-05-18 14:02:49,207 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 14:02:49,208 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 14:02:49,221 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:02:49,224 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:02:49,259 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:02:49,261 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 36.72ms
+2026-05-18 14:02:49,276 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 14:02:49,276 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 68.50ms
+2026-05-18 14:03:18,876 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 14:03:18,877 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 14:03:18,885 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:03:18,887 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:03:18,930 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:03:18,933 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 46.38ms
+2026-05-18 14:03:18,946 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 14:03:18,949 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 72.47ms
+2026-05-18 14:03:30,682 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 14:03:30,683 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 14:03:30,690 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:03:30,694 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:03:30,728 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:03:30,730 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 36.38ms
+2026-05-18 14:03:30,747 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 14:03:30,749 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 65.66ms
+2026-05-18 14:03:32,060 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:03:32,063 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:03:32,087 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:03:32,088 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 24.27ms
+2026-05-18 14:03:43,637 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 14:03:43,637 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 14:03:43,650 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:03:43,658 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:03:43,689 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:03:43,690 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 31.36ms
+2026-05-18 14:03:43,706 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 14:03:43,707 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 69.16ms
+2026-05-18 14:04:26,561 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-18 14:04:26,563 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-18 14:04:26,564 - enhanced_app - INFO - 职位权限修复完成
+2026-05-18 14:04:26,566 - enhanced_app - INFO - 默认职位创建成功
+2026-05-18 14:04:26,567 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-18 14:04:26,567 - enhanced_app - INFO - 数据库表创建完成
+2026-05-18 14:04:26,704 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-18 14:04:26,705 - enhanced_app - INFO - 数据库初始化完成
+2026-05-18 14:04:37,546 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 14:04:37,548 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 14:04:37,563 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:04:37,569 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:04:37,815 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:04:37,816 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 247.63ms
+2026-05-18 14:04:37,832 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 14:04:37,834 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 286.51ms
+2026-05-18 14:04:56,287 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 14:04:56,288 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 14:04:56,302 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 14:04:56,308 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 14:04:56,341 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 14:04:56,341 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 33.59ms
+2026-05-18 14:04:56,353 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 14:04:56,354 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 65.77ms

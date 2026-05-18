@@ -69,7 +69,7 @@
           </el-select>
         </div>
         
-        <div class="filter-item" v-if="filters.timeRange === 'custom'">
+        <div class="filter-item" v-show="filters.timeRange === 'custom'">
           <el-date-picker
             v-model="filters.customDateRange"
             type="daterange"
@@ -571,7 +571,7 @@ import {
   Refresh, RefreshLeft, Download, ArrowDown, 
   DataAnalysis, WarningFilled, CirclePlusFilled, CircleCheckFilled,
   Warning, TrendCharts, Timer, PieChart, Histogram, List,
-  UserFilled, View, ArrowUp, ArrowDownBold, Minus,
+  UserFilled, View, ArrowUp, ArrowDown as ArrowDownIcon, Minus,
   Calendar, Folder, Collection, CircleCheck, Flag, User, Document
 } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
@@ -584,7 +584,7 @@ export default {
     Refresh, RefreshLeft, Download, ArrowDown,
     DataAnalysis, WarningFilled, CirclePlusFilled, CircleCheckFilled,
     Warning, TrendCharts, Timer, PieChart, Histogram, List,
-    UserFilled, View, ArrowUp, ArrowDownBold, Minus,
+    UserFilled, View, ArrowUp, ArrowDown: ArrowDownIcon, Minus,
     Calendar, Folder, Collection, CircleCheck, Flag, User, Document
   },
   setup() {
@@ -2306,4 +2306,297 @@ export default {
 }
 
 .title-icon-bg.icon-type {
-  background:
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+}
+
+.title-icon-bg.icon-time {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  color: #db2777;
+}
+
+.title-icon-bg.icon-severity {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+}
+
+.title-icon-bg.icon-workload {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+}
+
+.title-icon-bg.icon-list {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #4f46e5;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.chart-container {
+  width: 100%;
+}
+
+/* ============================================
+   数据表格
+   ============================================ */
+.data-table-card {
+  margin-bottom: 24px;
+}
+
+.data-table-card :deep(.el-card__header) {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.item-count {
+  margin-left: 8px;
+}
+
+.table-view-toggle {
+  display: flex;
+}
+
+.bug-id {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-weight: 600;
+  color: #8b5cf6;
+}
+
+.status-tag,
+.severity-tag,
+.priority-tag {
+  font-weight: 500;
+}
+
+.view-btn {
+  padding: 6px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   加载遮罩
+   ============================================ */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loading-spinner span {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.spinner-ring {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(139, 92, 246, 0.1);
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: absolute;
+}
+
+.spinner-ring:nth-child(2) {
+  width: 36px;
+  height: 36px;
+  border-color: rgba(139, 92, 246, 0.15);
+  border-top-color: #a78bfa;
+  animation-duration: 0.8s;
+}
+
+.spinner-ring:nth-child(3) {
+  width: 24px;
+  height: 24px;
+  border-color: rgba(139, 92, 246, 0.2);
+  border-top-color: #c4b5fd;
+  animation-duration: 0.6s;
+}
+
+/* ============================================
+   动画
+   ============================================ */
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-elegant-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-elegant-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+.delay-600 {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   响应式适配
+   ============================================ */
+@media (max-width: 1200px) {
+  .kpi-cards .el-col {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bug-statistics {
+    padding: 16px;
+  }
+  
+  .statistics-header {
+    padding: 20px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  
+  .header-title {
+    gap: 12px;
+  }
+  
+  .title-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .title-icon .el-icon {
+    font-size: 24px;
+  }
+  
+  .title-text h2 {
+    font-size: 20px;
+  }
+  
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-item {
+    width: 100%;
+  }
+  
+  .filter-select,
+  .date-range-picker {
+    width: 100%;
+  }
+  
+  .reset-btn {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+</style>

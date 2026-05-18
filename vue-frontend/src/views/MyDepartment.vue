@@ -121,7 +121,7 @@
             <el-col :xs="12" :sm="6" :md="6" :lg="6">
               <div class="stat-card stat-card-todos">
                 <div class="stat-icon-wrapper stat-icon-wrapper-todos">
-                  <el-icon><Checklist /></el-icon>
+                  <el-icon><List /></el-icon>
                 </div>
                 <div class="stat-content">
                   <div class="stat-value">{{ todoCount }}</div>
@@ -291,9 +291,9 @@ import {
   InfoFilled,
   Folder,
   Calendar,
-  Checklist,
+  List,
   Grid,
-  Avatar,
+  User as Avatar,
   ArrowRight
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'

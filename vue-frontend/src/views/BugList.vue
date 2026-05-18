@@ -532,6 +532,7 @@ import {
   View,
   Check
 } from '@element-plus/icons-vue'
+import { h } from 'vue'
 import { useBugStore } from '@/stores/bug'
 import { useUserStore } from '@/stores/user'
 import { apiService, api as axios } from '@/services/api'
