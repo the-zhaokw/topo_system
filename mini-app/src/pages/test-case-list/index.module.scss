@@ -1,0 +1,61 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  padding: $page-padding;
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.caseItem {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.caseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.caseNo {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.priorityTag {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.priorityP0 {
+  background: rgba(244, 63, 94, 0.1);
+  color: $color-error;
+}
+
+.priorityP1 {
+  background: rgba(245, 158, 11, 0.1);
+  color: $color-warning;
+}
+
+.priorityP2 {
+  background: rgba(59, 130, 246, 0.1);
+  color: $color-info;
+}
+
+.caseName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.caseInfo {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

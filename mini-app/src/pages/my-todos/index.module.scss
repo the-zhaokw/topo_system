@@ -1,0 +1,238 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.filterBar {
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  box-shadow: $shadow-float;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.filterScroll {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.filterChip {
+  flex-shrink: 0;
+  padding: 12rpx 24rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+  white-space: nowrap;
+
+  &.active {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-color: $color-primary;
+  }
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+.todoList {
+  padding: $spacing-md $page-padding;
+}
+
+.todoCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+
+  &:active {
+    transform: scale(0.99);
+    opacity: 0.95;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6rpx;
+  }
+
+  &.priorityUrgent::before {
+    background: $color-error;
+  }
+
+  &.priorityHigh::before {
+    background: $color-warning;
+  }
+
+  &.priorityMedium::before {
+    background: $color-info;
+  }
+
+  &.priorityLow::before {
+    background: $color-text-tertiary;
+  }
+}
+
+.todoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-sm;
+}
+
+.todoTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  flex: 1;
+  margin-right: $spacing-sm;
+  line-height: 1.4;
+}
+
+.priorityBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+
+  &.priorityUrgent {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+
+  &.priorityHigh {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning-dark;
+  }
+
+  &.priorityMedium {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+  }
+
+  &.priorityLow {
+    background: rgba($color-text-tertiary, 0.1);
+    color: $color-text-secondary;
+  }
+}
+
+.todoDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-sm;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.todoMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-sm;
+}
+
+.tag {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+
+  &.statusPending {
+    background: rgba($color-text-tertiary, 0.1);
+    color: $color-text-secondary;
+  }
+
+  &.statusInProgress {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning-dark;
+  }
+
+  &.statusCompleted {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &.projectTag {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+}
+
+.todoFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-sm;
+  border-top: 1rpx solid $color-divider;
+}
+
+.dueDate {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+
+  &.overdue {
+    color: $color-error;
+  }
+}
+
+.completeBtn {
+  padding: 8rpx 20rpx;
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  text-align: center;
+
+  .emptyIcon {
+    font-size: 120rpx;
+    margin-bottom: $spacing-lg;
+  }
+
+  .emptyText {
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-sm;
+  }
+
+  .emptyHint {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}

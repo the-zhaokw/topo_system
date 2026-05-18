@@ -1,0 +1,187 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-md $page-padding;
+}
+
+.todayCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-xl;
+  padding: $spacing-xl;
+  color: $color-text-white;
+  margin-bottom: $spacing-lg;
+}
+
+.todayHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+
+  .todayDate {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+  }
+
+  .statusBadge {
+    padding: 8rpx 20rpx;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.clockTimes {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-lg 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: $radius-lg;
+}
+
+.clockItem {
+  text-align: center;
+
+  .clockLabel {
+    font-size: $font-size-sm;
+    opacity: 0.85;
+    margin-bottom: $spacing-xs;
+  }
+
+  .clockTime {
+    font-size: 48rpx;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.clockDivider {
+  width: 2rpx;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.workHours {
+  text-align: center;
+  font-size: $font-size-md;
+  margin-bottom: $spacing-lg;
+  opacity: 0.9;
+}
+
+.clockActions {
+  display: flex;
+  gap: $spacing-md;
+
+  .clockBtn {
+    flex: 1;
+    padding: $spacing-md 0;
+    background: $color-text-white;
+    border-radius: $radius-button;
+    text-align: center;
+    transition: all $transition-fast;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .clockBtnText {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+    }
+
+    &.clockBtnSecondary {
+      background: rgba(255, 255, 255, 0.2);
+
+      .clockBtnTextSecondary {
+        color: $color-text-white;
+      }
+    }
+  }
+}
+
+.historyList {
+  height: calc(100vh - 400rpx);
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.recordCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.recordHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+
+  .recordDate {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  .statusTag {
+    padding: 6rpx 16rpx;
+    border-radius: $radius-button;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.recordTimes {
+  display: flex;
+  justify-content: space-between;
+}
+
+.recordTime {
+  flex: 1;
+  text-align: center;
+
+  .timeLabel {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-bottom: 4rpx;
+  }
+
+  .timeValue {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+  }
+}
+
+.statusNormal {
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+}
+
+.statusLate {
+  background: rgba($color-warning, 0.1);
+  color: $color-warning-dark;
+}
+
+.statusAbsent {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+}
+
+.statusLeave {
+  background: rgba($color-info, 0.1);
+  color: $color-info;
+}

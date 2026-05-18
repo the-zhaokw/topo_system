@@ -1,0 +1,34 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  padding: $page-padding;
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.departmentItem {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.departmentName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.departmentInfo {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: 4rpx;
+}
+
+.subDepartment {
+  margin-top: $spacing-md;
+  padding-left: $spacing-md;
+  border-left: 4rpx solid $color-primary;
+}

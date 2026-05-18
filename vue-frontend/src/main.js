@@ -6,6 +6,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import './assets/mobile-responsive.css'
 import './styles/design-system.css'
+import './styles/mobile-utils.css'
 
 import App from './App.vue'
 import router from './router'

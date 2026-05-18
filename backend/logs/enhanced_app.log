@@ -11520,3 +11520,21 @@ ValueError: too many values to unpack (expected 5)
 2026-05-18 15:18:20,050 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 48.86ms
 2026-05-18 15:18:20,061 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-05-18 15:18:20,066 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 96.05ms
+2026-05-18 15:19:14,487 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-18 15:19:14,721 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 15:19:14,723 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 15:19:14,736 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 15:19:14,742 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 15:19:14,760 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 15:19:14,760 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 36.74ms
+2026-05-18 15:19:14,929 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 15:19:14,929 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 186.77ms
+2026-05-18 15:22:54,739 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-18 15:22:55,321 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-18 15:22:55,323 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-18 15:22:55,337 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-18 15:22:55,342 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-18 15:22:55,366 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-18 15:22:55,368 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 25.66ms
+2026-05-18 15:22:55,380 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-18 15:22:55,380 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 56.17ms

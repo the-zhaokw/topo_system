@@ -1,0 +1,66 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  padding: $page-padding;
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.riskItem {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.riskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.riskNo {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.levelTag {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+}
+
+.levelSerious {
+  background: rgba(244, 63, 94, 0.1);
+  color: $color-error;
+}
+
+.levelHigh {
+  background: rgba(245, 158, 11, 0.1);
+  color: $color-warning;
+}
+
+.levelMedium {
+  background: rgba(59, 130, 246, 0.1);
+  color: $color-info;
+}
+
+.levelLow {
+  background: rgba(34, 197, 94, 0.1);
+  color: $color-success;
+}
+
+.riskName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.riskInfo {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: 4rpx;
+}

@@ -1,0 +1,446 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 0;
+  padding-bottom: $spacing-xl;
+}
+
+.header {
+  padding: $spacing-lg $page-padding;
+  padding-top: calc(env(safe-area-inset-top) + 20rpx);
+  color: $color-text-white;
+
+  .titleWrapper {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .icon {
+      width: 64rpx;
+      height: 64rpx;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32rpx;
+    }
+
+    .titleText {
+      .mainTitle {
+        font-size: 40rpx;
+        font-weight: $font-weight-bold;
+        margin-bottom: 8rpx;
+      }
+
+      .subTitle {
+        font-size: $font-size-sm;
+        opacity: 0.85;
+      }
+    }
+  }
+}
+
+.refreshBtn {
+  position: absolute;
+  right: $page-padding;
+  top: calc(env(safe-area-inset-top) + 20rpx);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1rpx solid rgba(255, 255, 255, 0.3);
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  padding: 12rpx 24rpx;
+  border-radius: $radius-button;
+  line-height: 1.2;
+}
+
+.content {
+  padding: $spacing-lg $page-padding;
+  background: $color-bg-page;
+  min-height: calc(100vh - 200rpx);
+  border-radius: 40rpx 40rpx 0 0;
+  margin-top: -40rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  .dot {
+    width: 8rpx;
+    height: 8rpx;
+    background: $color-primary;
+    border-radius: $radius-round;
+  }
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.kpiCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  position: relative;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.95;
+  }
+
+  &.kpiPrimary {
+    grid-column: span 2;
+
+    .kpiIcon {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    }
+
+    .kpiGlow {
+      background: $color-primary;
+    }
+  }
+
+  &.kpiSuccess {
+    .kpiIcon {
+      background: linear-gradient(135deg, $color-success 0%, $color-success-dark 100%);
+    }
+
+    .kpiGlow {
+      background: $color-success;
+    }
+  }
+
+  &.kpiWarning {
+    .kpiIcon {
+      background: linear-gradient(135deg, $color-warning 0%, $color-warning-dark 100%);
+    }
+
+    .kpiGlow {
+      background: $color-warning;
+    }
+  }
+
+  &.kpiError {
+    .kpiIcon {
+      background: linear-gradient(135deg, $color-error 0%, $color-error-light 100%);
+    }
+
+    .kpiGlow {
+      background: $color-error;
+    }
+  }
+
+  &.kpiInfo {
+    .kpiIcon {
+      background: linear-gradient(135deg, $color-info 0%, $color-info-light 100%);
+    }
+
+    .kpiGlow {
+      background: $color-info;
+    }
+  }
+
+  &.kpiPurple {
+    .kpiIcon {
+      background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+    }
+
+    .kpiGlow {
+      background: #8B5CF6;
+    }
+  }
+}
+
+.kpiHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.kpiIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .iconText {
+    font-size: 36rpx;
+    color: $color-text-white;
+    position: relative;
+    z-index: 1;
+  }
+
+  .kpiGlow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    opacity: 0.3;
+    filter: blur(16rpx);
+  }
+}
+
+.kpiTrend {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: $font-size-xs;
+  padding: 6rpx 12rpx;
+  border-radius: $radius-button;
+  font-weight: $font-weight-medium;
+
+  &.trendUp {
+    color: $color-error;
+    background: rgba($color-error, 0.1);
+  }
+
+  &.trendDown {
+    color: $color-success;
+    background: rgba($color-success, 0.1);
+  }
+
+  &.trendStable {
+    color: $color-text-tertiary;
+    background: rgba($color-text-tertiary, 0.1);
+  }
+}
+
+.kpiBody {
+  .kpiValue {
+    font-size: 48rpx;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    line-height: 1.2;
+    display: flex;
+    align-items: baseline;
+    gap: 4rpx;
+    margin-bottom: 8rpx;
+
+    &.kpiValueLarge {
+      font-size: 56rpx;
+    }
+  }
+
+  .kpiUnit {
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    font-weight: $font-weight-normal;
+  }
+
+  .kpiLabel {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}
+
+.trendChart {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  .chartTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  .granularity {
+    display: flex;
+    gap: $spacing-xs;
+  }
+
+  .granularityBtn {
+    padding: 8rpx 20rpx;
+    font-size: $font-size-xs;
+    border-radius: $radius-button;
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+    border: none;
+    transition: all $transition-fast;
+
+    &.active {
+      background: $color-primary;
+      color: $color-text-white;
+    }
+  }
+}
+
+.chartContainer {
+  height: 320rpx;
+  position: relative;
+  padding: $spacing-md 0;
+}
+
+.chartBars {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 240rpx;
+  padding-bottom: $spacing-md;
+  border-bottom: 2rpx solid $color-border;
+}
+
+.barGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.barWrapper {
+  display: flex;
+  gap: 4rpx;
+  align-items: flex-end;
+  height: 200rpx;
+  margin-bottom: $spacing-xs;
+}
+
+.bar {
+  width: 20rpx;
+  border-radius: 4rpx 4rpx 0 0;
+  transition: height 0.3s ease;
+}
+
+.barNew {
+  background: $color-primary;
+}
+
+.barResolved {
+  background: $color-success;
+}
+
+.barLabel {
+  font-size: 18rpx;
+  color: $color-text-tertiary;
+}
+
+.chartLegend {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-lg;
+  padding-top: $spacing-md;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.legendDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+
+  &.legendDotNew {
+    background: $color-primary;
+  }
+
+  &.legendDotResolved {
+    background: $color-success;
+  }
+}
+
+.quickActions {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.95);
+    background: rgba($color-primary, 0.1);
+  }
+
+  .actionIcon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+  }
+
+  .actionLabel {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    text-align: center;
+  }
+}
+
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  .loadingSpinner {
+    width: 80rpx;
+    height: 80rpx;
+    border: 6rpx solid rgba(255, 255, 255, 0.3);
+    border-top-color: $color-text-white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
