@@ -1,404 +1,429 @@
 <template>
   <div class="my-todos">
-    <div class="page-header">
-      <div class="header-left">
-        <el-button @click="$router.push('/dashboard')" type="primary" plain>
-          <el-icon><ArrowLeft /></el-icon>
-          返回个人工作台
-        </el-button>
+    <!-- 页面头部 - 玻璃拟态风格 -->
+    <div class="page-header animate-fade-in-down">
+      <div class="header-bg-decoration">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
       </div>
-      <h2>待办事项</h2>
-      <div class="header-actions">
-        <el-input
-          v-model="searchKeyword"
-          placeholder="搜索待办事项..."
-          prefix-icon="Search"
-          clearable
-          style="width: 300px"
-        />
-        <el-select v-model="filterCategory" placeholder="筛选类型" clearable style="width: 150px; margin-left: 10px">
-          <el-option label="全部" value="" />
-          <el-option label="审批类" value="approval" />
-          <el-option label="Bug相关" value="bug" />
-
-          <el-option label="评审类" value="review" />
-          <el-option label="合同相关" value="contract" />
-        </el-select>
-        <el-select v-model="filterPriority" placeholder="筛选优先级" clearable style="width: 120px; margin-left: 10px">
-          <el-option label="全部" value="" />
-          <el-option label="紧急" value="urgent" />
-          <el-option label="高" value="high" />
-          <el-option label="中" value="medium" />
-          <el-option label="低" value="low" />
-        </el-select>
-        <el-button type="primary" @click="refreshAll" :loading="loading" style="margin-left: 10px">
-          <el-icon><Refresh /></el-icon>
-          刷新
-        </el-button>
+      <div class="header-content">
+        <div class="header-left">
+          <el-button @click="$router.push('/dashboard')" class="btn-back">
+            <el-icon><ArrowLeft /></el-icon>
+            返回个人工作台
+          </el-button>
+        </div>
+        <div class="header-title">
+          <div class="title-icon-wrapper">
+            <el-icon class="title-icon"><Bell /></el-icon>
+          </div>
+          <div class="title-text">
+            <h1>待办事项</h1>
+            <p class="subtitle">查看和处理您的待办任务</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="搜索待办事项..."
+            prefix-icon="Search"
+            clearable
+            class="search-input"
+          />
+          <el-select v-model="filterCategory" placeholder="筛选类型" clearable class="filter-select">
+            <el-option label="全部" value="" />
+            <el-option label="审批类" value="approval" />
+            <el-option label="Bug相关" value="bug" />
+            <el-option label="评审类" value="review" />
+            <el-option label="合同相关" value="contract" />
+          </el-select>
+          <el-select v-model="filterPriority" placeholder="筛选优先级" clearable class="filter-select-priority">
+            <el-option label="全部" value="" />
+            <el-option label="紧急" value="urgent" />
+            <el-option label="高" value="high" />
+            <el-option label="中" value="medium" />
+            <el-option label="低" value="low" />
+          </el-select>
+          <el-button type="primary" @click="refreshAll" :loading="loading" class="btn-refresh">
+            <el-icon><Refresh /></el-icon>
+            刷新
+          </el-button>
+        </div>
       </div>
     </div>
 
-    <el-row :gutter="20" class="stats-row">
-      <el-col :span="3">
-        <el-card class="stat-card total-card" shadow="hover">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-              <el-icon :size="24" style="color: white;"><Bell /></el-icon>
+    <!-- 统计卡片 -->
+    <div class="stats-row animate-fade-in-up delay-100">
+      <el-row :gutter="16">
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-total" @click="filterByCategory('')">
+            <div class="stat-icon-wrapper stat-icon-wrapper-total">
+              <el-icon><Bell /></el-icon>
             </div>
-            <div class="stat-badge-count" :style="{ background: summary.total > 0 ? '#F56C6C' : '#409EFF' }">{{ summary.total }}</div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-label">待办总数</div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="stat-card" shadow="hover" @click="filterByCategory('approval')">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">
-              <el-icon :size="24" style="color: white;"><Stamp /></el-icon>
+            <div class="stat-content">
+              <div class="stat-value">{{ summary.total }}</div>
+              <div class="stat-label">待办总数</div>
             </div>
-            <div class="stat-badge-count" :style="{ background: summary.approvals?.total > 0 ? '#F56C6C' : '#409EFF' }">{{ summary.approvals?.total || 0 }}</div>
           </div>
-          <div class="stat-content">
-            <div class="stat-label">待我审批</div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="stat-card" shadow="hover" @click="filterByCategory('bug')">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);">
-              <el-icon :size="24" style="color: white;"><CircleClose /></el-icon>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-approval" @click="filterByCategory('approval')">
+            <div class="stat-icon-wrapper stat-icon-wrapper-approval">
+              <el-icon><Stamp /></el-icon>
             </div>
-            <div class="stat-badge-count" :style="{ background: summary.bugs?.total > 0 ? '#F56C6C' : '#409EFF' }">{{ summary.bugs?.total || 0 }}</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ summary.approvals?.total || 0 }}</div>
+              <div class="stat-label">待我审批</div>
+            </div>
           </div>
-          <div class="stat-content">
-            <div class="stat-label">Bug待办</div>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-bug" @click="filterByCategory('bug')">
+            <div class="stat-icon-wrapper stat-icon-wrapper-bug">
+              <el-icon><CircleClose /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ summary.bugs?.total || 0 }}</div>
+              <div class="stat-label">待处理Bug</div>
+            </div>
           </div>
-        </el-card>
-      </el-col>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-review" @click="filterByCategory('review')">
+            <div class="stat-icon-wrapper stat-icon-wrapper-review">
+              <el-icon><Document /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ summary.reviews?.total || 0 }}</div>
+              <div class="stat-label">待我评审</div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
 
-      <el-col :span="3">
-        <el-card class="stat-card" shadow="hover" @click="filterByCategory('review')">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);">
-              <el-icon :size="24" style="color: white;"><Document /></el-icon>
+    <!-- 全部待办事项 -->
+    <div class="content-section animate-fade-in-up delay-200">
+      <el-card class="glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <el-icon><List /></el-icon>
+              <h3>全部待办事项</h3>
+              <span class="total-count">共 {{ filteredTodos.length }} 项</span>
             </div>
-            <div class="stat-badge-count" :style="{ background: summary.reviews?.total > 0 ? '#F56C6C' : '#409EFF' }">{{ summary.reviews?.total || 0 }}</div>
           </div>
-          <div class="stat-content">
-            <div class="stat-label">待我评审</div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="stat-card" shadow="hover" @click="filterByCategory('contract')">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);">
-              <el-icon :size="24" style="color: white;"><FolderOpened /></el-icon>
-            </div>
-            <div class="stat-badge-count" :style="{ background: summary.contracts?.total > 0 ? '#F56C6C' : '#409EFF' }">{{ summary.contracts?.total || 0 }}</div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-label">合同待办</div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="stat-card urgent-card" shadow="hover">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-box" style="background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);">
-              <el-icon :size="24" style="color: white;"><Warning /></el-icon>
-            </div>
-            <div class="stat-badge-count" :style="{ background: urgentCount > 0 ? '#F56C6C' : '#409EFF' }">{{ urgentCount }}</div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-label">紧急待办</div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </template>
 
-    <el-card class="section-card">
-      <template #header>
-        <div class="card-header">
-          <span>全部待办事项</span>
-          <div class="header-tags">
-            <el-tag type="info">共 {{ filteredTodos.length }} 项</el-tag>
-          </div>
+        <el-table 
+          :data="paginatedTodos" 
+          v-loading="loading" 
+          stripe 
+          class="custom-table"
+          :row-class-name="getRowClassName"
+          @row-click="handleRowClick"
+        >
+          <el-table-column prop="type_name" label="类型" width="120" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getCategoryTagType(row.category)" size="small" effect="light" class="category-tag">
+                {{ row.type_name }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="标题" min-width="250">
+            <template #default="{ row }">
+              <div class="todo-title">
+                <el-icon v-if="row.is_overdue" class="overdue-icon"><WarningFilled /></el-icon>
+                <span :class="{ 'overdue-text': row.is_overdue }">{{ row.title }}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getStatusTagType(row.status)" size="small" effect="light" class="status-tag">
+                {{ getStatusText(row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="priority" label="优先级" width="90" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getPriorityTagType(row.priority)" size="small" effect="dark" class="priority-tag">
+                {{ getPriorityText(row.priority) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="applicant_name" label="申请人" width="100">
+            <template #default="{ row }">
+              <div class="applicant-name">{{ row.applicant_name || '-' }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="due_date" label="截止时间" width="120" align="center">
+            <template #default="{ row }">
+              <span :class="{ 'overdue-text': row.is_overdue }">
+                {{ row.due_date ? formatDate(row.due_date) : '-' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="created_at" label="创建时间" width="160" align="center">
+            <template #default="{ row }">
+              <div class="timestamp">{{ formatDateTime(row.created_at) }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" size="small" @click.stop="handleTodoAction(row)" class="action-btn">
+                {{ getActionText(row) }}
+              </el-button>
+              <el-button size="small" @click.stop="viewDetail(row)" class="detail-btn">详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <div class="pagination-section">
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="filteredTodos.length"
+            layout="total, sizes, prev, pager, next, jumper"
+          />
         </div>
-      </template>
+      </el-card>
+    </div>
 
-      <el-table 
-        :data="paginatedTodos" 
-        v-loading="loading" 
-        stripe 
-        :row-class-name="getRowClassName"
-        @row-click="handleRowClick"
-      >
-        <el-table-column prop="type_name" label="类型" width="120">
-          <template #default="{ row }">
-            <el-tag :type="getCategoryTagType(row.category)" size="small">
-              {{ row.type_name }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="title" label="标题" min-width="250">
-          <template #default="{ row }">
-            <div class="todo-title">
-              <el-icon v-if="row.is_overdue" color="#F56C6C"><WarningFilled /></el-icon>
-              <span :class="{ 'overdue-text': row.is_overdue }">{{ row.title }}</span>
+    <!-- 待我审批 -->
+    <div class="content-section animate-fade-in-up delay-300" v-if="approvalTodos.length > 0">
+      <el-card class="glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <el-icon><Stamp /></el-icon>
+              <h3>待我审批</h3>
+              <span class="section-badge badge-approval">{{ approvalTodos.length }}</span>
             </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="getStatusTagType(row.status)" size="small">
-              {{ getStatusText(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="priority" label="优先级" width="90">
-          <template #default="{ row }">
-            <el-tag :type="getPriorityTagType(row.priority)" size="small" effect="dark">
-              {{ getPriorityText(row.priority) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="applicant_name" label="申请人" width="100">
-          <template #default="{ row }">
-            {{ row.applicant_name || '-' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="due_date" label="截止时间" width="120">
-          <template #default="{ row }">
-            <span :class="{ 'overdue-text': row.is_overdue }">
-              {{ row.due_date ? formatDate(row.due_date) : '-' }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
-          <template #default="{ row }">
-            {{ formatDateTime(row.created_at) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right">
-          <template #default="{ row }">
-            <el-button type="primary" size="small" @click.stop="handleTodoAction(row)">
-              {{ getActionText(row) }}
-            </el-button>
-            <el-button size="small" @click.stop="viewDetail(row)">详情</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+          </div>
+        </template>
 
-      <div class="pagination-container">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="filteredTodos.length"
-          layout="total, sizes, prev, pager, next, jumper"
-        />
-      </div>
-    </el-card>
+        <el-table :data="approvalTodos" v-loading="loading" stripe class="custom-table">
+          <el-table-column prop="type_name" label="审批类型" width="120" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getApprovalTypeTag(row.type)" size="small" effect="light" class="category-tag">
+                {{ row.type_name }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="标题" min-width="200">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="viewDetail(row)" class="title-link">
+                {{ row.title }}
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="applicant_name" label="申请人" width="100">
+            <template #default="{ row }">
+              <div class="applicant-name">{{ row.applicant_name }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag type="warning" size="small" effect="light" class="status-tag">待审批</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="created_at" label="申请时间" width="160" align="center">
+            <template #default="{ row }">
+              <div class="timestamp">{{ formatDateTime(row.created_at) }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="success" size="small" @click="handleApprove(row)" class="approve-btn">
+                <el-icon><Check /></el-icon>批准
+              </el-button>
+              <el-button type="danger" size="small" @click="handleReject(row)" class="reject-btn">
+                <el-icon><Close /></el-icon>拒绝
+              </el-button>
+              <el-button size="small" @click="viewDetail(row)" class="detail-btn">详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
 
-    <el-card class="section-card" v-if="approvalTodos.length > 0">
-      <template #header>
-        <div class="card-header">
-          <span>待我审批</span>
-          <el-tag type="warning">{{ approvalTodos.length }}</el-tag>
-        </div>
-      </template>
+    <!-- Bug待办 -->
+    <div class="content-section animate-fade-in-up delay-300" v-if="bugTodos.length > 0" ref="bugSectionRef">
+      <el-card class="glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <el-icon><CircleClose /></el-icon>
+              <h3>Bug待办</h3>
+              <span class="section-badge badge-bug">{{ bugTodos.length }}</span>
+            </div>
+          </div>
+        </template>
 
-      <el-table :data="approvalTodos" v-loading="loading" stripe>
-        <el-table-column prop="type_name" label="审批类型" width="120">
-          <template #default="{ row }">
-            <el-tag :type="getApprovalTypeTag(row.type)" size="small">
-              {{ row.type_name }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="title" label="标题" min-width="200">
-          <template #default="{ row }">
-            <el-button type="primary" link @click="viewDetail(row)">
-              {{ row.title }}
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="applicant_name" label="申请人" width="100" />
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag type="warning" size="small">待审批</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="申请时间" width="160">
-          <template #default="{ row }">
-            {{ formatDateTime(row.created_at) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
-          <template #default="{ row }">
-            <el-button type="success" size="small" @click="handleApprove(row)">批准</el-button>
-            <el-button type="danger" size="small" @click="handleReject(row)">拒绝</el-button>
-            <el-button size="small" @click="viewDetail(row)">详情</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+        <el-table :data="bugTodos" v-loading="loading" stripe class="custom-table">
+          <el-table-column prop="type_name" label="类型" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag :type="row.type === 'to_resolve' ? 'danger' : 'primary'" size="small" effect="light" class="category-tag">
+                {{ row.type_name }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="Bug标题" min-width="200">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="row.link ? router.push(row.link) : null" class="title-link">
+                {{ row.title }}
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="severity" label="严重程度" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getSeverityTagType(row.severity)" size="small" effect="light" class="severity-tag">
+                {{ getSeverityText(row.severity) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="priority" label="优先级" width="90" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getPriorityTagType(row.priority)" size="small" effect="light" class="priority-tag">
+                {{ getPriorityText(row.priority) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getBugStatusTagType(row.status)" size="small" effect="light" class="status-tag">
+                {{ getBugStatusText(row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="created_at" label="创建时间" width="160" align="center">
+            <template #default="{ row }">
+              <div class="timestamp">{{ formatDateTime(row.created_at) }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" size="small" @click="row.link ? router.push(row.link) : null" class="action-btn">
+                {{ row.type === 'to_resolve' ? '处理' : '验证' }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
 
-    <el-card class="section-card" v-if="bugTodos.length > 0" ref="bugSectionRef">
-      <template #header>
-        <div class="card-header">
-          <span>Bug待办</span>
-          <el-tag type="danger">{{ bugTodos.length }}</el-tag>
-        </div>
-      </template>
+    <!-- 待我评审 -->
+    <div class="content-section animate-fade-in-up delay-300" v-if="reviewTodos.length > 0">
+      <el-card class="glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <el-icon><Document /></el-icon>
+              <h3>待我评审</h3>
+              <span class="section-badge badge-review">{{ reviewTodos.length }}</span>
+            </div>
+          </div>
+        </template>
 
-      <el-table :data="bugTodos" v-loading="loading" stripe>
-        <el-table-column prop="type_name" label="类型" width="100">
-          <template #default="{ row }">
-            <el-tag :type="row.type === 'to_resolve' ? 'danger' : 'primary'" size="small">
-              {{ row.type_name }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="title" label="Bug标题" min-width="200">
-          <template #default="{ row }">
-            <el-button type="primary" link @click="row.link ? router.push(row.link) : null">
-              {{ row.title }}
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="severity" label="严重程度" width="100">
-          <template #default="{ row }">
-            <el-tag :type="getSeverityTagType(row.severity)" size="small">
-              {{ getSeverityText(row.severity) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="priority" label="优先级" width="90">
-          <template #default="{ row }">
-            <el-tag :type="getPriorityTagType(row.priority)" size="small">
-              {{ getPriorityText(row.priority) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="getBugStatusTagType(row.status)" size="small">
-              {{ getBugStatusText(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
-          <template #default="{ row }">
-            {{ formatDateTime(row.created_at) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100" fixed="right">
-          <template #default="{ row }">
-            <el-button type="primary" size="small" @click="row.link ? router.push(row.link) : null">
-              {{ row.type === 'to_resolve' ? '处理' : '验证' }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+        <el-table :data="reviewTodos" v-loading="loading" stripe class="custom-table">
+          <el-table-column prop="type_name" label="评审类型" width="120" align="center">
+            <template #default="{ row }">
+              <el-tag size="small" effect="light" class="category-tag">{{ row.type_name }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="标题" min-width="200">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="viewDetail(row)" class="title-link">
+                {{ row.title }}
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="identifier" label="编号" width="120" align="center">
+            <template #default="{ row }">
+              <span class="id-badge">{{ row.identifier }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag type="warning" size="small" effect="light" class="status-tag">待评审</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="created_at" label="创建时间" width="160" align="center">
+            <template #default="{ row }">
+              <div class="timestamp">{{ formatDateTime(row.created_at) }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" size="small" @click="viewDetail(row)" class="action-btn">评审</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
 
+    <!-- 合同待办 -->
+    <div class="content-section animate-fade-in-up delay-300" v-if="contractTodos.length > 0">
+      <el-card class="glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <el-icon><FolderOpened /></el-icon>
+              <h3>合同待办</h3>
+              <span class="section-badge badge-contract">{{ contractTodos.length }}</span>
+            </div>
+          </div>
+        </template>
 
+        <el-table :data="contractTodos" v-loading="loading" stripe class="custom-table">
+          <el-table-column prop="type_name" label="类型" width="120" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getContractTypeTag(row.type)" size="small" effect="light" class="category-tag">
+                {{ row.type_name }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="标题" min-width="200">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="viewDetail(row)" class="title-link">
+                {{ row.title }}
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="contract_title" label="关联合同" width="150" show-overflow-tooltip>
+            <template #default="{ row }">
+              <div class="contract-title">{{ row.contract_title }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag type="warning" size="small" effect="light" class="status-tag">{{ row.status }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="priority" label="优先级" width="90" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getPriorityTagType(row.priority)" size="small" effect="light" class="priority-tag">
+                {{ getPriorityText(row.priority) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="created_at" label="计划时间" width="120" align="center">
+            <template #default="{ row }">
+              <div class="timestamp">{{ row.created_at ? formatDate(row.created_at) : '-' }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" size="small" @click="viewDetail(row)" class="action-btn">处理</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
 
-    <el-card class="section-card" v-if="reviewTodos.length > 0">
-      <template #header>
-        <div class="card-header">
-          <span>待我评审</span>
-          <el-tag type="info">{{ reviewTodos.length }}</el-tag>
-        </div>
-      </template>
-
-      <el-table :data="reviewTodos" v-loading="loading" stripe>
-        <el-table-column prop="type_name" label="评审类型" width="120">
-          <template #default="{ row }">
-            <el-tag size="small">{{ row.type_name }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="title" label="标题" min-width="200">
-          <template #default="{ row }">
-            <el-button type="primary" link @click="viewDetail(row)">
-              {{ row.title }}
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="identifier" label="编号" width="120" />
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag type="warning" size="small">待评审</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
-          <template #default="{ row }">
-            {{ formatDateTime(row.created_at) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100" fixed="right">
-          <template #default="{ row }">
-            <el-button type="primary" size="small" @click="viewDetail(row)">评审</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <el-card class="section-card" v-if="contractTodos.length > 0">
-      <template #header>
-        <div class="card-header">
-          <span>合同待办</span>
-          <el-tag type="info">{{ contractTodos.length }}</el-tag>
-        </div>
-      </template>
-
-      <el-table :data="contractTodos" v-loading="loading" stripe>
-        <el-table-column prop="type_name" label="类型" width="120">
-          <template #default="{ row }">
-            <el-tag :type="getContractTypeTag(row.type)" size="small">
-              {{ row.type_name }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="title" label="标题" min-width="200">
-          <template #default="{ row }">
-            <el-button type="primary" link @click="viewDetail(row)">
-              {{ row.title }}
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="contract_title" label="关联合同" width="150" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag type="warning" size="small">{{ row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="priority" label="优先级" width="90">
-          <template #default="{ row }">
-            <el-tag :type="getPriorityTagType(row.priority)" size="small">
-              {{ getPriorityText(row.priority) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="计划时间" width="120">
-          <template #default="{ row }">
-            {{ row.created_at ? formatDate(row.created_at) : '-' }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100" fixed="right">
-          <template #default="{ row }">
-            <el-button type="primary" size="small" @click="viewDetail(row)">处理</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <el-dialog v-model="approvalDialogVisible" :title="isApprovalMode ? '审批申请' : '申请详情'" width="600px">
+    <el-dialog v-model="approvalDialogVisible" :title="isApprovalMode ? '审批申请' : '申请详情'" width="600px" class="approval-dialog">
       <el-descriptions :column="2" border v-if="currentApproval">
         <el-descriptions-item label="申请 ID" :span="2">
           {{ currentApproval.id }}
@@ -453,7 +478,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
   ArrowLeft, Refresh, Bell, Stamp, List, Document, Warning, 
-  WarningFilled, CircleClose, FolderOpened
+  WarningFilled, CircleClose, FolderOpened, Check, Close
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
@@ -795,7 +820,8 @@ const getCategoryTagType = (category) => {
     approval: 'warning',
     bug: 'danger',
     task: 'primary',
-    review: 'success'
+    review: 'success',
+    contract: 'info'
   }
   return map[category] || 'info'
 }
@@ -968,214 +994,661 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 导入设计系统 */
+@import '@/styles/design-system.css';
+
 .my-todos {
-  padding: 20px;
+  padding: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100%;
 }
 
+/* 页面头部 - 玻璃拟态风格 */
 .page-header {
+  position: relative;
   margin-bottom: 24px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: #f093fb;
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: #4facfe;
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
 }
 
 .header-left {
   margin-bottom: 16px;
 }
 
-.page-header h2 {
-  margin: 0 0 16px 0;
-  color: #303133;
-  font-size: 24px;
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.title-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.title-icon {
+  font-size: 32px;
+  color: white;
+}
+
+.title-text h1 {
+  margin: 0 0 6px 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
+.search-input {
+  width: 280px;
+}
+
+.search-input :deep(.el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.filter-select,
+.filter-select-priority {
+  width: 140px;
+}
+
+.filter-select :deep(.el-input__wrapper),
+.filter-select-priority :deep(.el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-refresh {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  transition: all 0.3s;
+  border-radius: 10px;
+}
+
+.btn-refresh:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* 统计卡片区域 */
 .stats-row {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding: 0 4px;
 }
 
 .stat-card {
-  text-align: center;
-  padding: 20px 0;
-  cursor: pointer;
-  transition: all 0.3s;
   position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  cursor: pointer;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1);
 }
 
-.stat-icon-box {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 12px;
+.stat-card:hover::before {
+  transform: scaleX(1);
 }
+
+.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-approval::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.stat-card-bug::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+.stat-card-review::before { background: linear-gradient(90deg, #10b981, #34d399); }
 
 .stat-icon-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.stat-badge-count {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #F56C6C;
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  min-width: 22px;
-  height: 22px;
-  border-radius: 11px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  font-size: 24px;
+  transition: all 0.4s;
+}
+
+.stat-card:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-icon-wrapper-total {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #667eea;
+  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+}
+
+.stat-icon-wrapper-approval {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+  box-shadow: 0 4px 15px -3px rgba(245, 158, 11, 0.4);
+}
+
+.stat-icon-wrapper-bug {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  box-shadow: 0 4px 15px -3px rgba(239, 68, 68, 0.4);
+}
+
+.stat-icon-wrapper-review {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+  box-shadow: 0 4px 15px -3px rgba(16, 185, 129, 0.4);
 }
 
 .stat-content {
-  margin-bottom: 4px;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card-total .stat-value {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-approval .stat-value {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-bug .stat-value {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-review .stat-value {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: #606266;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
 }
 
-.stat-badge {
-  position: absolute;
-  bottom: -6px;
-  left: -6px;
-}
-
-.section-card {
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s;
   margin-bottom: 20px;
+}
+
+.glass-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.glass-card :deep(.el-card__header) {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+/* 内容区域 */
+.content-section {
+  margin-bottom: 20px;
+  padding: 0 4px;
 }
 
 .card-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-.header-tags {
+.card-title {
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 
+.card-title .el-icon {
+  color: #6366f1;
+  font-size: 20px;
+}
+
+.card-title h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.total-count {
+  font-size: 13px;
+  color: #64748b;
+  margin-left: 8px;
+  background: rgba(241, 245, 249, 0.8);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.section-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-left: 8px;
+}
+
+.badge-approval {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+}
+
+.badge-bug {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+}
+
+.badge-review {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+}
+
+.badge-contract {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #6366f1;
+}
+
+/* 自定义表格 */
+.custom-table {
+  --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
+  --el-table-row-hover-bg-color: rgba(99, 102, 241, 0.05);
+}
+
+.custom-table :deep(.el-table__header th) {
+  font-weight: 600;
+  color: #1e293b;
+  background: rgba(241, 245, 249, 0.8);
+}
+
+.custom-table :deep(.el-table__row) {
+  transition: all 0.3s;
+}
+
+/* 待办标题 */
 .todo-title {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+}
+
+.overdue-icon {
+  color: #ef4444;
+  font-size: 16px;
 }
 
 .overdue-text {
-  color: #F56C6C;
+  color: #ef4444;
   font-weight: 500;
 }
 
+/* 标签样式 */
+.category-tag,
+.status-tag,
+.priority-tag,
+.severity-tag {
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.priority-tag {
+  font-size: 11px;
+}
+
+/* 申请人 */
+.applicant-name {
+  font-weight: 500;
+  color: #475569;
+}
+
+/* 时间戳 */
+.timestamp {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ID徽章 */
+.id-badge {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(241, 245, 249, 0.8);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* 合同标题 */
+.contract-title {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* 标题链接 */
+.title-link {
+  font-weight: 500;
+}
+
+/* 操作按钮 */
+.action-btn,
+.detail-btn,
+.approve-btn,
+.reject-btn {
+  transition: all 0.3s;
+}
+
+.action-btn:hover,
+.approve-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.4);
+}
+
+.reject-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -2px rgba(239, 68, 68, 0.4);
+}
+
+.detail-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* 行样式 */
 .overdue-row {
-  background-color: #FEF0F0 !important;
+  background-color: rgba(254, 226, 226, 0.5) !important;
 }
 
 .urgent-row {
-  background-color: #FDF6EC !important;
+  background-color: rgba(254, 243, 199, 0.5) !important;
 }
 
-.pagination-container {
-  margin-top: 20px;
+/* 分页 */
+.pagination-section {
+  margin-top: 24px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
-.detail-item {
-  margin-bottom: 8px;
+/* 审批对话框 */
+.approval-dialog :deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  border-radius: 16px 16px 0 0;
 }
 
-.detail-item:last-child {
-  margin-bottom: 0;
+.approval-dialog :deep(.el-dialog__title) {
+  color: white;
+  font-weight: 600;
 }
 
-:deep(.el-table .el-table__row) {
-  cursor: pointer;
+.approval-dialog :deep(.el-dialog__headerbtn .el-dialog__close) {
+  color: white;
 }
 
-:deep(.el-table .el-table__row:hover) {
-  background-color: #f5f7fa;
+/* 动画 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
   .my-todos {
-    padding: 12px;
+    padding: 0;
   }
 
   .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 16px;
   }
 
-  .page-header h2 {
-    font-size: 18px;
-    margin: 0 0 12px 0;
-  }
-
-  .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
-    min-width: 80px;
-    max-width: calc(50% - 4px);
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
-  .stats-row {
-    margin-bottom: 16px;
-  }
-
-  .stats-row .el-col {
-    width: 50%;
-    max-width: 50%;
-    flex: 0 0 50%;
+  .header-left {
     margin-bottom: 12px;
   }
 
-  .stat-card {
-    padding: 16px 0;
+  .header-title {
+    gap: 14px;
+    margin-bottom: 16px;
   }
 
-  .stat-icon-box {
+  .title-icon-wrapper {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
-    margin-bottom: 8px;
+    border-radius: 14px;
   }
 
-  .stat-icon-box i {
-    font-size: 20px;
+  .title-icon {
+    font-size: 24px;
+  }
+
+  .title-text h1 {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .search-input,
+  .filter-select,
+  .filter-select-priority {
+    width: 100% !important;
+  }
+
+  .stats-row {
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .stat-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .stat-value {
+    font-size: 22px;
   }
 
   .stat-label {
     font-size: 12px;
   }
 
-  .section-card {
+  .content-section {
     margin-bottom: 16px;
   }
 
@@ -1183,118 +1656,53 @@ onMounted(() => {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    font-size: 14px;
   }
 
-  .header-tags {
+  .card-title {
     flex-wrap: wrap;
-    gap: 6px;
   }
 
-  .header-tags .el-tag {
-    font-size: 11px;
-    padding: 2px 6px;
+  .custom-table :deep(.el-table__row:hover) .view-btn {
+    opacity: 1;
   }
 
-  .pagination-container {
-    margin-top: 16px;
+  .pagination-section {
     justify-content: center;
   }
 
-  .el-pagination {
-    font-size: 11px !important;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .el-pagination__sizes,
-  .el-pagination__jump {
-    display: none !important;
-  }
-
-  .el-pagination button,
-  .el-pager li {
-    min-width: 26px !important;
-    height: 26px !important;
-    line-height: 26px !important;
-    font-size: 11px !important;
-  }
-
   .el-table {
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 
   .el-table th,
   .el-table td {
-    padding: 6px 4px !important;
-  }
-
-  .el-dialog {
-    width: 95% !important;
-    margin: 10px auto !important;
-    max-height: 90vh !important;
-  }
-
-  .el-dialog__header {
-    padding: 12px !important;
-  }
-
-  .el-dialog__body {
-    padding: 12px !important;
-    max-height: 60vh !important;
-    overflow-y: auto !important;
-  }
-
-  .el-dialog__footer {
-    padding: 12px !important;
-  }
-
-  .detail-item {
-    font-size: 12px;
+    padding: 8px 6px !important;
   }
 }
 
 @media screen and (max-width: 480px) {
-  .my-todos {
-    padding: 8px;
+  .page-header {
+    padding: 16px;
   }
 
-  .page-header h2 {
-    font-size: 16px;
+  .title-text h1 {
+    font-size: 20px;
   }
 
-  .header-actions .el-button {
-    font-size: 11px;
-    padding: 6px 10px;
-    min-width: 70px;
+  .stat-card {
+    padding: 14px;
   }
 
-  .stats-row .el-col {
-    padding: 0 6px;
-  }
-
-  .stat-icon-box {
-    width: 40px;
-    height: 40px;
-  }
-
-  .stat-label {
-    font-size: 11px;
+  .stat-value {
+    font-size: 20px;
   }
 
   .el-table {
-    font-size: 10px !important;
+    font-size: 11px !important;
   }
 
   .el-pagination {
-    font-size: 10px !important;
-  }
-
-  .el-pagination button,
-  .el-pager li {
-    min-width: 24px !important;
-    height: 24px !important;
-    line-height: 24px !important;
+    font-size: 11px !important;
   }
 }
 </style>

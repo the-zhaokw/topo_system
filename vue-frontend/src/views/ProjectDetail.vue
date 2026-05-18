@@ -1,309 +1,458 @@
 <template>
-  <div class="project-detail">
-    <el-page-header @back="$router.back()" content="项目详情"></el-page-header>
+  <div class="project-detail-container">
+    <!-- 页面头部 - 玻璃拟态风格 -->
+    <div class="page-header animate-fade-in-down">
+      <div class="header-bg-decoration">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+      </div>
+      <div class="header-content">
+        <div class="header-left">
+          <el-page-header @back="$router.back()" class="custom-page-header">
+            <template #content>
+              <span class="header-title-text">项目详情</span>
+            </template>
+          </el-page-header>
+          <div class="header-title">
+            <div class="title-icon-wrapper">
+              <el-icon class="title-icon"><Folder /></el-icon>
+            </div>
+            <div class="title-text">
+              <h1>{{ project.name }}</h1>
+              <p class="subtitle">{{ getProjectTypeText(project.project_type) }} · {{ getStatusText(project.status) }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <el-tag :type="getStatusType(project.status)" size="large" effect="light" class="status-tag">
+            {{ getStatusText(project.status) }}
+          </el-tag>
+        </div>
+      </div>
+    </div>
 
-    <el-row :gutter="20">
+    <!-- 统计卡片 -->
+    <div class="stats-row animate-fade-in-up delay-100">
+      <el-row :gutter="16">
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-total">
+            <div class="stat-icon-wrapper stat-icon-wrapper-total">
+              <el-icon><Warning /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ bugStats.total || 0 }}</div>
+              <div class="stat-label">Bug总数</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-open">
+            <div class="stat-icon-wrapper stat-icon-wrapper-open">
+              <el-icon><CircleClose /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ bugStats.open || 0 }}</div>
+              <div class="stat-label">未解决</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-progress">
+            <div class="stat-icon-wrapper stat-icon-wrapper-progress">
+              <el-icon><Loading /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ bugStats.in_progress || 0 }}</div>
+              <div class="stat-label">进行中</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <div class="stat-card stat-card-closed">
+            <div class="stat-icon-wrapper stat-icon-wrapper-closed">
+              <el-icon><CircleCheck /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ bugStats.closed || 0 }}</div>
+              <div class="stat-label">已完成</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="6" :md="6" :lg="6" class="member-stat-col">
+          <div class="stat-card stat-card-members">
+            <div class="stat-icon-wrapper stat-icon-wrapper-members">
+              <el-icon><User /></el-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ members.length || 0 }}</div>
+              <div class="stat-label">成员数</div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+
+    <!-- Tab 标签页 -->
+    <div class="tabs-section animate-fade-in-up delay-200">
+      <div class="custom-tabs">
+        <div 
+          v-for="tab in tabs" 
+          :key="tab.key"
+          :class="['tab-item', { active: activeTab === tab.key }]"
+          @click="activeTab = tab.key"
+        >
+          <el-icon class="tab-icon"><component :is="tab.icon" /></el-icon>
+          <span class="tab-label">{{ tab.label }}</span>
+        </div>
+      </div>
+    </div>
+
+    <el-row :gutter="20" class="content-row animate-fade-in-up delay-300">
       <el-col :span="16">
-        <el-card class="project-info-card" shadow="hover">
-          <div class="project-header">
-            <h2 class="project-title">{{ project.name }}</h2>
-            <el-tag :type="getStatusType(project.status)" size="large">{{ getStatusText(project.status) }}</el-tag>
-          </div>
-
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="项目ID">{{ project.id }}</el-descriptions-item>
-            <el-descriptions-item label="项目代码">{{ project.code || '未知' }}</el-descriptions-item>
-            <el-descriptions-item label="创建时间">{{ formatDate(project.created_at) }}</el-descriptions-item>
-            <el-descriptions-item label="更新时间">{{ formatDate(project.updated_at) }}</el-descriptions-item>
-            <el-descriptions-item label="项目状态" :span="2">{{ getStatusText(project.status) }}</el-descriptions-item>
-            <el-descriptions-item label="项目类型" :span="2">{{ getProjectTypeText(project.project_type) }}</el-descriptions-item>
-            <el-descriptions-item label="项目经理">{{ project.manager_name || '未知' }}</el-descriptions-item>
-            <el-descriptions-item label="当前阶段">{{ project.current_stage || '未知' }}</el-descriptions-item>
-            <el-descriptions-item label="进度" :span="2">
-              <el-progress :percentage="project.progress || 0" :show-text="true" :stroke-width="16" />
-            </el-descriptions-item>
-            <el-descriptions-item label="开始时间">{{ formatDate(project.start_date) || '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="结束时间">{{ formatDate(project.end_date) || '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="优先级">
-              <el-tag :type="getPriorityType(project.priority)" size="small">{{ getPriorityText(project.priority) }}</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="质量">
-              <el-tag :type="getQualityType(project.quality)" size="small">{{ getQualityText(project.quality) }}</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="风险">
-              <el-tag :type="getRiskType(project.risk)" size="small">{{ getRiskText(project.risk) }}</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="资源状态">
-              <el-tag :type="getResourceType(project.resources)" size="small">{{ project.resources || '未设置' }}</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="缺陷数量" :span="2">{{ project.bug_count || 0 }}</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
-
-        <el-card class="project-tech-card" shadow="hover">
-          <div class="tech-stack-info">
-            <span class="tech-label">技术栈：</span>
-            <span class="tech-value">{{ project.technology_stack || '未设置' }}</span>
-          </div>
-        </el-card>
-
-        <el-card class="project-client-card" shadow="hover" v-if="project.client_name || project.project_type === 'client'">
-          <template #header>
-            <div class="card-header">
-              <span>客户信息</span>
+        <!-- 项目概览 Tab -->
+        <template v-if="activeTab === 'overview'">
+          <el-card class="project-info-card glass-card" shadow="hover">
+            <div class="project-header">
+              <h2 class="project-title">{{ project.name }}</h2>
+              <el-tag :type="getStatusType(project.status)" size="large">{{ getStatusText(project.status) }}</el-tag>
             </div>
-          </template>
 
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="客户名称">{{ project.client_name || '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="客户联系方式">{{ project.client_contact || '未设置' }}</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
+            <el-descriptions :column="2" border class="custom-descriptions">
+              <el-descriptions-item label="项目ID">{{ project.id }}</el-descriptions-item>
+              <el-descriptions-item label="项目代码">{{ project.code || '未知' }}</el-descriptions-item>
+              <el-descriptions-item label="创建时间">{{ formatDate(project.created_at) }}</el-descriptions-item>
+              <el-descriptions-item label="更新时间">{{ formatDate(project.updated_at) }}</el-descriptions-item>
+              <el-descriptions-item label="项目状态" :span="2">{{ getStatusText(project.status) }}</el-descriptions-item>
+              <el-descriptions-item label="项目类型" :span="2">{{ getProjectTypeText(project.project_type) }}</el-descriptions-item>
+              <el-descriptions-item label="项目经理">{{ project.manager_name || '未知' }}</el-descriptions-item>
+              <el-descriptions-item label="当前阶段">{{ project.current_stage || '未知' }}</el-descriptions-item>
+              <el-descriptions-item label="进度" :span="2">
+                <el-progress :percentage="project.progress || 0" :show-text="true" :stroke-width="16" class="custom-progress" />
+              </el-descriptions-item>
+              <el-descriptions-item label="开始时间">{{ formatDate(project.start_date) || '未设置' }}</el-descriptions-item>
+              <el-descriptions-item label="结束时间">{{ formatDate(project.end_date) || '未设置' }}</el-descriptions-item>
+              <el-descriptions-item label="优先级">
+                <el-tag :type="getPriorityType(project.priority)" size="small">{{ getPriorityText(project.priority) }}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="质量">
+                <el-tag :type="getQualityType(project.quality)" size="small">{{ getQualityText(project.quality) }}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="风险">
+                <el-tag :type="getRiskType(project.risk)" size="small">{{ getRiskText(project.risk) }}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="资源状态">
+                <el-tag :type="getResourceType(project.resources)" size="small">{{ project.resources || '未设置' }}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="缺陷数量" :span="2">{{ project.bug_count || 0 }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
 
-        <el-card class="project-finance-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>财务与资源信息</span>
+          <el-card class="project-tech-card glass-card" shadow="hover">
+            <div class="tech-stack-info">
+              <span class="tech-label">技术栈：</span>
+              <span class="tech-value">{{ project.technology_stack || '未设置' }}</span>
             </div>
-          </template>
+          </el-card>
 
-          <el-descriptions :column="3" border>
-            <el-descriptions-item label="预算">{{ project.budget ? `¥${parseFloat(project.budget).toLocaleString()}` : '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="实际成本">{{ project.actual_cost ? `¥${parseFloat(project.actual_cost).toLocaleString()}` : '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="合同金额">{{ project.contract_value ? `¥${parseFloat(project.contract_value).toLocaleString()}` : '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="预估工时">{{ project.estimated_hours || 0 }}小时</el-descriptions-item>
-            <el-descriptions-item label="实际工时">{{ project.actual_hours || 0 }}小时</el-descriptions-item>
-            <el-descriptions-item label="团队规模">{{ project.team_size || 0 }}人</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
+          <el-card class="project-client-card glass-card" shadow="hover" v-if="project.client_name || project.project_type === 'client'">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><OfficeBuilding /></el-icon>
+                  客户信息
+                </span>
+              </div>
+            </template>
 
-        <el-card class="project-intro-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>项目介绍</span>
+            <el-descriptions :column="2" border class="custom-descriptions">
+              <el-descriptions-item label="客户名称">{{ project.client_name || '未设置' }}</el-descriptions-item>
+              <el-descriptions-item label="客户联系方式">{{ project.client_contact || '未设置' }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
+
+          <el-card class="project-finance-card glass-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Money /></el-icon>
+                  财务与资源信息
+                </span>
+              </div>
+            </template>
+
+            <el-descriptions :column="3" border class="custom-descriptions">
+              <el-descriptions-item label="预算">{{ project.budget ? `¥${parseFloat(project.budget).toLocaleString()}` : '未设置' }}</el-descriptions-item>
+              <el-descriptions-item label="实际成本">{{ project.actual_cost ? `¥${parseFloat(project.actual_cost).toLocaleString()}` : '未设置' }}</el-descriptions-item>
+              <el-descriptions-item label="合同金额">{{ project.contract_value ? `¥${parseFloat(project.contract_value).toLocaleString()}` : '未设置' }}</el-descriptions-item>
+              <el-descriptions-item label="预估工时">{{ project.estimated_hours || 0 }}小时</el-descriptions-item>
+              <el-descriptions-item label="实际工时">{{ project.actual_hours || 0 }}小时</el-descriptions-item>
+              <el-descriptions-item label="团队规模">{{ project.team_size || 0 }}人</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
+
+          <el-card class="project-intro-card glass-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Document /></el-icon>
+                  项目介绍
+                </span>
+              </div>
+            </template>
+            <div class="project-intro-content">
+              {{ project.description || '暂无项目介绍' }}
             </div>
-          </template>
-          <div class="project-intro-content">
-            {{ project.description || '暂无项目介绍' }}
-          </div>
-        </el-card>
+          </el-card>
+        </template>
 
-        <el-card class="project-versions-card" :class="{ 'versions-empty': versions.length === 0 }" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>项目版本</span>
-              <span class="member-count">(共 {{ versions.length }} 个版本)</span>
-              <el-button type="primary" size="small" :icon="Plus" @click="addVersion" style="margin-left: auto;">
-                添加版本
-              </el-button>
+        <!-- 版本管理 Tab -->
+        <template v-if="activeTab === 'versions'">
+          <el-card class="project-versions-card glass-card" :class="{ 'versions-empty': versions.length === 0 }" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Collection /></el-icon>
+                  项目版本
+                </span>
+                <span class="member-count">(共 {{ versions.length }} 个版本)</span>
+                <el-button type="primary" size="small" :icon="Plus" @click="addVersion" class="btn-gradient">
+                  添加版本
+                </el-button>
+              </div>
+            </template>
+
+            <div v-if="versions.length > 0" class="versions-table-container">
+              <el-table :data="versions" style="width: 100%" stripe class="custom-table">
+                <el-table-column prop="name" label="版本名称" width="150">
+                  <template #default="{ row }">
+                    <el-tag type="primary" effect="light" class="version-tag">{{ row.name || '未命名' }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="description" label="版本描述" min-width="200"></el-table-column>
+                <el-table-column prop="release_date" label="发布日期" width="180">
+                  <template #default="{ row }">
+                    {{ row.release_date || '未设置' }}
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="150" fixed="right">
+                  <template #default="{ row, $index }">
+                    <el-button type="primary" size="small" :icon="Edit" circle @click="editVersion(row, $index)" />
+                    <el-button type="danger" size="small" :icon="Delete" circle @click="deleteVersion($index)" />
+                  </template>
+                </el-table-column>
+              </el-table>
             </div>
-          </template>
+            <el-empty v-else description="暂无版本信息，请在项目编辑中添加版本" :image-size="80" />
+          </el-card>
+        </template>
 
-          <div v-if="versions.length > 0" class="versions-table-container">
-            <el-table :data="versions" style="width: 100%" stripe>
-              <el-table-column prop="name" label="版本名称" width="150">
+        <!-- 模块管理 Tab -->
+        <template v-if="activeTab === 'modules'">
+          <el-card class="project-modules-card glass-card" :class="{ 'modules-empty': modules.length === 0 }" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Grid /></el-icon>
+                  项目模块
+                </span>
+                <span class="member-count">(共 {{ modules.length }} 个模块)</span>
+                <el-button type="primary" size="small" :icon="Plus" @click="addModule" class="btn-gradient">
+                  添加模块
+                </el-button>
+              </div>
+            </template>
+
+            <div v-if="modules.length > 0" class="modules-tags">
+              <el-tag
+                v-for="(module, index) in modules"
+                :key="index"
+                type="success"
+                closable
+                @close="deleteModule(index)"
+                @click="editModule(module, index)"
+                class="module-tag"
+                effect="light"
+              >
+                {{ module.name }}
+              </el-tag>
+            </div>
+            <el-empty v-else description="暂无模块信息，点击添加模块" :image-size="80" />
+          </el-card>
+        </template>
+
+        <!-- 成员管理 Tab -->
+        <template v-if="activeTab === 'members'">
+          <el-card class="project-members-card glass-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><UserFilled /></el-icon>
+                  参与人员
+                </span>
+                <span class="member-count">(共 {{ members.length }} 人)</span>
+              </div>
+            </template>
+
+            <el-table :data="members" style="width: 100%" stripe class="custom-table">
+              <el-table-column prop="user_id" label="用户ID" width="100" align="center">
                 <template #default="{ row }">
-                  <el-tag type="primary">{{ row.name || '未命名' }}</el-tag>
+                  <span class="id-badge">#{{ row.user_id }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="description" label="版本描述" min-width="200"></el-table-column>
-              <el-table-column prop="release_date" label="发布日期" width="180">
+              <el-table-column prop="username" label="用户名" width="150">
                 <template #default="{ row }">
-                  {{ row.release_date || '未设置' }}
+                  <router-link :to="'/users/' + row.user_id" class="user-link">
+                    {{ row.username }}
+                  </router-link>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="150" fixed="right">
-                <template #default="{ row, $index }">
-                  <el-button type="primary" size="small" :icon="Edit" circle @click="editVersion(row, $index)" />
-                  <el-button type="danger" size="small" :icon="Delete" circle @click="deleteVersion($index)" />
+              <el-table-column prop="position" label="职位" width="120">
+                <template #default="{ row }">
+                  <el-tag effect="light" size="small">{{ row.position || '未设置' }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="department" label="部门" width="150"></el-table-column>
+              <el-table-column prop="joined_at" label="加入时间" width="180">
+                <template #default="{ row }">
+                  {{ formatDate(row.joined_at) }}
                 </template>
               </el-table-column>
             </el-table>
-          </div>
-          <el-empty v-else description="暂无版本信息，请在项目编辑中添加版本" :image-size="80" />
-        </el-card>
+          </el-card>
+        </template>
 
-        <el-card class="project-modules-card" :class="{ 'modules-empty': modules.length === 0 }" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>项目模块</span>
-              <span class="member-count">(共 {{ modules.length }} 个模块)</span>
-              <el-button type="primary" size="small" :icon="Plus" @click="addModule" style="margin-left: auto;">
-                添加模块
-              </el-button>
-            </div>
-          </template>
+        <!-- 缺陷统计 Tab -->
+        <template v-if="activeTab === 'bugs'">
+          <el-card class="bug-stats-card glass-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><WarningFilled /></el-icon>
+                  缺陷报告统计
+                </span>
+              </div>
+            </template>
 
-          <div v-if="modules.length > 0" class="modules-tags">
-            <el-tag
-              v-for="(module, index) in modules"
-              :key="index"
-              type="success"
-              closable
-              @close="deleteModule(index)"
-              @click="editModule(module, index)"
-              class="module-tag"
-            >
-              {{ module.name }}
-            </el-tag>
-          </div>
-          <el-empty v-else description="暂无模块信息，点击添加模块" :image-size="80" />
-        </el-card>
-
-        <el-card class="project-members-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>参与人员</span>
-              <span class="member-count">(共 {{ members.length }} 人)</span>
-            </div>
-          </template>
-
-          <el-table :data="members" style="width: 100%" stripe>
-            <el-table-column prop="user_id" label="用户ID" width="100"></el-table-column>
-            <el-table-column prop="username" label="用户名" width="150">
-              <template #default="{ row }">
-                <router-link :to="'/users/' + row.user_id" class="user-link">
-                  {{ row.username }}
-                </router-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="position" label="职位" width="120">
-              <template #default="{ row }">
-                <el-tag>{{ row.position || '未设置' }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="department" label="部门" width="150"></el-table-column>
-            <el-table-column prop="joined_at" label="加入时间" width="180">
-              <template #default="{ row }">
-                {{ formatDate(row.joined_at) }}
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-
-        <el-card class="bug-stats-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>缺陷报告统计</span>
-            </div>
-          </template>
-
-          <el-row :gutter="20" class="stats-row">
-            <el-col :span="6">
-              <el-card class="stat-card" shadow="hover">
-                <div class="stat-content">
-                  <div class="stat-number">{{ bugStats.total || 0 }}</div>
-                  <div class="stat-label">总缺陷数</div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card class="stat-card" shadow="hover">
-                <div class="stat-content">
-                  <div class="stat-number">{{ bugStats.open || 0 }}</div>
-                  <div class="stat-label">未解决</div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card class="stat-card" shadow="hover">
-                <div class="stat-content">
-                  <div class="stat-number">{{ bugStats.in_progress || 0 }}</div>
-                  <div class="stat-label">处理中</div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card class="stat-card" shadow="hover">
-                <div class="stat-content">
-                  <div class="stat-number">{{ bugStats.closed || 0 }}</div>
-                  <div class="stat-label">已关闭</div>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-
-          <div class="severity-section">
-            <h3>严重程度分布</h3>
-            <el-row :gutter="20">
+            <el-row :gutter="20" class="stats-row-inner">
               <el-col :span="6">
-                <div class="severity-item">
-                  <div class="severity-label">
-                    <el-tag type="danger">严重</el-tag>
-                  </div>
-                  <div class="severity-value">{{ bugStats.severity?.critical || 0 }}</div>
+                <div class="mini-stat-card mini-stat-total">
+                  <div class="mini-stat-value">{{ bugStats.total || 0 }}</div>
+                  <div class="mini-stat-label">总缺陷数</div>
                 </div>
               </el-col>
               <el-col :span="6">
-                <div class="severity-item">
-                  <div class="severity-label">
-                    <el-tag type="warning">高</el-tag>
-                  </div>
-                  <div class="severity-value">{{ bugStats.severity?.high || 0 }}</div>
+                <div class="mini-stat-card mini-stat-open">
+                  <div class="mini-stat-value">{{ bugStats.open || 0 }}</div>
+                  <div class="mini-stat-label">未解决</div>
                 </div>
               </el-col>
               <el-col :span="6">
-                <div class="severity-item">
-                  <div class="severity-label">
-                    <el-tag type="info">中</el-tag>
-                  </div>
-                  <div class="severity-value">{{ bugStats.severity?.medium || 0 }}</div>
+                <div class="mini-stat-card mini-stat-progress">
+                  <div class="mini-stat-value">{{ bugStats.in_progress || 0 }}</div>
+                  <div class="mini-stat-label">处理中</div>
                 </div>
               </el-col>
               <el-col :span="6">
-                <div class="severity-item">
-                  <div class="severity-label">
-                    <el-tag type="success">低</el-tag>
-                  </div>
-                  <div class="severity-value">{{ bugStats.severity?.low || 0 }}</div>
+                <div class="mini-stat-card mini-stat-closed">
+                  <div class="mini-stat-value">{{ bugStats.closed || 0 }}</div>
+                  <div class="mini-stat-label">已关闭</div>
                 </div>
               </el-col>
             </el-row>
-          </div>
 
-          <div class="priority-section">
-            <h3>优先级分布</h3>
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <div class="priority-item">
-                  <div class="priority-label">
-                    <el-tag type="danger">高</el-tag>
+            <div class="severity-section">
+              <h3 class="section-title">
+                <el-icon><Warning /></el-icon>
+                严重程度分布
+              </h3>
+              <el-row :gutter="20">
+                <el-col :span="6">
+                  <div class="severity-item severity-critical">
+                    <div class="severity-label">
+                      <el-tag type="danger" effect="dark">严重</el-tag>
+                    </div>
+                    <div class="severity-value">{{ bugStats.severity?.critical || 0 }}</div>
                   </div>
-                  <div class="priority-value">{{ bugStats.priority?.high || 0 }}</div>
-                </div>
-              </el-col>
-              <el-col :span="8">
-                <div class="priority-item">
-                  <div class="priority-label">
-                    <el-tag type="warning">中</el-tag>
+                </el-col>
+                <el-col :span="6">
+                  <div class="severity-item severity-high">
+                    <div class="severity-label">
+                      <el-tag type="warning" effect="dark">高</el-tag>
+                    </div>
+                    <div class="severity-value">{{ bugStats.severity?.high || 0 }}</div>
                   </div>
-                  <div class="priority-value">{{ bugStats.priority?.medium || 0 }}</div>
-                </div>
-              </el-col>
-              <el-col :span="8">
-                <div class="priority-item">
-                  <div class="priority-label">
-                    <el-tag type="success">低</el-tag>
+                </el-col>
+                <el-col :span="6">
+                  <div class="severity-item severity-medium">
+                    <div class="severity-label">
+                      <el-tag type="info" effect="dark">中</el-tag>
+                    </div>
+                    <div class="severity-value">{{ bugStats.severity?.medium || 0 }}</div>
                   </div>
-                  <div class="priority-value">{{ bugStats.priority?.low || 0 }}</div>
+                </el-col>
+                <el-col :span="6">
+                  <div class="severity-item severity-low">
+                    <div class="severity-label">
+                      <el-tag type="success" effect="dark">低</el-tag>
+                    </div>
+                    <div class="severity-value">{{ bugStats.severity?.low || 0 }}</div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+
+            <div class="priority-section">
+              <h3 class="section-title">
+                <el-icon><Flag /></el-icon>
+                优先级分布
+              </h3>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <div class="priority-item priority-high">
+                    <div class="priority-label">
+                      <el-tag type="danger" effect="dark">高</el-tag>
+                    </div>
+                    <div class="priority-value">{{ bugStats.priority?.high || 0 }}</div>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="priority-item priority-medium">
+                    <div class="priority-label">
+                      <el-tag type="warning" effect="dark">中</el-tag>
+                    </div>
+                    <div class="priority-value">{{ bugStats.priority?.medium || 0 }}</div>
                 </div>
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
+                </el-col>
+                <el-col :span="8">
+                  <div class="priority-item priority-low">
+                    <div class="priority-label">
+                      <el-tag type="success" effect="dark">低</el-tag>
+                    </div>
+                    <div class="priority-value">{{ bugStats.priority?.low || 0 }}</div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-card>
+        </template>
       </el-col>
 
       <el-col :span="8">
-        <el-card class="project-subfunctions-card" shadow="hover">
+        <el-card class="project-subfunctions-card glass-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>项目子功能</span>
+              <span class="card-title">
+                <el-icon><Menu /></el-icon>
+                项目子功能
+              </span>
             </div>
           </template>
 
           <div class="subfunctions-list">
             <div class="subfunction-item" @click="navigateToSubfunction('bugs')">
-              <el-icon class="subfunction-icon"><Warning /></el-icon>
+              <div class="subfunction-icon-wrapper">
+                <el-icon class="subfunction-icon"><Warning /></el-icon>
+              </div>
               <div class="subfunction-info">
                 <div class="subfunction-title">缺陷管理</div>
                 <div class="subfunction-count">{{ bugStats.total || 0 }} 个缺陷</div>
@@ -311,7 +460,9 @@
               <el-icon class="arrow-icon"><ArrowRight /></el-icon>
             </div>
             <div class="subfunction-item" @click="navigateToSubfunction('requirements')">
-              <el-icon class="subfunction-icon"><Document /></el-icon>
+              <div class="subfunction-icon-wrapper icon-requirements">
+                <el-icon class="subfunction-icon"><Document /></el-icon>
+              </div>
               <div class="subfunction-info">
                 <div class="subfunction-title">需求管理</div>
                 <div class="subfunction-count">需求集管理</div>
@@ -319,7 +470,9 @@
               <el-icon class="arrow-icon"><ArrowRight /></el-icon>
             </div>
             <div class="subfunction-item" @click="navigateToSubfunction('tests')">
-              <el-icon class="subfunction-icon"><CircleCheck /></el-icon>
+              <div class="subfunction-icon-wrapper icon-tests">
+                <el-icon class="subfunction-icon"><CircleCheck /></el-icon>
+              </div>
               <div class="subfunction-info">
                 <div class="subfunction-title">测试管理</div>
                 <div class="subfunction-count">测试集与用例管理</div>
@@ -327,7 +480,9 @@
               <el-icon class="arrow-icon"><ArrowRight /></el-icon>
             </div>
             <div class="subfunction-item" @click="navigateToSubfunction('risks')">
-              <el-icon class="subfunction-icon"><Warning /></el-icon>
+              <div class="subfunction-icon-wrapper icon-risks">
+                <el-icon class="subfunction-icon"><WarningFilled /></el-icon>
+              </div>
               <div class="subfunction-info">
                 <div class="subfunction-title">风险管理</div>
                 <div class="subfunction-count">风险与问题管理</div>
@@ -335,7 +490,9 @@
               <el-icon class="arrow-icon"><ArrowRight /></el-icon>
             </div>
             <div class="subfunction-item" @click="navigateToSubfunction('logs')">
-              <el-icon class="subfunction-icon"><Document /></el-icon>
+              <div class="subfunction-icon-wrapper icon-logs">
+                <el-icon class="subfunction-icon"><Timer /></el-icon>
+              </div>
               <div class="subfunction-info">
                 <div class="subfunction-title">日志管理</div>
                 <div class="subfunction-count">项目日志记录</div>
@@ -349,7 +506,7 @@
   </div>
   
   <!-- 添加/编辑版本对话框 -->
-  <el-dialog v-model="showVersionDialog" :title="versionDialogTitle" width="500px">
+  <el-dialog v-model="showVersionDialog" :title="versionDialogTitle" width="500px" class="custom-dialog">
     <el-form :model="versionForm" label-width="100px">
       <el-form-item label="版本名称" required>
         <el-input v-model="versionForm.name" placeholder="如：v2.3" />
@@ -369,12 +526,12 @@
     </el-form>
     <template #footer>
       <el-button @click="showVersionDialog = false">取消</el-button>
-      <el-button type="primary" @click="saveVersion" :loading="versionLoading">保存</el-button>
+      <el-button type="primary" @click="saveVersion" :loading="versionLoading" class="btn-gradient">保存</el-button>
     </template>
   </el-dialog>
   
   <!-- 添加/编辑模块对话框 -->
-  <el-dialog v-model="showModuleDialog" :title="moduleDialogTitle" width="400px">
+  <el-dialog v-model="showModuleDialog" :title="moduleDialogTitle" width="400px" class="custom-dialog">
     <el-form :model="moduleForm" label-width="80px">
       <el-form-item label="模块名称" required>
         <el-input v-model="moduleForm.name" placeholder="如：OSPF、ISIS、BGP" />
@@ -385,7 +542,7 @@
     </el-form>
     <template #footer>
       <el-button @click="showModuleDialog = false">取消</el-button>
-      <el-button type="primary" @click="saveModule" :loading="moduleLoading">保存</el-button>
+      <el-button type="primary" @click="saveModule" :loading="moduleLoading" class="btn-gradient">保存</el-button>
     </template>
   </el-dialog>
 </template>
@@ -394,7 +551,11 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Document, CircleCheck, Warning, Plus, Edit, Delete, Flag, ArrowRight } from '@element-plus/icons-vue'
+import { 
+  Document, CircleCheck, Warning, Plus, Edit, Delete, Flag, ArrowRight, 
+  Folder, User, CircleClose, Loading, UserFilled, WarningFilled, 
+  Collection, Grid, Menu, OfficeBuilding, Money, Timer 
+} from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import bugStatisticsService from '@/services/bugStatisticsService'
 import { formatDate } from '@/utils/dateUtils'
@@ -404,6 +565,16 @@ console.log('===== ProjectDetail组件加载 =====')
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.id
+
+// Tab 配置
+const tabs = [
+  { key: 'overview', label: '项目概览', icon: 'Document' },
+  { key: 'versions', label: '版本管理', icon: 'Collection' },
+  { key: 'modules', label: '模块管理', icon: 'Grid' },
+  { key: 'members', label: '成员管理', icon: 'UserFilled' },
+  { key: 'bugs', label: '缺陷统计', icon: 'WarningFilled' },
+]
+const activeTab = ref('overview')
 
 // 项目数据
 const project = ref({})
@@ -882,36 +1053,406 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.project-detail {
-  padding: 20px;
+/* 导入设计系统 */
+@import '@/styles/design-system.css';
+
+.project-detail-container {
+  padding: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100%;
 }
 
-.project-info-card {
-  margin-bottom: 20px;
+/* 页面头部 - 玻璃拟态风格 */
+.page-header {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
 }
 
-.project-tech-card {
-  margin-bottom: 20px;
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-.tech-stack-info {
+.page-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: #f093fb;
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: #4facfe;
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.custom-page-header {
+  color: white;
+}
+
+.custom-page-header :deep(.el-page-header__left) {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.custom-page-header :deep(.el-page-header__content) {
+  color: white;
+}
+
+.header-title-text {
   font-size: 14px;
-  line-height: 1.6;
+  font-weight: 500;
 }
 
-.tech-label {
-  font-weight: bold;
-  color: #303133;
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.tech-value {
-  color: #606266;
+.title-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.project-client-card {
+.title-icon {
+  font-size: 32px;
+  color: white;
+}
+
+.title-text h1 {
+  margin: 0 0 6px 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.status-tag {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+/* 统计卡片区域 */
+.stats-row {
+  margin-bottom: 24px;
+}
+
+.member-stat-col {
+  margin-top: 16px;
+}
+
+.stat-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* 5种不同的渐变配色 */
+.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-open::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+.stat-card-progress::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.stat-card-closed::before { background: linear-gradient(90deg, #10b981, #34d399); }
+.stat-card-members::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.4s;
+}
+
+.stat-card:hover .stat-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-icon-wrapper-total {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #667eea;
+  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+}
+
+.stat-icon-wrapper-open {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  box-shadow: 0 4px 15px -3px rgba(239, 68, 68, 0.4);
+}
+
+.stat-icon-wrapper-progress {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+  box-shadow: 0 4px 15px -3px rgba(245, 158, 11, 0.4);
+}
+
+.stat-icon-wrapper-closed {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+  box-shadow: 0 4px 15px -3px rgba(16, 185, 129, 0.4);
+}
+
+.stat-icon-wrapper-members {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #2563eb;
+  box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.4);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card-total .stat-value {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-open .stat-value {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-progress .stat-value {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-closed .stat-value {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-members .stat-value {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Tab 标签页 */
+.tabs-section {
+  margin-bottom: 24px;
+}
+
+.custom-tabs {
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #64748b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.tab-item:hover {
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366f1;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px -2px rgba(102, 126, 234, 0.4);
+}
+
+.tab-icon {
+  font-size: 16px;
+}
+
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s;
   margin-bottom: 20px;
 }
 
+.glass-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.glass-card :deep(.el-card__header) {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+/* 卡片头部 */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.card-title .el-icon {
+  color: #6366f1;
+  font-size: 18px;
+}
+
+.member-count {
+  font-size: 14px;
+  color: #909399;
+  margin-left: 10px;
+  font-weight: normal;
+}
+
+/* 项目信息卡片 */
 .project-header {
   display: flex;
   justify-content: space-between;
@@ -921,70 +1462,95 @@ onMounted(() => {
 
 .project-title {
   margin: 0;
-  color: #303133;
-  font-size: 24px;
+  color: #1e293b;
+  font-size: 22px;
+  font-weight: 700;
 }
 
-.project-intro-card {
-  margin-bottom: 20px;
+/* 自定义描述列表 */
+.custom-descriptions :deep(.el-descriptions__label) {
+  background: rgba(241, 245, 249, 0.8);
+  font-weight: 600;
+  color: #475569;
 }
 
-.project-versions-card {
-  margin-bottom: 20px;
+.custom-descriptions :deep(.el-descriptions__content) {
+  color: #1e293b;
 }
 
+/* 自定义进度条 */
+.custom-progress :deep(.el-progress-bar__outer) {
+  background-color: rgba(226, 232, 240, 0.6);
+  border-radius: 8px;
+}
+
+.custom-progress :deep(.el-progress-bar__inner) {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+}
+
+/* 技术栈卡片 */
+.tech-stack-info {
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 0;
+}
+
+.tech-label {
+  font-weight: 600;
+  color: #475569;
+}
+
+.tech-value {
+  color: #1e293b;
+  background: rgba(99, 102, 241, 0.08);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+/* 项目介绍 */
+.project-intro-content {
+  padding: 10px 0;
+  line-height: 1.8;
+  color: #475569;
+  font-size: 14px;
+}
+
+/* 版本管理 */
 .versions-empty {
   min-height: auto;
 }
 
-.versions-empty .el-card__body {
+.versions-empty :deep(.el-card__body) {
   padding: 8px 20px;
   min-height: auto;
 }
 
-.versions-empty .el-empty {
+.versions-empty :deep(.el-empty) {
   padding: 10px 0;
-}
-
-.versions-empty .el-empty__description {
-  margin-top: 0;
-  padding: 0;
-}
-
-.versions-empty .el-empty__description p {
-  font-size: 13px;
-  margin: 0;
 }
 
 .versions-table-container {
   padding: 10px 0;
 }
 
-.project-modules-card {
-  margin-bottom: 20px;
+.version-tag {
+  font-weight: 500;
+  border-radius: 6px;
 }
 
+/* 模块管理 */
 .modules-empty {
   min-height: auto;
 }
 
-.modules-empty .el-card__body {
+.modules-empty :deep(.el-card__body) {
   padding: 8px 20px;
   min-height: auto;
 }
 
-.modules-empty .el-empty {
+.modules-empty :deep(.el-empty) {
   padding: 10px 0;
-}
-
-.modules-empty .el-empty__description {
-  margin-top: 0;
-  padding: 0;
-}
-
-.modules-empty .el-empty__description p {
-  font-size: 13px;
-  margin: 0;
 }
 
 .modules-tags {
@@ -997,20 +1563,181 @@ onMounted(() => {
 .module-tag {
   cursor: pointer;
   font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s;
 }
 
 .module-tag:hover {
-  opacity: 0.8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.project-intro-content {
-  padding: 10px 0;
-  line-height: 1.6;
-  color: #606266;
+/* 成员管理 */
+.id-badge {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(241, 245, 249, 0.8);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
 }
 
+.user-link {
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.user-link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+/* 自定义表格 */
+.custom-table {
+  --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
+  --el-table-row-hover-bg-color: rgba(99, 102, 241, 0.05);
+}
+
+.custom-table :deep(.el-table__header th) {
+  font-weight: 600;
+  color: #1e293b;
+  background: rgba(241, 245, 249, 0.8);
+}
+
+.custom-table :deep(.el-table__row) {
+  transition: all 0.3s;
+}
+
+/* 缺陷统计 */
+.stats-row-inner {
+  margin-bottom: 24px;
+}
+
+.mini-stat-card {
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s;
+}
+
+.mini-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.mini-stat-total {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.mini-stat-open {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(248, 113, 113, 0.1) 100%);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.mini-stat-progress {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.mini-stat-closed {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.mini-stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.mini-stat-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.severity-section,
+.priority-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.section-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #1e293b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title .el-icon {
+  color: #6366f1;
+}
+
+.severity-item,
+.priority-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 16px;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.severity-item:hover,
+.priority-item:hover {
+  transform: translateY(-2px);
+}
+
+.severity-critical {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(248, 113, 113, 0.1) 100%);
+}
+
+.severity-high {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+}
+
+.severity-medium {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
+}
+
+.severity-low {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+}
+
+.priority-high {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(248, 113, 113, 0.1) 100%);
+}
+
+.priority-medium {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+}
+
+.priority-low {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+}
+
+.severity-value,
+.priority-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* 子功能卡片 */
 .project-subfunctions-card {
-  margin-bottom: 20px;
   position: sticky;
   top: 20px;
 }
@@ -1025,21 +1752,50 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 16px;
-  background-color: #f5f7fa;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 .subfunction-item:hover {
-  background-color: #ecf5ff;
+  background: rgba(255, 255, 255, 0.9);
   transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.subfunction-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 20px;
+}
+
+.icon-requirements {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.icon-tests {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+.icon-risks {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+}
+
+.icon-logs {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 .subfunction-icon {
-  font-size: 28px;
-  color: #409EFF;
-  margin-right: 15px;
+  font-size: 20px;
 }
 
 .subfunction-info {
@@ -1048,174 +1804,189 @@ onMounted(() => {
 
 .subfunction-title {
   font-size: 15px;
-  font-weight: bold;
-  color: #303133;
+  font-weight: 600;
+  color: #1e293b;
   margin-bottom: 4px;
 }
 
 .subfunction-count {
   font-size: 13px;
-  color: #909399;
+  color: #64748b;
 }
 
 .arrow-icon {
   font-size: 16px;
-  color: #c0c4cc;
+  color: #94a3b8;
   transition: all 0.3s;
 }
 
 .subfunction-item:hover .arrow-icon {
-  color: #409EFF;
+  color: #6366f1;
   transform: translateX(4px);
 }
 
-.project-members-card {
-  margin-bottom: 20px;
+/* 按钮样式 */
+.btn-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s;
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+}
+
+/* 对话框样式 */
+:deep(.custom-dialog .el-dialog__header) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  margin-right: 0;
+}
+
+:deep(.custom-dialog .el-dialog__title) {
+  color: white;
   font-weight: 600;
-  color: #303133;
 }
 
-.member-count {
-  font-size: 14px;
-  color: #909399;
-  margin-left: 10px;
-  font-weight: normal;
+:deep(.custom-dialog .el-dialog__headerbtn .el-dialog__close) {
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.user-link {
-  color: #409EFF;
-  text-decoration: none;
-  font-weight: 500;
+:deep(.custom-dialog .el-dialog__headerbtn:hover .el-dialog__close) {
+  color: white;
 }
 
-.user-link:hover {
-  color: #66b1ff;
-  text-decoration: underline;
+/* 动画 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.bug-stats-card {
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* 内容行 */
+.content-row {
   margin-bottom: 20px;
 }
 
-.stats-row {
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  text-align: center;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-number {
-  font-size: 32px;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #909399;
-}
-
-.severity-section,
-.priority-section {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.severity-section h3,
-.priority-section h3 {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: #303133;
-}
-
-.severity-item,
-.priority-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-}
-
-.severity-label,
-.priority-label {
-  margin-right: 10px;
-}
-
-.severity-value,
-.priority-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #303133;
-}
-
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
-  .project-detail {
-    padding: 12px;
+  .project-detail-container {
+    padding: 0;
   }
 
-  .project-header {
+  .page-header {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+  }
+
+  .header-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-title {
+    gap: 14px;
+  }
+
+  .title-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .title-icon {
+    font-size: 24px;
+  }
+
+  .title-text h1 {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .stats-row {
+    margin-bottom: 20px;
+  }
+
+  .member-stat-col {
+    margin-top: 0;
+  }
+
+  .stat-card {
+    padding: 16px;
     gap: 12px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    margin-bottom: 12px;
   }
 
-  .header-left {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    width: 100%;
+  .stat-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
   }
 
-  .project-title {
-    font-size: 18px;
-    word-break: break-all;
+  .stat-value {
+    font-size: 22px;
   }
 
-  .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
-    min-width: 80px;
-    max-width: calc(50% - 4px);
+  .stat-label {
     font-size: 12px;
-    padding: 8px 12px;
   }
 
-  .project-info-card,
-  .project-client-card,
-  .project-intro-card,
-  .project-versions-card,
-  .project-modules-card,
-  .project-members-card,
-  .bug-stats-card,
-  .project-subfunctions-card {
+  .custom-tabs {
+    flex-wrap: wrap;
+    padding: 4px;
+  }
+
+  .tab-item {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .tab-icon {
+    font-size: 14px;
+  }
+
+  .glass-card {
     margin-bottom: 12px;
   }
 
@@ -1223,152 +1994,87 @@ onMounted(() => {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    font-size: 14px;
   }
 
-  .card-header .el-dropdown {
-    width: 100%;
-  }
-
-  .card-header .el-dropdown__trigger {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .tag-item {
-    font-size: 11px;
-    padding: 2px 6px;
-  }
-
-  .milestone-header {
+  .project-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 12px;
   }
 
-  .milestone-actions {
-    width: 100%;
-    justify-content: flex-start;
+  .project-title {
+    font-size: 18px;
   }
 
-  .milestone-actions .el-button {
-    font-size: 11px;
-    padding: 4px 8px;
+  .custom-descriptions :deep(.el-descriptions-item) {
+    display: block !important;
   }
 
-  .version-item {
-    padding: 10px;
+  .custom-descriptions :deep(.el-descriptions-item__label) {
+    width: 100% !important;
+    padding: 8px !important;
   }
 
-  .version-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+  .custom-descriptions :deep(.el-descriptions-item__content) {
+    width: 100% !important;
+    padding: 8px !important;
   }
 
-  .version-title {
-    font-size: 14px;
-  }
-
-  .version-info {
-    font-size: 11px;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .version-progress {
-    width: 100%;
-    margin-top: 8px;
-  }
-
-  .module-item {
-    padding: 12px;
-  }
-
-  .module-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .modules-tags {
     gap: 8px;
   }
 
-  .module-icon {
-    margin-right: 0;
-    margin-bottom: 4px;
+  .module-tag {
+    font-size: 13px;
+    padding: 6px 12px;
   }
 
-  .module-title {
-    font-size: 14px;
-  }
-
-  .module-description {
-    font-size: 12px;
-  }
-
-  .module-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .module-actions .el-button {
-    flex: 1;
-    min-width: 70px;
-    font-size: 11px;
-    padding: 6px 8px;
-  }
-
-  .member-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 12px;
-  }
-
-  .member-info {
-    width: 100%;
-  }
-
-  .member-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: flex-start;
-  }
-
-  .member-actions .el-button {
-    flex: none;
-    font-size: 11px;
-    padding: 4px 8px;
-  }
-
-  .stat-card {
-    height: auto;
-    min-height: 80px;
-    padding: 12px;
-  }
-
-  .stat-value {
-    font-size: 20px;
-  }
-
-  .stat-label {
-    font-size: 12px;
-  }
-
-  .stats-row .el-col {
+  .stats-row-inner .el-col {
     width: 50%;
     max-width: 50%;
     flex: 0 0 50%;
     margin-bottom: 12px;
   }
 
+  .mini-stat-card {
+    padding: 14px;
+  }
+
+  .mini-stat-value {
+    font-size: 22px;
+  }
+
+  .severity-item,
+  .priority-item {
+    padding: 12px;
+    height: auto;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .severity-value,
+  .priority-value {
+    font-size: 20px;
+  }
+
+  .project-subfunctions-card {
+    position: static;
+    margin-top: 20px;
+  }
+
   .subfunction-item {
     padding: 12px;
   }
 
-  .subfunction-icon {
-    font-size: 22px;
+  .subfunction-icon-wrapper {
+    width: 40px;
+    height: 40px;
     margin-right: 10px;
+  }
+
+  .subfunction-icon {
+    font-size: 18px;
   }
 
   .subfunction-title {
@@ -1379,183 +2085,49 @@ onMounted(() => {
     font-size: 12px;
   }
 
-  .el-descriptions {
-    font-size: 12px;
+  .custom-table {
+    font-size: 12px !important;
   }
 
-  .el-descriptions-item {
-    display: block !important;
+  .custom-table :deep(.el-table th),
+  .custom-table :deep(.el-table td) {
+    padding: 8px 6px !important;
   }
 
-  .el-descriptions-item__label {
-    width: 100% !important;
-    padding: 4px !important;
-  }
-
-  .el-descriptions-item__content {
-    width: 100% !important;
-    padding: 4px !important;
-  }
-
-  .info-grid {
-    flex-direction: column;
-  }
-
-  .info-item {
-    width: 100%;
-    padding: 8px 0;
-  }
-
-  .tech-tags {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .tech-tag {
-    font-size: 11px;
-    padding: 2px 6px;
-  }
-
-  .client-logo {
-    width: 60px;
-    height: 60px;
-  }
-
-  .client-info {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .client-name {
-    font-size: 14px;
-  }
-
-  .client-detail {
-    font-size: 12px;
-  }
-
-  .intro-content {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  .bug-stat-item {
-    padding: 10px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .bug-stat-header {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .bug-stat-value {
-    font-size: 18px;
-  }
-
-  .el-dialog {
+  :deep(.custom-dialog) {
     width: 95% !important;
     margin: 10px auto !important;
-    max-height: 90vh !important;
-  }
-
-  .el-dialog__header {
-    padding: 12px !important;
-  }
-
-  .el-dialog__body {
-    padding: 12px !important;
-    max-height: 60vh !important;
-    overflow-y: auto !important;
-  }
-
-  .el-dialog__footer {
-    padding: 12px !important;
-  }
-
-  .form-section {
-    padding: 12px;
-  }
-
-  .form-section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
-  .form-actions {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .form-actions .el-button {
-    flex: 1;
-    min-width: 80px;
   }
 }
 
 @media screen and (max-width: 480px) {
-  .project-detail {
-    padding: 8px;
+  .page-header {
+    padding: 16px;
   }
 
-  .project-header {
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-  }
-
-  .project-title {
-    font-size: 16px;
-  }
-
-  .header-actions .el-button {
-    max-width: 100%;
-    flex: none;
-    width: 100%;
-    font-size: 11px;
-    padding: 6px 10px;
+  .title-text h1 {
+    font-size: 20px;
   }
 
   .stat-card {
-    min-height: 70px;
-    padding: 10px;
+    padding: 14px;
   }
 
   .stat-value {
-    font-size: 18px;
+    font-size: 20px;
   }
 
-  .stat-label {
-    font-size: 11px;
+  .tab-item {
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
-  .stats-row .el-col {
-    width: 50%;
-    max-width: 50%;
-    flex: 0 0 50%;
+  .tab-label {
+    display: none;
   }
 
-  .module-item,
-  .subfunction-item,
-  .member-item {
-    padding: 10px;
-  }
-
-  .module-actions .el-button,
-  .member-actions .el-button {
-    font-size: 10px;
-    padding: 4px 6px;
-  }
-
-  .el-form-item {
-    margin-bottom: 12px !important;
-  }
-
-  .el-input__inner,
-  .el-textarea__inner {
-    font-size: 14px !important;
+  .custom-table {
+    font-size: 11px !important;
   }
 }
 </style>

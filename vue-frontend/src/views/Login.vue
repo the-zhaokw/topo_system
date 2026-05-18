@@ -1,33 +1,43 @@
 <template>
   <div class="login-container">
+    <!-- 深色渐变背景 -->
     <div class="bg-gradient"></div>
+    
+    <!-- 装饰性光球动画 -->
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
     <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+    
+    <!-- 背景网格 -->
     <div class="bg-grid"></div>
     
+    <!-- 浮动粒子 -->
     <div class="particles">
-      <span v-for="i in 20" :key="i" class="particle" :style="getParticleStyle(i)"></span>
+      <span v-for="i in 30" :key="i" class="particle" :style="getParticleStyle(i)"></span>
     </div>
     
+    <!-- 登录卡片 - 玻璃拟态效果 -->
     <div class="login-card glass-card">
       <div class="card-accent"></div>
       
       <div class="login-header">
         <div class="logo-wrapper">
           <div class="logo-glow"></div>
-          <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#6366f1"/>
-                <stop offset="100%" style="stop-color:#a855f7"/>
-              </linearGradient>
-            </defs>
-            <path d="M32 4L4 20v24l28 16 28-16V20L32 4z" fill="url(#logoGrad)"/>
-            <path d="M32 12L12 24v16l20 12 20-12V24L32 12z" fill="rgba(255,255,255,0.2)"/>
-            <circle cx="32" cy="28" r="6" fill="white"/>
-            <path d="M32 34v14" stroke="white" stroke-width="3" stroke-linecap="round"/>
-          </svg>
+          <div class="logo-icon">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#667eea"/>
+                  <stop offset="100%" style="stop-color:#764ba2"/>
+                </linearGradient>
+              </defs>
+              <path d="M32 4L4 20v24l28 16 28-16V20L32 4z" fill="url(#logoGrad)"/>
+              <path d="M32 12L12 24v16l20 12 20-12V24L32 12z" fill="rgba(255,255,255,0.2)"/>
+              <circle cx="32" cy="28" r="6" fill="white"/>
+              <path d="M32 34v14" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
         </div>
         <h2 class="title">TOPO系统</h2>
         <p class="subtitle">请登录您的账户</p>
@@ -94,6 +104,7 @@
       </div>
     </div>
     
+    <!-- 注册对话框 -->
     <el-dialog
       v-model="showRegister"
       title="用户注册"
@@ -267,23 +278,26 @@ const handleRegister = async () => {
 }
 
 const getParticleStyle = (index) => {
-  const delay = (index * 0.2) % 10
-  const duration = 8 + (index % 5) * 2
-  const size = 2 + (index % 3) * 2
-  const left = (index * 5) % 100
-  const top = (index * 7) % 100
+  const delay = (index * 0.3) % 15
+  const duration = 10 + (index % 8) * 2
+  const size = 2 + (index % 4) * 2
+  const left = (index * 3.3) % 100
+  const top = (index * 5.7) % 100
   return {
     '--delay': `${delay}s`,
     '--duration': `${duration}s`,
     '--size': `${size}px`,
     '--left': `${left}%`,
     '--top': `${top}%`,
-    '--opacity': 0.3 + (index % 4) * 0.15
+    '--opacity': 0.2 + (index % 5) * 0.1
   }
 }
 </script>
 
 <style scoped>
+/* 导入设计系统 */
+@import '@/styles/design-system.css';
+
 .login-container {
   min-height: 100vh;
   position: relative;
@@ -292,47 +306,59 @@ const getParticleStyle = (index) => {
   justify-content: center;
   padding: 16px;
   overflow: hidden;
-  background: #0f172a;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* 渐变背景动画 */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 背景渐变层 */
 .bg-gradient {
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(ellipse 120% 80% at 20% 80%, rgba(99, 102, 241, 0.4) 0%, transparent 60%),
-    radial-gradient(ellipse 100% 100% at 80% 20%, rgba(168, 85, 247, 0.4) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(59, 130, 246, 0.3) 0%, transparent 50%);
-  animation: gradientShift 15s ease-in-out infinite;
+  background:
+    radial-gradient(ellipse 120% 80% at 20% 80%, rgba(102, 126, 234, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 80% 20%, rgba(118, 75, 162, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99, 102, 241, 0.2) 0%, transparent 50%);
+  animation: bgPulse 8s ease-in-out infinite;
 }
 
-@keyframes gradientShift {
+@keyframes bgPulse {
   0%, 100% {
-    background: 
-      radial-gradient(ellipse 120% 80% at 20% 80%, rgba(99, 102, 241, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse 100% 100% at 80% 20%, rgba(168, 85, 247, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(59, 130, 246, 0.3) 0%, transparent 50%);
+    opacity: 1;
   }
   50% {
-    background: 
-      radial-gradient(ellipse 100% 80% at 70% 30%, rgba(99, 102, 241, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse 120% 100% at 30% 70%, rgba(168, 85, 247, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse 90% 60% at 60% 40%, rgba(59, 130, 246, 0.3) 0%, transparent 50%);
+    opacity: 0.8;
   }
 }
 
+/* 装饰性光球 */
 .bg-orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.6;
+  opacity: 0.5;
   mix-blend-mode: screen;
+  pointer-events: none;
 }
 
 .bg-orb-1 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0) 70%);
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.8) 0%, rgba(102, 126, 234, 0) 70%);
   left: -10%;
   top: -10%;
   animation: floatSlow 12s ease-in-out infinite;
@@ -341,7 +367,7 @@ const getParticleStyle = (index) => {
 .bg-orb-2 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, rgba(168, 85, 247, 0) 70%);
+  background: radial-gradient(circle, rgba(118, 75, 162, 0.8) 0%, rgba(118, 75, 162, 0) 70%);
   right: -5%;
   bottom: -5%;
   animation: floatSlow 15s ease-in-out infinite reverse;
@@ -350,11 +376,19 @@ const getParticleStyle = (index) => {
 .bg-orb-3 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.7) 0%, rgba(59, 130, 246, 0) 70%);
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(139, 92, 246, 0) 70%);
+  left: 60%;
+  top: 30%;
   animation: float 10s ease-in-out infinite;
+}
+
+.bg-orb-4 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%);
+  left: 20%;
+  bottom: 20%;
+  animation: float 14s ease-in-out infinite reverse;
 }
 
 @keyframes floatSlow {
@@ -365,21 +399,24 @@ const getParticleStyle = (index) => {
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, calc(-50% - 40px)) scale(1.15); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.15); }
 }
 
+/* 背景网格 */
 .bg-grid {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
   -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
   mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  pointer-events: none;
 }
 
+/* 浮动粒子 */
 .particles {
   position: absolute;
   inset: 0;
@@ -400,35 +437,36 @@ const getParticleStyle = (index) => {
 }
 
 @keyframes particleFloat {
-  0%, 100% { 
-    transform: translateY(0) translateX(0) scale(1); 
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
     opacity: 0;
   }
   10% { opacity: var(--opacity); }
-  50% { 
-    transform: translateY(-100px) translateX(20px) scale(1.2); 
+  50% {
+    transform: translateY(-100px) translateX(20px) scale(1.2);
     opacity: var(--opacity);
   }
   90% { opacity: var(--opacity); }
-  100% { 
-    transform: translateY(-200px) translateX(-10px) scale(0.8); 
+  100% {
+    transform: translateY(-200px) translateX(-10px) scale(0.8);
     opacity: 0;
   }
 }
 
+/* 玻璃拟态卡片 */
 .glass-card {
   position: relative;
   z-index: 10;
   width: 100%;
   max-width: 420px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
   padding: 48px 40px;
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.4),
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset,
     0 1px 1px rgba(255, 255, 255, 0.1) inset;
   animation: fadeInUp 0.8s ease-out;
@@ -445,16 +483,18 @@ const getParticleStyle = (index) => {
   }
 }
 
+/* 卡片顶部装饰线 */
 .card-accent {
   position: absolute;
   top: 0;
   left: 20%;
   right: 20%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  border-radius: 1px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8), transparent);
+  border-radius: 2px;
 }
 
+/* 登录头部 */
 .login-header {
   text-align: center;
   margin-bottom: 36px;
@@ -469,7 +509,7 @@ const getParticleStyle = (index) => {
 .logo-glow {
   position: absolute;
   inset: -20px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%);
   border-radius: 50%;
   animation: pulseGlow 3s ease-in-out infinite;
   filter: blur(10px);
@@ -477,34 +517,48 @@ const getParticleStyle = (index) => {
 
 @keyframes pulseGlow {
   0%, 100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.2); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 0.9; }
 }
 
 .logo-icon {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   position: relative;
   z-index: 1;
-  animation: float 4s ease-in-out infinite;
-  filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.5));
+  animation: floatLogo 4s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.5));
 }
 
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* 渐变文字标题 */
 .title {
   margin: 0 0 8px 0;
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 50%, #a5b4fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -0.5px;
+  animation: shimmer 3s ease-in-out infinite;
+  background-size: 200% auto;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
 }
 
 .subtitle {
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0.5px;
 }
 
@@ -512,10 +566,12 @@ const getParticleStyle = (index) => {
   margin-bottom: 24px;
 }
 
+/* 输入框包装器 */
 .input-wrapper {
   position: relative;
 }
 
+/* 输入框样式 - 玻璃拟态 */
 .input-wrapper :deep(.el-input__wrapper) {
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -530,10 +586,28 @@ const getParticleStyle = (index) => {
   border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
+/* 输入框聚焦时渐变边框效果 */
 .input-wrapper :deep(.el-input__wrapper.is-focus) {
   background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(99, 102, 241, 0.6) !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 0 0 2px rgba(102, 126, 234, 0.3),
+    inset 0 0 0 1px rgba(102, 126, 234, 0.5) !important;
+  animation: borderGlow 2s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(102, 126, 234, 0.3),
+      inset 0 0 0 1px rgba(102, 126, 234, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(118, 75, 162, 0.4),
+      inset 0 0 0 1px rgba(118, 75, 162, 0.6),
+      0 0 15px rgba(102, 126, 234, 0.3);
+  }
 }
 
 .input-wrapper :deep(.el-input__inner) {
@@ -561,30 +635,41 @@ const getParticleStyle = (index) => {
   color: #fb7185 !important;
 }
 
+/* 登录按钮 - 渐变背景 + 悬停发光 */
 .login-btn {
   width: 100%;
-  height: 48px;
+  height: 52px;
   border: none !important;
   border-radius: 14px !important;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-size: 200% 200% !important;
   font-size: 16px !important;
   font-weight: 600 !important;
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4) !important;
 }
 
 .login-btn:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6) !important;
+  box-shadow:
+    0 8px 30px rgba(102, 126, 234, 0.6),
+    0 0 40px rgba(102, 126, 234, 0.3) !important;
+  background-position: 100% 0 !important;
 }
 
 .login-btn:active {
   transform: translateY(0) scale(0.98) !important;
 }
 
+.btn-text {
+  position: relative;
+  z-index: 1;
+}
+
+/* 按钮闪烁效果 */
 .btn-shimmer {
   position: absolute;
   top: 0;
@@ -599,6 +684,7 @@ const getParticleStyle = (index) => {
   left: 100%;
 }
 
+/* 登录底部 */
 .login-footer {
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
@@ -620,6 +706,7 @@ const getParticleStyle = (index) => {
   text-decoration: underline;
 }
 
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
   .login-container {
     padding: 12px;
@@ -633,12 +720,12 @@ const getParticleStyle = (index) => {
   }
 
   .logo-icon {
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
   }
 
   .title {
-    font-size: 24px !important;
+    font-size: 26px !important;
   }
 
   .subtitle {
@@ -650,7 +737,7 @@ const getParticleStyle = (index) => {
   }
 
   .login-btn {
-    height: 44px !important;
+    height: 48px !important;
     font-size: 15px !important;
   }
 
@@ -664,7 +751,8 @@ const getParticleStyle = (index) => {
     height: 250px;
   }
 
-  .bg-orb-3 {
+  .bg-orb-3,
+  .bg-orb-4 {
     width: 200px;
     height: 200px;
   }
@@ -677,20 +765,20 @@ const getParticleStyle = (index) => {
   }
 
   .title {
-    font-size: 20px !important;
+    font-size: 22px !important;
   }
 
   .login-btn {
-    height: 42px !important;
+    height: 46px !important;
     font-size: 14px !important;
   }
 }
 </style>
 
 <style>
-/* Register Dialog Styles - Global scope for append-to-body */
+/* 注册对话框样式 - 全局作用域 */
 body .register-dialog {
-  background: rgba(15, 23, 42, 0.95) !important;
+  background: rgba(30, 27, 75, 0.98) !important;
   backdrop-filter: blur(30px) !important;
   -webkit-backdrop-filter: blur(30px) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -706,8 +794,12 @@ body .register-dialog .el-dialog__header {
 
 body .register-dialog .el-dialog__title {
   color: #ffffff !important;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 20px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 body .register-dialog .el-dialog__close {
@@ -753,8 +845,8 @@ body .register-dialog .el-input__wrapper:hover {
 
 body .register-dialog .el-input__wrapper.is-focus {
   background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(99, 102, 241, 0.6) !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+  border-color: rgba(102, 126, 234, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
 }
 
 body .register-dialog .el-input__inner {
@@ -781,7 +873,7 @@ body .register-dialog .dialog-footer {
 
 body .register-dialog .dialog-btn {
   min-width: 80px;
-  height: 38px;
+  height: 40px;
   border-radius: 10px !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -796,14 +888,15 @@ body .register-dialog .dialog-btn:hover {
 }
 
 body .register-dialog .dialog-btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   border: none !important;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
   color: #ffffff !important;
 }
 
 body .register-dialog .dialog-btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+  transform: translateY(-2px) !important;
 }
 
 body .register-dialog .form-grid {
@@ -816,9 +909,9 @@ body .register-dialog .full-width {
   width: 100%;
 }
 
-/* Dropdown styles */
+/* 下拉菜单样式 */
 body .el-select-dropdown {
-  background: rgba(15, 23, 42, 0.98) !important;
+  background: rgba(30, 27, 75, 0.98) !important;
   backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: 12px !important;
@@ -831,13 +924,13 @@ body .el-select-dropdown__item {
 
 body .el-select-dropdown__item.hover,
 body .el-select-dropdown__item.selected {
-  background: rgba(99, 102, 241, 0.2) !important;
+  background: rgba(102, 126, 234, 0.2) !important;
   color: #a5b4fc !important;
 }
 
-/* Overlay */
+/* 遮罩层 */
 body .el-overlay {
-  background: rgba(15, 23, 42, 0.5) !important;
+  background: rgba(30, 27, 75, 0.6) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
 }

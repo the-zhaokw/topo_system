@@ -3155,9 +3155,12 @@ def require_permission(permission_name):
 def register_api_blueprints():
     """延迟注册 API 蓝图以避免循环导入"""
     # 所有蓝图通过 restful_api.py 中的 api_bp 统一注册
-    # 避免重复注册导致的 flask-restful 错误
+    # restful_api 模块会在导入时自动注册所有子蓝图
     from restful_api import api_bp
     app.register_blueprint(api_bp)
+
+# 在模块加载时立即注册 API 蓝图（确保通过 WSGI 服务器启动时也能正常工作）
+register_api_blueprints()
 
 # 邮件通知功能
 def send_email_notification(to_email, subject, body, html_body=None):

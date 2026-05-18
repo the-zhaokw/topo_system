@@ -1,129 +1,147 @@
 <template>
   <div class="knowledge-base">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-left">
-        <div class="header-icon">
-          <svg class="knowledge-svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <!-- 书本底座 -->
-            <path class="book-base" d="M8 48 L8 16 Q8 12 12 12 L52 12 Q56 12 56 16 L56 48 Q56 52 52 52 L12 52 Q8 52 8 48Z" />
-            <!-- 书本页面 -->
-            <path class="book-page-left" d="M12 16 L12 44 Q12 46 14 46 L30 46 L30 16 L14 16 Q12 16 12 16Z" />
-            <path class="book-page-right" d="M52 16 L52 44 Q52 46 50 46 L34 46 L34 16 L50 16 Q52 16 52 16Z" />
-            <!-- 书脊 -->
-            <rect class="book-spine" x="30" y="14" width="4" height="34" rx="1" />
-            <!-- 书签 -->
-            <path class="bookmark" d="M44 8 L44 22 L48 18 L52 22 L52 8Z" />
-            <!-- 知识光芒 -->
-            <g class="knowledge-rays">
-              <line x1="32" y1="4" x2="32" y2="8" />
-              <line x1="20" y1="6" x2="22" y2="10" />
-              <line x1="44" y1="6" x2="42" y2="10" />
-              <line x1="12" y1="12" x2="16" y2="14" />
-              <line x1="52" y1="12" x2="48" y2="14" />
-            </g>
-            <!-- 知识节点 -->
-            <circle class="knowledge-node" cx="20" cy="26" r="3" />
-            <circle class="knowledge-node" cx="32" cy="22" r="3" />
-            <circle class="knowledge-node" cx="44" cy="26" r="3" />
-            <circle class="knowledge-node" cx="26" cy="36" r="3" />
-            <circle class="knowledge-node" cx="38" cy="36" r="3" />
-            <!-- 连接线 -->
-            <g class="knowledge-lines">
-              <line x1="20" y1="26" x2="32" y2="22" />
-              <line x1="32" y1="22" x2="44" y2="26" />
-              <line x1="20" y1="26" x2="26" y2="36" />
-              <line x1="44" y1="26" x2="38" y2="36" />
-              <line x1="26" y1="36" x2="38" y2="36" />
-              <line x1="32" y1="22" x2="32" y2="30" />
-            </g>
-          </svg>
-        </div>
-        <div class="header-info">
-          <h1 class="page-title">知识库</h1>
-          <p class="page-subtitle">结构化管理和浏览知识文章</p>
-        </div>
+    <!-- 页面头部 - 玻璃拟态风格 -->
+    <div class="page-header animate-fade-in-down">
+      <div class="header-bg-decoration">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
       </div>
-      <div class="header-actions">
-        <el-button :icon="Refresh" @click="refreshData">刷新</el-button>
-        <el-button type="primary" :icon="Plus" @click="createArticle">新建文章</el-button>
+      <div class="header-content">
+        <div class="header-title">
+          <div class="title-icon-wrapper">
+            <svg class="knowledge-svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <!-- 书本底座 -->
+              <path class="book-base" d="M8 48 L8 16 Q8 12 12 12 L52 12 Q56 12 56 16 L56 48 Q56 52 52 52 L12 52 Q8 52 8 48Z" />
+              <!-- 书本页面 -->
+              <path class="book-page-left" d="M12 16 L12 44 Q12 46 14 46 L30 46 L30 16 L14 16 Q12 16 12 16Z" />
+              <path class="book-page-right" d="M52 16 L52 44 Q52 46 50 46 L34 46 L34 16 L50 16 Q52 16 52 16Z" />
+              <!-- 书脊 -->
+              <rect class="book-spine" x="30" y="14" width="4" height="34" rx="1" />
+              <!-- 书签 -->
+              <path class="bookmark" d="M44 8 L44 22 L48 18 L52 22 L52 8Z" />
+              <!-- 知识光芒 -->
+              <g class="knowledge-rays">
+                <line x1="32" y1="4" x2="32" y2="8" />
+                <line x1="20" y1="6" x2="22" y2="10" />
+                <line x1="44" y1="6" x2="42" y2="10" />
+                <line x1="12" y1="12" x2="16" y2="14" />
+                <line x1="52" y1="12" x2="48" y2="14" />
+              </g>
+              <!-- 知识节点 -->
+              <circle class="knowledge-node" cx="20" cy="26" r="3" />
+              <circle class="knowledge-node" cx="32" cy="22" r="3" />
+              <circle class="knowledge-node" cx="44" cy="26" r="3" />
+              <circle class="knowledge-node" cx="26" cy="36" r="3" />
+              <circle class="knowledge-node" cx="38" cy="36" r="3" />
+              <!-- 连接线 -->
+              <g class="knowledge-lines">
+                <line x1="20" y1="26" x2="32" y2="22" />
+                <line x1="32" y1="22" x2="44" y2="26" />
+                <line x1="20" y1="26" x2="26" y2="36" />
+                <line x1="44" y1="26" x2="38" y2="36" />
+                <line x1="26" y1="36" x2="38" y2="36" />
+                <line x1="32" y1="22" x2="32" y2="30" />
+              </g>
+            </svg>
+          </div>
+          <div class="title-text">
+            <h1>知识库</h1>
+            <p class="subtitle">结构化管理和浏览知识文章</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <el-button class="btn-secondary" :icon="Refresh" @click="refreshData">刷新</el-button>
+          <el-button class="btn-gradient" type="primary" :icon="Plus" @click="createArticle">新建文章</el-button>
+        </div>
       </div>
     </div>
 
     <!-- 统计卡片 -->
-    <div class="stats-cards">
+    <div class="stats-row animate-fade-in-up delay-100">
       <el-row :gutter="16">
-        <el-col :xs="12" :sm="8" :md="4" v-for="stat in statistics" :key="stat.key">
+        <el-col :xs="12" :sm="12" :md="6" v-for="stat in statistics.slice(0, 4)" :key="stat.key">
           <div class="stat-card" :class="stat.class" @click="handleStatClick(stat)">
             <div class="stat-icon-wrapper">
-              <el-icon class="stat-icon" :size="20">
+              <el-icon class="stat-icon" :size="24">
                 <component :is="stat.icon" />
               </el-icon>
             </div>
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stat.value }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
           </div>
         </el-col>
       </el-row>
     </div>
 
     <!-- 搜索栏 -->
-    <el-card class="search-card" shadow="never">
-      <el-row :gutter="16" align="middle">
-        <el-col :xs="24" :sm="8" :md="6">
-          <el-input
-            v-model="searchForm.keyword"
-            placeholder="搜索标题、内容、拼音..."
-            clearable
-            @keyup.enter="handleSearch"
-          >
-            <template #prefix>
+    <div class="filter-section animate-fade-in-up delay-200">
+      <el-card class="filter-card glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <span class="card-title">
               <el-icon><Search /></el-icon>
-            </template>
-          </el-input>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="4">
-          <el-select v-model="searchForm.category" placeholder="全部分类" clearable @change="handleSearch">
-            <el-option
-              v-for="cat in categories"
-              :key="cat.id"
-              :label="cat.name"
-              :value="cat.id"
-            />
-          </el-select>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="4">
-          <el-select v-model="searchForm.tag" placeholder="标签筛选" clearable @change="handleSearch">
-            <el-option
-              v-for="tag in tags"
-              :key="tag"
-              :label="tag"
-              :value="tag"
-            />
-          </el-select>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="4">
-          <el-select v-model="searchForm.status" placeholder="全部状态" clearable @change="handleSearch">
-            <el-option label="已发布" value="published" />
-            <el-option label="草稿" value="draft" />
-          </el-select>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="4">
-          <el-select v-model="searchForm.sort" placeholder="最新更新" @change="handleSearch">
-            <el-option label="最新更新" value="updated" />
-            <el-option label="创建时间" value="created" />
-            <el-option label="浏览最多" value="views" />
-          </el-select>
-        </el-col>
-        <el-col :xs="24" :sm="4" :md="2">
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-          <el-button link @click="resetSearch">重置</el-button>
-        </el-col>
-      </el-row>
-    </el-card>
+              搜索筛选
+            </span>
+          </div>
+        </template>
+        <el-row :gutter="16" align="middle">
+          <el-col :xs="24" :sm="8" :md="6">
+            <el-input
+              v-model="searchForm.keyword"
+              placeholder="搜索标题、内容、拼音..."
+              clearable
+              @keyup.enter="handleSearch"
+            >
+              <template #prefix>
+                <el-icon><Search /></el-icon>
+              </template>
+            </el-input>
+          </el-col>
+          <el-col :xs="12" :sm="6" :md="4">
+            <el-select v-model="searchForm.category" placeholder="全部分类" clearable @change="handleSearch">
+              <el-option
+                v-for="cat in categories"
+                :key="cat.id"
+                :label="cat.name"
+                :value="cat.id"
+              />
+            </el-select>
+          </el-col>
+          <el-col :xs="12" :sm="6" :md="4">
+            <el-select v-model="searchForm.tag" placeholder="标签筛选" clearable @change="handleSearch">
+              <el-option
+                v-for="tag in tags"
+                :key="tag"
+                :label="tag"
+                :value="tag"
+              />
+            </el-select>
+          </el-col>
+          <el-col :xs="12" :sm="6" :md="4">
+            <el-select v-model="searchForm.status" placeholder="全部状态" clearable @change="handleSearch">
+              <el-option label="已发布" value="published" />
+              <el-option label="草稿" value="draft" />
+            </el-select>
+          </el-col>
+          <el-col :xs="12" :sm="6" :md="4">
+            <el-select v-model="searchForm.sort" placeholder="最新更新" @change="handleSearch">
+              <el-option label="最新更新" value="updated" />
+              <el-option label="创建时间" value="created" />
+              <el-option label="浏览最多" value="views" />
+            </el-select>
+          </el-col>
+          <el-col :xs="24" :sm="4" :md="2">
+            <el-button class="btn-gradient" type="primary" @click="handleSearch">搜索</el-button>
+            <el-button class="btn-secondary" link @click="resetSearch">重置</el-button>
+          </el-col>
+        </el-row>
+      </el-card>
+    </div>
 
     <!-- 主内容区 -->
-    <div class="main-content">
+    <div class="main-content animate-fade-in-up delay-300">
       <!-- 左侧边栏 -->
       <div class="sidebar">
         <el-card shadow="never" class="sidebar-card">
@@ -435,14 +453,12 @@ const searchForm = reactive({
 const categories = ref([])
 const tags = ref([])
 
-// 统计数据
+// 统计数据 - 使用4种渐变配色
 const statistics = ref([
-  { key: 'total', label: '全部文章', value: 0, class: 'stat-total', icon: 'Document' },
-  { key: 'published', label: '已发布', value: 0, class: 'stat-published', icon: 'CircleCheck' },
-  { key: 'draft', label: '草稿', value: 0, class: 'stat-draft', icon: 'EditPen' },
-  { key: 'my', label: '我的文章', value: 0, class: 'stat-my', icon: 'User' },
-  { key: 'favorites', label: '我的收藏', value: 0, class: 'stat-favorites', icon: 'Star' },
-  { key: 'views', label: '总浏览', value: 0, class: 'stat-views', icon: 'View' }
+  { key: 'total', label: '文章总数', value: 0, class: 'stat-card-total', icon: 'Document' },
+  { key: 'published', label: '本月新增', value: 0, class: 'stat-card-create', icon: 'CircleCheck' },
+  { key: 'views', label: '阅读量', value: 0, class: 'stat-card-update', icon: 'View' },
+  { key: 'favorites', label: '收藏量', value: 0, class: 'stat-card-today', icon: 'Star' }
 ])
 
 // API 请求
@@ -515,12 +531,10 @@ const loadStats = async () => {
     const response = await apiRequest('/api/knowledge/stats')
     const data = response.data || {}
     statistics.value = [
-      { key: 'total', label: '全部文章', value: data.total || 0, class: 'stat-total', icon: 'Document' },
-      { key: 'published', label: '已发布', value: data.published || 0, class: 'stat-published', icon: 'CircleCheck' },
-      { key: 'draft', label: '草稿', value: data.draft || 0, class: 'stat-draft', icon: 'EditPen' },
-      { key: 'my', label: '我的文章', value: data.my || 0, class: 'stat-my', icon: 'User' },
-      { key: 'favorites', label: '我的收藏', value: data.favorites || 0, class: 'stat-favorites', icon: 'Star' },
-      { key: 'views', label: '总浏览', value: formatNumber(data.views || 0), class: 'stat-views', icon: 'View' }
+      { key: 'total', label: '文章总数', value: data.total || 0, class: 'stat-card-total', icon: 'Document' },
+      { key: 'published', label: '本月新增', value: data.monthly_new || data.published || 0, class: 'stat-card-create', icon: 'CircleCheck' },
+      { key: 'views', label: '阅读量', value: formatNumber(data.views || 0), class: 'stat-card-update', icon: 'View' },
+      { key: 'favorites', label: '收藏量', value: data.favorites || 0, class: 'stat-card-today', icon: 'Star' }
     ]
   } catch (error) {
     console.error('加载统计失败:', error)
@@ -600,9 +614,9 @@ const handleMenuSelect = (index) => {
 
 // 统计卡片点击
 const handleStatClick = (stat) => {
-  // 总浏览是汇总数据，不适合筛选，跳过
-  if (stat.key === 'views') {
-    ElMessage.info('总浏览是汇总数据，无法筛选')
+  // 阅读量和收藏量是汇总数据，不适合筛选，跳过
+  if (stat.key === 'views' || stat.key === 'favorites') {
+    ElMessage.info('该数据是汇总统计，无法筛选')
     return
   }
   handleMenuSelect(stat.key)
@@ -770,45 +784,110 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 导入设计系统 */
+@import '@/styles/design-system.css';
+
 .knowledge-base {
-  padding: 20px;
-  min-height: calc(100vh - 60px);
-  background: #f5f7fa;
+  padding: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100%;
 }
 
-/* 页面头部 */
+/* 页面头部 - 玻璃拟态风格 */
 .page-header {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: #f093fb;
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: #4facfe;
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.header-left {
+.header-title {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
-.header-icon {
+.title-icon-wrapper {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.header-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* SVG 图标样式 */
@@ -853,17 +932,19 @@ onMounted(() => {
   opacity: 0.8;
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: #303133;
+.title-text h1 {
+  margin: 0 0 6px 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-.page-subtitle {
-  font-size: 14px;
-  color: #909399;
+.subtitle {
   margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .header-actions {
@@ -871,130 +952,208 @@ onMounted(() => {
   gap: 12px;
 }
 
-/* 统计卡片 */
-.stats-cards {
-  margin-bottom: 20px;
+/* 统计卡片区域 */
+.stats-row {
+  margin-bottom: 24px;
 }
 
 .stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: 2px solid transparent;
   position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  cursor: pointer;
 }
 
 .stat-card::before {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
   height: 3px;
-  opacity: 0;
-  transition: opacity 0.3s;
+  transform: scaleX(0);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1);
 }
 
 .stat-card:hover::before {
-  opacity: 1;
+  transform: scaleX(1);
 }
 
-.stat-total:hover { border-color: #409EFF; }
-.stat-published:hover { border-color: #67C23A; }
-.stat-draft:hover { border-color: #E6A23C; }
-.stat-my:hover { border-color: #909399; }
-.stat-favorites:hover { border-color: #F56C6C; }
-.stat-views:hover { border-color: #8B5CF6; }
+.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-create::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
+.stat-card-update::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.stat-card-today::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
 
-.stat-total::before { background: #409EFF; }
-.stat-published::before { background: #67C23A; }
-.stat-draft::before { background: #E6A23C; }
-.stat-my::before { background: #909399; }
-.stat-favorites::before { background: #F56C6C; }
-.stat-views::before { background: #8B5CF6; }
-
-/* 统计卡片图标 */
 .stat-icon-wrapper {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 8px;
-  transition: all 0.3s;
-}
-
-.stat-total .stat-icon-wrapper {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  color: #409EFF;
-}
-
-.stat-published .stat-icon-wrapper {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  color: #67C23A;
-}
-
-.stat-draft .stat-icon-wrapper {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  color: #E6A23C;
-}
-
-.stat-my .stat-icon-wrapper {
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-  color: #909399;
-}
-
-.stat-favorites .stat-icon-wrapper {
-  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-  color: #F56C6C;
-}
-
-.stat-views .stat-icon-wrapper {
-  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-  color: #8B5CF6;
+  font-size: 24px;
+  transition: all 0.4s;
 }
 
 .stat-card:hover .stat-icon-wrapper {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-card-total .stat-icon-wrapper {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #667eea;
+  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+}
+
+.stat-card-create .stat-icon-wrapper {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+  box-shadow: 0 4px 15px -3px rgba(16, 185, 129, 0.4);
+}
+
+.stat-card-update .stat-icon-wrapper {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+  box-shadow: 0 4px 15px -3px rgba(245, 158, 11, 0.4);
+}
+
+.stat-card-today .stat-icon-wrapper {
+  background: linear-gradient(135deg, #fce7f3 0%, #f9a8d4 100%);
+  color: #db2777;
+  box-shadow: 0 4px 15px -3px rgba(236, 72, 153, 0.4);
+}
+
+.stat-content {
+  flex: 1;
 }
 
 .stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 2px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.stat-total .stat-value { color: #409EFF; }
-.stat-published .stat-value { color: #67C23A; }
-.stat-draft .stat-value { color: #E6A23C; }
-.stat-my .stat-value { color: #909399; }
-.stat-favorites .stat-value { color: #F56C6C; }
-.stat-views .stat-value { color: #8B5CF6; }
+.stat-card-total .stat-value {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-create .stat-value {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-update .stat-value {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-today .stat-value {
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .stat-label {
   font-size: 13px;
-  color: #606266;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
 }
 
-/* 搜索栏 */
-.search-card {
-  margin-bottom: 20px;
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s;
+}
+
+.glass-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* 筛选区域 */
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.filter-card :deep(.el-card__header) {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.card-title .el-icon {
+  color: #6366f1;
+  font-size: 18px;
+}
+
+/* 按钮样式 */
+.btn-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+}
+
+.btn-secondary {
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
+  color: #6366f1;
 }
 
 /* 主内容区 */
 .main-content {
   display: flex;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
 .sidebar {
@@ -1003,12 +1162,16 @@ onMounted(() => {
 }
 
 .sidebar-card {
-  border-radius: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-title {
   font-weight: 600;
-  color: #303133;
+  color: #1e293b;
 }
 
 .nav-menu {
@@ -1016,17 +1179,32 @@ onMounted(() => {
 }
 
 .nav-menu :deep(.el-menu-item) {
-  border-radius: 6px;
+  border-radius: 10px;
   margin: 4px 0;
+  transition: all 0.3s;
+}
+
+.nav-menu :deep(.el-menu-item:hover) {
+  background: rgba(99, 102, 241, 0.08);
 }
 
 .nav-menu :deep(.el-menu-item.is-active) {
-  background: #ecf5ff;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  color: #667eea;
+  font-weight: 600;
 }
 
 .content {
   flex: 1;
   min-width: 0;
+}
+
+.content > .el-card {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* 工具栏 */
@@ -1036,7 +1214,7 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 .toolbar-left {
@@ -1052,13 +1230,31 @@ onMounted(() => {
 }
 
 .total-info {
-  color: #909399;
+  color: #64748b;
   font-size: 13px;
+  background: rgba(241, 245, 249, 0.8);
+  padding: 4px 12px;
+  border-radius: 20px;
 }
 
 /* 文章列表 */
 .article-list {
   min-height: 400px;
+}
+
+.article-list :deep(.el-table) {
+  --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
+  --el-table-row-hover-bg-color: rgba(99, 102, 241, 0.05);
+}
+
+.article-list :deep(.el-table__header th) {
+  font-weight: 600;
+  color: #1e293b;
+  background: rgba(241, 245, 249, 0.8);
+}
+
+.article-list :deep(.el-table__row) {
+  transition: all 0.3s;
 }
 
 .article-info {
@@ -1074,8 +1270,13 @@ onMounted(() => {
 }
 
 .article-title {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
+  color: #1e293b;
+}
+
+.article-title:hover {
+  color: #667eea;
 }
 
 .article-tags {
@@ -1098,7 +1299,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #909399;
+  color: #64748b;
   font-size: 13px;
 }
 
@@ -1110,7 +1311,7 @@ onMounted(() => {
 
 .author-name {
   font-size: 13px;
-  color: #606266;
+  color: #475569;
 }
 
 .author-link {
@@ -1127,7 +1328,7 @@ onMounted(() => {
 }
 
 .author-link .author-name {
-  color: #409EFF;
+  color: #667eea;
 }
 
 .card-author-link {
@@ -1135,12 +1336,12 @@ onMounted(() => {
   align-items: center;
   gap: 4px;
   text-decoration: none;
-  color: #909399;
+  color: #64748b;
   transition: color 0.3s;
 }
 
 .card-author-link:hover {
-  color: #409EFF;
+  color: #667eea;
 }
 
 .time-info {
@@ -1148,7 +1349,7 @@ onMounted(() => {
 }
 
 .time-relative {
-  color: #909399;
+  color: #94a3b8;
   font-size: 12px;
 }
 
@@ -1159,17 +1360,27 @@ onMounted(() => {
 
 .article-card {
   margin-bottom: 16px;
-  border-radius: 8px;
-  transition: all 0.3s;
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  overflow: hidden;
 }
 
 .article-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+  border-color: rgba(102, 126, 234, 0.3);
 }
 
 .article-card.is-pinned {
   border: 1px solid #f56c6c;
+  background: linear-gradient(135deg, rgba(245, 108, 108, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+}
+
+.article-card.is-pinned:hover {
+  border-color: #f56c6c;
+  box-shadow: 0 20px 40px -10px rgba(245, 108, 108, 0.2);
 }
 
 .card-header {
@@ -1184,10 +1395,15 @@ onMounted(() => {
 }
 
 .card-title {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 15px;
   flex: 1;
   line-height: 1.4;
+  color: #1e293b;
+}
+
+.card-title:hover {
+  color: #667eea;
 }
 
 .card-badges {
@@ -1197,7 +1413,7 @@ onMounted(() => {
 }
 
 .card-summary {
-  color: #606266;
+  color: #475569;
   font-size: 13px;
   line-height: 1.6;
   margin-bottom: 12px;
@@ -1215,7 +1431,7 @@ onMounted(() => {
 .card-meta {
   display: flex;
   gap: 16px;
-  color: #909399;
+  color: #64748b;
   font-size: 12px;
   margin-bottom: 12px;
 }
@@ -1229,11 +1445,11 @@ onMounted(() => {
 .card-stats {
   display: flex;
   gap: 16px;
-  color: #909399;
+  color: #64748b;
   font-size: 12px;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 .card-stats span {
@@ -1255,6 +1471,47 @@ onMounted(() => {
 .text-danger {
   color: #f56c6c;
 }
+
+/* 动画 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
 
 /* 响应式 */
 @media screen and (max-width: 1200px) {
@@ -1279,10 +1536,39 @@ onMounted(() => {
 
 @media screen and (max-width: 768px) {
   .knowledge-base {
-    padding: 12px;
+    padding: 0;
   }
 
   .page-header {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+  }
+
+  .header-title {
+    gap: 14px;
+  }
+
+  .title-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .knowledge-svg-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .title-text h1 {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
@@ -1292,10 +1578,65 @@ onMounted(() => {
     width: 100%;
   }
 
+  .stats-row {
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .stat-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
   .toolbar {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
+  }
+
+  .filter-card :deep(.el-row) {
+    flex-direction: column;
+  }
+
+  .filter-card :deep(.el-col) {
+    width: 100% !important;
+    margin-bottom: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .page-header {
+    padding: 16px;
+  }
+
+  .title-text h1 {
+    font-size: 20px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .article-card {
+    margin-bottom: 12px;
   }
 }
 </style>

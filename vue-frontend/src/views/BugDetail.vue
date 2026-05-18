@@ -1,488 +1,547 @@
 <template>
-  <div class="bug-detail" v-loading="loading">
-    <div v-if="bug && bug.id">
-    <!-- 头部操作栏 -->
-    <div class="bug-detail-header">
-      <div class="header-left">
-        <el-button @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          返回
-        </el-button>
-        <h2>{{ bug.title }}</h2>
-        <el-tag :type="getStatusType(bug.status)" size="large" class="status-tag">
-          {{ getStatusText(bug.status) }}
-          <span v-if="currentStatusDuration" class="status-duration">
-            ({{ currentStatusDuration }})
-          </span>
-        </el-tag>
-      </div>
-      <div class="header-right">
-        <!-- 状态流转按钮组 -->
-        <el-button-group v-if="availableTransitions.length > 0" class="transition-buttons">
-          <el-button 
-            v-for="transition in availableTransitions" 
-            :key="transition.to"
-            :type="transition.type"
-            @click="handleStatusTransition(transition)"
-          >
-            {{ transition.label }}
-          </el-button>
-        </el-button-group>
-        
-        <el-button v-if="canDelete" type="danger" @click="handleDelete">
-          <el-icon><Delete /></el-icon>
-          删除
-        </el-button>
-        <el-button type="primary" @click="handleEdit">
-          <el-icon><Edit /></el-icon>
-          编辑Bug
-        </el-button>
-      </div>
-    </div>
-
-    <!-- 工作流建议面板 -->
-    <el-card class="workflow-suggestion-card" v-if="workflowSuggestions.length > 0">
-      <template #header>
-        <div class="card-header">
-          <span>
-            <el-icon><InfoFilled /></el-icon>
-            工作流建议
-          </span>
+  <div class="bug-detail-container" v-loading="loading">
+    <div v-if="bug && bug.id" class="bug-detail-content">
+      <!-- 页面头部 - 玻璃拟态风格 -->
+      <div class="page-header animate-fade-in-down">
+        <div class="header-bg-decoration">
+          <div class="gradient-orb orb-1"></div>
+          <div class="gradient-orb orb-2"></div>
         </div>
-      </template>
-      <div class="workflow-suggestions">
-        <div 
-          v-for="(suggestion, index) in workflowSuggestions" 
-          :key="index"
-          class="suggestion-item"
-          :class="suggestion.type"
-        >
-          <div class="suggestion-header">
-            <el-tag :type="suggestion.type === 'recommended' ? 'success' : suggestion.type === 'warning' ? 'warning' : 'info'" size="small">
-              {{ suggestion.type === 'recommended' ? '建议' : suggestion.type === 'warning' ? '注意' : '提示' }}
-            </el-tag>
-            <span class="suggestion-title">{{ suggestion.title }}</span>
+        <div class="header-content">
+          <div class="header-left">
+            <el-button @click="$router.back()" class="btn-back">
+              <el-icon><ArrowLeft /></el-icon>
+              返回
+            </el-button>
+            <div class="title-section">
+              <h1>{{ bug.title }}</h1>
+              <div class="status-section">
+                <el-tag :type="getStatusType(bug.status)" size="large" class="status-tag" :class="`status-${bug.status}`">
+                  {{ getStatusText(bug.status) }}
+                </el-tag>
+                <span v-if="currentStatusDuration" class="status-duration">
+                  <el-icon><Timer /></el-icon>
+                  {{ currentStatusDuration }}
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="suggestion-content">{{ suggestion.description }}</div>
-          <div class="suggestion-actions" v-if="suggestion.actions && suggestion.actions.length > 0">
-            <el-button 
-              v-for="action in suggestion.actions" 
-              :key="action.to"
-              :type="action.btnType"
-              size="small"
-              @click="handleStatusTransition({ to: action.to, label: action.label })"
-            >
-              {{ action.label }}
+          <div class="header-right">
+            <!-- 状态流转按钮组 -->
+            <el-button-group v-if="availableTransitions.length > 0" class="transition-buttons">
+              <el-button 
+                v-for="transition in availableTransitions" 
+                :key="transition.to"
+                :class="`btn-transition btn-${transition.type}`"
+                @click="handleStatusTransition(transition)"
+              >
+                {{ transition.label }}
+              </el-button>
+            </el-button-group>
+            
+            <el-button v-if="canDelete" class="btn-gradient-danger" @click="handleDelete">
+              <el-icon><Delete /></el-icon>
+              删除
+            </el-button>
+            <el-button class="btn-gradient" @click="handleEdit">
+              <el-icon><Edit /></el-icon>
+              编辑Bug
             </el-button>
           </div>
         </div>
       </div>
-    </el-card>
-    
-    <!-- 状态流转对话框 -->
-    <el-dialog v-model="showTransitionDialog" title="状态变更" width="500px">
-      <el-form label-width="100px">
-        <el-form-item label="当前状态">
-          <el-tag :type="getStatusType(bug.status)">{{ getStatusText(bug.status) }}</el-tag>
-        </el-form-item>
-        <el-form-item label="目标状态">
-          <el-tag :type="getStatusType(transitionForm.newStatus)">{{ getStatusText(transitionForm.newStatus) }}</el-tag>
-        </el-form-item>
-        <el-form-item label="修复说明" v-if="needResolution">
-          <el-input
-            v-model="transitionForm.resolution"
-            type="textarea"
-            :rows="4"
-            placeholder="请输入修复说明（必填）"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showTransitionDialog = false">取消</el-button>
-        <el-button type="primary" @click="confirmTransition" :loading="transitionLoading">确认</el-button>
-      </template>
-    </el-dialog>
 
-    <!-- 附件预览对话框 -->
-    <el-dialog v-model="showPreviewDialog" title="预览附件" width="800px" class="preview-dialog" @close="handlePreviewClose">
-      <div class="preview-content" v-loading="previewLoading">
-        <img v-if="isImageFile(previewFile)" :src="previewUrl" class="preview-image" />
-        <iframe v-else-if="isPdfFile(previewFile)" :src="previewUrl" class="preview-pdf" />
-        <div v-else class="preview-unsupported">
-          <el-icon size="64"><Document /></el-icon>
-          <p>该文件类型暂不支持预览</p>
-          <p class="preview-filename">{{ previewFile?.filename }}</p>
-        </div>
-      </div>
-    </el-dialog>
-    
-    <!-- Bug基本信息 -->
-    <el-row :gutter="20">
-      <el-col :span="16">
-        <el-card class="info-card">
-          <template #header>
-            <div class="card-header">
-              <span>基本信息</span>
-            </div>
-          </template>
-          
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="ID">{{ bug.id }}</el-descriptions-item>
-            <el-descriptions-item label="状态">
-              <el-tag :type="getStatusType(bug.status)" size="small">
-                {{ getStatusText(bug.status) }}
+      <!-- 工作流建议面板 -->
+      <el-card class="workflow-suggestion-card glass-card animate-fade-in-up delay-100" v-if="workflowSuggestions.length > 0">
+        <template #header>
+          <div class="card-header">
+            <span class="card-title">
+              <el-icon><InfoFilled /></el-icon>
+              工作流建议
+            </span>
+          </div>
+        </template>
+        <div class="workflow-suggestions">
+          <div 
+            v-for="(suggestion, index) in workflowSuggestions" 
+            :key="index"
+            class="suggestion-item"
+            :class="suggestion.type"
+          >
+            <div class="suggestion-header">
+              <el-tag :type="suggestion.type === 'recommended' ? 'success' : suggestion.type === 'warning' ? 'warning' : 'info'" size="small" effect="light">
+                {{ suggestion.type === 'recommended' ? '建议' : suggestion.type === 'warning' ? '注意' : '提示' }}
               </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="严重程度">
-              <el-tag :type="getSeverityType(bug.severity)" size="small">
-                {{ getSeverityText(bug.severity) }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="优先级">
-              <el-tag :type="getPriorityType(bug.priority)" size="small">
-                {{ getPriorityText(bug.priority) }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="项目">
-              <span class="clickable-link" @click="goToProject(bug.project_id)">{{ bug.project_name }}</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="创建人">
-              <span class="clickable-link" @click="goToUser(bug.reported_by)">{{ bug.creator_name }}</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="创建时间">{{ formatDate(bug.created_at) }}</el-descriptions-item>
-            <el-descriptions-item label="更新时间">{{ formatDate(bug.updated_at) }}</el-descriptions-item>
-            <el-descriptions-item label="归属版本">{{ bug.version || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="问题类型">{{ bug.issue_type || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="重现频率">{{ bug.reproduce_frequency || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="发现构建">{{ bug.found_build || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="测试版本">{{ bug.test_version || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="模块">{{ bug.module || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="客户MR编号">{{ bug.customer_mr_number || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="计划解决版本">{{ bug.plan_resolve_version || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="解决构建">{{ bug.resolve_build || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="解决者">
-              <span v-if="bug.resolver_name">
-                <span class="clickable-link" @click="goToUser(bug.resolver_id)">{{ bug.resolver_name }}</span>
-                <el-tag v-if="bug.resolved_at" size="small" type="info">
-                  {{ formatDate(bug.resolved_at) }}
-                </el-tag>
-              </span>
-              <div v-else>-</div>
-            </el-descriptions-item>
-            <el-descriptions-item label="验证者">
-              <span v-if="bug.verifier_name">
-                <span class="clickable-link" @click="goToUser(bug.verifier_id)">{{ bug.verifier_name }}</span>
-                <el-tag v-if="bug.verified_at" size="small" type="info">
-                  {{ formatDate(bug.verified_at) }}
-                </el-tag>
-              </span>
-              <div v-else>-</div>
-            </el-descriptions-item>
-            <el-descriptions-item label="期限">{{ bug.deadline ? formatDate(bug.deadline) : '-' }}</el-descriptions-item>
-            <el-descriptions-item label="重新打开次数">{{ bug.reopened_count || 0 }}</el-descriptions-item>
-            <el-descriptions-item label="预计工时">{{ bug.estimated_hours ? bug.estimated_hours + ' 小时' : '-' }}</el-descriptions-item>
-            <el-descriptions-item label="实际工时">{{ bug.actual_hours ? bug.actual_hours + ' 小时' : '-' }}</el-descriptions-item>
-            <el-descriptions-item label="关联测试用例">{{ bug.test_case_id || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="相关Bug">{{ bug.related_bug_id ? `#${bug.related_bug_id}` : '-' }}</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
-        
-        <!-- 状态时间线 -->
-        <el-card class="timeline-card">
-          <template #header>
-            <div class="card-header">
-              <span>状态时间线</span>
+              <span class="suggestion-title">{{ suggestion.title }}</span>
             </div>
-          </template>
-
-          <el-timeline v-if="statusTimeline.length > 0">
-            <el-timeline-item
-              v-for="item in statusTimeline"
-              :key="item.id"
-              :timestamp="formatDate(item.timestamp)"
-              placement="top"
-            >
-              <el-card>
-                <h4>{{ item.title }}</h4>
-                <p>{{ item.description }}</p>
-                <el-tag v-if="item.type === 'resolved'" size="small" type="success">已解决</el-tag>
-                <el-tag v-if="item.type === 'reopened'" size="small" type="warning">重新打开</el-tag>
-                <el-tag v-if="item.type === 'closed'" size="small" type="info">已关闭</el-tag>
-                <el-tag v-if="item.type === 'in_progress'" size="small" type="primary">处理中</el-tag>
-              </el-card>
-            </el-timeline-item>
-          </el-timeline>
-          <el-empty v-else description="暂无状态变更记录" />
-        </el-card>
-        
-        <!-- Bug 活动记录 -->
-        <el-card class="field-changes-card" v-if="fieldChangeActivities.length > 0">
-          <template #header>
-            <div class="card-header">
-              <span>Bug 活动记录</span>
-              <el-tag size="small" type="info">{{ fieldChangeActivities.length }} 条记录</el-tag>
-            </div>
-          </template>
-          
-          <div class="field-changes-list">
-            <div 
-              v-for="activity in fieldChangeActivities" 
-              :key="activity.id" 
-              class="field-change-item"
-            >
-              <div class="field-change-header">
-                <div class="header-left">
-                  <span class="field-change-action">{{ getActivityActionText(activity.action) }}</span>
-                  <span class="field-change-time" :title="formatFullDate(activity.created_at)">
-                    {{ formatActivityDate(activity.created_at) }}
-                  </span>
-                </div>
-                <div class="header-right">
-                  <el-tag size="small" type="primary">{{ activity.user_name || '未知用户' }}</el-tag>
-                </div>
-              </div>
-              <div v-if="activity.field_changes && activity.field_changes.length > 0" class="field-changes-detail">
-                <div class="changes-summary">
-                  <el-icon><Edit /></el-icon>
-                  <span>共修改 {{ activity.field_changes.length }} 个字段</span>
-                </div>
-                <div 
-                  v-for="(change, index) in activity.field_changes" 
-                  :key="index" 
-                  class="field-change-row"
-                >
-                  <div class="field-label-wrapper">
-                    <span class="field-name">{{ change.field_label || change.field }}</span>
-                  </div>
-                  <div class="field-value-wrapper">
-                    <span class="field-old-value" :title="change.old_value">{{ change.old_value || '空' }}</span>
-                    <span class="field-arrow">→</span>
-                    <span class="field-new-value" :title="change.new_value">{{ change.new_value || '空' }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </el-card>
-        
-        <!-- Bug描述 -->
-        <el-card class="description-card">
-          <template #header>
-            <div class="card-header">
-              <span>Bug描述</span>
-            </div>
-          </template>
-          
-          <div class="description-content">
-            <pre>{{ bug.description }}</pre>
-          </div>
-        </el-card>
-        
-        <!-- 重现步骤 -->
-        <el-card class="steps-card" v-if="bug.steps_to_reproduce">
-          <template #header>
-            <div class="card-header">
-              <span>重现步骤</span>
-            </div>
-          </template>
-          
-          <div class="steps-content">
-            <pre>{{ bug.steps_to_reproduce }}</pre>
-          </div>
-        </el-card>
-        
-        <!-- 预期结果和实际结果 -->
-        <el-row :gutter="20" v-if="bug.expected_result || bug.actual_result">
-          <el-col :span="12">
-            <el-card class="result-card">
-              <template #header>
-                <div class="card-header">
-                  <span>预期结果</span>
-                </div>
-              </template>
-              
-              <div class="result-content">
-                <pre>{{ bug.expected_result || '无' }}</pre>
-              </div>
-            </el-card>
-          </el-col>
-          
-          <el-col :span="12">
-            <el-card class="result-card">
-              <template #header>
-                <div class="card-header">
-                  <span>实际结果</span>
-                </div>
-              </template>
-              
-              <div class="result-content">
-                <pre>{{ bug.actual_result || '无' }}</pre>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </el-col>
-      
-      <el-col :span="8">
-        <!-- 标签 -->
-        <el-card class="tags-card">
-          <template #header>
-            <div class="card-header">
-              <span>标签</span>
-            </div>
-          </template>
-          
-          <div class="tags-content">
-            <el-tag 
-              v-for="tag in parsedTags" 
-              :key="tag" 
-              class="tag-item"
-              type="primary"
-            >
-              {{ tag }}
-            </el-tag>
-            <div v-if="!parsedTags || parsedTags.length === 0" class="no-tags">
-              暂无标签
-            </div>
-          </div>
-        </el-card>
-        
-        <!-- 附件 -->
-        <el-card class="attachments-card">
-          <template #header>
-            <div class="card-header attachments-header">
-              <span class="header-title">附件</span>
-              <div class="upload-actions">
-                <el-upload
-                  ref="uploadRef"
-                  :http-request="uploadFile"
-                  :before-upload="beforeUpload"
-                  :show-file-list="false"
-                  :multiple="true"
-                  :limit="10"
-                  accept="*"
-                >
-                  <el-button type="primary" size="small" :disabled="!canEdit">
-                    <el-icon><Upload /></el-icon>
-                    选择文件
-                  </el-button>
-                </el-upload>
-                <div class="upload-tip-container">
-                  <span class="upload-tip">支持多文件上传，单个文件最大 50MB</span>
-                </div>
-              </div>
-            </div>
-          </template>
-          
-          <div class="attachments-content">
-            <div
-              v-for="uploading in uploadingFiles"
-              :key="uploading.id"
-              class="attachment-item uploading"
-            >
-              <div class="attachment-icon">
-                <el-icon class="uploading-icon"><Loading /></el-icon>
-              </div>
-              <div class="attachment-info">
-                <div class="attachment-name">{{ uploading.name }}</div>
-                <div class="attachment-meta">
-                  <el-progress :percentage="uploading.percent" :stroke-width="4" />
-                </div>
-              </div>
-            </div>
-            <div
-              v-for="attachment in bug.attachments"
-              :key="attachment.id"
-              class="attachment-item"
-            >
-              <div class="attachment-icon">
-                <el-icon><Document /></el-icon>
-              </div>
-              <div class="attachment-info">
-                <div class="attachment-name">{{ attachment.filename }}</div>
-                <div class="attachment-meta">
-                  <span class="attachment-size">{{ formatFileSize(attachment.file_size) }}</span>
-                  <span class="attachment-uploader">上传者：{{ getUploaderName(attachment) }}</span>
-                  <span class="attachment-time">{{ formatDate(attachment.created_at) }}</span>
-                </div>
-              </div>
-              <div class="attachment-actions">
-                <el-button
-                  type="primary"
-                  link
-                  size="small"
-                  @click="previewAttachment(attachment)"
-                  v-if="canPreview(attachment)"
-                >
-                  预览
-                </el-button>
-                <el-button type="primary" link size="small" @click="downloadAttachment(attachment)">
-                  下载
-                </el-button>
-                <el-button
-                  type="danger"
-                  link
-                  size="small"
-                  @click="deleteAttachment(attachment)"
-                  v-if="canDeleteAttachment(attachment)"
-                  :loading="deletingAttachmentId === attachment.id"
-                >
-                  删除
-                </el-button>
-              </div>
-            </div>
-            <div v-if="!bug.attachments || bug.attachments.length === 0" class="no-attachments">
-              暂无附件，请点击"选择文件"按钮添加附件
-            </div>
-          </div>
-        </el-card>
-        
-        <!-- 评论区域 -->
-        <el-card class="comments-card">
-          <template #header>
-            <div class="card-header">
-              <span>评论</span>
-            </div>
-          </template>
-          
-          <div class="comment-input">
-            <el-input
-              v-model="newComment"
-              type="textarea"
-              :rows="3"
-              placeholder="请输入评论..."
-              maxlength="500"
-              show-word-limit
-            />
-            <div class="comment-actions">
-              <el-button type="primary" @click="addComment" :disabled="!newComment.trim()">
-                发表评论
+            <div class="suggestion-content">{{ suggestion.description }}</div>
+            <div class="suggestion-actions" v-if="suggestion.actions && suggestion.actions.length > 0">
+              <el-button 
+                v-for="action in suggestion.actions" 
+                :key="action.to"
+                :class="`btn-${action.btnType}`"
+                size="small"
+                @click="handleStatusTransition({ to: action.to, label: action.label })"
+              >
+                {{ action.label }}
               </el-button>
             </div>
           </div>
-          
-          <div class="comments-list">
-            <div 
-              v-for="comment in comments" 
-              :key="comment.id" 
-              class="comment-item"
-            >
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.author_name }}</span>
-                <span class="comment-time">{{ formatDate(comment.created_at) }}</span>
+        </div>
+      </el-card>
+      
+      <!-- 状态流转对话框 -->
+      <el-dialog v-model="showTransitionDialog" title="状态变更" width="500px" class="custom-dialog">
+        <el-form label-width="100px">
+          <el-form-item label="当前状态">
+            <el-tag :type="getStatusType(bug.status)" effect="light">{{ getStatusText(bug.status) }}</el-tag>
+          </el-form-item>
+          <el-form-item label="目标状态">
+            <el-tag :type="getStatusType(transitionForm.newStatus)" effect="light">{{ getStatusText(transitionForm.newStatus) }}</el-tag>
+          </el-form-item>
+          <el-form-item label="修复说明" v-if="needResolution">
+            <el-input
+              v-model="transitionForm.resolution"
+              type="textarea"
+              :rows="4"
+              placeholder="请输入修复说明（必填）"
+            />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="showTransitionDialog = false" class="btn-secondary">取消</el-button>
+          <el-button class="btn-gradient" @click="confirmTransition" :loading="transitionLoading">确认</el-button>
+        </template>
+      </el-dialog>
+
+      <!-- 附件预览对话框 -->
+      <el-dialog v-model="showPreviewDialog" title="预览附件" width="800px" class="preview-dialog custom-dialog" @close="handlePreviewClose">
+        <div class="preview-content" v-loading="previewLoading">
+          <img v-if="isImageFile(previewFile)" :src="previewUrl" class="preview-image" />
+          <iframe v-else-if="isPdfFile(previewFile)" :src="previewUrl" class="preview-pdf" />
+          <div v-else class="preview-unsupported">
+            <el-icon size="64"><Document /></el-icon>
+            <p>该文件类型暂不支持预览</p>
+            <p class="preview-filename">{{ previewFile?.filename }}</p>
+          </div>
+        </div>
+      </el-dialog>
+      
+      <!-- Bug基本信息 -->
+      <el-row :gutter="20" class="animate-fade-in-up delay-200">
+        <el-col :span="16">
+          <el-card class="info-card glass-card">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Document /></el-icon>
+                  基本信息
+                </span>
               </div>
-              <div class="comment-content">
-                {{ comment.content }}
+            </template>
+            
+            <el-descriptions :column="2" border class="custom-descriptions">
+              <el-descriptions-item label="ID">
+                <span class="id-badge">#{{ bug.id }}</span>
+              </el-descriptions-item>
+              <el-descriptions-item label="状态">
+                <el-tag :type="getStatusType(bug.status)" size="small" effect="light" class="status-badge" :class="`status-${bug.status}`">
+                  {{ getStatusText(bug.status) }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="严重程度">
+                <el-tag :type="getSeverityType(bug.severity)" size="small" effect="light" class="severity-badge">
+                  {{ getSeverityText(bug.severity) }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="优先级">
+                <el-tag :type="getPriorityType(bug.priority)" size="small" effect="light" class="priority-badge">
+                  {{ getPriorityText(bug.priority) }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="项目">
+                <span class="clickable-link" @click="goToProject(bug.project_id)">{{ bug.project_name }}</span>
+              </el-descriptions-item>
+              <el-descriptions-item label="创建人">
+                <span class="clickable-link" @click="goToUser(bug.reported_by)">{{ bug.creator_name }}</span>
+              </el-descriptions-item>
+              <el-descriptions-item label="创建时间">{{ formatDate(bug.created_at) }}</el-descriptions-item>
+              <el-descriptions-item label="更新时间">{{ formatDate(bug.updated_at) }}</el-descriptions-item>
+              <el-descriptions-item label="归属版本">{{ bug.version || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="问题类型">{{ bug.issue_type || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="重现频率">{{ bug.reproduce_frequency || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="发现构建">{{ bug.found_build || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="测试版本">{{ bug.test_version || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="模块">{{ bug.module || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="客户MR编号">{{ bug.customer_mr_number || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="计划解决版本">{{ bug.plan_resolve_version || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="解决构建">{{ bug.resolve_build || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="解决者">
+                <span v-if="bug.resolver_name">
+                  <span class="clickable-link" @click="goToUser(bug.resolver_id)">{{ bug.resolver_name }}</span>
+                  <el-tag v-if="bug.resolved_at" size="small" type="info" effect="light" class="time-tag">
+                    {{ formatDate(bug.resolved_at) }}
+                  </el-tag>
+                </span>
+                <div v-else>-</div>
+              </el-descriptions-item>
+              <el-descriptions-item label="验证者">
+                <span v-if="bug.verifier_name">
+                  <span class="clickable-link" @click="goToUser(bug.verifier_id)">{{ bug.verifier_name }}</span>
+                  <el-tag v-if="bug.verified_at" size="small" type="info" effect="light" class="time-tag">
+                    {{ formatDate(bug.verified_at) }}
+                  </el-tag>
+                </span>
+                <div v-else>-</div>
+              </el-descriptions-item>
+              <el-descriptions-item label="期限">{{ bug.deadline ? formatDate(bug.deadline) : '-' }}</el-descriptions-item>
+              <el-descriptions-item label="重新打开次数">{{ bug.reopened_count || 0 }}</el-descriptions-item>
+              <el-descriptions-item label="预计工时">{{ bug.estimated_hours ? bug.estimated_hours + ' 小时' : '-' }}</el-descriptions-item>
+              <el-descriptions-item label="实际工时">{{ bug.actual_hours ? bug.actual_hours + ' 小时' : '-' }}</el-descriptions-item>
+              <el-descriptions-item label="关联测试用例">{{ bug.test_case_id || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="相关Bug">{{ bug.related_bug_id ? `#${bug.related_bug_id}` : '-' }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
+          
+          <!-- 状态时间线 -->
+          <el-card class="timeline-card glass-card">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Clock /></el-icon>
+                  状态时间线
+                </span>
+              </div>
+            </template>
+
+            <el-timeline v-if="statusTimeline.length > 0" class="custom-timeline">
+              <el-timeline-item
+                v-for="item in statusTimeline"
+                :key="item.id"
+                :timestamp="formatDate(item.timestamp)"
+                placement="top"
+                :type="item.type === 'creation' ? 'primary' : item.type === 'resolved' ? 'success' : item.type === 'reopened' ? 'danger' : 'warning'"
+              >
+                <div class="timeline-item-content">
+                  <h4>{{ item.title }}</h4>
+                  <p>{{ item.description }}</p>
+                  <div class="timeline-tags">
+                    <el-tag v-if="item.type === 'resolved'" size="small" type="success" effect="light">已解决</el-tag>
+                    <el-tag v-if="item.type === 'reopened'" size="small" type="danger" effect="light">重新打开</el-tag>
+                    <el-tag v-if="item.type === 'closed'" size="small" type="info" effect="light">已关闭</el-tag>
+                    <el-tag v-if="item.type === 'in_progress'" size="small" type="warning" effect="light">处理中</el-tag>
+                  </div>
+                </div>
+              </el-timeline-item>
+            </el-timeline>
+            <el-empty v-else description="暂无状态变更记录" />
+          </el-card>
+          
+          <!-- Bug 活动记录 -->
+          <el-card class="field-changes-card glass-card" v-if="fieldChangeActivities.length > 0">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><List /></el-icon>
+                  Bug 活动记录
+                </span>
+                <el-tag size="small" type="info" effect="light" class="count-badge">{{ fieldChangeActivities.length }} 条记录</el-tag>
+              </div>
+            </template>
+            
+            <div class="field-changes-list">
+              <div 
+                v-for="activity in fieldChangeActivities" 
+                :key="activity.id" 
+                class="field-change-item"
+              >
+                <div class="field-change-header">
+                  <div class="header-left">
+                    <span class="field-change-action">{{ getActivityActionText(activity.action) }}</span>
+                    <span class="field-change-time" :title="formatFullDate(activity.created_at)">
+                      {{ formatActivityDate(activity.created_at) }}
+                    </span>
+                  </div>
+                  <div class="header-right">
+                    <el-tag size="small" type="primary" effect="light">{{ activity.user_name || '未知用户' }}</el-tag>
+                  </div>
+                </div>
+                <div v-if="activity.field_changes && activity.field_changes.length > 0" class="field-changes-detail">
+                  <div class="changes-summary">
+                    <el-icon><Edit /></el-icon>
+                    <span>共修改 {{ activity.field_changes.length }} 个字段</span>
+                  </div>
+                  <div 
+                    v-for="(change, index) in activity.field_changes" 
+                    :key="index" 
+                    class="field-change-row"
+                  >
+                    <div class="field-label-wrapper">
+                      <span class="field-name">{{ change.field_label || change.field }}</span>
+                    </div>
+                    <div class="field-value-wrapper">
+                      <span class="field-old-value" :title="change.old_value">{{ change.old_value || '空' }}</span>
+                      <span class="field-arrow">→</span>
+                      <span class="field-new-value" :title="change.new_value">{{ change.new_value || '空' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-card>
+          
+          <!-- Bug描述 -->
+          <el-card class="description-card glass-card">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Document /></el-icon>
+                  Bug描述
+                </span>
+              </div>
+            </template>
+            
+            <div class="description-content">
+              <pre>{{ bug.description }}</pre>
+            </div>
+          </el-card>
+          
+          <!-- 重现步骤 -->
+          <el-card class="steps-card glass-card" v-if="bug.steps_to_reproduce">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><Refresh /></el-icon>
+                  重现步骤
+                </span>
+              </div>
+            </template>
+            
+            <div class="steps-content">
+              <pre>{{ bug.steps_to_reproduce }}</pre>
+            </div>
+          </el-card>
+          
+          <!-- 预期结果和实际结果 -->
+          <el-row :gutter="20" v-if="bug.expected_result || bug.actual_result">
+            <el-col :span="12">
+              <el-card class="result-card glass-card">
+                <template #header>
+                  <div class="card-header">
+                    <span class="card-title">
+                      <el-icon><CircleCheck /></el-icon>
+                      预期结果
+                    </span>
+                  </div>
+                </template>
+                
+                <div class="result-content">
+                  <pre>{{ bug.expected_result || '无' }}</pre>
+                </div>
+              </el-card>
+            </el-col>
+            
+            <el-col :span="12">
+              <el-card class="result-card glass-card">
+                <template #header>
+                  <div class="card-header">
+                    <span class="card-title">
+                      <el-icon><CircleClose /></el-icon>
+                      实际结果
+                    </span>
+                  </div>
+                </template>
+                
+                <div class="result-content">
+                  <pre>{{ bug.actual_result || '无' }}</pre>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </el-col>
+        
+        <el-col :span="8">
+          <!-- 标签 -->
+          <el-card class="tags-card glass-card">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><CollectionTag /></el-icon>
+                  标签
+                </span>
+              </div>
+            </template>
+            
+            <div class="tags-content">
+              <el-tag 
+                v-for="tag in parsedTags" 
+                :key="tag" 
+                class="tag-item"
+                type="primary"
+                effect="light"
+              >
+                {{ tag }}
+              </el-tag>
+              <div v-if="!parsedTags || parsedTags.length === 0" class="no-tags">
+                <el-icon><InfoFilled /></el-icon>
+                暂无标签
+              </div>
+            </div>
+          </el-card>
+          
+          <!-- 附件 -->
+          <el-card class="attachments-card glass-card">
+            <template #header>
+              <div class="card-header attachments-header">
+                <span class="card-title">
+                  <el-icon><Paperclip /></el-icon>
+                  附件
+                </span>
+                <div class="upload-actions">
+                  <el-upload
+                    ref="uploadRef"
+                    :http-request="uploadFile"
+                    :before-upload="beforeUpload"
+                    :show-file-list="false"
+                    :multiple="true"
+                    :limit="10"
+                    accept="*"
+                  >
+                    <el-button class="btn-gradient" size="small" :disabled="!canEdit">
+                      <el-icon><Upload /></el-icon>
+                      选择文件
+                    </el-button>
+                  </el-upload>
+                  <div class="upload-tip-container">
+                    <span class="upload-tip">支持多文件上传，单个文件最大 50MB</span>
+                  </div>
+                </div>
+              </div>
+            </template>
+            
+            <div class="attachments-content">
+              <div
+                v-for="uploading in uploadingFiles"
+                :key="uploading.id"
+                class="attachment-item uploading"
+              >
+                <div class="attachment-icon">
+                  <el-icon class="uploading-icon"><Loading /></el-icon>
+                </div>
+                <div class="attachment-info">
+                  <div class="attachment-name">{{ uploading.name }}</div>
+                  <div class="attachment-meta">
+                    <el-progress :percentage="uploading.percent" :stroke-width="4" />
+                  </div>
+                </div>
+              </div>
+              <div
+                v-for="attachment in bug.attachments"
+                :key="attachment.id"
+                class="attachment-item"
+              >
+                <div class="attachment-icon">
+                  <el-icon><Document /></el-icon>
+                </div>
+                <div class="attachment-info">
+                  <div class="attachment-name">{{ attachment.filename }}</div>
+                  <div class="attachment-meta">
+                    <span class="attachment-size">{{ formatFileSize(attachment.file_size) }}</span>
+                    <span class="attachment-uploader">上传者：{{ getUploaderName(attachment) }}</span>
+                    <span class="attachment-time">{{ formatDate(attachment.created_at) }}</span>
+                  </div>
+                </div>
+                <div class="attachment-actions">
+                  <el-button
+                    type="primary"
+                    link
+                    size="small"
+                    @click="previewAttachment(attachment)"
+                    v-if="canPreview(attachment)"
+                    class="action-link"
+                  >
+                    预览
+                  </el-button>
+                  <el-button type="primary" link size="small" @click="downloadAttachment(attachment)" class="action-link">
+                    下载
+                  </el-button>
+                  <el-button
+                    type="danger"
+                    link
+                    size="small"
+                    @click="deleteAttachment(attachment)"
+                    v-if="canDeleteAttachment(attachment)"
+                    :loading="deletingAttachmentId === attachment.id"
+                    class="action-link danger"
+                  >
+                    删除
+                  </el-button>
+                </div>
+              </div>
+              <div v-if="!bug.attachments || bug.attachments.length === 0" class="no-attachments">
+                <el-icon><Document /></el-icon>
+                暂无附件，请点击"选择文件"按钮添加附件
+              </div>
+            </div>
+          </el-card>
+          
+          <!-- 评论区域 -->
+          <el-card class="comments-card glass-card">
+            <template #header>
+              <div class="card-header">
+                <span class="card-title">
+                  <el-icon><ChatDotRound /></el-icon>
+                  评论
+                </span>
+              </div>
+            </template>
+            
+            <div class="comment-input">
+              <el-input
+                v-model="newComment"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入评论..."
+                maxlength="500"
+                show-word-limit
+                class="comment-textarea"
+              />
+              <div class="comment-actions">
+                <el-button class="btn-gradient" @click="addComment" :disabled="!newComment.trim()">
+                  <el-icon><Promotion /></el-icon>
+                  发表评论
+                </el-button>
               </div>
             </div>
             
-            <div v-if="comments.length === 0" class="no-comments">
-              暂无评论
+            <div class="comments-list">
+              <div 
+                v-for="comment in comments" 
+                :key="comment.id" 
+                class="comment-item"
+              >
+                <div class="comment-avatar">
+                  <div class="avatar-circle">{{ comment.author_name ? comment.author_name.charAt(0).toUpperCase() : '?' }}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-header">
+                    <span class="comment-author">{{ comment.author_name }}</span>
+                    <span class="comment-time">{{ formatDate(comment.created_at) }}</span>
+                  </div>
+                  <div class="comment-content">
+                    {{ comment.content }}
+                  </div>
+                </div>
+              </div>
+              
+              <div v-if="comments.length === 0" class="no-comments">
+                <el-icon><ChatDotRound /></el-icon>
+                暂无评论
+              </div>
             </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+          </el-card>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -491,7 +550,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft, Edit, Delete, InfoFilled, Document, Upload, Right, Loading } from '@element-plus/icons-vue'
+import { 
+  ArrowLeft, Edit, Delete, InfoFilled, Document, Upload, Loading, 
+  Clock, List, Refresh, CircleCheck, CircleClose, CollectionTag, 
+  Paperclip, ChatDotRound, Promotion, Timer 
+} from '@element-plus/icons-vue'
 import { useBugStore } from '@/stores/bug'
 import { useUserStore } from '@/stores/user'
 import { systemTimeService } from '@/services/systemTimeService'
@@ -1352,7 +1415,7 @@ const getStatusType = (status) => {
     'in_progress': 'warning',
     'resolved': 'success',
     'verified': 'success',
-    'closed': 'success',
+    'closed': 'info',
     'reopened': 'danger'
   }
   return typeMap[status] || 'info'
@@ -1503,318 +1566,321 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.bug-detail {
+/* 导入设计系统 */
+@import '@/styles/design-system.css';
+
+.bug-detail-container {
   padding: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100%;
 }
 
-.bug-detail-header {
+.bug-detail-content {
+  padding-bottom: 24px;
+}
+
+/* 页面头部 - 玻璃拟态风格 */
+.page-header {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.header-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: #f093fb;
+  top: -50px;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: #4facfe;
+  bottom: -30px;
+  right: 30%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #EBEEF5;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-.header-left h2 {
-  margin: 0;
-  color: #303133;
-}
-
-.header-right {
-  display: flex;
-  gap: 8px;
-}
-
-.info-card,
-.description-card,
-.steps-card,
-.result-card,
-.tags-card,
-.attachments-card,
-.comments-card,
-.timeline-card {
-  margin-bottom: 20px;
-}
-
-.timeline-card :deep(.el-card__body) {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.timeline-card :deep(.el-timeline) {
-  padding-left: 10px;
-}
-
-.timeline-card :deep(.el-timeline-item__content) {
-  min-width: 200px;
-}
-
-.field-changes-card {
-  margin-bottom: 20px;
-}
-
-.field-changes-card :deep(.el-card__body) {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.card-header {
-  font-weight: 600;
-  color: #303133;
-}
-
-.description-content,
-.steps-content,
-.result-content {
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.tags-content {
-  display: flex;
+  gap: 20px;
   flex-wrap: wrap;
-  gap: 8px;
 }
 
-.tag-item {
-  margin-bottom: 8px;
-}
-
-.no-tags {
-  color: #909399;
-  font-style: italic;
-}
-
-.attachments-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.attachment-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid #EBEEF5;
-  border-radius: 4px;
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
   transition: all 0.3s;
 }
 
-.attachment-item:hover {
-  border-color: #409EFF;
-  background-color: #f5f7fa;
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  transform: translateY(-2px);
 }
 
-.attachment-icon {
+.title-section {
   display: flex;
-  align-items: center;
-  color: #409EFF;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title-section h1 {
+  margin: 0;
+  color: white;
   font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
-.attachment-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.attachment-name {
-  font-size: 14px;
-  color: #303133;
-  font-weight: 500;
-  margin-bottom: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.attachment-meta {
+.status-section {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 12px;
-  color: #909399;
-  flex-wrap: wrap;
 }
 
-.attachment-size {
-  color: #909399;
-}
-
-.attachment-uploader {
-  color: #606266;
-}
-
-.attachment-time {
-  color: #C0C4CC;
-}
-
-.attachment-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.attachment-item.uploading {
-  opacity: 0.7;
-  background-color: #f5f7fa;
-}
-
-.attachment-item.uploading .attachment-icon {
-  color: #909399;
-}
-
-.uploading-icon {
-  animation: rotate 1s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.no-attachments {
-  color: #909399;
-  font-style: italic;
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.attachments-card .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-
-.attachments-card .card-header.attachments-header {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.attachments-card .card-header .header-title {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.upload-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.upload-tip-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.upload-tip {
-  font-size: 12px;
-  color: #909399;
-  white-space: nowrap;
-}
-
-.comment-input {
-  margin-bottom: 20px;
-}
-
-.comment-actions {
-  margin-top: 12px;
-  text-align: right;
-}
-
-.comments-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.comment-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #EBEEF5;
-}
-
-.comment-item:last-child {
-  border-bottom: none;
-}
-
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.comment-author {
-  font-weight: 600;
-  color: #303133;
-}
-
-.comment-time {
-  color: #909399;
-  font-size: 12px;
-}
-
-.comment-content {
-  color: #606266;
-  line-height: 1.5;
-}
-
-.no-comments {
-  text-align: center;
-  color: #909399;
-  font-style: italic;
-  padding: 20px;
-}
-
-/* 状态流转按钮样式 */
 .status-tag {
-  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+}
+
+.status-tag.status-new {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  color: white;
+}
+
+.status-tag.status-in_progress {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: white;
+}
+
+.status-tag.status-resolved,
+.status-tag.status-verified,
+.status-tag.status-closed {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+}
+
+.status-tag.status-reopened {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  color: white;
 }
 
 .status-duration {
-  margin-left: 4px;
-  font-size: 12px;
-  opacity: 0.8;
-}
-
-.transition-buttons {
-  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* 工作流建议面板样式 */
-.workflow-suggestion-card {
-  margin-bottom: 16px;
+/* 渐变按钮 */
+.btn-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s;
 }
 
-.workflow-suggestion-card .card-header {
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  color: white;
+}
+
+.btn-gradient-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-gradient-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.5);
+  color: white;
+}
+
+.btn-secondary {
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+/* 状态流转按钮 */
+.transition-buttons {
+  margin-right: 8px;
+}
+
+.btn-transition {
+  transition: all 0.3s;
+}
+
+.btn-transition:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 20px -5px rgba(59, 130, 246, 0.5);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  border: none;
+  color: white;
+}
+
+.btn-success:hover {
+  box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.5);
+  color: white;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  border: none;
+  color: white;
+}
+
+.btn-warning:hover {
+  box-shadow: 0 8px 20px -5px rgba(245, 158, 11, 0.5);
+  color: white;
+}
+
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s;
+  margin-bottom: 20px;
+}
+
+.glass-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.glass-card :deep(.el-card__header) {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.card-title .el-icon {
+  color: #6366f1;
+  font-size: 18px;
+}
+
+.count-badge {
+  font-weight: 500;
+}
+
+/* 工作流建议面板 */
+.workflow-suggestion-card {
+  margin-bottom: 20px;
 }
 
 .workflow-suggestions {
@@ -1824,105 +1890,194 @@ onMounted(async () => {
 }
 
 .suggestion-item {
-  padding: 12px;
-  border-radius: 8px;
-  background-color: #f5f7fa;
-  border-left: 4px solid #409eff;
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-left: 4px solid #6366f1;
+  transition: all 0.3s;
+}
+
+.suggestion-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .suggestion-item.recommended {
-  border-left-color: #67c23a;
-  background-color: #f0f9eb;
+  border-left-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
 }
 
 .suggestion-item.warning {
-  border-left-color: #e6a23c;
-  background-color: #fdf6ec;
+  border-left-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
 }
 
 .suggestion-item.info {
-  border-left-color: #909399;
-  background-color: #f4f4f5;
+  border-left-color: #6b7280;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
 }
 
 .suggestion-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 8px;
 }
 
 .suggestion-title {
-  font-weight: 500;
-  color: #303133;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
 }
 
 .suggestion-content {
-  color: #606266;
+  color: #475569;
   font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 8px;
+  line-height: 1.6;
+  margin-bottom: 12px;
 }
 
 .suggestion-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
-/* 时间线样式 */
-.resolution-text {
-  margin-top: 8px;
-  padding: 8px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #606266;
+/* 信息卡片 */
+.id-badge {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(241, 245, 249, 0.8);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
 }
 
-.resolution-alert {
-  margin-top: 12px;
+.status-badge,
+.severity-badge,
+.priority-badge {
+  font-weight: 500;
+  border-radius: 6px;
 }
 
-.resolution-meta {
-  margin-top: 12px;
+.status-badge.status-new {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+  border: none;
+}
+
+.status-badge.status-in_progress {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #b45309;
+  border: none;
+}
+
+.status-badge.status-resolved,
+.status-badge.status-verified,
+.status-badge.status-closed {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #047857;
+  border: none;
+}
+
+.status-badge.status-reopened {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #b91c1c;
+  border: none;
+}
+
+.time-tag {
+  margin-left: 8px;
+}
+
+.clickable-link {
+  color: #6366f1;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.clickable-link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+/* 自定义描述列表 */
+.custom-descriptions :deep(.el-descriptions__header) {
+  margin-bottom: 16px;
+}
+
+.custom-descriptions :deep(.el-descriptions__label) {
+  background: rgba(241, 245, 249, 0.8);
+  font-weight: 500;
+  color: #475569;
+}
+
+.custom-descriptions :deep(.el-descriptions__content) {
+  color: #1e293b;
+}
+
+/* 时间线 */
+.timeline-card :deep(.el-card__body) {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.custom-timeline :deep(.el-timeline-item__node) {
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.timeline-item-content {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.timeline-item-content h4 {
+  margin: 0 0 8px 0;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.timeline-item-content p {
+  margin: 0 0 12px 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.timeline-tags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.timeline-card .el-timeline-item__wrapper {
-  padding-left: 28px;
-}
-
-.timeline-card .el-card__body {
-  padding: 16px;
-}
-
-.timeline-card h4 {
-  margin: 0 0 8px 0;
-  color: #303133;
-  font-size: 16px;
-}
-
-.timeline-card p {
-  margin: 4px 0;
-  color: #606266;
-  font-size: 14px;
-}
-
-/* Bug 活动记录样式 */
-.field-changes-list {
-  max-height: 500px;
+/* 字段变更记录 */
+.field-changes-card :deep(.el-card__body) {
+  max-height: 400px;
   overflow-y: auto;
 }
 
-.field-change-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #EBEEF5;
+.field-changes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.field-change-item:last-child {
-  border-bottom: none;
+.field-change-item {
+  padding: 16px;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s;
+}
+
+.field-change-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .field-change-header {
@@ -1938,7 +2093,6 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
 }
 
 .field-change-header .header-right {
@@ -1949,18 +2103,12 @@ onMounted(async () => {
 
 .field-change-action {
   font-weight: 600;
-  color: #303133;
+  color: #1e293b;
   font-size: 14px;
 }
 
 .field-change-time {
-  color: #909399;
-  font-size: 12px;
-  cursor: help;
-}
-
-.field-change-user {
-  color: #409eff;
+  color: #94a3b8;
   font-size: 12px;
 }
 
@@ -1969,31 +2117,30 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #606266;
-  margin-bottom: 8px;
-  padding: 6px 8px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
+  color: #64748b;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
 }
 
 .changes-summary .el-icon {
-  color: #409eff;
+  color: #6366f1;
 }
 
 .field-changes-detail {
   padding: 12px;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
 }
 
 .field-change-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: 8px 0;
   font-size: 13px;
-  border-bottom: 1px dashed #EBEEF5;
+  border-bottom: 1px dashed rgba(203, 213, 225, 0.5);
 }
 
 .field-change-row:last-child {
@@ -2007,122 +2154,375 @@ onMounted(async () => {
 
 .field-name {
   font-weight: 500;
-  color: #303133;
+  color: #1e293b;
   display: inline-block;
-  padding: 2px 6px;
-  background-color: #e8f4ff;
-  border-radius: 3px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  border-radius: 6px;
+  font-size: 12px;
 }
 
 .field-value-wrapper {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 
 .field-old-value {
-  color: #909399;
+  color: #94a3b8;
   text-decoration: line-through;
-  max-width: 250px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  cursor: help;
 }
 
 .field-arrow {
-  color: #409eff;
+  color: #6366f1;
   font-weight: bold;
   font-size: 16px;
-  flex-shrink: 0;
 }
 
 .field-new-value {
-  color: #67c23a;
+  color: #059669;
   font-weight: 500;
-  max-width: 250px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  cursor: help;
 }
 
-.field-changes-detail {
-  padding: 8px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-  margin-top: 8px;
+/* 描述、步骤、结果卡片 */
+.description-content,
+.steps-content,
+.result-content {
+  padding: 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #334155;
+  border: 1px solid rgba(226, 232, 240, 0.6);
 }
 
-.field-change-row {
+/* 标签卡片 */
+.tags-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag-item {
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 12px;
+  transition: all 0.3s;
+}
+
+.tag-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.no-tags {
+  color: #94a3b8;
+  font-style: italic;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 0;
-  font-size: 13px;
+  padding: 20px;
+  justify-content: center;
+}
+
+/* 附件卡片 */
+.attachments-card .card-header.attachments-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-.field-name {
-  font-weight: 500;
-  color: #303133;
-  min-width: 80px;
+.upload-tip-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.field-old-value {
-  color: #909399;
-  text-decoration: line-through;
-  max-width: 200px;
+.upload-tip {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.attachments-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s;
+}
+
+.attachment-item:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+}
+
+.attachment-item.uploading {
+  opacity: 0.7;
+  background: rgba(241, 245, 249, 0.9);
+}
+
+.attachment-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  border-radius: 10px;
+  color: #6366f1;
+  font-size: 20px;
+}
+
+.attachment-item.uploading .attachment-icon {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #94a3b8;
+}
+
+.uploading-icon {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.attachment-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.attachment-name {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  margin-bottom: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.field-arrow {
-  color: #409eff;
-  font-weight: bold;
+.attachment-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #64748b;
+  flex-wrap: wrap;
 }
 
-.field-new-value {
-  color: #67c23a;
+.attachment-size {
+  background: rgba(226, 232, 240, 0.6);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.attachment-uploader {
+  color: #64748b;
+}
+
+.attachment-time {
+  color: #94a3b8;
+}
+
+.attachment-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-link {
   font-weight: 500;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.clickable-link {
-  color: #409eff;
-  cursor: pointer;
-  text-decoration: none;
+.action-link.danger:hover {
+  color: #ef4444;
 }
 
-.clickable-link:hover {
-  color: #66b1ff;
-  text-decoration: underline;
+.no-attachments {
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
+.no-attachments .el-icon {
+  font-size: 32px;
+  color: #cbd5e1;
+}
+
+/* 评论卡片 */
+.comment-input {
+  margin-bottom: 20px;
+}
+
+.comment-textarea :deep(.el-textarea__inner) {
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s;
+}
+
+.comment-textarea :deep(.el-textarea__inner:focus) {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #c7d2fe;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.comment-actions {
+  margin-top: 12px;
+  text-align: right;
+}
+
+.comments-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment-item {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s;
+}
+
+.comment-item:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+}
+
+.comment-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.comment-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
+}
+
+.comment-time {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.comment-content {
+  color: #475569;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.no-comments {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.no-comments .el-icon {
+  font-size: 32px;
+  color: #cbd5e1;
+}
+
+/* 预览对话框 */
 .preview-dialog .preview-content {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
 }
 
 .preview-image {
   max-width: 100%;
   max-height: 70vh;
   object-fit: contain;
+  border-radius: 8px;
 }
 
 .preview-pdf {
   width: 100%;
   height: 70vh;
   border: none;
+  border-radius: 8px;
 }
 
 .preview-unsupported {
@@ -2130,41 +2530,106 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #909399;
+  color: #94a3b8;
   gap: 16px;
 }
 
 .preview-unsupported .preview-filename {
   font-size: 14px;
-  color: #606266;
+  color: #64748b;
   word-break: break-all;
   text-align: center;
   max-width: 100%;
 }
 
+/* 自定义对话框 */
+:deep(.custom-dialog .el-dialog__header) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 24px;
+  margin-right: 0;
+}
+
+:deep(.custom-dialog .el-dialog__title) {
+  color: white;
+  font-weight: 600;
+}
+
+:deep(.custom-dialog .el-dialog__headerbtn .el-dialog__close) {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+:deep(.custom-dialog .el-dialog__headerbtn:hover .el-dialog__close) {
+  color: white;
+}
+
+/* 动画 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
-  .bug-detail {
-    padding: 12px;
+  .bug-detail-container {
+    padding: 0;
   }
 
-  .bug-detail-header {
+  .page-header {
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+
+  .header-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    gap: 16px;
   }
 
   .header-left {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
     width: 100%;
   }
 
-  .header-left h2 {
-    font-size: 16px;
-    word-break: break-all;
+  .title-section h1 {
+    font-size: 18px;
   }
 
   .header-right {
@@ -2198,7 +2663,6 @@ onMounted(async () => {
 
   .status-tag {
     margin-left: 0;
-    margin-bottom: 8px;
   }
 
   .workflow-suggestion-card {
@@ -2210,7 +2674,7 @@ onMounted(async () => {
   }
 
   .suggestion-item {
-    padding: 10px;
+    padding: 12px;
   }
 
   .suggestion-header {
@@ -2231,33 +2695,15 @@ onMounted(async () => {
     padding: 6px 10px;
   }
 
-  .info-card .el-row {
-    flex-direction: column;
-  }
-
-  .info-card .el-col {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-bottom: 12px;
-  }
-
-  .description-card,
-  .attachments-card,
-  .comments-card,
-  .timeline-card,
-  .field-changes-card,
-  .steps-card,
-  .result-card,
-  .tags-card,
-  .workflow-suggestion-card {
-    margin-bottom: 12px;
+  .glass-card {
+    margin-bottom: 16px;
+    border-radius: 12px;
   }
 
   .card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    font-size: 14px;
   }
 
   .attachments-header {
@@ -2275,7 +2721,7 @@ onMounted(async () => {
   }
 
   .comment-input {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .comment-actions {
@@ -2290,6 +2736,10 @@ onMounted(async () => {
 
   .comments-list {
     max-height: 300px;
+  }
+
+  .comment-item {
+    padding: 12px;
   }
 
   .field-change-header {
@@ -2307,7 +2757,7 @@ onMounted(async () => {
   .field-change-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 6px;
   }
 
   .field-label-wrapper {
@@ -2408,17 +2858,12 @@ onMounted(async () => {
 }
 
 @media screen and (max-width: 480px) {
-  .bug-detail {
-    padding: 8px;
+  .page-header {
+    padding: 16px;
   }
 
-  .bug-detail-header {
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-  }
-
-  .header-left h2 {
-    font-size: 14px;
+  .title-section h1 {
+    font-size: 16px;
   }
 
   .header-right .el-button {
@@ -2434,7 +2879,7 @@ onMounted(async () => {
   }
 
   .suggestion-item {
-    padding: 8px;
+    padding: 10px;
   }
 
   .suggestion-content {
@@ -2448,10 +2893,8 @@ onMounted(async () => {
   .description-content,
   .steps-content,
   .result-content {
-    padding: 10px;
+    padding: 12px;
     font-size: 12px;
-    white-space: pre-wrap;
-    word-break: break-all;
   }
 
   .comment-input :deep(.el-textarea__inner) {
@@ -2467,7 +2910,7 @@ onMounted(async () => {
   }
 
   .field-change-item {
-    padding: 10px 0;
+    padding: 12px;
   }
 
   .field-change-action {
@@ -2480,7 +2923,7 @@ onMounted(async () => {
 
   .changes-summary {
     font-size: 11px;
-    padding: 4px 6px;
+    padding: 6px 8px;
   }
 
   .field-change-row {
