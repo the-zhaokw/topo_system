@@ -1,30 +1,49 @@
 // ============================================
 // 主题配色变量（TOPO系统微信小程序）
+// 与Vue网页端保持一致的设计系统
 // ============================================
 
-// 品牌主题色（靛蓝色 - 专业、信任）
+// 主色调 - 深邃靛蓝
 $color-primary: #4F46E5;
 $color-primary-light: #6366F1;
 $color-primary-dark: #4338CA;
 
+// 辅助色 - 紫罗兰
+$color-secondary: #9333EA;
+$color-secondary-light: #A855F7;
+$color-secondary-dark: #7C3AED;
+
+// 强调色 - 珊瑚橙
+$color-accent: #EA580C;
+$color-accent-light: #FB923C;
+$color-accent-dark: #C2410C;
+
 // 功能色
-$color-success: #22C55E;
-$color-success-dark: #16A34A;
+$color-success: #10B981;
+$color-success-light: #34D399;
+$color-success-dark: #059669;
+
 $color-warning: #F59E0B;
+$color-warning-light: #FBBF24;
 $color-warning-dark: #D97706;
-$color-error: #F43F5E;
-$color-error-light: #FB7185;
+
+$color-error: #EF4444;
+$color-error-light: #F87171;
+$color-error-dark: #DC2626;
+
 $color-info: #3B82F6;
 $color-info-light: #60A5FA;
+$color-info-dark: #2563EB;
 
 // 背景色
 $color-bg-page: #F8FAFC;
+$color-bg-secondary: #F1F5F9;
+$color-bg-tertiary: #E2E8F0;
 $color-bg-card: #FFFFFF;
-$color-bg-hover: #F1F5F9;
 
 // 文本色
-$color-text-primary: #1E293B;
-$color-text-secondary: #64748B;
+$color-text-primary: #0F172A;
+$color-text-secondary: #475569;
 $color-text-tertiary: #94A3B8;
 $color-text-disabled: #CBD5E1;
 $color-text-white: #FFFFFF;
@@ -32,3 +51,41 @@ $color-text-white: #FFFFFF;
 // 边框色
 $color-border: #E2E8F0;
 $color-divider: #F1F5F9;
+
+// 渐变配色
+$gradient-primary: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
+$gradient-secondary: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
+$gradient-success: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+$gradient-warning: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+$gradient-danger: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+
+// KPI卡片专用渐变
+$gradient-kpi-total: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+$gradient-kpi-new: linear-gradient(135deg, #F093FB 0%, #F5576C 100%);
+$gradient-kpi-resolved: linear-gradient(135deg, #11998E 0%, #38EF7D 100%);
+$gradient-kpi-pending: linear-gradient(135deg, #FC4A1A 0%, #F7B733 100%);
+$gradient-kpi-rate: linear-gradient(135deg, #00C6FF 0%, #0072FF 100%);
+$gradient-kpi-time: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+
+// 阴影系统
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+$shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-card-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+$shadow-float: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+$shadow-glow-success: 0 0 20px rgba(16, 185, 129, 0.3);
+$shadow-glow-warning: 0 0 20px rgba(245, 158, 11, 0.3);
+$shadow-glow-danger: 0 0 20px rgba(239, 68, 68, 0.3);
+
+// 圆角系统
+$radius-xs: 6rpx;
+$radius-sm: 6px;
+$radius-md: 10rpx;
+$radius-lg: 16rpx;
+$radius-xl: 24rpx;
+$radius-2xl: 32rpx;
+$radius-button: 9999px;
+$radius-full: 9999px;

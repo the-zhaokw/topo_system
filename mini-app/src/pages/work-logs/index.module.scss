@@ -1,0 +1,67 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  padding: $page-padding;
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.logItem {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.logHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.logNo {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.statusTag {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+}
+
+.statusPending {
+  background: rgba(245, 158, 11, 0.1);
+  color: $color-warning;
+}
+
+.statusApproved {
+  background: rgba(34, 197, 94, 0.1);
+  color: $color-success;
+}
+
+.statusRejected {
+  background: rgba(244, 63, 94, 0.1);
+  color: $color-error;
+}
+
+.logProject {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.logContent {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-xs;
+}
+
+.logMeta {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}

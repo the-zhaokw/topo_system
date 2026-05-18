@@ -5,13 +5,106 @@
   background: $color-bg-page;
 }
 
+.statsSection {
+  background: $gradient-primary;
+  padding: $spacing-lg $page-padding;
+  padding-top: calc(env(safe-area-inset-top) + 20rpx);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  backdrop-filter: blur(10px);
+  transition: all $transition-normal;
+
+  &:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.statIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.statContent {
+  flex: 1;
+
+  .statValue {
+    font-size: 36rpx;
+    font-weight: $font-weight-extrabold;
+    color: $color-text-white;
+    display: block;
+    margin-bottom: 4rpx;
+  }
+
+  .statLabel {
+    font-size: $font-size-xs;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: $font-weight-medium;
+  }
+}
+
+.searchSection {
+  padding: $spacing-md $page-padding;
+  background: $color-bg-page;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: $shadow-card;
+  border: 1rpx solid rgba(226, 232, 240, 0.6);
+}
+
+.searchIcon {
+  font-size: 28rpx;
+  margin-right: $spacing-sm;
+}
+
+.searchInput {
+  flex: 1;
+  height: 64rpx;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.clearBtn {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+}
+
 .filterBar {
   background: $color-bg-card;
   padding: $spacing-md $page-padding;
   box-shadow: $shadow-float;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  border-bottom: 1rpx solid $color-border;
 }
 
 .filterScroll {
@@ -32,14 +125,15 @@
   border-radius: $radius-button;
   font-size: $font-size-sm;
   color: $color-text-secondary;
-  border: 2rpx solid transparent;
+  border: 1rpx solid transparent;
   transition: all $transition-fast;
   white-space: nowrap;
+  font-weight: $font-weight-medium;
 
   &.active {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    border-color: $color-primary;
+    background: $gradient-primary;
+    color: $color-text-white;
+    border-color: transparent;
   }
 
   &:active {
@@ -49,6 +143,7 @@
 }
 
 .todoList {
+  height: calc(100vh - 500rpx);
   padding: $spacing-md $page-padding;
 }
 
@@ -58,9 +153,10 @@
   padding: $spacing-lg;
   margin-bottom: $spacing-md;
   box-shadow: $shadow-card;
-  transition: all $transition-base;
+  transition: all $transition-slow;
   position: relative;
   overflow: hidden;
+  border: 1rpx solid rgba(226, 232, 240, 0.6);
 
   &:active {
     transform: scale(0.99);
@@ -74,6 +170,22 @@
     top: 0;
     bottom: 0;
     width: 6rpx;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4rpx;
+    background: $gradient-primary;
+    transform: scaleX(0);
+    transition: transform $transition-normal;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
   }
 
   &.priorityUrgent::before {
@@ -106,14 +218,14 @@
   color: $color-text-primary;
   flex: 1;
   margin-right: $spacing-sm;
-  line-height: 1.4;
+  line-height: $line-height-normal;
 }
 
 .priorityBadge {
   padding: 6rpx 16rpx;
   border-radius: $radius-button;
   font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   flex-shrink: 0;
 
   &.priorityUrgent {
@@ -140,7 +252,7 @@
 .todoDesc {
   font-size: $font-size-sm;
   color: $color-text-secondary;
-  line-height: 1.6;
+  line-height: $line-height-relaxed;
   margin-bottom: $spacing-sm;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -197,6 +309,7 @@
   gap: $spacing-xs;
   font-size: $font-size-xs;
   color: $color-text-tertiary;
+  font-weight: $font-weight-medium;
 
   &.overdue {
     color: $color-error;
@@ -209,7 +322,13 @@
   color: $color-success;
   border-radius: $radius-button;
   font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 .emptyState {
@@ -229,6 +348,7 @@
     font-size: $font-size-lg;
     color: $color-text-secondary;
     margin-bottom: $spacing-sm;
+    font-weight: $font-weight-semibold;
   }
 
   .emptyHint {

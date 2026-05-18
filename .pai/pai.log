@@ -1,0 +1,20 @@
+[16:26:47.153] Server listening on port 57854, PID 5472
+[16:26:56.498] [Preview Server] Frontend connected, clients size = 1
+[16:27:42.080] readProjectFiles, Found 122352 files to read.
+[16:27:48.027] File change detected. Updating...
+[16:27:55.393] readProjectFiles, Found 122762 files to read.
+node:internal/fs/promises:637
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open 'D:\topo_system\mini-app\node_modules\json-schema-traverse\.travis.yml'
+    at async open (node:internal/fs/promises:637:25)
+    at async Object.readFile (node:internal/fs/promises:1269:14)
+    at async tO (c:\Users\DELL\.trae-cn\builtin_skills\TRAE-generate-mini-app\scripts\preview-server.js:187:40935) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'D:\\topo_system\\mini-app\\node_modules\\json-schema-traverse\\.travis.yml'
+}
+
+Node.js v24.14.0

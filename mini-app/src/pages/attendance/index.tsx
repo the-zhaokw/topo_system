@@ -16,6 +16,13 @@ const AttendancePage: React.FC = () => {
     status: '未打卡'
   });
 
+  const [monthlyStats, setMonthlyStats] = useState({
+    attendanceDays: 0,
+    lateCount: 0,
+    earlyLeaveCount: 0,
+    missingCount: 0
+  });
+
   useEffect(() => {
     loadAttendance();
   }, []);
@@ -35,6 +42,14 @@ const AttendancePage: React.FC = () => {
           status: today.status === 'normal' ? '正常' : today.status === 'late' ? '迟到' : '未打卡'
         });
       }
+
+      const monthData = mockAttendance.filter(a => a.date.startsWith('2026-05'));
+      setMonthlyStats({
+        attendanceDays: monthData.filter(a => a.status === 'normal').length,
+        lateCount: monthData.filter(a => a.status === 'late').length,
+        earlyLeaveCount: monthData.filter(a => a.status === 'absent').length,
+        missingCount: monthData.filter(a => a.status === 'leave').length
+      });
 
       console.log('[Attendance] Loaded attendance records');
     } catch (error) {
@@ -133,6 +148,48 @@ const AttendancePage: React.FC = () => {
           </View>
           <View className={classnames(styles.clockBtn, styles.clockBtnSecondary)} onClick={handleCheckOut}>
             <Text className={classnames(styles.clockBtnText, styles.clockBtnTextSecondary)}>签退</Text>
+          </View>
+        </View>
+      </View>
+
+      <View className={styles.statsSection}>
+        <View className={styles.sectionTitle}>本月统计</View>
+        <View className={styles.statsGrid}>
+          <View className={styles.statCard}>
+            <View className={styles.statIcon} style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
+              <Text>📅</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{monthlyStats.attendanceDays}</Text>
+              <Text className={styles.statLabel}>出勤天数</Text>
+            </View>
+          </View>
+          <View className={styles.statCard}>
+            <View className={styles.statIcon} style={{ background: 'rgba(245, 158, 11, 0.1)' }}>
+              <Text>⏰</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{monthlyStats.lateCount}</Text>
+              <Text className={styles.statLabel}>迟到次数</Text>
+            </View>
+          </View>
+          <View className={styles.statCard}>
+            <View className={styles.statIcon} style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
+              <Text>🚪</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{monthlyStats.earlyLeaveCount}</Text>
+              <Text className={styles.statLabel}>早退次数</Text>
+            </View>
+          </View>
+          <View className={styles.statCard}>
+            <View className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)' }}>
+              <Text>❓</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{monthlyStats.missingCount}</Text>
+              <Text className={styles.statLabel}>缺卡次数</Text>
+            </View>
           </View>
         </View>
       </View>

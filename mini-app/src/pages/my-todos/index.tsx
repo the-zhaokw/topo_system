@@ -10,6 +10,15 @@ const MyTodosPage: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const [summary, setSummary] = useState({
+    total: 0,
+    approval: 0,
+    bug: 0,
+    review: 0,
+    contract: 0
+  });
 
   const statusFilters = [
     { key: 'all', label: '全部' },
@@ -18,8 +27,16 @@ const MyTodosPage: React.FC = () => {
     { key: 'completed', label: '已完成' }
   ];
 
+  const categoryFilters = [
+    { key: 'approval', label: '审批类', icon: '📋' },
+    { key: 'bug', label: 'Bug相关', icon: '🐛' },
+    { key: 'review', label: '评审类', icon: '📝' },
+    { key: 'contract', label: '合同相关', icon: '📄' }
+  ];
+
   useEffect(() => {
     loadTodos(true);
+    calculateSummary();
   }, [activeFilter]);
 
   const loadTodos = async (reset = false) => {
@@ -35,6 +52,13 @@ const MyTodosPage: React.FC = () => {
         filteredData = filteredData.filter(todo => todo.status === activeFilter);
       }
 
+      if (searchKeyword) {
+        filteredData = filteredData.filter(todo =>
+          todo.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          todo.description?.toLowerCase().includes(searchKeyword.toLowerCase())
+        );
+      }
+
       setTodos(filteredData);
       console.log(`[MyTodos] Loaded ${filteredData.length} todos`);
     } catch (error) {
@@ -46,6 +70,17 @@ const MyTodosPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateSummary = () => {
+    const allTodos = mockTodos;
+    setSummary({
+      total: allTodos.length,
+      approval: Math.floor(allTodos.length * 0.3),
+      bug: Math.floor(allTodos.length * 0.4),
+      review: Math.floor(allTodos.length * 0.2),
+      contract: Math.floor(allTodos.length * 0.1)
+    });
   };
 
   const onPullDownRefresh = () => {
@@ -60,6 +95,14 @@ const MyTodosPage: React.FC = () => {
 
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter);
+  };
+
+  const handleSearch = () => {
+    loadTodos(true);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setActiveFilter(category);
   };
 
   const handleComplete = (todoId: number) => {
@@ -143,6 +186,66 @@ const MyTodosPage: React.FC = () => {
 
   return (
     <View className={styles.container}>
+      <View className={styles.statsSection}>
+        <View className={styles.statsGrid}>
+          <View className={styles.statCard} onClick={() => handleCategoryClick('all')}>
+            <View className={styles.statIcon} style={{ background: 'rgba(79, 70, 229, 0.1)' }}>
+              <Text>🔔</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{summary.total}</Text>
+              <Text className={styles.statLabel}>待办总数</Text>
+            </View>
+          </View>
+          <View className={styles.statCard} onClick={() => handleCategoryClick('approval')}>
+            <View className={styles.statIcon} style={{ background: 'rgba(245, 158, 11, 0.1)' }}>
+              <Text>📋</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{summary.approval}</Text>
+              <Text className={styles.statLabel}>待我审批</Text>
+            </View>
+          </View>
+          <View className={styles.statCard} onClick={() => handleCategoryClick('bug')}>
+            <View className={styles.statIcon} style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
+              <Text>🐛</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{summary.bug}</Text>
+              <Text className={styles.statLabel}>待处理Bug</Text>
+            </View>
+          </View>
+          <View className={styles.statCard} onClick={() => handleCategoryClick('review')}>
+            <View className={styles.statIcon} style={{ background: 'rgba(34, 197, 94, 0.1)' }}>
+              <Text>📝</Text>
+            </View>
+            <View className={styles.statContent}>
+              <Text className={styles.statValue}>{summary.review}</Text>
+              <Text className={styles.statLabel}>待我评审</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View className={styles.searchSection}>
+        <View className={styles.searchBar}>
+          <Text className={styles.searchIcon}>🔍</Text>
+          <input
+            className={styles.searchInput}
+            type="text"
+            placeholder="搜索待办事项..."
+            value={searchKeyword}
+            onInput={(e) => setSearchKeyword(e.detail.value)}
+            onConfirm={handleSearch}
+          />
+          {searchKeyword && (
+            <View className={styles.clearBtn} onClick={() => { setSearchKeyword(''); loadTodos(true); }}>
+              <Text>✕</Text>
+            </View>
+          )}
+        </View>
+      </View>
+
       <View className={styles.filterBar}>
         <ScrollView scrollX className={styles.filterScroll} enableFlex>
           {statusFilters.map(filter => (
