@@ -11878,3 +11878,513 @@ ValueError: too many values to unpack (expected 5)
 2026-05-18 19:24:33,144 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 33.20ms
 2026-05-18 19:24:33,156 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-05-18 19:24:33,157 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 54.08ms
+2026-05-19 19:01:23,552 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:01:23,553 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:01:23,554 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:01:23,555 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:01:23,555 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:01:23,555 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:01:23,755 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:01:23,756 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:01:27,189 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 19:01:27,966 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:01:27,968 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:01:27,982 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:01:28,006 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:01:28,172 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:01:28,178 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 172.55ms
+2026-05-19 19:01:28,207 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:01:28,208 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 241.38ms
+2026-05-19 19:01:35,677 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:01:35,683 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:01:35,693 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:01:35,695 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.79ms
+2026-05-19 19:01:44,526 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:01:44,526 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:01:44,534 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:01:44,534 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 7.80ms
+2026-05-19 19:01:45,659 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'applicant'
+2026-05-19 19:01:47,772 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:01:47,777 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:01:47,777 - enhanced_app - ERROR - Error getting overtime applications: 'OvertimeApplication' object has no attribute 'applicant'
+2026-05-19 19:01:47,784 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:01:47,785 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 7.44ms
+2026-05-19 19:01:48,913 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'applicant'
+2026-05-19 19:01:48,925 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'applicant'
+2026-05-19 19:01:50,234 - enhanced_app - ERROR - Error getting overtime applications: 'OvertimeApplication' object has no attribute 'applicant'
+2026-05-19 19:02:18,610 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:02:18,611 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:02:18,611 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:02:18,611 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:02:18,620 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:02:18,620 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:02:18,620 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 9.26ms
+2026-05-19 19:02:18,620 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 9.26ms
+2026-05-19 19:02:25,549 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:02:25,554 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:02:25,566 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:02:25,566 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 12.76ms
+2026-05-19 19:02:26,579 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:02:26,583 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:02:26,599 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:02:26,599 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.25ms
+2026-05-19 19:11:03,140 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:11:03,141 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:11:03,151 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:11:03,152 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.27ms
+2026-05-19 19:11:04,292 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:11:04,293 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:11:04,293 - enhanced_app - ERROR - Error getting overtime applications: 'OvertimeApplication' object has no attribute 'applicant'
+2026-05-19 19:11:04,302 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:11:04,302 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 9.55ms
+2026-05-19 19:11:18,924 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'applicant'
+2026-05-19 19:11:18,944 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'applicant'
+2026-05-19 19:12:04,732 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:12:04,733 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:12:04,735 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:12:04,737 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:12:04,737 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:12:04,738 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:12:04,873 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:12:04,875 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:12:07,364 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:12:07,366 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:12:07,373 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:12:07,377 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:12:07,612 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:12:07,612 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 234.44ms
+2026-05-19 19:12:07,659 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:12:07,660 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 286.29ms
+2026-05-19 19:12:10,754 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:12:10,755 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:12:10,765 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:12:10,767 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.56ms
+2026-05-19 19:12:11,835 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'days'
+2026-05-19 19:12:13,868 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:12:13,873 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:12:13,873 - enhanced_app - ERROR - Error getting overtime applications: 'str' object has no attribute 'strftime'
+2026-05-19 19:12:13,884 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:12:13,885 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.65ms
+2026-05-19 19:12:14,742 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'days'
+2026-05-19 19:12:14,752 - enhanced_app - ERROR - Error getting leave applications: 'LeaveApplication' object has no attribute 'days'
+2026-05-19 19:12:15,371 - enhanced_app - ERROR - Error getting overtime applications: 'str' object has no attribute 'strftime'
+2026-05-19 19:12:16,275 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:12:16,279 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:12:16,289 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:12:16,289 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 10.44ms
+2026-05-19 19:20:46,558 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:20:46,559 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:20:46,559 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:20:46,562 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:20:46,562 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:20:46,563 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:20:46,727 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:20:46,727 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:20:58,620 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:20:58,620 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:20:58,628 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:20:58,638 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:20:58,730 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:20:58,739 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 100.78ms
+2026-05-19 19:20:58,783 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:20:58,784 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 156.01ms
+2026-05-19 19:21:05,423 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:21:05,423 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:21:05,433 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:05,435 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:05,588 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:05,595 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 160.40ms
+2026-05-19 19:21:05,638 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:21:05,639 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 215.72ms
+2026-05-19 19:21:08,418 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:21:08,419 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:21:08,426 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:08,430 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:08,458 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:08,460 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 29.81ms
+2026-05-19 19:21:08,480 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:21:08,480 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 61.27ms
+2026-05-19 19:21:10,971 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:21:10,972 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:21:10,977 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:10,981 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:11,013 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:11,016 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 35.71ms
+2026-05-19 19:21:11,038 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:21:11,038 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 65.67ms
+2026-05-19 19:21:13,560 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:21:13,561 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:21:13,567 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:13,571 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:13,595 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:13,598 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 26.73ms
+2026-05-19 19:21:13,622 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:21:13,622 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 60.42ms
+2026-05-19 19:21:16,146 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:16,146 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:21:16,147 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:16,147 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:21:16,162 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:16,163 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:21:16,163 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 16.30ms
+2026-05-19 19:21:16,163 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.30ms
+2026-05-19 19:21:17,907 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:21:17,908 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:21:17,916 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:17,921 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:17,957 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:17,958 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 37.35ms
+2026-05-19 19:21:17,980 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:21:17,980 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 72.28ms
+2026-05-19 19:21:21,282 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:21:21,283 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:21:21,290 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:21:21,295 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:21:21,329 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:21:21,331 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 36.44ms
+2026-05-19 19:21:21,344 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:21:21,344 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 60.23ms
+2026-05-19 19:21:40,894 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:21:40,897 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:21:40,904 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:21:40,904 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 7.50ms
+2026-05-19 19:21:42,339 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.days
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:21:44,612 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:21:44,624 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:21:44,625 - enhanced_app - ERROR - Error getting overtime applications: 'str' object has no attribute 'strftime'
+2026-05-19 19:21:44,634 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:21:44,635 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.67ms
+2026-05-19 19:21:45,370 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.days
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:21:45,382 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.days
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:21:46,208 - enhanced_app - ERROR - Error getting overtime applications: 'str' object has no attribute 'strftime'
+2026-05-19 19:21:46,700 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:21:46,705 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:21:46,717 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:21:46,717 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 12.16ms
+2026-05-19 19:25:26,520 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:25:26,522 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:25:26,524 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:25:26,525 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:25:26,525 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:25:26,525 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:25:26,658 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:25:26,658 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:25:28,488 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:25:28,501 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:25:28,506 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:25:28,519 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:25:28,603 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:25:28,610 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 90.89ms
+2026-05-19 19:25:28,761 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:25:28,762 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 262.53ms
+2026-05-19 19:25:34,397 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:25:34,397 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:25:34,407 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:25:34,408 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.38ms
+2026-05-19 19:25:35,753 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.days
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:25:37,423 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.days
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:25:37,435 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.days
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:25:37,811 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:25:37,817 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:25:37,831 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:25:37,831 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.92ms
+2026-05-19 19:25:38,652 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:25:38,657 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:25:38,667 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:25:38,667 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 10.38ms
+2026-05-19 19:27:28,721 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:27:28,723 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:27:28,747 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:27:28,753 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:27:28,800 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:27:28,804 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 51.53ms
+2026-05-19 19:27:28,834 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:27:28,835 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 87.31ms
+2026-05-19 19:29:39,283 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:29:39,285 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:29:39,286 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:29:39,288 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:29:39,288 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:29:39,288 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:29:39,480 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:29:39,481 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:29:47,336 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:29:47,340 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:29:47,342 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:29:47,346 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:29:47,386 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:29:47,389 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 42.80ms
+2026-05-19 19:29:47,412 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:29:47,413 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 71.02ms
+2026-05-19 19:29:53,849 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:29:53,850 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:29:53,856 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:29:53,864 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:29:53,912 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:29:53,916 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 52.55ms
+2026-05-19 19:29:53,950 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:29:53,951 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 100.59ms
+2026-05-19 19:30:29,378 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:30:29,379 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:30:29,380 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:30:29,382 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:30:29,382 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:30:29,383 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:30:29,526 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:30:29,527 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:30:30,886 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:30:30,897 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:30:30,966 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:30:30,969 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 71.81ms
+2026-05-19 19:30:34,912 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:30:34,912 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:30:34,913 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:30:34,913 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:30:34,931 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:30:34,931 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:30:34,932 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 19.81ms
+2026-05-19 19:30:34,932 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 19.81ms
+2026-05-19 19:30:39,430 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:30:39,431 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:30:39,435 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:30:39,435 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 4.89ms
+2026-05-19 19:30:40,489 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.approval_comment
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:30:41,985 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:30:41,994 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:30:42,005 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:30:42,007 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.12ms
+2026-05-19 19:30:42,623 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.approval_comment
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:30:42,638 - enhanced_app - ERROR - Error getting leave applications: (sqlite3.OperationalError) no such column: leave_applications.approval_comment
+[SQL: SELECT leave_applications.id AS leave_applications_id, leave_applications.user_id AS leave_applications_user_id, leave_applications.start_date AS leave_applications_start_date, leave_applications.end_date AS leave_applications_end_date, leave_applications.leave_type AS leave_applications_leave_type, leave_applications.days AS leave_applications_days, leave_applications.reason AS leave_applications_reason, leave_applications.approval_comment AS leave_applications_approval_comment, leave_applications.status AS leave_applications_status, leave_applications.approver_id AS leave_applications_approver_id, leave_applications.approved_at AS leave_applications_approved_at, leave_applications.current_approver_level AS leave_applications_current_approver_level, leave_applications.approval_levels AS leave_applications_approval_levels, leave_applications.emergency_flag AS leave_applications_emergency_flag, leave_applications.attachment_path AS leave_applications_attachment_path, leave_applications.created_at AS leave_applications_created_at, leave_applications.updated_at AS leave_applications_updated_at, users_1.id AS users_1_id, users_1.username AS users_1_username, users_1.email AS users_1_email, users_1.password_hash AS users_1_password_hash, users_1.salt AS users_1_salt, users_1.role AS users_1_role, users_1.is_admin AS users_1_is_admin, users_1.is_active AS users_1_is_active, users_1.first_name AS users_1_first_name, users_1.last_name AS users_1_last_name, users_1.department AS users_1_department, users_1.position AS users_1_position, users_1.phone AS users_1_phone, users_1.employee_id AS users_1_employee_id, users_1.company_phone AS users_1_company_phone, users_1.mobile_phone AS users_1_mobile_phone, users_1.birthday AS users_1_birthday, users_1.gender AS users_1_gender, users_1.work_language AS users_1_work_language, users_1.avatar AS users_1_avatar, users_1.status AS users_1_status, users_1.created_at AS users_1_created_at, users_1.updated_at AS users_1_updated_at, users_1.last_login AS users_1_last_login, users_1.last_activity AS users_1_last_activity, users_1.email_notification_enabled AS users_1_email_notification_enabled, users_1.email_on_bug_assigned AS users_1_email_on_bug_assigned, users_1.email_on_bug_closed AS users_1_email_on_bug_closed, users_1.custom_permissions AS users_1_custom_permissions, users_1.is_super_admin AS users_1_is_super_admin, users_2.id AS users_2_id, users_2.username AS users_2_username, users_2.email AS users_2_email, users_2.password_hash AS users_2_password_hash, users_2.salt AS users_2_salt, users_2.role AS users_2_role, users_2.is_admin AS users_2_is_admin, users_2.is_active AS users_2_is_active, users_2.first_name AS users_2_first_name, users_2.last_name AS users_2_last_name, users_2.department AS users_2_department, users_2.position AS users_2_position, users_2.phone AS users_2_phone, users_2.employee_id AS users_2_employee_id, users_2.company_phone AS users_2_company_phone, users_2.mobile_phone AS users_2_mobile_phone, users_2.birthday AS users_2_birthday, users_2.gender AS users_2_gender, users_2.work_language AS users_2_work_language, users_2.avatar AS users_2_avatar, users_2.status AS users_2_status, users_2.created_at AS users_2_created_at, users_2.updated_at AS users_2_updated_at, users_2.last_login AS users_2_last_login, users_2.last_activity AS users_2_last_activity, users_2.email_notification_enabled AS users_2_email_notification_enabled, users_2.email_on_bug_assigned AS users_2_email_on_bug_assigned, users_2.email_on_bug_closed AS users_2_email_on_bug_closed, users_2.custom_permissions AS users_2_custom_permissions, users_2.is_super_admin AS users_2_is_super_admin 
+FROM leave_applications LEFT OUTER JOIN users AS users_1 ON users_1.id = leave_applications.user_id LEFT OUTER JOIN users AS users_2 ON users_2.id = leave_applications.approver_id ORDER BY leave_applications.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-19 19:30:43,930 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 19:30:43,936 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:30:43,950 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 19:30:43,950 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.07ms
+2026-05-19 19:30:45,798 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:30:45,801 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:30:45,809 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:30:45,812 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:30:45,913 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 19:30:45,915 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 103.15ms
+2026-05-19 19:30:45,957 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 19:30:45,958 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 148.79ms
+2026-05-19 19:34:19,294 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:34:19,295 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:34:19,297 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:34:19,299 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:34:19,300 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:34:19,300 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:34:19,491 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:34:19,492 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:34:28,809 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:34:28,844 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:34:28,971 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:34:28,977 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:34:29,048 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 76.62ms
+2026-05-19 19:34:29,048 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 71.00ms
+2026-05-19 19:34:34,818 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:34:34,821 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:34:34,828 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:34:34,829 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 7.62ms
+2026-05-19 19:34:34,834 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:34:34,844 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 9.99ms
+2026-05-19 19:34:37,320 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:34:37,321 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:34:37,321 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:34:37,322 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:34:37,324 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 1.99ms
+2026-05-19 19:34:37,324 - enhanced_app - ERROR - API Call Failed: api.users.get_users - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 2.03ms
+2026-05-19 19:36:29,450 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:36:29,452 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:36:29,453 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:36:29,455 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:36:29,457 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:36:29,457 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:36:29,634 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 19:36:29,636 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:36:31,881 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:36:31,884 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:36:31,885 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:36:31,888 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:36:31,892 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 6.21ms
+2026-05-19 19:36:31,894 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? - Duration: 5.33ms
+2026-05-19 19:39:31,237 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:39:31,238 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:39:31,240 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:39:31,242 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:39:31,242 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:39:31,242 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:39:31,243 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:39:31,243 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:39:40,706 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:39:40,710 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:39:40,710 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:39:40,751 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:39:57,188 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:39:57,190 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 19:39:57,194 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:39:57,194 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 19:39:57,226 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object. - Duration: 32.72ms
+2026-05-19 19:39:57,263 - enhanced_app - ERROR - API Call Failed: api.users.get_users - Error: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object. - Duration: 69.00ms
+2026-05-19 19:40:31,416 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:40:31,418 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:40:31,428 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:40:31,457 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object. - Duration: 40.70ms
+2026-05-19 19:40:31,460 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:40:31,541 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object. - Duration: 81.17ms
+2026-05-19 19:42:01,047 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:42:01,049 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:42:01,051 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:42:01,053 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:42:01,053 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:42:01,053 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:42:01,054 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:42:01,054 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:42:01,139 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects
+2026-05-19 19:42:01,143 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:42:01,144 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 1.12ms
+2026-05-19 19:42:06,430 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:42:06,433 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:42:06,442 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:42:06,487 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:42:06,518 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: Table 'user_shifts' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object. - Duration: 84.00ms
+2026-05-19 19:42:06,606 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Table 'user_shifts' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object. - Duration: 119.71ms
+2026-05-19 19:42:34,484 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects
+2026-05-19 19:42:34,485 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:42:34,486 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 0.98ms
+2026-05-19 19:43:36,314 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:43:36,317 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:43:36,317 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:43:36,319 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:43:36,319 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:43:36,320 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:43:36,320 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:43:36,320 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:44:21,812 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:44:21,814 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:44:21,815 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:44:21,817 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:44:21,817 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:44:21,818 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:44:21,819 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:44:21,819 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:47:34,796 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:47:34,797 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:47:34,798 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:47:34,800 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:47:34,800 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:47:34,800 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:47:34,802 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:47:34,803 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:47:56,466 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:47:56,467 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:47:56,468 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 1.53ms
+2026-05-19 19:48:59,891 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:50:32,764 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:50:32,767 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:50:32,768 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:50:32,769 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:50:32,770 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:50:32,770 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:50:32,771 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:50:32,771 - enhanced_app - INFO - 数据库初始化完成

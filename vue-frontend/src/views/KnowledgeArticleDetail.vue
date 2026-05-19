@@ -194,40 +194,7 @@
           </el-card>
         </div>
 
-        <!-- 侧边栏 -->
-        <div class="sidebar animate-fade-in-up delay-300">
-          <!-- 文章目录 -->
-          <el-card shadow="never" class="toc-card glass-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><List /></el-icon>
-                <span>文章目录</span>
-              </div>
-            </template>
-            <div class="toc-content">
-              <div class="toc-placeholder">
-                <el-icon><Document /></el-icon>
-                <span>目录功能开发中</span>
-              </div>
-            </div>
-          </el-card>
 
-          <!-- 相关文章推荐 -->
-          <el-card shadow="never" class="related-card glass-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><Link /></el-icon>
-                <span>相关推荐</span>
-              </div>
-            </template>
-            <div class="related-content">
-              <div class="related-placeholder">
-                <el-icon><Collection /></el-icon>
-                <span>相关文章推荐开发中</span>
-              </div>
-            </div>
-          </el-card>
-        </div>
       </div>
     </template>
 
@@ -246,8 +213,7 @@ import { marked } from 'marked'
 import { useUserStore } from '@/stores/user'
 import {
   ArrowLeft, User, Folder, Clock, View, Star, StarFilled,
-  ChatDotRound, Paperclip, Edit, Share, Download, Document,
-  List, Link, Collection
+  ChatDotRound, Paperclip, Edit, Share, Download, Document
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -670,19 +636,12 @@ onMounted(() => {
 
 /* 文章布局 */
 .article-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .main-content {
   min-width: 0;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
 
 /* 玻璃拟态卡片 */
@@ -1142,56 +1101,6 @@ onMounted(() => {
   color: #94a3b8;
 }
 
-/* 侧边栏 */
-.toc-card,
-.related-card {
-  position: sticky;
-  top: 20px;
-}
-
-.toc-card :deep(.el-card__header),
-.related-card :deep(.el-card__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-  background: rgba(241, 245, 249, 0.5);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  color: #1e293b;
-  font-size: 15px;
-}
-
-.card-header .el-icon {
-  color: #6366f1;
-  font-size: 18px;
-}
-
-.toc-content,
-.related-content {
-  padding: 20px;
-}
-
-.toc-placeholder,
-.related-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 32px 20px;
-  color: #94a3b8;
-  text-align: center;
-}
-
-.toc-placeholder .el-icon,
-.related-placeholder .el-icon {
-  font-size: 40px;
-  color: #cbd5e1;
-}
-
 /* 动画 */
 @keyframes fadeInDown {
   from {
@@ -1243,23 +1152,6 @@ onMounted(() => {
 }
 
 /* 响应式 */
-@media screen and (max-width: 1024px) {
-  .article-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    flex-direction: row;
-    gap: 20px;
-  }
-
-  .toc-card,
-  .related-card {
-    position: static;
-    flex: 1;
-  }
-}
-
 @media screen and (max-width: 768px) {
   .page-header {
     padding: 20px;
@@ -1330,10 +1222,6 @@ onMounted(() => {
   .comment-content {
     padding-left: 0;
     margin-top: 12px;
-  }
-
-  .sidebar {
-    flex-direction: column;
   }
 
   .article-content :deep(h1) {

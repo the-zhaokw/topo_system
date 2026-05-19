@@ -20255,3 +20255,763 @@ REQUEST:
 None
 USER:
 None
+2026-05-19 19:34:29,109 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:34:29,111 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:34:34,856 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:34:34,857 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:34:37,329 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:34:37,330 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 67, in get_users
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:36:31,903 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:36:31,905 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2178, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:39:57,276 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 61, in get_users
+    User, UserRole, Department, Position = get_models()
+                                           ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 35, in get_models
+    from enhanced_app import User, UserRole, Department, Position
+  File "D:\topo_system\backend\enhanced_app.py", line 848, in <module>
+    class ProjectMember(db.Model):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 92, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 144, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_api.py", line 195, in __init__
+    _as_declarative(reg, cls, dict_)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 247, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 328, in setup_mapping
+    return _ClassScanMapperConfig(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 578, in __init__
+    self._setup_table(table)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1729, in _setup_table
+    table_cls(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 171, in __table_cls__
+    return sa.Table(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in __new__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 436, in __new__
+    return cls._new(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 468, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:39:57,277 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 78, in get_projects
+    db = get_db()
+         ^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 65, in get_db
+    from enhanced_app import get_db_instance
+  File "D:\topo_system\backend\enhanced_app.py", line 848, in <module>
+    class ProjectMember(db.Model):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 92, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 144, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_api.py", line 195, in __init__
+    _as_declarative(reg, cls, dict_)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 247, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 328, in setup_mapping
+    return _ClassScanMapperConfig(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 578, in __init__
+    self._setup_table(table)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1729, in _setup_table
+    table_cls(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 171, in __table_cls__
+    return sa.Table(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in __new__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 436, in __new__
+    return cls._new(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 468, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:40:31,520 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 42, in get_dashboard_stats
+    db = get_db()
+         ^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 21, in get_db
+    from enhanced_app import get_db_instance
+  File "D:\topo_system\backend\enhanced_app.py", line 848, in <module>
+    class ProjectMember(db.Model):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 92, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 144, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_api.py", line 195, in __init__
+    _as_declarative(reg, cls, dict_)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 247, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 328, in setup_mapping
+    return _ClassScanMapperConfig(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 578, in __init__
+    self._setup_table(table)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1729, in _setup_table
+    table_cls(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 171, in __table_cls__
+    return sa.Table(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in __new__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 436, in __new__
+    return cls._new(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 468, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:40:31,549 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 78, in get_projects
+    db = get_db()
+         ^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 65, in get_db
+    from enhanced_app import get_db_instance
+  File "D:\topo_system\backend\enhanced_app.py", line 848, in <module>
+    class ProjectMember(db.Model):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 92, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 144, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_api.py", line 195, in __init__
+    _as_declarative(reg, cls, dict_)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 247, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 328, in setup_mapping
+    return _ClassScanMapperConfig(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 578, in __init__
+    self._setup_table(table)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1729, in _setup_table
+    table_cls(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 171, in __table_cls__
+    return sa.Table(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in __new__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 436, in __new__
+    return cls._new(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 468, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'project_members' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:42:01,146 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:42:06,611 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 43, in get_dashboard_stats
+    Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
+                                                   ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 31, in get_models
+    from enhanced_app import Bug, Project, ProjectMember, User, BugStatus, RequirementDocument, RequirementItem
+  File "D:\topo_system\backend\enhanced_app.py", line 921, in <module>
+    class UserShift(db.Model):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 92, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 144, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_api.py", line 195, in __init__
+    _as_declarative(reg, cls, dict_)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 247, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 328, in setup_mapping
+    return _ClassScanMapperConfig(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 578, in __init__
+    self._setup_table(table)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1729, in _setup_table
+    table_cls(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 171, in __table_cls__
+    return sa.Table(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in __new__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 436, in __new__
+    return cls._new(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 468, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'user_shifts' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:42:06,621 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 79, in get_projects
+    User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
+                                                                       ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 36, in get_models
+    from enhanced_app import User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug
+  File "D:\topo_system\backend\enhanced_app.py", line 921, in <module>
+    class UserShift(db.Model):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 92, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 144, in __init__
+    super().__init__(name, bases, d, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_api.py", line 195, in __init__
+    _as_declarative(reg, cls, dict_)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 247, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 328, in setup_mapping
+    return _ClassScanMapperConfig(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 578, in __init__
+    self._setup_table(table)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 1729, in _setup_table
+    table_cls(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 171, in __table_cls__
+    return sa.Table(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in __new__
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 436, in __new__
+    return cls._new(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\schema.py", line 468, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'user_shifts' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:42:34,489 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:47:56,469 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None

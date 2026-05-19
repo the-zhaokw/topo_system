@@ -147,8 +147,18 @@ def get_contracts_statistics_bp():
     return contracts_statistics_bp
 
 def get_requirements_bp():
-    from api.requirements import requirements_bp
-    return requirements_bp
+    try:
+        from api.requirements import requirements_bp
+        return requirements_bp
+    except Exception as e:
+        print(f"Skipped requirements_bp: {e}")
+        # 返回一个空的蓝图作为占位符
+        from flask import Blueprint
+        placeholder_bp = Blueprint('requirements_placeholder', __name__)
+        @placeholder_bp.route('/health', methods=['GET'])
+        def health():
+            return {'status': 'requirements module not loaded'}
+        return placeholder_bp
 
 def get_test_management_bp():
     from api.test_management import test_management_bp
@@ -187,8 +197,18 @@ def get_project_logs_bp():
     return project_logs_bp
 
 def get_knowledge_bp():
-    from api.knowledge import knowledge_bp
-    return knowledge_bp
+    try:
+        from api.knowledge import knowledge_bp
+        return knowledge_bp
+    except Exception as e:
+        print(f"Skipped knowledge_bp: {e}")
+        # 返回一个空的蓝图作为占位符
+        from flask import Blueprint
+        placeholder_bp = Blueprint('knowledge_placeholder', __name__)
+        @placeholder_bp.route('/health', methods=['GET'])
+        def health():
+            return {'status': 'knowledge module not loaded'}
+        return placeholder_bp
 
 def get_data_import_export_bp():
     from api.data_import_export import data_bp

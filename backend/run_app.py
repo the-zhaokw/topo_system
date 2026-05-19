@@ -369,13 +369,14 @@ def ensure_columns():
 
 if __name__ == '__main__':
     ensure_columns()
-    
-    # 初始化扩展（必须在注册蓝图之前调用）
+
+    # 注册API蓝图 - 必须在 init_extensions 之前调用
+    # 这样所有模型会在 db.init_app() 之前被导入，避免重复注册
+    register_api_blueprints()
+
+    # 初始化扩展（现在可以安全地初始化 db）
     init_extensions(app)
-    
-    # 注意：API蓝图已在 enhanced_app.py 文件末尾自动注册
-    # 无需再次调用 register_api_blueprints()
-    
+
     # 初始化数据库
     with app.app_context():
         init_db()

@@ -11,10 +11,14 @@ from datetime import datetime
 import json
 import io
 
-from enhanced_app import db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User
 from services.email_service import email_service
 
 requirements_bp = Blueprint('requirements', __name__, url_prefix='/')
+
+# 延迟导入数据库模型以避免循环导入
+def get_db_and_models():
+    from enhanced_app import db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User
+    return db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User
 
 
 def get_current_user_id():

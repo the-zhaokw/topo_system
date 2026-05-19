@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
-from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -12,6 +11,9 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
 from functools import wraps
+
+# 从 config.extensions 导入 db 和 jwt，确保使用统一的实例
+from config.extensions import db, jwt, init_extensions
 
 CHINA_TZ = ZoneInfo('Asia/Shanghai')
 
@@ -74,13 +76,7 @@ def serve_upload(filename):
     from flask import send_from_directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# 初始化扩展（使用Flask-SQLAlchemy 3.x兼容方式）
-db = SQLAlchemy(app)
-jwt = JWTManager(app)
-
-def init_extensions(app):
-    """初始化所有扩展"""
-    pass
+# 注意：db 和 jwt 已从 config.extensions 导入，init_extensions 函数也从该模块导入
 
 # 配置CORS - 更全面的CORS配置
 cors = CORS(app, resources={
@@ -851,6 +847,7 @@ class Project(db.Model):
 # 定义ProjectMember模型（在模块级别定义）
 class ProjectMember(db.Model):
     __tablename__ = 'project_members'
+    __table_args__ = {'extend_existing': True}
     
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
@@ -867,7 +864,8 @@ class ProjectMember(db.Model):
 # 工作日历模型
 class WorkCalendar(db.Model):
     __tablename__ = 'work_calendar'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False, unique=True)  # 日期
     is_working_day = Column(Boolean, default=True)  # 是否工作日
@@ -890,7 +888,8 @@ class WorkCalendar(db.Model):
 # 班次模型
 class ShiftSchedule(db.Model):
     __tablename__ = 'shift_schedules'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)  # 班次名称
     start_time = Column(String(5), nullable=False)  # 开始时间（格式：HH:MM）
@@ -921,7 +920,8 @@ class ShiftSchedule(db.Model):
 # 用户班次分配模型
 class UserShift(db.Model):
     __tablename__ = 'user_shifts'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # 用户ID
     shift_id = Column(Integer, ForeignKey('shift_schedules.id'), nullable=False)  # 班次ID
@@ -948,7 +948,8 @@ class UserShift(db.Model):
 # 考勤记录模型
 class AttendanceRecord(db.Model):
     __tablename__ = 'attendance_records'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # 用户ID
     record_date = Column(DateTime, nullable=False)  # 记录日期
@@ -994,13 +995,16 @@ class AttendanceRecord(db.Model):
 # 请假申请模型
 class LeaveApplication(db.Model):
     __tablename__ = 'leave_applications'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # 申请人ID
     start_date = Column(DateTime, nullable=False)  # 开始日期
     end_date = Column(DateTime, nullable=False)  # 结束日期
     leave_type = Column(String(50), nullable=False)  # 请假类型
+    days = Column(Float, nullable=False)  # 请假天数
     reason = Column(Text, nullable=False)  # 请假原因
+    approval_comment = Column(Text)  # 审批意见
     status = Column(String(20), default="pending", nullable=False)  # 审批状态
     approver_id = Column(Integer, ForeignKey('users.id'))  # 当前审批人ID
     approved_at = Column(DateTime)  # 审批时间
@@ -1014,7 +1018,12 @@ class LeaveApplication(db.Model):
     # 关系
     user = relationship("User", foreign_keys=[user_id])
     approver = relationship("User", foreign_keys=[approver_id])
-    
+
+    @property
+    def attachment(self):
+        """兼容attachment属性访问"""
+        return self.attachment_path
+
     def to_dict(self):
         import json
         approval_levels_list = []
@@ -1044,7 +1053,8 @@ class LeaveApplication(db.Model):
 # 加班申请模型
 class OvertimeApplication(db.Model):
     __tablename__ = 'overtime_applications'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # 申请人ID
     date = Column(DateTime, nullable=False)  # 加班日期
@@ -1080,7 +1090,8 @@ class OvertimeApplication(db.Model):
 # 考勤异常模型
 class AttendanceException(db.Model):
     __tablename__ = 'attendance_exceptions'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # 用户ID
     record_date = Column(DateTime, nullable=False)  # 异常日期
@@ -1113,7 +1124,8 @@ class AttendanceException(db.Model):
 # 定义 Bug 相关模型
 class Bug(db.Model):
     __tablename__ = 'bugs'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)  # Bug 标题
     description = Column(Text, nullable=False)  # Bug 描述
@@ -1220,7 +1232,8 @@ class Bug(db.Model):
 # 定义评论模型
 class Comment(db.Model):
     __tablename__ = 'comments'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     content = Column(Text, nullable=False)  # 评论内容
     created_by = Column(Integer, ForeignKey('users.id'), nullable=False)  # 创建人ID
@@ -1249,7 +1262,8 @@ class Comment(db.Model):
 # 定义附件模型
 class Attachment(db.Model):
     __tablename__ = 'attachments'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     filename = Column(String(255), nullable=False)  # 文件名
     file_path = Column(String(500), nullable=False)  # 文件路径
@@ -1284,7 +1298,8 @@ class Attachment(db.Model):
 # 定义活动日志模型
 class Activity(db.Model):
     __tablename__ = 'activities'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     action = Column(String(50), nullable=False)  # 活动类型
     description = Column(Text, nullable=False)  # 活动描述
@@ -1331,6 +1346,7 @@ class ProjectLogType(enum.Enum):
 
 class ProjectLog(db.Model):
     __tablename__ = 'project_logs'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
@@ -1411,6 +1427,7 @@ class IssuePriority(enum.Enum):
 class Risk(db.Model):
     """风险和问题管理模型"""
     __tablename__ = 'risks'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
@@ -1508,7 +1525,8 @@ class Risk(db.Model):
 # 物料分类模型
 class MaterialCategory(db.Model):
     __tablename__ = 'material_categories'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)  # 分类名称
     code = Column(String(50), unique=True, nullable=False)  # 分类编码
@@ -1537,7 +1555,8 @@ class MaterialCategory(db.Model):
 # 物料主数据模型
 class Material(db.Model):
     __tablename__ = 'materials'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)  # 物料名称
     code = Column(String(100), unique=True, nullable=False)  # 物料编码
@@ -1583,7 +1602,8 @@ class Material(db.Model):
 # 仓库模型
 class Warehouse(db.Model):
     __tablename__ = 'warehouses'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)  # 仓库名称
     code = Column(String(50), unique=True, nullable=False)  # 仓库编码
@@ -1619,7 +1639,8 @@ class Warehouse(db.Model):
 # 库位模型
 class Location(db.Model):
     __tablename__ = 'locations'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     warehouse_id = Column(Integer, ForeignKey('warehouses.id'), nullable=False)  # 仓库ID
     name = Column(String(100), nullable=False)  # 库位名称
@@ -1659,7 +1680,8 @@ class Location(db.Model):
 # 库存模型
 class Inventory(db.Model):
     __tablename__ = 'inventories'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     material_id = Column(Integer, ForeignKey('materials.id'), nullable=False)  # 物料ID
     warehouse_id = Column(Integer, ForeignKey('warehouses.id'), nullable=False)  # 仓库ID
@@ -1690,7 +1712,8 @@ class Inventory(db.Model):
 # 序列号模型
 class SerialNumber(db.Model):
     __tablename__ = 'serial_numbers'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     material_id = Column(Integer, ForeignKey('materials.id'), nullable=False)  # 物料ID
     serial_number = Column(String(100), unique=True, nullable=False)  # 序列号
@@ -1721,7 +1744,8 @@ class SerialNumber(db.Model):
 # 库存交易模型
 class InventoryTransaction(db.Model):
     __tablename__ = 'inventory_transactions'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     transaction_date = Column(DateTime, default=datetime.utcnow)  # 交易日期
     transaction_type = Column(String(20), nullable=False)  # 交易类型
@@ -1765,7 +1789,8 @@ class InventoryTransaction(db.Model):
 # 物料关系模型
 class MaterialRelationship(db.Model):
     __tablename__ = 'material_relationships'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     source_material_id = Column(Integer, ForeignKey('materials.id'), nullable=False)  # 源物料ID
     target_material_id = Column(Integer, ForeignKey('materials.id'), nullable=False)  # 目标物料ID
@@ -1790,7 +1815,8 @@ class MaterialRelationship(db.Model):
 # 库存盘点模型
 class InventoryCheck(db.Model):
     __tablename__ = 'inventory_checks'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     check_no = Column(String(50), unique=True, nullable=False)  # 盘点单号
     check_date = Column(DateTime, default=datetime.utcnow)  # 盘点日期
@@ -1831,7 +1857,8 @@ class InventoryCheck(db.Model):
 # 库存盘点明细模型
 class InventoryCheckDetail(db.Model):
     __tablename__ = 'inventory_check_details'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     check_id = Column(Integer, ForeignKey('inventory_checks.id'), nullable=False)  # 盘点单ID
     material_id = Column(Integer, ForeignKey('materials.id'), nullable=False)  # 物料ID
@@ -1873,6 +1900,7 @@ class InventoryCheckDetail(db.Model):
 # 定义通知模型
 class Notification(db.Model):
     __tablename__ = 'notifications'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -1909,7 +1937,8 @@ class Notification(db.Model):
 
 class Contract(db.Model):
     __tablename__ = 'contracts'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_no = Column(String(50), unique=True, nullable=False)
     title = Column(String(255), nullable=False)
@@ -2099,7 +2128,8 @@ class Contract(db.Model):
 
 class ContractClause(db.Model):
     __tablename__ = 'contract_clauses'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     clause_type = Column(String(50))
@@ -2128,7 +2158,8 @@ class ContractClause(db.Model):
 
 class ContractApproval(db.Model):
     __tablename__ = 'contract_approvals'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     approval_level = Column(Integer, default=1)
@@ -2158,7 +2189,8 @@ class ContractApproval(db.Model):
 
 class ContractDelivery(db.Model):
     __tablename__ = 'contract_deliveries'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     delivery_no = Column(String(50))
@@ -2197,7 +2229,8 @@ class ContractDelivery(db.Model):
 
 class ContractChange(db.Model):
     __tablename__ = 'contract_changes'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     change_no = Column(String(50))
@@ -2236,7 +2269,8 @@ class ContractChange(db.Model):
 
 class ContractRisk(db.Model):
     __tablename__ = 'contract_risks'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     risk_type = Column(String(50))
@@ -2270,7 +2304,8 @@ class ContractRisk(db.Model):
 
 class ContractPayment(db.Model):
     __tablename__ = 'contract_payments'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     payment_no = Column(String(50))
@@ -2309,7 +2344,8 @@ class ContractPayment(db.Model):
 
 class ContractAttachment(db.Model):
     __tablename__ = 'contract_attachments'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
     file_name = Column(String(255), nullable=False)
@@ -2344,6 +2380,7 @@ class ContractAttachment(db.Model):
 class RequirementDocument(db.Model):
     """需求文档表"""
     __tablename__ = 'requirement_documents'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
@@ -2386,7 +2423,8 @@ class RequirementDocument(db.Model):
 class RequirementItem(db.Model):
     """需求条目表"""
     __tablename__ = 'requirement_items'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     doc_id = Column(Integer, ForeignKey('requirement_documents.id'), nullable=False)
     parent_id = Column(Integer, ForeignKey('requirement_items.id'), nullable=True)
@@ -2438,7 +2476,8 @@ class RequirementItem(db.Model):
 class RequirementComment(db.Model):
     """需求评论表"""
     __tablename__ = 'requirement_comments'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     target_type = Column(String(20), nullable=False)  # document, item
     target_id = Column(Integer, nullable=False)
@@ -2470,7 +2509,8 @@ class RequirementComment(db.Model):
 class RequirementLink(db.Model):
     """需求关联关系表"""
     __tablename__ = 'requirement_links'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     requirement_id = Column(Integer, ForeignKey('requirement_items.id'), nullable=False)
     target_type = Column(String(20), nullable=False)  # task, bug, test_case, code_commit
@@ -2498,6 +2538,7 @@ class RequirementLink(db.Model):
 class RequirementVersion(db.Model):
     """需求文档版本历史表"""
     __tablename__ = 'requirement_versions'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     doc_id = Column(Integer, ForeignKey('requirement_documents.id'), nullable=False)
@@ -2527,6 +2568,7 @@ class RequirementVersion(db.Model):
 class TestSuite(db.Model):
     """测试集表"""
     __tablename__ = 'test_suites'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
@@ -2579,6 +2621,7 @@ class TestSuite(db.Model):
 class TestCase(db.Model):
     """测试用例表"""
     __tablename__ = 'test_cases'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     suite_id = Column(Integer, ForeignKey('test_suites.id'), nullable=False)
@@ -2653,6 +2696,7 @@ class TestCase(db.Model):
 class TestStep(db.Model):
     """用例步骤表"""
     __tablename__ = 'test_steps'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     case_id = Column(Integer, ForeignKey('test_cases.id'), nullable=False)
@@ -2687,6 +2731,7 @@ class TestStep(db.Model):
 class TestExecution(db.Model):
     """测试执行记录表"""
     __tablename__ = 'test_executions'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
@@ -2740,6 +2785,7 @@ class TestExecution(db.Model):
 class TestResult(db.Model):
     """用例执行结果表"""
     __tablename__ = 'test_results'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     execution_id = Column(Integer, ForeignKey('test_executions.id'), nullable=False)
@@ -2791,6 +2837,7 @@ class TestResult(db.Model):
 class TestCaseRequirementLink(db.Model):
     """测试用例与需求关联表"""
     __tablename__ = 'test_case_requirement_links'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     test_case_id = Column(Integer, ForeignKey('test_cases.id'), nullable=False)
@@ -2820,6 +2867,7 @@ class TestCaseRequirementLink(db.Model):
 class AuditLog(db.Model):
     """审计日志模型 - 记录所有用户操作"""
     __tablename__ = 'audit_logs'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
@@ -2850,6 +2898,7 @@ class AuditLog(db.Model):
 class WorkLog(db.Model):
     """工作日志模型 - 记录用户个人工作日志"""
     __tablename__ = 'work_logs'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
@@ -2889,6 +2938,7 @@ class WorkLog(db.Model):
 class KnowledgeCategory(db.Model):
     """知识库分类模型"""
     __tablename__ = 'knowledge_categories'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
@@ -2925,6 +2975,7 @@ class KnowledgeCategory(db.Model):
 class KnowledgeArticle(db.Model):
     """知识库文章模型"""
     __tablename__ = 'knowledge_articles'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)
@@ -3001,6 +3052,7 @@ class KnowledgeArticle(db.Model):
 class KnowledgeAttachment(db.Model):
     """知识库附件模型"""
     __tablename__ = 'knowledge_attachments'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     article_id = Column(Integer, ForeignKey('knowledge_articles.id'), index=True, nullable=False)
@@ -3627,6 +3679,19 @@ def migrate_database():
                         db.session.rollback()
                         logger.warning(f"添加列 {col_name} 失败（可能已存在）: {str(e)}")
         
+        # 检查 leave_applications 表 - 添加缺失的 days 列
+        if inspector.has_table('leave_applications'):
+            existing_columns = [col['name'] for col in inspector.get_columns('leave_applications')]
+            
+            if 'days' not in existing_columns:
+                try:
+                    db.session.execute(db.text("ALTER TABLE leave_applications ADD COLUMN days FLOAT DEFAULT 0"))
+                    db.session.commit()
+                    logger.info("数据库迁移成功：已添加缺失列 days 到 leave_applications 表")
+                except Exception as e:
+                    db.session.rollback()
+                    logger.warning(f"添加列 days 失败（可能已存在）: {str(e)}")
+        
         # 迁移部门和职位数据到新表
         if inspector.has_table('users') and inspector.has_table('departments'):
             try:
@@ -3873,7 +3938,8 @@ if __name__ == '__main__':
 class KnowledgeVersion(db.Model):
     """知识库文章版本历史"""
     __tablename__ = 'knowledge_versions'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
     version_number = Column(Integer, nullable=False)
@@ -3890,7 +3956,8 @@ class KnowledgeVersion(db.Model):
 class KnowledgeShare(db.Model):
     """知识库文章分享"""
     __tablename__ = 'knowledge_shares'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
     share_token = Column(String(32), unique=True, nullable=False)
@@ -3909,7 +3976,8 @@ class KnowledgeShare(db.Model):
 class KnowledgeLink(db.Model):
     """知识库文章双向链接"""
     __tablename__ = 'knowledge_links'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     from_article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
     to_article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
@@ -3923,7 +3991,8 @@ class KnowledgeLink(db.Model):
 class KnowledgeTagEnhanced(db.Model):
     """知识库标签（增强版）"""
     __tablename__ = 'knowledge_tags'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True, nullable=False)
     color = Column(String(7), default='#409EFF')
@@ -3941,7 +4010,8 @@ article_tags = db.Table('article_tags',
 class KnowledgeFavorite(db.Model):
     """知识库收藏"""
     __tablename__ = 'knowledge_favorites'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -3955,7 +4025,8 @@ class KnowledgeFavorite(db.Model):
 class KnowledgeReadRecord(db.Model):
     """知识库阅读记录"""
     __tablename__ = 'knowledge_read_records'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -3970,7 +4041,8 @@ class KnowledgeReadRecord(db.Model):
 class KnowledgeComment(db.Model):
     """知识库行内评论"""
     __tablename__ = 'knowledge_comments'
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True)
     article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -3988,6 +4060,4 @@ class KnowledgeComment(db.Model):
 
 # ==================== 知识库增强模型结束 ====================
 
-# 在模块加载时立即注册 API 蓝图（确保通过 WSGI 服务器启动时也能正常工作）
-# 注意：必须在所有模型定义之后调用，以避免循环导入问题
-register_api_blueprints()
+# 注意：API 蓝图在 if __name__ == '__main__': 块中注册，以避免循环导入问题

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.orm import joinedload
 import json
 
 # 创建考勤管理蓝图
@@ -384,7 +385,10 @@ def get_leave_applications():
         status = request.args.get('status')
         user_id = request.args.get('user_id', type=int)
         
-        query = LeaveApplication.query
+        query = LeaveApplication.query.options(
+            joinedload(LeaveApplication.applicant),
+            joinedload(LeaveApplication.approver)
+        )
         
         # 非管理员只能查看自己的申请
         if current_user.role != 'admin':
@@ -415,7 +419,7 @@ def get_leave_applications():
                 'leave_type': app.leave_type,
                 'start_date': app.start_date.strftime('%Y-%m-%d') if app.start_date else None,
                 'end_date': app.end_date.strftime('%Y-%m-%d') if app.end_date else None,
-                'days': app.days,
+                'days': getattr(app, 'days', None) or ((app.end_date - app.start_date).days + 1) if app.start_date and app.end_date else None,
                 'reason': app.reason,
                 'status': app.status,
                 'approver_id': app.approver_id,
@@ -462,7 +466,10 @@ def get_overtime_applications():
         status = request.args.get('status')
         user_id = request.args.get('user_id', type=int)
         
-        query = OvertimeApplication.query
+        query = OvertimeApplication.query.options(
+            joinedload(OvertimeApplication.user),
+            joinedload(OvertimeApplication.approver)
+        )
         
         # 非管理员只能查看自己的申请
         if current_user.role != 'admin':
@@ -480,7 +487,7 @@ def get_overtime_applications():
         
         result = []
         for app in applications:
-            applicant = app.applicant
+            applicant = app.user
             approver = app.approver
             app_data = {
                 'id': app.id,
@@ -490,11 +497,10 @@ def get_overtime_applications():
                     'username': applicant.username if applicant else '未知',
                     'name': f"{applicant.first_name or ''} {applicant.last_name or ''}".strip() or applicant.username if applicant else '未知'
                 } if applicant else None,
-                'overtime_date': app.overtime_date.strftime('%Y-%m-%d') if hasattr(app, 'overtime_date') and app.overtime_date else None,
-                'start_time': app.start_time.strftime('%H:%M') if hasattr(app, 'start_time') and app.start_time else None,
-                'end_time': app.end_time.strftime('%H:%M') if hasattr(app, 'end_time') and app.end_time else None,
-                'hours': app.hours if hasattr(app, 'hours') else 0,
-                'reason': app.reason if hasattr(app, 'reason') else None,
+                'overtime_date': app.date.strftime('%Y-%m-%d') if app.date and hasattr(app.date, 'strftime') else (app.date if app.date else None),
+                'start_time': app.start_time,
+                'end_time': app.end_time,
+                'reason': app.reason,
                 'status': app.status,
                 'approver_id': app.approver_id,
                 'approver': {
@@ -503,7 +509,7 @@ def get_overtime_applications():
                     'name': f"{approver.first_name or ''} {approver.last_name or ''}".strip() or approver.username if approver else None
                 } if approver else None,
                 'approved_at': app.approved_at.isoformat() if app.approved_at else None,
-                'approval_comment': app.approval_comment if hasattr(app, 'approval_comment') else None,
+                'rejection_reason': app.rejection_reason,
                 'created_at': app.created_at.isoformat() if app.created_at else None
             }
             result.append(app_data)
@@ -520,6 +526,24 @@ def get_overtime_applications():
         import traceback
         traceback.print_exc()
         return jsonify({'error': '获取加班申请失败'}), 500
+
+# 获取班次列表
+@attendance_bp.route('/shifts', methods=['GET'])
+@jwt_required()
+def get_shifts():
+    """获取班次列表"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+
+    try:
+        shifts = ShiftSchedule.query.filter_by(is_active=True).all()
+        return jsonify([shift.to_dict() for shift in shifts])
+    except Exception as e:
+        logger.error(f"Error getting shifts: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取班次列表失败'}), 500
 
 # 获取用户班次安排
 @attendance_bp.route('/user-shifts', methods=['GET'])
@@ -743,8 +767,8 @@ def get_statistics():
         
         # 获取加班统计
         overtime_query = OvertimeApplication.query.filter(
-            OvertimeApplication.date >= start_date,
-            OvertimeApplication.date <= end_date,
+            db.func.date(OvertimeApplication.date) >= start_date,
+            db.func.date(OvertimeApplication.date) <= end_date,
             OvertimeApplication.status == ApprovalStatus.APPROVED.value
         )
         

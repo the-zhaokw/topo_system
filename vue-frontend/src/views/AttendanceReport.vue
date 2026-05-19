@@ -467,8 +467,8 @@ const fetchReportData = async () => {
     detailData.value = detailRes?.records || []
     pagination.value.total = detailRes?.total || 0
     
-    exceptionData.value = exceptionRes || []
-    overtimeData.value = overtimeRes || []
+    exceptionData.value = exceptionRes?.records || []
+    overtimeData.value = overtimeRes?.records || overtimeRes || []
     
   } catch (error) {
     ElMessage.error('获取报表数据失败')
