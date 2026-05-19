@@ -80,7 +80,7 @@ def get_projects():
     
     # 直接使用get_jwt_identity函数
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     
     # 使用增强日志系统记录请求
     try:
@@ -111,17 +111,17 @@ def get_projects():
     
     # 构建查询 - 使用 joinedload 避免 N+1 查询
     if user_id:
-        query = Project.query.options(
+        query = db.session.query(Project).options(
             joinedload(Project.members).joinedload(ProjectMember.user)
         ).join(ProjectMember).filter(ProjectMember.user_id == user_id)
     elif current_user.role == UserRole.ADMIN.value:
         # 管理员可以查看所有项目
-        query = Project.query.options(
+        query = db.session.query(Project).options(
             joinedload(Project.members).joinedload(ProjectMember.user)
         )
     else:
         # 普通用户只能查看自己参与的项目
-        query = Project.query.options(
+        query = db.session.query(Project).options(
             joinedload(Project.members).joinedload(ProjectMember.user)
         ).join(ProjectMember).filter(ProjectMember.user_id == current_user_id)
     
@@ -268,16 +268,16 @@ def get_project(project_id):
     # 延迟导入数据库模型
     db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
     
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     
     # 查找项目
-    project = Project.query.get(project_id)
+    project = db.session.query(Project).get(project_id)
     if not project:
         return jsonify({'error': '项目不存在'}), 404
     
     # 检查权限：管理员可以查看所有项目，普通用户只能查看自己参与的项目
     if current_user.role != UserRole.ADMIN.value:
-        member = ProjectMember.query.filter_by(
+        member = db.session.query(ProjectMember).filter_by(
             project_id=project_id,
             user_id=current_user_id
         ).first()
@@ -285,7 +285,7 @@ def get_project(project_id):
             return jsonify({'error': '无权查看此项目'}), 403
     
     # 获取项目成员信息
-    members = ProjectMember.query.filter_by(project_id=project_id).all()
+    members = db.session.query(ProjectMember).filter_by(project_id=project_id).all()
     members_data = []
     for member in members:
         member_first_name = ''
@@ -329,7 +329,7 @@ def get_project(project_id):
         pass
     
     # 获取项目下的缺陷数量
-    bug_count = Bug.query.filter_by(project_id=project_id).count()
+    bug_count = db.session.query(Bug).filter_by(project_id=project_id).count()
     
     # 构建项目详情
     project_data = {
@@ -395,7 +395,7 @@ def create_project():
     db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
     
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     
     # 检查权限
     if not current_user.can('create'):
@@ -458,7 +458,7 @@ def create_project():
                 'code': 'VALIDATION_ERROR'
             }), 400
     
-    if Project.query.filter_by(code=data['code']).first():
+    if db.session.query(Project).filter_by(code=data['code']).first():
         log_manager.log_error(
             message=f"创建项目验证错误: 项目代码已存在: {data['code']}"
         )
@@ -559,7 +559,7 @@ def create_project():
                     except (ValueError, TypeError):
                         continue
                     
-                    user = User.query.get(user_id_int)
+                    user = db.session.query(User).get(user_id_int)
                     if user:
                         new_member = ProjectMember(
                             project_id=new_project.id,
@@ -572,7 +572,7 @@ def create_project():
         
         # 确保项目经理是项目成员（如果有设置）
         if new_project.manager_id:
-            manager_member = ProjectMember.query.filter_by(
+            manager_member = db.session.query(ProjectMember).filter_by(
                 project_id=new_project.id,
                 user_id=new_project.manager_id
             ).first()
@@ -679,10 +679,10 @@ def update_project(project_id):
         # 延迟导入数据库模型
         db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
         
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.query(User).get(current_user_id)
         
         # 查找项目
-        project = Project.query.get(project_id)
+        project = db.session.query(Project).get(project_id)
         if not project:
             log_manager.log_error(
                 error_type='update_project_failed',
@@ -759,7 +759,7 @@ def update_project(project_id):
                 return jsonify({'error': '项目代码长度不能超过20个字符', 'code': 'VALIDATION_ERROR'}), 400
             
             # 检查项目代码是否已被其他项目使用
-            existing_project = Project.query.filter_by(code=code).first()
+            existing_project = db.session.query(Project).filter_by(code=code).first()
             if existing_project and existing_project.id != project_id:
                 return jsonify({'error': f'项目代码 "{code}" 已存在，请使用其他代码', 'code': 'VALIDATION_ERROR'}), 400
             project.code = code
@@ -775,14 +775,14 @@ def update_project(project_id):
                     if manager_id_int <= 0:
                         return jsonify({'error': '项目经理ID必须为正整数', 'code': 'VALIDATION_ERROR'}), 400
                     
-                    manager = User.query.get(manager_id_int)
+                    manager = db.session.query(User).get(manager_id_int)
                     if not manager:
                         return jsonify({'error': '指定的项目经理不存在', 'code': 'VALIDATION_ERROR'}), 400
                     
                     project.manager_id = manager_id_int
                     
                     # 确保项目经理是项目成员
-                    manager_member = ProjectMember.query.filter_by(
+                    manager_member = db.session.query(ProjectMember).filter_by(
                         project_id=project_id,
                         user_id=manager_id_int
                     ).first()
@@ -899,7 +899,7 @@ def update_project(project_id):
                             continue  # 跳过无效ID
                         
                         # 验证用户是否存在
-                        user = User.query.get(user_id_int)
+                        user = db.session.query(User).get(user_id_int)
                         if user:
                             valid_member_ids.append(user_id_int)
                         else:
@@ -910,7 +910,7 @@ def update_project(project_id):
                 
                 if valid_member_ids:
                     # 删除现有成员（除了项目经理）
-                    existing_members = ProjectMember.query.filter_by(project_id=project_id).all()
+                    existing_members = db.session.query(ProjectMember).filter_by(project_id=project_id).all()
                     for member in existing_members:
                         # 保留项目经理记录
                         if member.user_id != project.manager_id:
@@ -1020,21 +1020,21 @@ def get_project_members(project_id):
         db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
 
         current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.query(User).get(current_user_id)
 
-        project = Project.query.get(project_id)
+        project = db.session.query(Project).get(project_id)
         if not project:
             return jsonify({'error': '项目不存在'}), 404
 
         if current_user.role != UserRole.ADMIN.value:
-            member = ProjectMember.query.filter_by(
+            member = db.session.query(ProjectMember).filter_by(
                 project_id=project_id,
                 user_id=current_user_id
             ).first()
             if not member:
                 return jsonify({'error': '无权查看此项目成员'}), 403
 
-        members = ProjectMember.query.filter_by(project_id=project_id).all()
+        members = db.session.query(ProjectMember).filter_by(project_id=project_id).all()
         members_data = []
         for member in members:
             member_first_name = ''
@@ -1077,9 +1077,9 @@ def get_project_risks(project_id):
     User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
 
-    project = Project.query.get(project_id)
+    project = db.session.query(Project).get(project_id)
     if not project:
         return jsonify({'error': '项目不存在'}), 404
 
@@ -1093,7 +1093,7 @@ def get_project_risks(project_id):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
 
-    query = Risk.query.filter(Risk.project_id == project_id)
+    query = db.session.query(Risk).filter(Risk.project_id == project_id)
 
     if risk_type:
         query = query.filter(Risk.risk_type == risk_type)
@@ -1160,7 +1160,7 @@ def add_project_member(project_id):
         db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
         
         current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.query(User).get(current_user_id)
         data = request.get_json()
         
         # 处理 members 字段 - 单独处理，不将其作为项目属性更新
@@ -1171,7 +1171,7 @@ def add_project_member(project_id):
             return jsonify({'error': '成员数据格式不正确'}), 400
         
         # 延迟导入数据库模型查找项目
-        project = Project.query.get(project_id)
+        project = db.session.query(Project).get(project_id)
         if not project:
             return jsonify({'error': '项目不存在'}), 404
         
@@ -1187,12 +1187,12 @@ def add_project_member(project_id):
         role = data.get('role', 'member')  # 默认角色为普通成员
         
         # 验证用户是否存在
-        user = User.query.get(user_id)
+        user = db.session.query(User).get(user_id)
         if not user:
             return jsonify({'error': '用户不存在'}), 400
         
         # 检查用户是否已经是项目成员
-        existing_member = ProjectMember.query.filter_by(
+        existing_member = db.session.query(ProjectMember).filter_by(
             project_id=project_id,
             user_id=user_id
         ).first()
@@ -1253,11 +1253,11 @@ def update_project_member(project_id, member_id):
         db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
         
         current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.query(User).get(current_user_id)
         data = request.get_json()
         
         # 查找项目
-        project = Project.query.get(project_id)
+        project = db.session.query(Project).get(project_id)
         if not project:
             return jsonify({'error': '项目不存在'}), 404
         
@@ -1266,7 +1266,7 @@ def update_project_member(project_id, member_id):
             return jsonify({'error': '无权限更新项目成员'}), 403
         
         # 查找项目成员
-        member = ProjectMember.query.filter_by(
+        member = db.session.query(ProjectMember).filter_by(
             id=member_id,
             project_id=project_id
         ).first()
@@ -1322,10 +1322,10 @@ def remove_project_member(project_id, member_id):
         db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
         
         current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.query(User).get(current_user_id)
         
         # 查找项目
-        project = Project.query.get(project_id)
+        project = db.session.query(Project).get(project_id)
         if not project:
             return jsonify({'error': '项目不存在'}), 404
         
@@ -1334,7 +1334,7 @@ def remove_project_member(project_id, member_id):
             return jsonify({'error': '无权限删除项目成员'}), 403
         
         # 查找项目成员
-        member = ProjectMember.query.filter_by(
+        member = db.session.query(ProjectMember).filter_by(
             id=member_id,
             project_id=project_id
         ).first()
@@ -1383,12 +1383,12 @@ def delete_project(project_id):
         db, Project, User, ProjectMember, ProjectStatus, create_audit_log, UserRole, Bug = get_db_and_models()
         
         current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
+        current_user = db.session.query(User).get(current_user_id)
         
         print(f"删除项目请求: project_id={project_id}, current_user_id={current_user_id}, current_user_role={current_user.role}")
         
         # 查找项目
-        project = Project.query.get(project_id)
+        project = db.session.query(Project).get(project_id)
         if not project:
             print(f"项目不存在: {project_id}")
             return jsonify({'error': '项目不存在'}), 404
@@ -1404,7 +1404,7 @@ def delete_project(project_id):
         
         try:
             # 检查项目是否有关联Bug
-            bugs = Bug.query.filter_by(project_id=project_id).all()
+            bugs = db.session.query(Bug).filter_by(project_id=project_id).all()
             bug_count = len(bugs)
 
             # 构建bug列表
@@ -1439,7 +1439,7 @@ def delete_project(project_id):
             )
             
             # 删除项目成员关系
-            ProjectMember.query.filter_by(project_id=project_id).delete()
+            db.session.query(ProjectMember).filter_by(project_id=project_id).delete()
             
             # 删除项目
             db.session.delete(project)

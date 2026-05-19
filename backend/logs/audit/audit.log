@@ -1076,3 +1076,6 @@
 2026-05-19 19:30:43,942 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
 2026-05-19 19:30:45,821 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown
 2026-05-19 19:30:45,827 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-19 20:28:12,828 - INFO - USER:1 - ACTION:get_projects_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'status': None, 'manager': None, 'search': '', 'only_my': False, 'user_role': 'admin'} - IP:unknown
+2026-05-19 20:28:14,851 - INFO - USER:1 - ACTION:get_users_request - RESOURCE:request - ID:none - DETAILS:{'page': 1, 'per_page': 20, 'department': None, 'search': ''} - IP:unknown
+2026-05-19 20:28:19,521 - INFO - USER:1 - ACTION:get_dashboard_statistics - RESOURCE:request - ID:none - DETAILS:{'days': 30, 'description': '获取仪表盘统计'} - IP:unknown

@@ -21015,3 +21015,301 @@ REQUEST:
 None
 USER:
 None
+2026-05-19 19:51:05,992 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 19:51:10,027 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:10:51,199 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:10:51,218 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:14:01,536 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:14:01,573 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:16:15,160 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 43, in get_dashboard_stats
+    Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
+                                                   ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 31, in get_models
+    from enhanced_app import Bug, Project, ProjectMember, User, BugStatus, RequirementDocument, RequirementItem
+ImportError: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py)
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:16:15,160 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 79, in get_projects
+    User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
+                                                                       ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 36, in get_models
+    from enhanced_app import User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug
+ImportError: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py)
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:19:46,721 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 20:22:16,388 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None

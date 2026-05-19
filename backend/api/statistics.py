@@ -219,11 +219,13 @@ def get_requirements_statistics():
         try:
             log_manager.log_business(
                 f"获取需求统计",
-                current_user_id=current_user_id,
-                total_requirements=total_requirements,
-                completed_items=completed_items,
-                completion_rate=completion_rate,
-                project_id=project_id
+                user_id=current_user_id,
+                project_id=project_id,
+                details={
+                    'total_requirements': total_requirements,
+                    'completed_items': completed_items,
+                    'completion_rate': completion_rate
+                }
             )
         except Exception as e:
             log_manager.log_error(f"记录业务操作日志失败: {str(e)}")
@@ -423,17 +425,19 @@ def get_bug_statistics():
         try:
             log_manager.log_business(
                 f"获取缺陷统计",
-                current_user_id=current_user_id,
-                total_bugs=total_bugs,
-                resolved_bugs=resolved_bugs,
-                resolution_rate=resolution_rate,
-                avg_fix_time_hours=avg_fix_time,
-                reopen_rate=reopen_rate,
+                user_id=current_user_id,
                 project_id=project_id,
-                severity=severity,
-                assignee_id=assignee_id,
-                start_date=start_date,
-                end_date=end_date
+                details={
+                    'total_bugs': total_bugs,
+                    'resolved_bugs': resolved_bugs,
+                    'resolution_rate': resolution_rate,
+                    'avg_fix_time_hours': avg_fix_time,
+                    'reopen_rate': reopen_rate,
+                    'severity': severity,
+                    'assignee_id': assignee_id,
+                    'start_date': str(start_date) if start_date else None,
+                    'end_date': str(end_date) if end_date else None
+                }
             )
         except Exception as e:
             log_manager.log_error(f"记录业务操作日志失败: {str(e)}")

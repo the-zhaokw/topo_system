@@ -844,17 +844,18 @@ class Project(db.Model):
             'modules': self.modules
         }
 
-# 定义ProjectMember模型（在模块级别定义）
+# 定义项目成员模型
 class ProjectMember(db.Model):
+    """项目成员模型"""
     __tablename__ = 'project_members'
     __table_args__ = {'extend_existing': True}
-    
+
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     role = Column(String(50), default='member')
     join_date = Column(DateTime, default=datetime.utcnow)
-    
+
     # 关系
     project = relationship("Project", back_populates="members")
     user = relationship("User", back_populates="projects")
@@ -3925,7 +3926,7 @@ if __name__ == '__main__':
     # 初始化数据库
     init_db()
     
-    # 注册API路由
+    # 注册API路由（如果尚未注册）
     register_api_blueprints()
     
     # 启动应用

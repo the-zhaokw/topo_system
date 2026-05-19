@@ -12388,3 +12388,1581 @@ sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - c
 2026-05-19 19:50:32,770 - enhanced_app - INFO - 数据库表创建完成
 2026-05-19 19:50:32,771 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
 2026-05-19 19:50:32,771 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 19:51:05,986 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 19:51:05,989 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 19:51:05,989 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 0.00ms
+2026-05-19 19:51:10,024 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 19:51:10,025 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 19:51:10,026 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: Missing Authorization Header - Duration: 1.03ms
+2026-05-19 19:58:38,449 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 19:58:38,451 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 19:58:38,451 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 19:58:38,453 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 19:58:38,453 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 19:58:38,454 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 19:58:38,454 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 19:58:38,454 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:00:40,454 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:00:40,455 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:00:40,456 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:00:40,458 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:00:40,458 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:00:40,459 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:00:40,460 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:00:40,460 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:02:04,470 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:02:04,472 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:02:04,473 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:02:04,474 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:02:04,474 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:02:04,474 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:02:04,476 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:02:04,476 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:02:31,332 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:02:31,335 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:02:31,335 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:02:31,336 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:02:31,336 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:02:31,336 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:02:31,337 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:02:31,337 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:04:02,781 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:04:02,782 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:04:02,783 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:04:02,785 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:04:02,786 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:04:02,786 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:04:02,787 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:04:02,787 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:05:59,503 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:05:59,506 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:05:59,506 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:05:59,507 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:05:59,508 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:05:59,508 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:05:59,509 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:05:59,509 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:07:54,071 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:07:54,073 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:07:54,074 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:07:54,075 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:07:54,076 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:07:54,076 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:07:54,077 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:07:54,077 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:10:18,973 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:10:18,974 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:10:18,975 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:10:18,976 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:10:18,977 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:10:18,978 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:10:18,978 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:10:18,978 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:10:50,812 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:10:50,964 - enhanced_app - ERROR - Exception on /api/users/1/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 280, in get_user
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:10:51,182 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 20:10:51,184 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 20:10:51,185 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path. - Duration: 0.98ms
+2026-05-19 20:10:51,186 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 20:10:51,188 - enhanced_app - ERROR - Exception on /api/bugs [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\bugs.py", line 97, in get_bugs
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:10:51,189 - enhanced_app - ERROR - Exception on /api/users/1/home [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 337, in get_user_home
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:10:51,189 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 20:10:51,203 - enhanced_app - ERROR - Exception on /api/statistics/dashboard [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:10:51,210 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path. - Duration: 21.11ms
+2026-05-19 20:10:51,220 - enhanced_app - ERROR - Exception on /api/projects/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:11:51,029 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:11:51,031 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:11:51,031 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:11:51,033 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:11:51,033 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:11:51,033 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:11:51,034 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:11:51,034 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:13:25,857 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:13:25,858 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:13:25,859 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:13:25,861 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:13:25,861 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:13:25,861 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:13:25,861 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:13:25,862 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:14:00,867 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:14:01,214 - enhanced_app - ERROR - Exception on /api/users/1/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 280, in get_user
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:14:01,518 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 20:14:01,519 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 20:14:01,521 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path. - Duration: 2.20ms
+2026-05-19 20:14:01,526 - enhanced_app - ERROR - Exception on /api/bugs [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\bugs.py", line 97, in get_bugs
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:14:01,528 - enhanced_app - ERROR - Exception on /api/users/1/home [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 337, in get_user_home
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:14:01,534 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 20:14:01,555 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 20:14:01,557 - enhanced_app - ERROR - Exception on /api/statistics/dashboard [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 46, in get_dashboard_stats
+    current_user = User.query.get(int(current_user_id))
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:14:01,560 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path. - Duration: 5.19ms
+2026-05-19 20:14:01,578 - enhanced_app - ERROR - Exception on /api/projects/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 83, in get_projects
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "ProjectMember" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:16:13,571 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:16:13,574 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:16:13,576 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:16:13,578 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:16:13,578 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:16:13,579 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:16:13,580 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:16:13,582 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:16:15,101 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 20:16:15,102 - enhanced_app - ERROR - Exception on /api/bugs [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\bugs.py", line 93, in get_bugs
+    User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
+                                                                                                                                  ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\bugs.py", line 32, in get_models
+    from enhanced_app import User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications
+ImportError: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py)
+2026-05-19 20:16:15,104 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 20:16:15,106 - enhanced_app - ERROR - Exception on /api/users/1/home [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 337, in get_user_home
+    current_user = User.query.get(current_user_id)
+                   ^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:16:15,106 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 20:16:15,123 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 20:16:15,139 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py) - Duration: 32.31ms
+2026-05-19 20:16:15,140 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py) - Duration: 16.56ms
+2026-05-19 20:16:15,161 - enhanced_app - ERROR - Exception on /api/statistics/dashboard [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 43, in get_dashboard_stats
+    Bug, Project, ProjectMember, User, BugStatus = get_models()[:5]
+                                                   ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 31, in get_models
+    from enhanced_app import Bug, Project, ProjectMember, User, BugStatus, RequirementDocument, RequirementItem
+ImportError: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py)
+2026-05-19 20:16:15,162 - enhanced_app - ERROR - Exception on /api/projects/ [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 79, in get_projects
+    User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
+                                                                       ^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\projects.py", line 36, in get_models
+    from enhanced_app import User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug
+ImportError: cannot import name 'ProjectMember' from 'enhanced_app' (D:\topo_system\backend\enhanced_app.py)
+2026-05-19 20:19:00,895 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:19:46,719 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 20:19:46,720 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 20:19:46,720 - enhanced_app - ERROR - API Call Failed: api.users.get_users - Error: Missing Authorization Header - Duration: 0.00ms
+2026-05-19 20:21:14,892 - enhanced_app - ERROR - Exception on /api/notifications/unread-count [GET]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\notifications.py", line 101, in get_unread_count
+    unread_count = Notification.query.filter_by(
+                   ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_sqlalchemy\model.py", line 22, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:22:12,783 - enhanced_app - ERROR - Exception on /api/auth/login [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\auth.py", line 205, in login
+    user = session.query(User).filter_by(username=data['username']).first()
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\scoping.py", line 1697, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2912, in query
+    return self._query_cls(entities, self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:22:16,385 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 20:22:16,385 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 20:22:16,387 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 1.51ms
+2026-05-19 20:22:26,772 - enhanced_app - ERROR - Exception on /api/auth/login [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\auth.py", line 205, in login
+    user = session.query(User).filter_by(username=data['username']).first()
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\scoping.py", line 1697, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2912, in query
+    return self._query_cls(entities, self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:22:31,561 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:22:31,562 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:22:31,563 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:22:31,564 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:22:31,564 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:22:31,564 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:22:31,566 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:22:31,566 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:22:34,624 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:22:34,626 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:22:34,627 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:22:34,629 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:22:34,629 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:22:34,629 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:22:34,631 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:22:34,632 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:22:56,153 - enhanced_app - ERROR - Exception on /api/auth/login [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\auth.py", line 205, in login
+    user = session.query(User).filter_by(username=data['username']).first()
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\scoping.py", line 1697, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2912, in query
+    return self._query_cls(entities, self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:23:23,488 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:23:23,490 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:23:23,492 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:23:23,493 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:23:23,493 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:23:23,494 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:23:23,495 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:23:23,495 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:23:42,074 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:23:42,075 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:23:42,076 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:23:42,078 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:23:42,078 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:23:42,079 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:23:42,080 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:23:42,080 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:23:51,668 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:23:51,669 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:23:51,670 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:23:51,672 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:23:51,672 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:23:51,672 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:23:51,674 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:23:51,674 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:23:59,709 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:23:59,710 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:23:59,711 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:23:59,712 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:23:59,713 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:23:59,713 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:23:59,714 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:23:59,714 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:24:02,523 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:24:02,523 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:24:02,524 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:24:02,526 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:24:02,526 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:24:02,526 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:24:02,528 - enhanced_app - WARNING - 创建默认用户失败: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:24:02,528 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:24:23,812 - enhanced_app - ERROR - Exception on /api/auth/login [POST]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_restful\__init__.py", line 298, in error_router
+    return original_handler(e)
+           ^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 7 more times]
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\auth.py", line 205, in login
+    user = session.query(User).filter_by(username=data['username']).first()
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\scoping.py", line 1697, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2912, in query
+    return self._query_cls(entities, self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 276, in __init__
+    self._set_entities(entities)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 289, in _set_entities
+    coercions.expect(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2707, in _post_inspect
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: Multiple classes found for path "User" in the registry of this declarative base. Please use a fully module-qualified path.
+2026-05-19 20:26:03,669 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:26:03,671 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:26:03,672 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:26:03,673 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:26:03,673 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:26:03,674 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:26:03,674 - enhanced_app - WARNING - 创建默认用户失败: When initializing mapper Mapper[User(users)], expression 'ProjectMember' failed to locate a name ('ProjectMember'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.User'> class after both dependent classes have been defined.
+2026-05-19 20:26:03,675 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:26:06,218 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:26:06,219 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:26:06,219 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:26:06,222 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:26:06,222 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:26:06,222 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:26:06,223 - enhanced_app - WARNING - 创建默认用户失败: When initializing mapper Mapper[User(users)], expression 'ProjectMember' failed to locate a name ('ProjectMember'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.User'> class after both dependent classes have been defined.
+2026-05-19 20:26:06,223 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:26:32,871 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:26:32,873 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:26:32,874 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:26:32,876 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:26:32,876 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:26:32,876 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:26:32,877 - enhanced_app - WARNING - 创建默认用户失败: When initializing mapper Mapper[User(users)], expression 'ProjectMember' failed to locate a name ('ProjectMember'). If this is a class name, consider adding this relationship() to the <class 'enhanced_app.User'> class after both dependent classes have been defined.
+2026-05-19 20:26:32,877 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:26:59,447 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:26:59,449 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:26:59,450 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:26:59,452 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:26:59,452 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:26:59,452 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:26:59,623 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:26:59,623 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:02,213 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:02,215 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:02,215 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:02,216 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:02,217 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:02,217 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:02,402 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:02,403 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:07,217 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:07,218 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:07,219 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:07,221 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:07,221 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:07,221 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:07,391 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:07,392 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:10,013 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:10,015 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:10,016 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:10,018 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:10,018 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:10,019 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:10,272 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:10,272 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:19,020 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 20:27:20,852 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:20,854 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:20,855 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:20,857 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:20,857 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:20,858 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:21,044 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:21,044 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:42,644 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 20:27:50,735 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:50,737 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:50,739 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:50,744 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:50,744 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:50,745 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:50,997 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:50,998 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:53,899 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:53,902 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:53,903 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:53,906 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:53,906 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:53,907 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:54,103 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:54,104 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:54,421 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 20:27:56,900 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:56,901 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:56,902 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:56,905 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:56,905 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:56,905 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:57,104 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:57,105 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:27:59,691 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:27:59,692 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:27:59,693 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:27:59,695 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:27:59,695 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:27:59,695 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:27:59,881 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:27:59,882 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:28:03,195 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:28:03,197 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:28:03,197 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:28:03,200 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:28:03,200 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:28:03,202 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:28:03,372 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:28:03,372 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:28:10,717 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 20:28:12,825 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 20:28:12,826 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 20:28:12,841 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 20:28:12,841 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 14.85ms
+2026-05-19 20:28:14,848 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-19 20:28:14,848 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 20:28:14,856 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 20:28:14,856 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.30ms
+2026-05-19 20:28:19,313 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:28:19,315 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:28:19,316 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:28:19,318 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:28:19,318 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:28:19,319 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:28:19,486 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:28:19,486 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:28:19,518 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-19 20:28:19,518 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-19 20:28:19,551 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-19 20:28:19,551 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 32.81ms
+2026-05-19 20:28:44,148 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:28:44,150 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:28:44,150 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:28:44,152 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:28:44,153 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:28:44,153 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:28:44,347 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:28:44,347 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:28:53,884 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:28:53,885 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:28:53,886 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:28:53,890 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:28:53,890 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:28:53,890 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:28:54,061 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:28:54,062 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:29:04,586 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:29:04,587 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:29:04,587 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:29:04,590 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:29:04,590 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:29:04,590 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:29:04,768 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:29:04,769 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:29:16,882 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:29:16,884 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:29:16,884 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:29:16,886 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:29:16,886 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:29:16,887 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:29:17,179 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:29:17,179 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:29:29,753 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:29:29,755 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:29:29,755 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:29:29,757 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:29:29,757 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:29:29,757 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:29:29,927 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:29:29,927 - enhanced_app - INFO - 数据库初始化完成
