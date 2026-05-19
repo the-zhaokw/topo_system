@@ -3,6 +3,8 @@
 // 与Vue网页端保持一致的间距和圆角系统
 // ============================================
 
+@forward './theme.scss';
+
 // 基础配置
 $page-padding: 32rpx;
 $safe-area-top: env(safe-area-inset-top);

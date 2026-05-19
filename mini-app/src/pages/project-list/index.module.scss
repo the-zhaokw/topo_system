@@ -13,8 +13,6 @@
   margin-bottom: $spacing-md;
   box-shadow: $shadow-card;
   transition: all $transition-base;
-  position: relative;
-  overflow: hidden;
 
   &:active {
     transform: scale(0.99);
@@ -41,7 +39,6 @@
   padding: 6rpx 16rpx;
   border-radius: $radius-button;
   font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
   flex-shrink: 0;
 
   &.statusPlanning {
@@ -70,11 +67,6 @@
   color: $color-text-secondary;
   line-height: 1.6;
   margin-bottom: $spacing-md;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .progressSection {
@@ -109,7 +101,6 @@
     height: 100%;
     background: linear-gradient(90deg, $color-primary, $color-primary-light);
     border-radius: 4rpx;
-    transition: width 0.3s ease;
   }
 }
 
@@ -168,11 +159,6 @@
   }
 }
 
-.dateRange {
-  font-size: $font-size-xs;
-  color: $color-text-tertiary;
-}
-
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -189,18 +175,5 @@
   .emptyText {
     font-size: $font-size-lg;
     color: $color-text-secondary;
-    margin-bottom: $spacing-sm;
   }
-
-  .emptyHint {
-    font-size: $font-size-sm;
-    color: $color-text-tertiary;
-  }
-}
-
-.loadingMore {
-  text-align: center;
-  padding: $spacing-lg;
-  color: $color-text-tertiary;
-  font-size: $font-size-sm;
 }

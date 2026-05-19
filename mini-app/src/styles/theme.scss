@@ -3,6 +3,8 @@
 // 与Vue网页端保持一致的设计系统
 // ============================================
 
+@use 'sass:math';
+
 // 主色调 - 深邃靛蓝
 $color-primary: #4F46E5;
 $color-primary-light: #6366F1;
@@ -40,6 +42,7 @@ $color-bg-page: #F8FAFC;
 $color-bg-secondary: #F1F5F9;
 $color-bg-tertiary: #E2E8F0;
 $color-bg-card: #FFFFFF;
+$color-bg-hover: #F1F5F9;
 
 // 文本色
 $color-text-primary: #0F172A;
@@ -89,3 +92,4 @@ $radius-xl: 24rpx;
 $radius-2xl: 32rpx;
 $radius-button: 9999px;
 $radius-full: 9999px;
+$radius-round: 9999px;

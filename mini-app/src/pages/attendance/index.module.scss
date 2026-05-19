@@ -7,19 +7,16 @@
 }
 
 .todayCard {
-  background: $gradient-primary;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   border-radius: $radius-lg;
   padding: $spacing-xl;
   color: $color-text-white;
   margin-bottom: $spacing-lg;
-  box-shadow: $shadow-glow;
-  transition: all $transition-slow;
 }
 
 .todayHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: $spacing-lg;
 
   .todayDate {
@@ -31,7 +28,6 @@
     padding: 8rpx 20rpx;
     border-radius: $radius-button;
     font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
     background: rgba(255, 255, 255, 0.2);
   }
 }
@@ -39,7 +35,6 @@
 .clockTimes {
   display: flex;
   justify-content: space-around;
-  align-items: center;
   margin-bottom: $spacing-lg;
   padding: $spacing-lg 0;
   background: rgba(255, 255, 255, 0.1);
@@ -52,7 +47,6 @@
   .clockLabel {
     font-size: $font-size-sm;
     opacity: 0.85;
-    margin-bottom: $spacing-xs;
   }
 
   .clockTime {
@@ -67,13 +61,6 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-.workHours {
-  text-align: center;
-  font-size: $font-size-md;
-  margin-bottom: $spacing-lg;
-  opacity: 0.9;
-}
-
 .clockActions {
   display: flex;
   gap: $spacing-md;
@@ -84,23 +71,15 @@
     background: $color-text-white;
     border-radius: $radius-button;
     text-align: center;
-    transition: all $transition-normal;
-    font-weight: $font-weight-semibold;
-    box-shadow: $shadow-sm;
-
-    &:active {
-      transform: scale(0.98);
-      opacity: 0.9;
-    }
 
     .clockBtnText {
       font-size: $font-size-md;
       color: $color-primary;
+      font-weight: $font-weight-semibold;
     }
 
     &.clockBtnSecondary {
       background: rgba(255, 255, 255, 0.2);
-      box-shadow: none;
 
       .clockBtnTextSecondary {
         color: $color-text-white;
@@ -109,21 +88,11 @@
   }
 }
 
-.statsSection {
-  margin-bottom: $spacing-lg;
-}
-
-.sectionTitle {
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  margin-bottom: $spacing-md;
-}
-
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: $spacing-md;
+  margin-bottom: $spacing-lg;
 }
 
 .statCard {
@@ -131,48 +100,31 @@
   border-radius: $radius-lg;
   padding: $spacing-lg;
   box-shadow: $shadow-card;
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  border: 1rpx solid rgba(226, 232, 240, 0.6);
-  transition: all $transition-slow;
 
-  &:active {
-    transform: scale(0.98);
-    box-shadow: $shadow-card-hover;
-  }
-}
-
-.statIcon {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: $radius-md;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40rpx;
-}
-
-.statContent {
-  flex: 1;
-
-  .statValue {
+  .statIcon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 40rpx;
-    font-weight: $font-weight-extrabold;
-    color: $color-text-primary;
-    display: block;
-    margin-bottom: 4rpx;
   }
 
-  .statLabel {
-    font-size: $font-size-sm;
-    color: $color-text-tertiary;
-    font-weight: $font-weight-medium;
-  }
-}
+  .statContent {
+    flex: 1;
 
-.historyList {
-  height: calc(100vh - 800rpx);
+    .statValue {
+      font-size: 40rpx;
+      font-weight: $font-weight-extrabold;
+      color: $color-text-primary;
+    }
+
+    .statLabel {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
 }
 
 .recordCard {
@@ -181,32 +133,16 @@
   padding: $spacing-lg;
   margin-bottom: $spacing-md;
   box-shadow: $shadow-card;
-  border: 1rpx solid rgba(226, 232, 240, 0.6);
-  transition: all $transition-normal;
-
-  &:active {
-    transform: scale(0.99);
-    box-shadow: $shadow-md;
-  }
 }
 
 .recordHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: $spacing-sm;
 
   .recordDate {
     font-size: $font-size-md;
     font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-  }
-
-  .statusTag {
-    padding: 6rpx 16rpx;
-    border-radius: $radius-button;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
   }
 }
 
@@ -222,33 +158,10 @@
   .timeLabel {
     font-size: $font-size-xs;
     color: $color-text-tertiary;
-    margin-bottom: 4rpx;
-    font-weight: $font-weight-medium;
   }
 
   .timeValue {
     font-size: $font-size-md;
     font-weight: $font-weight-semibold;
-    color: $color-text-primary;
   }
-}
-
-.statusNormal {
-  background: rgba($color-success, 0.1);
-  color: $color-success;
-}
-
-.statusLate {
-  background: rgba($color-warning, 0.1);
-  color: $color-warning-dark;
-}
-
-.statusAbsent {
-  background: rgba($color-error, 0.1);
-  color: $color-error;
-}
-
-.statusLeave {
-  background: rgba($color-info, 0.1);
-  color: $color-info;
 }
