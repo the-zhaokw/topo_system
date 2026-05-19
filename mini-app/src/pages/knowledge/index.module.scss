@@ -1,89 +1,183 @@
+// 知识库页面样式
 @use '@/styles/variables.scss' as *;
 
 .container {
   min-height: 100vh;
-  background: $color-bg-page;
-  padding: $spacing-md $page-padding;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
 }
 
-.articleCard {
-  background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  margin-bottom: $spacing-md;
-  box-shadow: $shadow-card;
+.header {
+  background: $gradient-primary;
+  padding: 40rpx $page-padding 60rpx;
+
+  .title {
+    color: $color-text-white;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-md;
+  }
 }
 
-.articleHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: $spacing-sm;
+.searchBar {
+  margin: -40rpx $page-padding $spacing-lg;
 
-  .category {
-    padding: 6rpx 16rpx;
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
+  .searchInput {
+    background: $color-bg-card;
     border-radius: $radius-button;
-    font-size: $font-size-xs;
+    padding: 20rpx $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    box-shadow: $shadow-card;
+
+    .placeholder {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.categorySection {
+  padding: 0 $page-padding $spacing-lg;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
   }
 
-  .date {
-    font-size: $font-size-xs;
-    color: $color-text-tertiary;
+  .categoryGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-md;
+
+    .categoryItem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: $spacing-md;
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      box-shadow: $shadow-card;
+
+      .icon {
+        width: 64rpx;
+        height: 64rpx;
+        border-radius: $radius-md;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32rpx;
+        margin-bottom: 8rpx;
+        background: $color-bg-secondary;
+        color: $color-primary;
+      }
+
+      .label {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        text-align: center;
+      }
+    }
   }
 }
 
-.title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  margin-bottom: $spacing-sm;
-  line-height: 1.4;
+.articleList {
+  padding: 0 $page-padding;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  .articleCard {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-md;
+    margin-bottom: $spacing-sm;
+    box-shadow: $shadow-card;
+
+    .articleTitle {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      margin-bottom: 8rpx;
+      line-height: $line-height-normal;
+    }
+
+    .articleInfo {
+      display: flex;
+      gap: $spacing-md;
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-bottom: 8rpx;
+    }
+
+    .articleTags {
+      display: flex;
+      gap: 8rpx;
+
+      .tag {
+        padding: 4rpx 12rpx;
+        background: $color-bg-secondary;
+        border-radius: $radius-sm;
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+      }
+    }
+  }
 }
 
-.summary {
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-  line-height: 1.6;
-  margin-bottom: $spacing-md;
-}
-
-.articleFooter {
-  display: flex;
-  justify-content: space-between;
-  padding-top: $spacing-sm;
-  border-top: 1rpx solid $color-divider;
-}
-
-.author {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-}
-
-.views {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: $font-size-sm;
-  color: $color-text-tertiary;
-}
-
-.emptyState {
+.empty {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 120rpx 40rpx;
+  color: $color-text-tertiary;
 
-  .emptyIcon {
-    font-size: 120rpx;
-    margin-bottom: $spacing-lg;
+  .icon {
+    font-size: 160rpx;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
   }
 
-  .emptyText {
-    font-size: $font-size-lg;
-    color: $color-text-secondary;
+  .text {
+    font-size: $font-size-md;
+  }
+}
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: $color-bg-card;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  .tabItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $color-text-tertiary;
+    font-size: $font-size-xs;
+
+    &.active {
+      color: $color-primary;
+    }
+
+    .icon {
+      font-size: 40rpx;
+      margin-bottom: 4rpx;
+    }
   }
 }

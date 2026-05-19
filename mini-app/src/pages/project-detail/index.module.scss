@@ -1,106 +1,111 @@
+// 项目详情页面样式
 @use '@/styles/variables.scss' as *;
 
 .container {
   min-height: 100vh;
-  background: $color-bg-page;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
 }
 
 .header {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  padding: $spacing-lg $page-padding;
-  color: $color-text-white;
-}
+  background: $gradient-primary;
+  padding: 40rpx $page-padding 80rpx;
 
-.projectName {
-  font-size: 40rpx;
-  font-weight: $font-weight-bold;
-  margin-bottom: $spacing-sm;
-}
+  .projectName {
+    color: $color-text-white;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-sm;
+  }
 
-.statusBadge {
-  display: inline-flex;
-  padding: 10rpx 24rpx;
-  border-radius: $radius-button;
-  font-size: $font-size-sm;
-  background: rgba(255, 255, 255, 0.2);
+  .status {
+    display: inline-block;
+    padding: 6rpx 20rpx;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    color: $color-text-white;
+  }
 }
 
 .content {
-  padding: $spacing-lg $page-padding;
+  margin-top: -40rpx;
+  padding: 0 $page-padding;
 }
 
-.infoCard {
+.statsCard {
   background: $color-bg-card;
   border-radius: $radius-lg;
   padding: $spacing-lg;
-  box-shadow: $shadow-card;
   margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-sm;
+
+    .statItem {
+      text-align: center;
+
+      .value {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: $color-primary;
+      }
+
+      .label {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        margin-top: 4rpx;
+      }
+    }
+  }
 }
 
-.infoRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-sm 0;
-  border-bottom: 1rpx solid $color-divider;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  .infoLabel {
-    font-size: $font-size-sm;
-    color: $color-text-secondary;
-  }
-
-  .infoValue {
-    font-size: $font-size-sm;
-    color: $color-text-primary;
-  }
-}
-
-.descriptionSection {
+.card {
   background: $color-bg-card;
   border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-card;
+  padding: $spacing-md;
   margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
 
-  .sectionTitle {
+  .cardTitle {
     font-size: $font-size-md;
     font-weight: $font-weight-semibold;
     color: $color-text-primary;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-sm;
   }
+}
 
-  .description {
-    font-size: $font-size-sm;
-    color: $color-text-secondary;
-    line-height: 1.8;
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+
+  .infoItem {
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-bottom: 4rpx;
+    }
+
+    .value {
+      font-size: $font-size-sm;
+      color: $color-text-primary;
+    }
   }
 }
 
 .progressSection {
-  background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-card;
-  margin-bottom: $spacing-md;
-
-  .sectionTitle {
-    font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    margin-bottom: $spacing-md;
-  }
-
   .progressHeader {
     display: flex;
     justify-content: space-between;
-    margin-bottom: $spacing-sm;
+    align-items: center;
+    margin-bottom: 8rpx;
 
-    .progressValue {
-      font-size: 32rpx;
+    .percent {
+      font-size: $font-size-lg;
       font-weight: $font-weight-bold;
       color: $color-primary;
     }
@@ -108,36 +113,52 @@
 
   .progressBar {
     height: 12rpx;
-    background: $color-bg-hover;
-    border-radius: 6rpx;
+    background: $color-bg-secondary;
+    border-radius: $radius-round;
     overflow: hidden;
-    margin-bottom: $spacing-md;
 
-    .progressFill {
+    .progress {
       height: 100%;
-      background: linear-gradient(90deg, $color-primary, $color-primary-light);
-      border-radius: 6rpx;
+      background: $gradient-primary;
+      border-radius: $radius-round;
+      transition: width $transition-normal;
     }
   }
+}
 
-  .statsGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+.memberList {
+  .memberItem {
+    display: flex;
+    align-items: center;
     gap: $spacing-sm;
+    padding: $spacing-sm 0;
+    border-bottom: 1rpx solid $color-divider;
 
-    .statItem {
-      text-align: center;
-      padding: $spacing-sm;
-      background: $color-bg-hover;
-      border-radius: $radius-md;
+    &:last-child {
+      border-bottom: none;
+    }
 
-      .statValue {
-        font-size: 32rpx;
-        font-weight: $font-weight-bold;
+    .avatar {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: 50%;
+      background: $color-bg-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-primary;
+    }
+
+    .info {
+      flex: 1;
+
+      .name {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
         color: $color-text-primary;
       }
 
-      .statLabel {
+      .role {
         font-size: $font-size-xs;
         color: $color-text-tertiary;
       }
@@ -145,47 +166,36 @@
   }
 }
 
-.quickActions {
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-card;
+  padding: $spacing-md $page-padding;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: $spacing-sm;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
 
-  .sectionTitle {
+  .btn {
+    flex: 1;
+    height: $button-height-md;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    margin-bottom: $spacing-md;
-  }
+    font-weight: $font-weight-medium;
 
-  .actionsGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: $spacing-md;
+    &.primary {
+      background: $gradient-primary;
+      color: $color-text-white;
+    }
 
-    .actionItem {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: $spacing-xs;
-      padding: $spacing-md;
-      background: $color-bg-hover;
-      border-radius: $radius-md;
-
-      .actionIcon {
-        width: 64rpx;
-        height: 64rpx;
-        border-radius: $radius-md;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 32rpx;
-      }
-
-      .actionLabel {
-        font-size: $font-size-xs;
-        color: $color-text-secondary;
-      }
+    &.secondary {
+      background: $color-bg-secondary;
+      color: $color-text-primary;
     }
   }
 }

@@ -1,1 +1,211 @@
+// 仪表盘页面样式
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: $gradient-primary;
+  padding: 40rpx $page-padding 80rpx;
+
+  .title {
+    color: $color-text-white;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-md;
+  }
+
+  .dateInfo {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: $font-size-sm;
+  }
+}
+
+.statsSection {
+  margin: -40rpx $page-padding $spacing-lg;
+
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+
+    .statCard {
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      padding: $spacing-md;
+      box-shadow: $shadow-card;
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: transparent;
+        padding: 0;
+        margin-bottom: $spacing-sm;
+
+        .icon {
+          width: 48rpx;
+          height: 48rpx;
+          border-radius: $radius-md;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: $color-bg-secondary;
+          color: $color-primary;
+        }
+
+        .trend {
+          font-size: $font-size-xs;
+          padding: 4rpx 8rpx;
+          border-radius: $radius-sm;
+
+          &.up {
+            background: rgba($color-success, 0.1);
+            color: $color-success;
+          }
+
+          &.down {
+            background: rgba($color-error, 0.1);
+            color: $color-error;
+          }
+        }
+      }
+
+      .value {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
+        color: $color-text-primary;
+        margin-bottom: 4rpx;
+      }
+
+      .label {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+    }
+  }
+}
+
+.section {
+  padding: 0 $page-padding $spacing-lg;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .more {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.chartCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+
+  .chartPlaceholder {
+    height: 300rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-tertiary;
+    font-size: $font-size-sm;
+  }
+}
+
+.listCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+
+  .listItem {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm 0;
+    border-bottom: 1rpx solid $color-divider;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .avatar {
+      width: 48rpx;
+      height: 48rpx;
+      border-radius: 50%;
+      background: $color-bg-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20rpx;
+      color: $color-primary;
+    }
+
+    .info {
+      flex: 1;
+
+      .title {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+        margin-bottom: 2rpx;
+      }
+
+      .desc {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+      }
+    }
+
+    .value {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+
+      &.success { color: $color-success; }
+      &.warning { color: $color-warning; }
+      &.error { color: $color-error; }
+    }
+  }
+}
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: $color-bg-card;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  .tabItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $color-text-tertiary;
+    font-size: $font-size-xs;
+
+    &.active {
+      color: $color-primary;
+    }
+
+    .icon {
+      font-size: 40rpx;
+      margin-bottom: 4rpx;
+    }
+  }
 }

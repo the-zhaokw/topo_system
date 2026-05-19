@@ -1,1 +1,189 @@
+// 个人计划页面样式
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: $gradient-primary;
+  padding: 40rpx $page-padding 60rpx;
+
+  .title {
+    color: $color-text-white;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.statsCards {
+  margin: -40rpx $page-padding $spacing-lg;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-sm;
+
+  .statCard {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-md;
+    text-align: center;
+    box-shadow: $shadow-card;
+
+    .value {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $color-primary;
+
+      &.success { color: $color-success; }
+      &.warning { color: $color-warning; }
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-top: 4rpx;
+    }
+  }
+}
+
+.tabSection {
+  padding: 0 $page-padding;
+  margin-bottom: $spacing-md;
+
+  .tabs {
+    display: flex;
+    gap: $spacing-xs;
+    background: $color-bg-secondary;
+    border-radius: $radius-button;
+    padding: 6rpx;
+
+    .tab {
+      flex: 1;
+      height: 56rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+
+      &.active {
+        background: $color-bg-card;
+        color: $color-primary;
+        box-shadow: $shadow-sm;
+      }
+    }
+  }
+}
+
+.planList {
+  padding: 0 $page-padding;
+
+  .planItem {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-md;
+    margin-bottom: $spacing-sm;
+    box-shadow: $shadow-card;
+
+    .planHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8rpx;
+
+      .planTitle {
+        flex: 1;
+        font-size: $font-size-md;
+        font-weight: $font-weight-medium;
+        color: $color-text-primary;
+      }
+
+      .priority {
+        padding: 4rpx 16rpx;
+        border-radius: $radius-sm;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-medium;
+
+        &.重要紧急 { background: rgba($color-error, 0.1); color: $color-error; }
+        &.紧急 { background: rgba($color-warning, 0.1); color: $color-warning; }
+        &.重要 { background: rgba($color-info, 0.1); color: $color-info; }
+        &.一般 { background: rgba($color-text-tertiary, 0.1); color: $color-text-tertiary; }
+      }
+    }
+
+    .planInfo {
+      display: flex;
+      gap: $spacing-md;
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-bottom: 8rpx;
+    }
+
+    .progressBar {
+      height: 6rpx;
+      background: $color-bg-secondary;
+      border-radius: $radius-round;
+      overflow: hidden;
+
+      .progress {
+        height: 100%;
+        background: $gradient-primary;
+        border-radius: $radius-round;
+      }
+    }
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  color: $color-text-tertiary;
+
+  .icon {
+    font-size: 160rpx;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+
+  .text {
+    font-size: $font-size-md;
+  }
+}
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: $color-bg-card;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  .tabItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $color-text-tertiary;
+    font-size: $font-size-xs;
+
+    &.active {
+      color: $color-primary;
+    }
+
+    .icon {
+      font-size: 40rpx;
+      margin-bottom: 4rpx;
+    }
+  }
 }

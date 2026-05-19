@@ -1,167 +1,201 @@
+// 考勤打卡页面样式
 @use '@/styles/variables.scss' as *;
 
 .container {
   min-height: 100vh;
-  background: $color-bg-page;
-  padding: $spacing-md $page-padding;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
 }
 
-.todayCard {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  border-radius: $radius-lg;
+.header {
+  background: $gradient-primary;
+  padding: 40rpx $page-padding 80rpx;
+
+  .dateInfo {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: $font-size-sm;
+    margin-bottom: 8rpx;
+  }
+
+  .time {
+    color: $color-text-white;
+    font-size: 64rpx;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-sm;
+  }
+
+  .weekday {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: $font-size-md;
+  }
+}
+
+.clockCard {
+  margin: -40rpx $page-padding $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
-  color: $color-text-white;
-  margin-bottom: $spacing-lg;
-}
+  box-shadow: $shadow-card-hover;
 
-.todayHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: $spacing-lg;
-
-  .todayDate {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
-  }
-
-  .statusBadge {
-    padding: 8rpx 20rpx;
-    border-radius: $radius-button;
-    font-size: $font-size-sm;
-    background: rgba(255, 255, 255, 0.2);
-  }
-}
-
-.clockTimes {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: $spacing-lg;
-  padding: $spacing-lg 0;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: $radius-md;
-}
-
-.clockItem {
-  text-align: center;
-
-  .clockLabel {
-    font-size: $font-size-sm;
-    opacity: 0.85;
-  }
-
-  .clockTime {
-    font-size: 48rpx;
-    font-weight: $font-weight-extrabold;
-  }
-}
-
-.clockDivider {
-  width: 2rpx;
-  height: 80rpx;
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.clockActions {
-  display: flex;
-  gap: $spacing-md;
-
-  .clockBtn {
-    flex: 1;
-    padding: $spacing-md 0;
-    background: $color-text-white;
-    border-radius: $radius-button;
+  .clockStatus {
     text-align: center;
+    margin-bottom: $spacing-xl;
 
-    .clockBtnText {
-      font-size: $font-size-md;
-      color: $color-primary;
+    .status {
+      font-size: $font-size-xl;
+      color: $color-text-primary;
       font-weight: $font-weight-semibold;
+      margin-bottom: 8rpx;
     }
 
-    &.clockBtnSecondary {
-      background: rgba(255, 255, 255, 0.2);
+    .time {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
 
-      .clockBtnTextSecondary {
+  .clockButtons {
+    display: flex;
+    gap: $spacing-md;
+
+    .clockBtn {
+      flex: 1;
+      height: $button-height-lg;
+      border-radius: $radius-button;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+
+      &.checkIn {
+        background: $gradient-primary;
         color: $color-text-white;
+      }
+
+      &.checkOut {
+        background: $gradient-secondary;
+        color: $color-text-white;
+      }
+
+      &.disabled {
+        background: $color-bg-secondary;
+        color: $color-text-disabled;
       }
     }
   }
 }
 
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-}
+.statsSection {
+  padding: 0 $page-padding $spacing-lg;
 
-.statCard {
-  background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-card;
-
-  .statIcon {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: $radius-md;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40rpx;
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
   }
 
-  .statContent {
-    flex: 1;
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-sm;
 
-    .statValue {
-      font-size: 40rpx;
-      font-weight: $font-weight-extrabold;
-      color: $color-text-primary;
+    .statCard {
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      padding: $spacing-md;
+      text-align: center;
+      box-shadow: $shadow-card;
+
+      .value {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: $color-primary;
+      }
+
+      .label {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        margin-top: 4rpx;
+      }
     }
+  }
+}
 
-    .statLabel {
+.recordSection {
+  padding: 0 $page-padding;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  .recordCard {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-md;
+    margin-bottom: $spacing-sm;
+    box-shadow: $shadow-card;
+
+    .date {
       font-size: $font-size-sm;
       color: $color-text-tertiary;
+      margin-bottom: $spacing-sm;
+    }
+
+    .times {
+      display: flex;
+      justify-content: space-around;
+
+      .timeItem {
+        text-align: center;
+
+        .label {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+          margin-bottom: 4rpx;
+        }
+
+        .value {
+          font-size: $font-size-md;
+          color: $color-text-primary;
+          font-weight: $font-weight-medium;
+        }
+      }
     }
   }
 }
 
-.recordCard {
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
   background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  margin-bottom: $spacing-md;
-  box-shadow: $shadow-card;
-}
-
-.recordHeader {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: $spacing-sm;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
 
-  .recordDate {
-    font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
-  }
-}
-
-.recordTimes {
-  display: flex;
-  justify-content: space-between;
-}
-
-.recordTime {
-  flex: 1;
-  text-align: center;
-
-  .timeLabel {
-    font-size: $font-size-xs;
+  .tabItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     color: $color-text-tertiary;
-  }
+    font-size: $font-size-xs;
 
-  .timeValue {
-    font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
+    &.active {
+      color: $color-primary;
+    }
+
+    .icon {
+      font-size: 40rpx;
+      margin-bottom: 4rpx;
+    }
   }
 }

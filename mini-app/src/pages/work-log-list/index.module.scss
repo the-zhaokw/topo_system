@@ -1,1 +1,177 @@
+// 工作日志列表页面样式
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: $gradient-primary;
+  padding: 40rpx $page-padding 60rpx;
+
+  .title {
+    color: $color-text-white;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.filterTabs {
+  margin: -40rpx $page-padding $spacing-md;
+
+  .tabs {
+    display: flex;
+    gap: $spacing-xs;
+    background: $color-bg-card;
+    border-radius: $radius-button;
+    padding: 6rpx;
+    box-shadow: $shadow-card;
+
+    .tab {
+      flex: 1;
+      height: 56rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+
+      &.active {
+        background: $color-primary;
+        color: $color-text-white;
+      }
+    }
+  }
+}
+
+.logList {
+  padding: 0 $page-padding;
+
+  .dateGroup {
+    margin-bottom: $spacing-lg;
+
+    .dateHeader {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      margin-bottom: $spacing-sm;
+      padding-left: 8rpx;
+    }
+
+    .logCard {
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      padding: $spacing-md;
+      margin-bottom: $spacing-sm;
+      box-shadow: $shadow-card;
+
+      .logHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8rpx;
+
+        .project {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-medium;
+          color: $color-primary;
+          margin-bottom: 4rpx;
+        }
+
+        .time {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+        }
+      }
+
+      .logContent {
+        font-size: $font-size-md;
+        color: $color-text-primary;
+        line-height: $line-height-normal;
+        margin-bottom: 8rpx;
+      }
+
+      .logStats {
+        display: flex;
+        gap: $spacing-md;
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+
+        .stat {
+          display: flex;
+          align-items: center;
+          gap: 4rpx;
+        }
+      }
+    }
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  color: $color-text-tertiary;
+
+  .icon {
+    font-size: 160rpx;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+
+  .text {
+    font-size: $font-size-md;
+  }
+}
+
+.fab {
+  position: fixed;
+  right: $page-padding;
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: $gradient-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-lg;
+  color: $color-text-white;
+  font-size: 40rpx;
+}
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: $color-bg-card;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  .tabItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $color-text-tertiary;
+    font-size: $font-size-xs;
+
+    &.active {
+      color: $color-primary;
+    }
+
+    .icon {
+      font-size: 40rpx;
+      margin-bottom: 4rpx;
+    }
+  }
 }
