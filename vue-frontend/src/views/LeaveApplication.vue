@@ -310,7 +310,7 @@
         <el-table :data="myApplications" v-loading="tableLoading" class="custom-table" stripe>
           <el-table-column prop="id" label="申请ID" width="80" align="center">
             <template #default="{ row }">
-              <span class="id-badge">#{{ row.id }}</span>
+              <span class="id-badge">{{ row.id }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="leave_type" label="请假类型" align="center">
@@ -516,7 +516,7 @@
     >
       <el-descriptions :column="1" border v-if="detailDialog.currentApplication" class="detail-descriptions">
         <el-descriptions-item label="申请ID">
-          <span class="id-badge">#{{ detailDialog.currentApplication.id }}</span>
+          <span class="id-badge">{{ detailDialog.currentApplication.id }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="申请人">
           {{ detailDialog.currentApplication.user_name || detailDialog.currentApplication.user_email }}

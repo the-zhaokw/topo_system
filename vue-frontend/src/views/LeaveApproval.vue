@@ -99,13 +99,13 @@
         <el-table :data="pendingApplications" v-loading="tableLoading" class="custom-table" stripe>
           <el-table-column prop="id" label="申请ID" width="80" align="center">
             <template #default="{ row }">
-              <span class="id-badge">#{{ row.id }}</span>
+              <span class="id-badge">{{ row.id }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="applicant" label="申请人" width="120">
             <template #default="{ row }">
               <div class="user-info">
-                <div class="user-name">{{ row.applicant }}</div>
+                <div class="user-name">{{ row.applicant?.name || row.applicant?.username || row.applicant }}</div>
               </div>
             </template>
           </el-table-column>
@@ -202,13 +202,13 @@
         <el-table :data="approvalHistory" v-loading="historyLoading" class="custom-table" stripe>
           <el-table-column prop="id" label="申请ID" width="80" align="center">
             <template #default="{ row }">
-              <span class="id-badge">#{{ row.id }}</span>
+              <span class="id-badge">{{ row.id }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="applicant" label="申请人" width="120">
             <template #default="{ row }">
               <div class="user-info">
-                <div class="user-name">{{ row.applicant }}</div>
+                <div class="user-name">{{ row.applicant?.name || row.applicant?.username || row.applicant }}</div>
               </div>
             </template>
           </el-table-column>
@@ -246,7 +246,7 @@
           <el-table-column prop="approver" label="审批人" width="120">
             <template #default="{ row }">
               <div class="user-info">
-                <div class="user-name">{{ row.approver }}</div>
+                <div class="user-name">{{ row.approver?.name || row.approver?.username || row.approver || '-' }}</div>
               </div>
             </template>
           </el-table-column>
@@ -302,7 +302,7 @@
           <div class="info-body">
             <div class="info-row">
               <span class="info-label">申请人</span>
-              <span class="info-value">{{ approvalDialog.currentApplication?.applicant }}</span>
+              <span class="info-value">{{ approvalDialog.currentApplication?.applicant?.name || approvalDialog.currentApplication?.applicant?.username || approvalDialog.currentApplication?.applicant }}</span>
             </div>
             <div class="info-row">
               <span class="info-label">请假类型</span>
@@ -386,10 +386,10 @@
       <div class="detail-content" v-if="detailDialog.currentApplication">
         <el-descriptions :column="2" border class="detail-descriptions">
           <el-descriptions-item label="申请ID" align="center">
-            <span class="id-highlight">#{{ detailDialog.currentApplication.id }}</span>
+            <span class="id-highlight">{{ detailDialog.currentApplication.id }}</span>
           </el-descriptions-item>
           <el-descriptions-item label="申请人" align="center">
-            {{ detailDialog.currentApplication.applicant }}
+            {{ detailDialog.currentApplication.applicant?.name || detailDialog.currentApplication.applicant?.username || detailDialog.currentApplication.applicant }}
           </el-descriptions-item>
           <el-descriptions-item label="请假类型" align="center">
             <el-tag :type="getLeaveTypeTag(detailDialog.currentApplication.leave_type)" size="small">
@@ -414,7 +414,7 @@
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="审批人" :span="2">
-            {{ detailDialog.currentApplication.approver || '待审批' }}
+            {{ detailDialog.currentApplication.approver?.name || detailDialog.currentApplication.approver?.username || detailDialog.currentApplication.approver || '待审批' }}
           </el-descriptions-item>
           <el-descriptions-item label="审批时间" :span="2">
             {{ detailDialog.currentApplication.approved_at || '待审批' }}

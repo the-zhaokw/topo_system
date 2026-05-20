@@ -151,7 +151,7 @@
         <el-table :data="attendanceRecords" v-loading="loading" stripe class="custom-table" style="width: 100%">
           <el-table-column prop="id" label="ID" width="70" align="center">
             <template #default="{ row }">
-              <span class="id-badge">#{{ row.id }}</span>
+              <span class="id-badge">{{ row.id }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="user.username" label="员工" min-width="100">

@@ -21313,3 +21313,91 @@ REQUEST:
 None
 USER:
 None
+2026-05-19 21:17:47,262 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-19 21:17:49,310 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-20 08:29:07,008 - ERROR - API api.projects.get_projects failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None
+2026-05-20 08:29:09,326 - ERROR - API api.users.get_users failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 167, in decorator
+    verify_jwt_in_request(
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 94, in verify_jwt_in_request
+    jwt_data, jwt_header, jwt_location = _decode_jwt_from_request(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 358, in _decode_jwt_from_request
+    raise NoAuthorizationError(errors[0])
+flask_jwt_extended.exceptions.NoAuthorizationError: Missing Authorization Header
+
+REQUEST:
+None
+USER:
+None

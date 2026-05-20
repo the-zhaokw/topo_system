@@ -64,7 +64,7 @@ def get_users():
     current_user_id = get_jwt_identity()
     
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         log_manager = get_log_manager()
         log_manager.log_error('get_users_user_not_found', f"用户不存在: {current_user_id}")
@@ -98,7 +98,7 @@ def get_users():
     search = request.args.get('search', '').strip()
 
     # 构建查询
-    query = User.query
+    query = db.session.query(User)
 
     # 应用筛选条件
     if department:
@@ -196,7 +196,7 @@ def search_users():
     current_user_id = get_jwt_identity()
 
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -211,7 +211,7 @@ def search_users():
         return jsonify({'users': []}), 200
     
     # 搜索用户
-    users = User.query.filter(
+    users = db.session.query(User).filter(
         (User.username.contains(query)) |
         (User.email.contains(query)) |
         (User.first_name.contains(query)) |
@@ -245,12 +245,12 @@ def get_approvers():
     current_user_id = get_jwt_identity()
     
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
     
     # 获取所有活跃用户作为审批人选项
-    users = User.query.filter_by(is_active=True).order_by(User.username).all()
+    users = db.session.query(User).filter_by(is_active=True).order_by(User.username).all()
     
     users_data = []
     for user in users:
@@ -277,7 +277,7 @@ def get_user(user_id):
     current_user_id = get_jwt_identity()
     
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -288,7 +288,7 @@ def get_user(user_id):
         return jsonify({'error': '权限不足'}), 403
 
     # 获取目标用户
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -334,7 +334,7 @@ def get_user_home(user_id):
 
     current_user_id = get_jwt_identity()
 
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -342,7 +342,7 @@ def get_user_home(user_id):
     is_admin = current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))
     is_self = current_user_id == user_id
 
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -379,7 +379,7 @@ def get_user_home(user_id):
     }
     
     thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-    activities = Activity.query.filter(
+    activities = db.session.query(Activity).filter(
         Activity.performed_by == user_id,
         Activity.created_at >= thirty_days_ago
     ).order_by(Activity.created_at.desc()).limit(50).all()
@@ -396,15 +396,15 @@ def get_user_home(user_id):
         }
         
         if activity.target_type == 'bug':
-            bug = Bug.query.get(activity.target_id)
+            bug = db.session.query(Bug).get(activity.target_id)
             activity_dict['resource_name'] = bug.title if bug else '未知Bug'
         elif activity.target_type == 'project':
-            project = Project.query.get(activity.target_id)
+            project = db.session.query(Project).get(activity.target_id)
             activity_dict['resource_name'] = project.name if project else '未知项目'
         elif activity.target_type == 'task':
             activity_dict['resource_name'] = f'任务 #{activity.target_id}'
         elif activity.target_type == 'work_log':
-            work_log = WorkLog.query.get(activity.target_id)
+            work_log = db.session.query(WorkLog).get(activity.target_id)
             if work_log:
                 activity_dict['resource_name'] = work_log.title
             else:
@@ -416,12 +416,12 @@ def get_user_home(user_id):
         activity_list.append(activity_dict)
     
     response_data['activities'] = activity_list
-    response_data['activity_count'] = Activity.query.filter_by(performed_by=user_id).count()
+    response_data['activity_count'] = db.session.query(Activity).filter_by(performed_by=user_id).count()
     
     if is_admin or is_self:
         response_data['statistics'] = {
-            'total_bugs': Bug.query.filter_by(assigned_to=user_id).count() if hasattr(Bug, 'assigned_to') else 0,
-            'total_projects': Project.query.filter(
+            'total_bugs': db.session.query(Bug).filter_by(assigned_to=user_id).count() if hasattr(Bug, 'assigned_to') else 0,
+            'total_projects': db.session.query(Project).filter(
                 (Project.owner_id == user_id) | (Project.manager_id == user_id)
             ).count() if hasattr(Project, 'owner_id') else 0
         }
@@ -443,7 +443,7 @@ def update_user_status(user_id):
     db, User, UserRole, create_audit_log = get_db_and_models()
     
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
     
@@ -462,7 +462,7 @@ def update_user_status(user_id):
     if new_status not in valid_statuses:
         return jsonify({'error': f'无效的状态值，必须是以下之一: {", ".join(valid_statuses)}'}), 400
     
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         return jsonify({'error': '用户不存在'}), 404
     
@@ -492,7 +492,7 @@ def update_user_activity(user_id):
     if current_user_id != user_id:
         return jsonify({'error': '只能更新自己的活动'}), 403
     
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         return jsonify({'error': '用户不存在'}), 404
     
@@ -524,7 +524,7 @@ def create_user():
     current_user_id = get_jwt_identity()
 
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -571,7 +571,7 @@ def create_user():
     # 职位处理 - 如果职位不存在则自动创建
     position = data.get('position', '')
     if position:
-        position_obj = Position.query.filter_by(name=position).first()
+        position_obj = db.session.query(Position).filter_by(name=position).first()
         if not position_obj:
             try:
                 # 判断职位是否为管理员或经理
@@ -598,13 +598,13 @@ def create_user():
                 log_manager.log_error('create_position_error', f"自动创建职位失败: {str(e)}")
     
     # 检查用户名是否已存在
-    if User.query.filter_by(username=data['username']).first():
+    if db.session.query(User).filter_by(username=data['username']).first():
         log_manager = get_log_manager()
         log_manager.log_error('create_user_validation_error', f"用户名已存在: {data['username']}")
         return jsonify({'error': '用户名已存在'}), 400
     
     # 检查邮箱是否已存在
-    if User.query.filter_by(email=data['email']).first():
+    if db.session.query(User).filter_by(email=data['email']).first():
         log_manager = get_log_manager()
         log_manager.log_error('create_user_validation_error', f"邮箱已存在: {data['email']}")
         return jsonify({'error': '邮箱已存在'}), 400
@@ -702,7 +702,7 @@ def update_user(user_id):
     except Exception as e:
         logger.error(f"更新用户请求日志记录失败: {str(e)}")
     
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         try:
             log_manager = get_log_manager()
@@ -712,7 +712,7 @@ def update_user(user_id):
         return jsonify({'error': '用户不存在'}), 404
 
     # 防止修改管理员账号
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     user_position = user.get_position_info()
     if user_position and user_position.is_admin and current_user.id != user.id and not current_user.is_super_admin:
         try:
@@ -778,7 +778,7 @@ def update_user(user_id):
                     logger.error(f"记录用户名格式错误日志失败: {str(e)}")
                 return jsonify({'error': '用户名只能包含字母、数字和下划线，长度3-20位'}), 400
 
-            existing_user = User.query.filter_by(username=new_username).first()
+            existing_user = db.session.query(User).filter_by(username=new_username).first()
             if existing_user and existing_user.id != user_id:
                 try:
                     log_manager = get_log_manager()
@@ -801,7 +801,7 @@ def update_user(user_id):
             return jsonify({'error': '邮箱格式不正确'}), 400
         
         # 检查邮箱是否已被其他用户使用
-        existing_user = User.query.filter_by(email=data['email']).first()
+        existing_user = db.session.query(User).filter_by(email=data['email']).first()
         if existing_user and existing_user.id != user_id:
             try:
                 log_manager = get_log_manager()
@@ -894,7 +894,7 @@ def delete_user(user_id):
     except Exception as e:
         logger.error(f"删除用户请求日志记录失败: {str(e)}")
     
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         try:
             log_manager = get_log_manager()
@@ -904,7 +904,7 @@ def delete_user(user_id):
         return jsonify({'error': '用户不存在'}), 404
 
     # 防止删除管理员账号
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
 
     user_position = user.get_position_info()
     if user_position and user_position.is_admin:
@@ -981,7 +981,7 @@ def reset_user_password(user_id):
 
     current_user_id = get_jwt_identity()
 
-    user = User.query.get(user_id)
+    user = db.session.query(User).get(user_id)
     if not user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1033,7 +1033,7 @@ def batch_delete_users():
 
     # 检查是否包含管理员ID
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1044,7 +1044,7 @@ def batch_delete_users():
 
     admin_users = []
     for user_id in user_ids:
-        user = User.query.get(user_id)
+        user = db.session.query(User).get(user_id)
         if user:
             user_pos = user.get_position_info()
             if user_pos and user_pos.is_admin:
@@ -1055,7 +1055,7 @@ def batch_delete_users():
     
     try:
         # 获取要删除的用户
-        users = User.query.filter(User.id.in_(user_ids)).all()
+        users = db.session.query(User).filter(User.id.in_(user_ids)).all()
         
         if not users:
             return jsonify({'error': '未找到要删除的用户'}), 404
@@ -1072,7 +1072,7 @@ def batch_delete_users():
             )
         
         # 批量删除
-        User.query.filter(User.id.in_(user_ids)).delete(synchronize_session=False)
+        db.session.query(User).filter(User.id.in_(user_ids)).delete(synchronize_session=False)
         db.session.commit()
         
         return jsonify({
@@ -1246,7 +1246,7 @@ def import_users():
     create_audit_log = get_create_audit_log()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1325,7 +1325,7 @@ def import_users():
                     error_count += 1
                     continue
 
-                existing_user = User.query.filter_by(username=username).first()
+                existing_user = db.session.query(User).filter_by(username=username).first()
 
                 if existing_user:
                     if row.get('邮箱'):
@@ -1454,7 +1454,7 @@ def get_departments():
     User, UserRole, Department, Position = get_models()
     
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1475,7 +1475,7 @@ def get_department_members(department_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1486,7 +1486,7 @@ def get_department_members(department_name):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     
-    query = User.query.filter_by(department=department_name)
+    query = db.session.query(User).filter_by(department=department_name)
     
     pagination = query.order_by(User.id.desc()).paginate(
         page=page, per_page=per_page, error_out=False
@@ -1530,7 +1530,7 @@ def create_department():
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1566,7 +1566,7 @@ def update_department(old_department_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1592,7 +1592,7 @@ def update_department(old_department_name):
     if department:
         department.name = new_department_name
     
-    users_to_update = User.query.filter_by(department=old_department_name).all()
+    users_to_update = db.session.query(User).filter_by(department=old_department_name).all()
     for user in users_to_update:
         user.department = new_department_name
     
@@ -1613,7 +1613,7 @@ def delete_department(department_name):
     User, UserRole, Department, Position = get_models()
     
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1621,7 +1621,7 @@ def delete_department(department_name):
     if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
         return jsonify({'error': '权限不足'}), 403
 
-    users_in_department = User.query.filter_by(department=department_name).all()
+    users_in_department = db.session.query(User).filter_by(department=department_name).all()
 
     if users_in_department:
         return jsonify({
@@ -1647,7 +1647,7 @@ def batch_add_department_members(department_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1666,7 +1666,7 @@ def batch_add_department_members(department_name):
     
     for user_id in user_ids:
         try:
-            user = User.query.get(user_id)
+            user = db.session.query(User).get(user_id)
             if user:
                 user.department = department_name
                 success_count += 1
@@ -1695,7 +1695,7 @@ def batch_remove_department_members(department_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1714,7 +1714,7 @@ def batch_remove_department_members(department_name):
 
     for user_id in user_ids:
         try:
-            user = User.query.get(user_id)
+            user = db.session.query(User).get(user_id)
             if user and user.department == department_name:
                 user.department = ''
                 success_count += 1
@@ -1743,7 +1743,7 @@ def get_positions():
     User, UserRole, Department, Position = get_models()
     
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
     
@@ -1760,7 +1760,7 @@ def get_position_members(position_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1771,7 +1771,7 @@ def get_position_members(position_name):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
 
-    query = User.query.filter_by(position=position_name)
+    query = db.session.query(User).filter_by(position=position_name)
 
     pagination = query.order_by(User.id.desc()).paginate(
         page=page, per_page=per_page, error_out=False
@@ -1815,7 +1815,7 @@ def create_position():
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1829,7 +1829,7 @@ def create_position():
     if not position_name:
         return jsonify({'error': '职位名称不能为空'}), 400
 
-    existing_position = Position.query.filter_by(name=position_name).first()
+    existing_position = db.session.query(Position).filter_by(name=position_name).first()
 
     if existing_position:
         return jsonify({'error': '职位已存在'}), 400
@@ -1851,7 +1851,7 @@ def update_position(old_position_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1868,16 +1868,16 @@ def update_position(old_position_name):
     if old_position_name == new_position_name:
         return jsonify({'message': '职位名称未变化'}), 200
 
-    existing_position = Position.query.filter_by(name=new_position_name).first()
+    existing_position = db.session.query(Position).filter_by(name=new_position_name).first()
 
     if existing_position:
         return jsonify({'error': '新职位名称已存在'}), 400
 
-    position = Position.query.filter_by(name=old_position_name).first()
+    position = db.session.query(Position).filter_by(name=old_position_name).first()
     if position:
         position.name = new_position_name
 
-    users_to_update = User.query.filter_by(position=old_position_name).all()
+    users_to_update = db.session.query(User).filter_by(position=old_position_name).all()
     for user in users_to_update:
         user.position = new_position_name
 
@@ -1898,7 +1898,7 @@ def delete_position(position_name):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -1906,7 +1906,7 @@ def delete_position(position_name):
     if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
         return jsonify({'error': '权限不足'}), 403
 
-    users_with_position = User.query.filter_by(position=position_name).all()
+    users_with_position = db.session.query(User).filter_by(position=position_name).all()
 
     if users_with_position:
         return jsonify({
@@ -1914,7 +1914,7 @@ def delete_position(position_name):
             'member_count': len(users_with_position)
         }), 400
     
-    position = Position.query.filter_by(name=position_name).first()
+    position = db.session.query(Position).filter_by(name=position_name).first()
     if position:
         db.session.delete(position)
         db.session.commit()
@@ -1933,7 +1933,7 @@ def get_all_permissions():
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2033,7 +2033,7 @@ def get_user_permissions(user_id):
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2041,7 +2041,7 @@ def get_user_permissions(user_id):
     if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
         return jsonify({'error': '权限不足'}), 403
 
-    target_user = User.query.get(user_id)
+    target_user = db.session.query(User).get(user_id)
     if not target_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2069,7 +2069,7 @@ def update_user_permissions(user_id):
     data = request.get_json()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2077,7 +2077,7 @@ def update_user_permissions(user_id):
     if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
         return jsonify({'error': '权限不足'}), 403
 
-    target_user = User.query.get(user_id)
+    target_user = db.session.query(User).get(user_id)
     if not target_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2155,7 +2155,7 @@ def batch_update_user_role():
     new_position = data.get('position', '')
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2166,7 +2166,7 @@ def batch_update_user_role():
     if not new_position:
         return jsonify({'error': '职位不能为空'}), 400
 
-    existing_position = Position.query.filter_by(name=new_position).first()
+    existing_position = db.session.query(Position).filter_by(name=new_position).first()
     if not existing_position:
         return jsonify({'error': '无效的职位'}), 400
 
@@ -2175,7 +2175,7 @@ def batch_update_user_role():
 
     for user_id in user_ids:
         try:
-            user = User.query.get(user_id)
+            user = db.session.query(User).get(user_id)
             if not user:
                 failed_users.append({'id': user_id, 'reason': '用户不存在'})
                 continue
@@ -2208,7 +2208,7 @@ def get_position_list():
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2219,7 +2219,7 @@ def get_position_list():
     positions = Position.query.all()
     positions_data = []
     for pos in positions:
-        user_count = User.query.filter_by(position=pos.name).count()
+        user_count = db.session.query(User).filter_by(position=pos.name).count()
         positions_data.append({
             'name': pos.name,
             'description': pos.description,
@@ -2254,7 +2254,7 @@ def _build_user_data(user):
 
 def _get_department_members(db, User, department_name, page=1, per_page=20, search=''):
     """获取部门成员列表"""
-    query = User.query.filter_by(department=department_name)
+    query = db.session.query(User).filter_by(department=department_name)
 
     if search:
         query = query.filter(
@@ -2278,8 +2278,8 @@ def _get_department_members(db, User, department_name, page=1, per_page=20, sear
         'per_page': pagination.per_page,
         'statistics': {
             'total': pagination.total,
-            'active': User.query.filter_by(department=department_name, is_active=True).count(),
-            'inactive': User.query.filter_by(department=department_name, is_active=False).count()
+            'active': db.session.query(User).filter_by(department=department_name, is_active=True).count(),
+            'inactive': db.session.query(User).filter_by(department=department_name, is_active=False).count()
         }
     }
 
@@ -2299,7 +2299,7 @@ def get_my_department():
     User, UserRole, Department, Position = get_models()
 
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
 
@@ -2322,7 +2322,7 @@ def get_my_department():
                 'id': dept.id,
                 'name': dept.name,
                 'description': dept.description,
-                'member_count': User.query.filter_by(department=dept.name).count()
+                'member_count': db.session.query(User).filter_by(department=dept.name).count()
             }
             for dept in departments
         ]
@@ -2345,8 +2345,8 @@ def get_my_department():
         members_data = [_build_user_data(user) for user in pagination.items]
 
         total_users = User.query.count()
-        active_users = User.query.filter_by(is_active=True).count()
-        inactive_users = User.query.filter_by(is_active=False).count()
+        active_users = db.session.query(User).filter_by(is_active=True).count()
+        inactive_users = db.session.query(User).filter_by(is_active=False).count()
 
         return jsonify({
             'has_department': True,

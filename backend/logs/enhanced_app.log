@@ -13966,3 +13966,262 @@ sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - c
 2026-05-19 20:29:29,757 - enhanced_app - INFO - 数据库表创建完成
 2026-05-19 20:29:29,927 - enhanced_app - INFO - 管理员用户已存在，跳过创建
 2026-05-19 20:29:29,927 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:29:55,316 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:29:55,319 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:29:55,320 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:29:55,323 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:29:55,324 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:29:55,324 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:29:55,588 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:29:55,590 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:08,132 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:08,134 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:08,135 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:08,135 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:08,136 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:08,136 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:08,302 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:08,303 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:14,905 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:14,907 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:14,907 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:14,908 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:14,908 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:14,910 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:15,081 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:15,082 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:21,760 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:21,761 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:21,762 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:21,763 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:21,763 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:21,765 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:22,026 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:22,026 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:28,616 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:28,618 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:28,618 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:28,619 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:28,620 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:28,620 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:28,810 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:28,810 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:35,294 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:35,295 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:35,297 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:35,298 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:35,298 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:35,299 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:35,462 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:35,464 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:41,018 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:41,020 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:41,020 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:41,022 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:41,022 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:41,022 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:41,192 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:41,192 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:46,833 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:46,834 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:46,835 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:46,838 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:46,838 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:46,838 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:47,066 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:47,066 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:30:53,661 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:30:53,663 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:30:53,663 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:30:53,665 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:30:53,665 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:30:53,665 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:30:53,850 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:30:53,850 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:31:04,741 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:31:04,743 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:31:04,745 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:31:04,748 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:31:04,749 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:31:04,749 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:31:04,947 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:31:04,948 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:31:10,997 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:31:11,000 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:31:11,001 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:31:11,003 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:31:11,003 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:31:11,003 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:31:11,208 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:31:11,208 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:31:24,001 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:31:24,002 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:31:24,003 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:31:24,005 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:31:24,005 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:31:24,006 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:31:24,180 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:31:24,180 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:31:58,902 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:31:58,904 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:31:58,904 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:31:58,906 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:31:58,906 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:31:58,907 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:31:59,071 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:31:59,072 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:32:11,812 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:32:11,815 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:32:11,816 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:32:11,819 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:32:11,819 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:32:11,819 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:32:12,039 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:32:12,040 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:32:15,270 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 20:32:19,588 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:32:19,590 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:32:19,591 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:32:19,592 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:32:19,593 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:32:19,593 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:32:19,816 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:32:19,816 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 20:32:27,612 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 20:32:27,613 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 20:32:27,615 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 20:32:27,617 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 20:32:27,617 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 20:32:27,617 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 20:32:27,798 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 20:32:27,799 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 21:15:24,045 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 21:15:24,046 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 21:15:24,047 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 21:15:24,049 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 21:15:24,049 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 21:15:24,049 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 21:15:24,211 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 21:15:24,211 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 21:16:35,073 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-19 21:16:35,075 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-19 21:16:35,077 - enhanced_app - INFO - 职位权限修复完成
+2026-05-19 21:16:35,079 - enhanced_app - INFO - 默认职位创建成功
+2026-05-19 21:16:35,079 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-19 21:16:35,079 - enhanced_app - INFO - 数据库表创建完成
+2026-05-19 21:16:35,255 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-19 21:16:35,556 - enhanced_app - INFO - 数据库初始化完成
+2026-05-19 21:16:43,905 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 21:17:37,145 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 21:17:47,105 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 21:17:47,236 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 21:17:47,237 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 0.58ms
+2026-05-19 21:17:49,309 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 21:17:49,309 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 21:17:49,310 - enhanced_app - ERROR - API Call Failed: api.users.get_users - Error: Missing Authorization Header - Duration: 0.98ms
+2026-05-19 21:18:02,242 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-19 21:18:04,740 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-19 21:18:04,741 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-19 21:18:04,761 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-19 21:18:04,761 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 20.06ms
+2026-05-19 21:18:06,771 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-19 21:18:06,772 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-19 21:18:06,779 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-19 21:18:06,780 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.03ms
+2026-05-20 08:27:58,486 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:28:10,431 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-20 08:28:10,432 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-20 08:28:10,433 - enhanced_app - INFO - 职位权限修复完成
+2026-05-20 08:28:10,435 - enhanced_app - INFO - 默认职位创建成功
+2026-05-20 08:28:10,435 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-20 08:28:10,435 - enhanced_app - INFO - 数据库表创建完成
+2026-05-20 08:28:10,601 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-20 08:28:10,602 - enhanced_app - INFO - 数据库初始化完成
+2026-05-20 08:28:41,661 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:28:47,339 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:29:07,006 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-20 08:29:07,007 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-20 08:29:07,007 - enhanced_app - ERROR - API Call Failed: api.projects.get_projects - Error: Missing Authorization Header - Duration: 0.00ms
+2026-05-20 08:29:09,324 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-20 08:29:09,324 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:29:09,324 - enhanced_app - ERROR - API Call Failed: api.users.get_users - Error: Missing Authorization Header - Duration: 0.00ms
+2026-05-20 08:29:36,103 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:31:34,164 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-20 08:31:34,166 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-20 08:31:34,167 - enhanced_app - INFO - 职位权限修复完成
+2026-05-20 08:31:34,169 - enhanced_app - INFO - 默认职位创建成功
+2026-05-20 08:31:34,170 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-20 08:31:34,170 - enhanced_app - INFO - 数据库表创建完成
+2026-05-20 08:31:34,342 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-20 08:31:34,343 - enhanced_app - INFO - 数据库初始化完成
+2026-05-20 08:31:53,049 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-05-20 08:31:53,052 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-20 08:31:53,055 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-05-20 08:31:53,064 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-20 08:31:53,274 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-20 08:31:53,275 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 210.74ms
+2026-05-20 08:31:53,305 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-05-20 08:31:53,307 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 251.60ms
+2026-05-20 08:31:57,707 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-20 08:31:57,708 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-05-20 08:31:57,708 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:31:57,709 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-05-20 08:31:57,716 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:31:57,717 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.59ms
+2026-05-20 08:31:57,722 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-05-20 08:31:57,724 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 14.61ms
+2026-05-20 08:32:03,546 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-20 08:32:03,546 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:32:03,552 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:32:03,552 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 6.08ms
+2026-05-20 08:32:05,169 - enhanced_app - ERROR - Error getting leave applications: type object 'LeaveApplication' has no attribute 'applicant'
+2026-05-20 08:32:06,376 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-20 08:32:06,384 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:32:06,399 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:32:06,399 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 15.17ms
+2026-05-20 08:32:06,931 - enhanced_app - ERROR - Error getting leave applications: type object 'LeaveApplication' has no attribute 'applicant'
+2026-05-20 08:32:06,943 - enhanced_app - ERROR - Error getting leave applications: type object 'LeaveApplication' has no attribute 'applicant'
+2026-05-20 08:32:09,030 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-20 08:32:09,032 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:32:09,039 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:32:09,041 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 9.21ms
+2026-05-20 08:32:41,185 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:32:43,301 - enhanced_app - ERROR - Error getting leave applications: type object 'LeaveApplication' has no attribute 'applicant'
+2026-05-20 08:33:43,971 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-20 08:33:43,973 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-20 08:33:43,974 - enhanced_app - INFO - 职位权限修复完成
+2026-05-20 08:33:43,977 - enhanced_app - INFO - 默认职位创建成功
+2026-05-20 08:33:43,977 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-20 08:33:43,978 - enhanced_app - INFO - 数据库表创建完成
+2026-05-20 08:33:44,228 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-20 08:33:44,229 - enhanced_app - INFO - 数据库初始化完成
+2026-05-20 08:33:47,517 - enhanced_app - INFO - 部门数据迁移成功
+2026-05-20 08:33:47,519 - enhanced_app - INFO - 职位数据迁移成功
+2026-05-20 08:33:47,520 - enhanced_app - INFO - 职位权限修复完成
+2026-05-20 08:33:47,525 - enhanced_app - INFO - 默认职位创建成功
+2026-05-20 08:33:47,525 - enhanced_app - INFO - 数据库迁移检查完成
+2026-05-20 08:33:47,526 - enhanced_app - INFO - 数据库表创建完成
+2026-05-20 08:33:47,714 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-05-20 08:33:47,714 - enhanced_app - INFO - 数据库初始化完成
+2026-05-20 08:34:03,976 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:34:31,039 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-05-20 08:35:02,152 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-20 08:35:02,155 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:35:02,315 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:35:02,315 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 160.53ms
+2026-05-20 08:35:03,859 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-20 08:35:03,874 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:35:03,894 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:35:03,896 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 22.01ms
+2026-05-20 08:35:06,015 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-05-20 08:35:06,018 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:35:06,033 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:35:06,034 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 15.78ms
+2026-05-20 08:35:08,925 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-20 08:35:08,929 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:35:08,940 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:35:08,941 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.92ms
+2026-05-20 08:35:46,908 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-05-20 08:35:46,912 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-05-20 08:35:46,927 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-05-20 08:35:46,927 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 15.53ms

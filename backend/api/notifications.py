@@ -33,7 +33,7 @@ def get_notifications():
     notification_type = request.args.get('type')
     
     # 构建查询
-    query = Notification.query.filter_by(user_id=current_user_id)
+    query = db.session.query(Notification).filter_by(user_id=current_user_id)
     
     # 已读/未读筛选
     if is_read is not None:
@@ -60,18 +60,18 @@ def get_notifications():
         
         # 添加关联信息
         if notification.related_bug_id:
-            bug = Bug.query.get(notification.related_bug_id)
+            bug = db.session.query(Bug).get(notification.related_bug_id)
             if bug:
                 notification_dict['bug_title'] = bug.title
                 notification_dict['bug_status'] = bug.status.value if hasattr(bug.status, 'value') else str(bug.status)
         
         if notification.related_comment_id:
-            comment = Comment.query.get(notification.related_comment_id)
+            comment = db.session.query(Comment).get(notification.related_comment_id)
             if comment:
                 notification_dict['comment_content_preview'] = comment.content[:100] + '...' if len(comment.content) > 100 else comment.content
         
         # 添加用户信息
-        user = User.query.get(notification.user_id)
+        user = db.session.query(User).get(notification.user_id)
         if user:
             notification_dict['username'] = user.username
         
@@ -98,7 +98,7 @@ def get_unread_count():
     current_user_id = get_jwt_identity()
     
     # 统计未读通知数量
-    unread_count = Notification.query.filter_by(
+    unread_count = db.session.query(Notification).filter_by(
         user_id=current_user_id,
         is_read=False
     ).count()
@@ -118,7 +118,7 @@ def mark_as_read(notification_id):
     current_user_id = get_jwt_identity()
     
     # 获取通知
-    notification = Notification.query.filter_by(
+    notification = db.session.query(Notification).filter_by(
         id=notification_id,
         user_id=current_user_id
     ).first()
@@ -147,7 +147,7 @@ def mark_all_as_read():
     current_user_id = get_jwt_identity()
     
     # 获取所有未读通知
-    unread_notifications = Notification.query.filter_by(
+    unread_notifications = db.session.query(Notification).filter_by(
         user_id=current_user_id,
         is_read=False
     ).all()
@@ -175,7 +175,7 @@ def delete_notification(notification_id):
     current_user_id = get_jwt_identity()
     
     # 获取通知
-    notification = Notification.query.filter_by(
+    notification = db.session.query(Notification).filter_by(
         id=notification_id,
         user_id=current_user_id
     ).first()
@@ -202,7 +202,7 @@ def send_test_notification():
     current_user_id = get_jwt_identity()
     
     # 获取当前用户
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.query(User).get(current_user_id)
     if not current_user:
         return jsonify({'error': '用户不存在'}), 404
     

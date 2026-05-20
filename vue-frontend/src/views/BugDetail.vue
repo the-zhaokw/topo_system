@@ -142,7 +142,7 @@
             
             <el-descriptions :column="2" border class="custom-descriptions">
               <el-descriptions-item label="ID">
-                <span class="id-badge">#{{ bug.id }}</span>
+                <span class="id-badge">{{ bug.id }}</span>
               </el-descriptions-item>
               <el-descriptions-item label="状态">
                 <el-tag :type="getStatusType(bug.status)" size="small" effect="light" class="status-badge" :class="`status-${bug.status}`">
@@ -199,7 +199,7 @@
               <el-descriptions-item label="预计工时">{{ bug.estimated_hours ? bug.estimated_hours + ' 小时' : '-' }}</el-descriptions-item>
               <el-descriptions-item label="实际工时">{{ bug.actual_hours ? bug.actual_hours + ' 小时' : '-' }}</el-descriptions-item>
               <el-descriptions-item label="关联测试用例">{{ bug.test_case_id || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="相关Bug">{{ bug.related_bug_id ? `#${bug.related_bug_id}` : '-' }}</el-descriptions-item>
+              <el-descriptions-item label="相关Bug">{{ bug.related_bug_id || '-' }}</el-descriptions-item>
             </el-descriptions>
           </el-card>
           

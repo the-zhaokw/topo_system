@@ -374,7 +374,7 @@
             <el-table :data="alertList" style="width: 100%" class="custom-table">
               <el-table-column prop="id" label="ID" width="80" align="center">
                 <template #default="{ row }">
-                  <span class="id-badge">#{{ row.id }}</span>
+                  <span class="id-badge">{{ row.id }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="title" label="标题" />

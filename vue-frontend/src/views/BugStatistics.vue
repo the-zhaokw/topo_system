@@ -498,7 +498,7 @@
       >
         <el-table-column prop="id" label="ID" width="80">
           <template #default="{ row }">
-            <span class="bug-id">#{{ row.id }}</span>
+            <span class="bug-id">{{ row.id }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="title" label="标题" min-width="200" show-overflow-tooltip />

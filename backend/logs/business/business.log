@@ -1100,3 +1100,17 @@
 2026-05-19 20:28:12,840 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
 2026-05-19 20:28:14,855 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
 2026-05-19 20:28:19,550 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 3, 'new_bugs': 1, 'fixed_bugs': 7, 'active_projects': 3, 'days': 30}
+2026-05-19 21:18:04,761 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-05-19 21:18:06,779 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:31:53,272 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-05-20 08:31:53,304 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 3, 'new_bugs': 1, 'fixed_bugs': 7, 'active_projects': 3, 'days': 30}
+2026-05-20 08:31:57,715 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:31:57,719 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 100, 'filtered_by_status': '', 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-05-20 08:32:03,550 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:32:06,398 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 100, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:32:09,038 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:35:02,313 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 100, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:35:03,890 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:35:06,032 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:35:08,938 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 100, 'filtered_by_department': None, 'search_term': ''}
+2026-05-20 08:35:46,926 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 100, 'filtered_by_department': None, 'search_term': ''}

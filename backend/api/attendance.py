@@ -386,7 +386,7 @@ def get_leave_applications():
         user_id = request.args.get('user_id', type=int)
         
         query = LeaveApplication.query.options(
-            joinedload(LeaveApplication.applicant),
+            joinedload(LeaveApplication.user),
             joinedload(LeaveApplication.approver)
         )
         
@@ -406,7 +406,7 @@ def get_leave_applications():
         
         result = []
         for app in applications:
-            applicant = app.applicant
+            applicant = app.user
             approver = app.approver
             app_data = {
                 'id': app.id,
