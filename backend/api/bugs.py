@@ -172,7 +172,7 @@ def get_bugs():
         # 处理特殊的 'open' 状态，表示所有未关闭的bug
         if 'open' in status_list:
             # 排除 closed, resolved, verified 状态
-            closed_statuses = [BugStatus.CLOSED, BugStatus.RESOLVED, BugStatus.VERIFIED]
+            closed_statuses = [BugStatus.CLOSED.value, BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]
             query = query.filter(~Bug.status.in_(closed_statuses))
             # 从列表中移除 'open'，只保留其他明确的状态
             status_list = [s for s in status_list if s != 'open']
@@ -301,47 +301,32 @@ def create_bug():
         if not member:
             return jsonify({'success': False, 'message': '无权在此项目中创建缺陷', 'data': None}), 403
     
-    # 处理状态枚举
-    status = BugStatus.NEW
+    # 处理状态
+    status = BugStatus.NEW.value
     if 'status' in data and data['status']:
         status_value = data['status'].lower()
-        matched = False
-        for s in BugStatus:
-            if s.value == status_value:
-                status = s
-                matched = True
-                break
-        if not matched:
-            valid_statuses = [s.value for s in BugStatus]
+        valid_statuses = [s.value for s in BugStatus]
+        if status_value not in valid_statuses:
             return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
+        status = status_value
     
-    # 处理优先级枚举
-    priority = Priority.MEDIUM
+    # 处理优先级
+    priority = Priority.MEDIUM.value
     if 'priority' in data and data['priority']:
         priority_value = data['priority'].lower()
-        matched = False
-        for p in Priority:
-            if p.value == priority_value:
-                priority = p
-                matched = True
-                break
-        if not matched:
-            valid_priorities = [p.value for p in Priority]
+        valid_priorities = [p.value for p in Priority]
+        if priority_value not in valid_priorities:
             return jsonify({'success': False, 'message': f'无效的优先级值，可选值: {valid_priorities}', 'data': None}), 400
+        priority = priority_value
     
-    # 处理严重程度枚举
-    severity = Severity.HIGH
+    # 处理严重程度
+    severity = Severity.HIGH.value
     if 'severity' in data and data['severity']:
         severity_value = data['severity'].lower()
-        matched = False
-        for sv in Severity:
-            if sv.value == severity_value:
-                severity = sv
-                matched = True
-                break
-        if not matched:
-            valid_severities = [sv.value for sv in Severity]
+        valid_severities = [sv.value for sv in Severity]
+        if severity_value not in valid_severities:
             return jsonify({'success': False, 'message': f'无效的严重程度值，可选值: {valid_severities}', 'data': None}), 400
+        severity = severity_value
     
     # 验证分配人是否存在
     assigned_to = None
@@ -669,18 +654,15 @@ def update_bug(bug_id):
             new_value_display = None
             
             if field in enum_fields:
-                if old_value:
-                    old_value_display = old_value.value if hasattr(old_value, 'value') else str(old_value)
+                old_value_display = str(old_value) if old_value else ''
                 if new_value:
-                    for enum_member in enum_fields[field]:
-                        if enum_member.value == str(new_value).lower():
-                            new_value = enum_member
-                            new_value_display = enum_member.value
-                            break
-                    if new_value_display is None:
+                    new_value_str = str(new_value).lower()
+                    valid_values = [e.value for e in enum_fields[field]]
+                    if new_value_str in valid_values:
+                        new_value_display = new_value_str
+                    else:
                         new_value_display = str(new_value)
                 else:
-                    new_value = None
                     new_value_display = ''
             elif field in ['assigned_to', 'resolved_by', 'verifier_id']:
                 if old_value:
@@ -734,10 +716,12 @@ def update_bug(bug_id):
                     value = data[field]
                     if value:
                         enum_cls = enum_fields[field]
-                        for enum_member in enum_cls:
-                            if enum_member.value == str(value).lower():
-                                setattr(bug, field, enum_member)
-                                break
+                        value_str = str(value).lower()
+                        valid_values = [e.value for e in enum_cls]
+                        if value_str in valid_values:
+                            setattr(bug, field, value_str)
+                        else:
+                            setattr(bug, field, str(value))
                     else:
                         setattr(bug, field, None)
                 elif field == 'assigned_to':
@@ -916,22 +900,15 @@ def update_bug_status(bug_id):
             if not is_resolver and not is_reporter:
                 return jsonify({'success': False, 'message': '无权更新此缺陷状态', 'data': None}), 403
 
-    old_status = bug.status.value if hasattr(bug.status, 'value') else str(bug.status)
+    old_status = str(bug.status) if bug.status else ''
     new_status_value = data['status']
     
     valid_statuses = [status.value for status in BugStatus]
     if new_status_value not in valid_statuses:
         return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
     
-    for status in BugStatus:
-        if status.value == new_status_value.lower():
-            bug.status = status
-            break
-    
+    bug.status = new_status_value.lower()
     bug.updated_at = datetime.utcnow()
-    
-    # 记录旧状态用于邮件通知
-    old_status = bug.status.value if hasattr(bug.status, 'value') else str(bug.status)
     
     if new_status_value == 'resolved' and not bug.resolved_at:
         bug.resolved_at = datetime.utcnow()
@@ -1067,22 +1044,15 @@ def transition_bug_status(bug_id):
             if not is_resolver and not is_reporter:
                 return jsonify({'success': False, 'message': '无权操作此缺陷', 'data': None}), 403
     
-    old_status = bug.status.value if hasattr(bug.status, 'value') else str(bug.status)
+    old_status = str(bug.status) if bug.status else ''
     new_status_lower = new_status.lower()
     
     valid_statuses = [status.value for status in BugStatus]
     if new_status_lower not in valid_statuses:
         return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
     
-    for status in BugStatus:
-        if status.value == new_status_lower:
-            bug.status = status
-            break
-    
+    bug.status = new_status_lower
     bug.updated_at = datetime.utcnow()
-    
-    # 记录旧状态用于邮件通知
-    old_status_for_email = bug.status.value if hasattr(bug.status, 'value') else str(bug.status)
     
     if new_status_lower == 'resolved':
         bug.resolved_at = datetime.utcnow()
@@ -1100,7 +1070,7 @@ def transition_bug_status(bug_id):
         db.session.commit()
         
         # 如果状态变为resolved，发送邮件通知报告人
-        if new_status_lower == 'resolved' and old_status_for_email != 'resolved':
+        if new_status_lower == 'resolved' and old_status != 'resolved':
             try:
                 reporter = User.query.get(bug.reported_by)
                 if reporter and reporter.email:
@@ -1361,9 +1331,9 @@ def export_bugs():
             'ID': bug.id,
             '标题': bug.title,
             '描述': bug.description,
-            '状态': bug.status.value if hasattr(bug.status, 'value') else str(bug.status),
-            '严重程度': bug.severity.value if hasattr(bug.severity, 'value') else str(bug.severity),
-            '优先级': bug.priority.value if hasattr(bug.priority, 'value') else str(bug.priority),
+            '状态': str(bug.status) if bug.status else '',
+            '严重程度': str(bug.severity) if bug.severity else '',
+            '优先级': str(bug.priority) if bug.priority else '',
             '项目': project.name if project else '',
             '负责人': assignee.username if assignee else '',
             '创建人': reporter.username if reporter else '',
@@ -1579,10 +1549,12 @@ def batch_update_bugs():
                 if field in allowed_fields:
                     if field in enum_fields and value:
                         enum_cls = enum_fields[field]
-                        for enum_member in enum_cls:
-                            if enum_member.value == str(value).lower():
-                                setattr(bug, field, enum_member)
-                                break
+                        value_str = str(value).lower()
+                        valid_values = [e.value for e in enum_cls]
+                        if value_str in valid_values:
+                            setattr(bug, field, value_str)
+                        else:
+                            setattr(bug, field, str(value))
                     elif field == 'assigned_to' and value:
                         bug.assigned_to = int(value)
                     elif field == 'deadline' and value:
@@ -1704,13 +1676,13 @@ def import_bugs():
                     reporter = current_user
                 
                 status_value = str(row.get('状态', 'new')).strip().lower()
-                status = status_map.get(status_value, BugStatus.NEW)
+                status = status_map.get(status_value, BugStatus.NEW).value
                 
                 severity_value = str(row.get('严重程度', 'medium')).strip().lower()
-                severity = severity_map.get(severity_value, Severity.MEDIUM)
+                severity = severity_map.get(severity_value, Severity.MEDIUM).value
                 
                 priority_value = str(row.get('优先级', 'medium')).strip().lower()
-                priority = priority_map.get(priority_value, Priority.MEDIUM)
+                priority = priority_map.get(priority_value, Priority.MEDIUM).value
                 
                 assignee_name = str(row.get('负责人', '')).strip().lower()
                 assigned_to = user_cache.get(assignee_name).id if assignee_name and user_cache.get(assignee_name) else None

@@ -1130,9 +1130,9 @@ class Bug(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)  # Bug 标题
     description = Column(Text, nullable=False)  # Bug 描述
-    status = Column(SQLEnum(BugStatus, values_callable=lambda x: [e.value for e in x]), default=BugStatus.NEW, nullable=False)  # Bug 状态
-    priority = Column(SQLEnum(Priority, values_callable=lambda x: [e.value for e in x]), default=Priority.MEDIUM, nullable=False)  # 优先级
-    severity = Column(SQLEnum(Severity, values_callable=lambda x: [e.value for e in x]), default=Severity.HIGH, nullable=False)  # 严重程度
+    status = Column(String(50), default=BugStatus.NEW.value, nullable=False)  # Bug 状态
+    priority = Column(String(20), default=Priority.MEDIUM.value, nullable=False)  # 优先级
+    severity = Column(String(20), default=Severity.HIGH.value, nullable=False)  # 严重程度
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)  # 所属项目ID
     reported_by = Column(Integer, ForeignKey('users.id'), nullable=False)  # 报告人ID
     assigned_to = Column(Integer, ForeignKey('users.id'))  # 分配给ID
@@ -1188,9 +1188,9 @@ class Bug(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
-            'status': self.status.value if hasattr(self.status, 'value') else str(self.status),
-            'priority': self.priority.value if hasattr(self.priority, 'value') else str(self.priority),
-            'severity': self.severity.value if hasattr(self.severity, 'value') else str(self.severity),
+            'status': str(self.status) if self.status else '',
+            'priority': str(self.priority) if self.priority else '',
+            'severity': str(self.severity) if self.severity else '',
             'project_id': self.project_id,
             'reported_by': self.reported_by,
             'assigned_to': self.assigned_to,
