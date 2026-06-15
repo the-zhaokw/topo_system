@@ -89,6 +89,8 @@ const PersonalPlan = () => import('@/views/PersonalPlan.vue')
 
 const MyDepartment = () => import('@/views/MyDepartment.vue')
 
+const MyAttendance = () => import('@/views/MyAttendance.vue')
+
 const routes = [
   {
     path: '/login',
@@ -134,6 +136,12 @@ const routes = [
     path: '/my-department',
     name: 'MyDepartment',
     component: MyDepartment,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/my-attendance',
+    name: 'MyAttendance',
+    component: MyAttendance,
     meta: { requiresAuth: true }
   },
   // Bug 管理模块 - 嵌套路由

@@ -798,10 +798,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -812,7 +812,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -992,7 +992,7 @@ onMounted(() => {
   transform: scaleX(1);
 }
 
-.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-total::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-create::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
 .stat-card-update::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .stat-card-today::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
@@ -1014,8 +1014,8 @@ onMounted(() => {
 
 .stat-card-total .stat-icon-wrapper {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-card-create .stat-icon-wrapper {
@@ -1051,7 +1051,7 @@ onMounted(() => {
 }
 
 .stat-card-total .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1122,13 +1122,13 @@ onMounted(() => {
 }
 
 .card-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 18px;
 }
 
 /* 按钮样式 */
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -1136,7 +1136,7 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 .btn-secondary {
@@ -1144,9 +1144,9 @@ onMounted(() => {
 }
 
 .btn-secondary:hover {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: #6366f1;
-  color: #6366f1;
+  background: rgba(56, 189, 248, 0.1);
+  border-color: #0ea5e9;
+  color: #0ea5e9;
 }
 
 /* 主内容区 */
@@ -1185,12 +1185,12 @@ onMounted(() => {
 }
 
 .nav-menu :deep(.el-menu-item:hover) {
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(56, 189, 248, 0.08);
 }
 
 .nav-menu :deep(.el-menu-item.is-active) {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-  color: #667eea;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+  color: #7dd3fc;
   font-weight: 600;
 }
 
@@ -1244,7 +1244,7 @@ onMounted(() => {
 
 .article-list :deep(.el-table) {
   --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
-  --el-table-row-hover-bg-color: rgba(99, 102, 241, 0.05);
+  --el-table-row-hover-bg-color: rgba(56, 189, 248, 0.05);
 }
 
 .article-list :deep(.el-table__header th) {
@@ -1276,7 +1276,7 @@ onMounted(() => {
 }
 
 .article-title:hover {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .article-tags {
@@ -1328,7 +1328,7 @@ onMounted(() => {
 }
 
 .author-link .author-name {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .card-author-link {
@@ -1341,7 +1341,7 @@ onMounted(() => {
 }
 
 .card-author-link:hover {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .time-info {
@@ -1370,7 +1370,7 @@ onMounted(() => {
 .article-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-  border-color: rgba(102, 126, 234, 0.3);
+  border-color: rgba(56, 189, 248, 0.3);
 }
 
 .article-card.is-pinned {
@@ -1403,7 +1403,7 @@ onMounted(() => {
 }
 
 .card-title:hover {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .card-badges {

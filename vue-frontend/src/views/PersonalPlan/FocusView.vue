@@ -286,7 +286,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 16px;
   color: white;
   transition: all 0.3s;

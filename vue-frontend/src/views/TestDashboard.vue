@@ -496,7 +496,7 @@ onUnmounted(() => {
 
 .test-dashboard {
   padding: 20px;
-  background: linear-gradient(135deg, #fef9f3 0%, #fdf4ed 25%, #f8fafc 50%, #f1f5f9 75%, #f5f3ff 100%);
+  background: linear-gradient(135deg, #fef9f3 0%, #fdf4ed 25%, #f8fafc 50%, #f1f5f9 75%, #f0f9ff 100%);
   min-height: 100%;
   background-attachment: fixed;
 }
@@ -505,7 +505,7 @@ onUnmounted(() => {
 .dashboard-header {
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  background: linear-gradient(135deg, #0c4a6e 0%, #0c4a6e 50%, #0c4a6e 100%);
   border-radius: 20px;
   color: white;
   position: relative;
@@ -520,7 +520,7 @@ onUnmounted(() => {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.3) 0%, transparent 50%);
+  background: radial-gradient(ellipse at top, rgba(56, 189, 248, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -568,7 +568,7 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, transparent 70%);
   filter: blur(20px);
 }
 
@@ -647,7 +647,7 @@ onUnmounted(() => {
 .decoration-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(56, 189, 248, 0.1);
 }
 
 .circle-1 {
@@ -662,7 +662,7 @@ onUnmounted(() => {
   height: 150px;
   bottom: -75px;
   right: 100px;
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(56, 189, 248, 0.1);
 }
 
 .circle-3 {
@@ -702,7 +702,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8, #a855f7);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -760,7 +760,7 @@ onUnmounted(() => {
 
 .overview-icon-suites {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
-  color: #4f46e5;
+  color: #0284c7;
 }
 
 .overview-icon-cases {
@@ -811,7 +811,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -866,7 +866,7 @@ onUnmounted(() => {
 }
 
 .chart-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 20px;
 }
 
@@ -901,7 +901,7 @@ onUnmounted(() => {
 }
 
 .card-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 20px;
 }
 
@@ -915,7 +915,7 @@ onUnmounted(() => {
 }
 
 .custom-table :deep(.el-table__row:hover) {
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(56, 189, 248, 0.05);
 }
 
 .progress-wrapper {
@@ -1024,7 +1024,7 @@ onUnmounted(() => {
 .todo-value {
   font-size: 24px;
   font-weight: 800;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

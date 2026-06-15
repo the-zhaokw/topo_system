@@ -771,7 +771,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1e293b' },
           padding: [12, 16],
@@ -815,12 +815,12 @@ export default {
             smooth: true,
             symbol: 'circle',
             symbolSize: 8,
-            itemStyle: { color: '#8b5cf6', borderWidth: 2, borderColor: '#fff' },
-            lineStyle: { width: 3, shadowColor: 'rgba(139, 92, 246, 0.3)', shadowBlur: 10 },
+            itemStyle: { color: '#38bdf8', borderWidth: 2, borderColor: '#fff' },
+            lineStyle: { width: 3, shadowColor: 'rgba(56, 189, 248, 0.3)', shadowBlur: 10 },
             areaStyle: { 
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(139, 92, 246, 0.25)' },
-                { offset: 1, color: 'rgba(139, 92, 246, 0.02)' }
+                { offset: 0, color: 'rgba(56, 189, 248, 0.25)' },
+                { offset: 1, color: 'rgba(56, 189, 248, 0.02)' }
               ])
             }
           },
@@ -898,7 +898,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1e293b' },
           padding: [12, 16],
@@ -1029,13 +1029,13 @@ export default {
     const renderTypeChart = (data) => {
       if (!typeChart || !data.length) return
       
-      const colors = ['#8b5cf6', '#a78bfa', '#c4b5fd', '#f472b6', '#fb7185', '#f97316']
+      const colors = ['#38bdf8', '#7dd3fc', '#7dd3fc', '#f472b6', '#fb7185', '#f97316']
       
       const option = {
         tooltip: { 
           trigger: 'item',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1e293b' },
           padding: [12, 16],
@@ -1108,7 +1108,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1e293b' },
           padding: [12, 16],
@@ -1186,7 +1186,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1e293b' },
           padding: [12, 16],
@@ -1290,7 +1290,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1e293b' },
           padding: [12, 16],
@@ -1724,11 +1724,11 @@ export default {
   position: relative;
   margin-bottom: 28px;
   padding: 32px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4c1d95 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #0c4a6e 0%, #0c4a6e 25%, #0c4a6e 50%, #0284c7 100%);
   border-radius: 24px;
   color: white;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 .statistics-header::before {
@@ -1739,8 +1739,8 @@ export default {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.4) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 70%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 30%, rgba(56, 189, 248, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(14, 165, 233, 0.3) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 50%, rgba(109, 40, 217, 0.2) 0%, transparent 70%);
   pointer-events: none;
 }
@@ -1779,7 +1779,7 @@ export default {
 
 .title-icon .el-icon {
   font-size: 32px;
-  color: #c4b5fd;
+  color: #7dd3fc;
 }
 
 .title-glow {
@@ -1789,7 +1789,7 @@ export default {
   transform: translate(-50%, -50%);
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.5) 0%, transparent 70%);
   filter: blur(10px);
   animation: glowPulse 3s ease-in-out infinite;
 }
@@ -1806,7 +1806,7 @@ export default {
   margin: 0;
   font-size: 15px;
   opacity: 0.85;
-  color: #ddd6fe;
+  color: #bae6fd;
 }
 
 .header-actions {
@@ -1859,19 +1859,19 @@ export default {
    按钮样式
    ============================================ */
 .btn-gradient {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
   border: none;
   color: white;
   padding: 12px 24px;
   font-weight: 600;
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
 }
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
 }
 
 .btn-shine {
@@ -1924,8 +1924,8 @@ export default {
 }
 
 .btn-text-elegant:hover {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.05);
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.05);
 }
 
 /* ============================================
@@ -1960,7 +1960,7 @@ export default {
 
 .filter-label .el-icon {
   font-size: 14px;
-  color: #8b5cf6;
+  color: #38bdf8;
 }
 
 .filter-select {
@@ -2012,7 +2012,7 @@ export default {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  background: linear-gradient(90deg, #38bdf8, #7dd3fc);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -2073,12 +2073,12 @@ export default {
 }
 
 .kpi-icon-total {
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-  color: #7c3aed;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0284c7;
 }
 
 .kpi-icon-total .icon-glow {
-  background: #8b5cf6;
+  background: #38bdf8;
 }
 
 .kpi-icon-new {
@@ -2119,7 +2119,7 @@ export default {
 
 .kpi-icon-time {
   background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-  color: #7c3aed;
+  color: #0284c7;
 }
 
 .kpi-icon-time .icon-glow {
@@ -2210,7 +2210,7 @@ export default {
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  background: linear-gradient(90deg, #38bdf8, #7dd3fc);
   transition: width 0.6s ease;
 }
 
@@ -2220,7 +2220,7 @@ export default {
   right: -20px;
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -2296,8 +2296,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-  color: #7c3aed;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0284c7;
 }
 
 .title-icon-bg.icon-project {
@@ -2327,7 +2327,7 @@ export default {
 
 .title-icon-bg.icon-list {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #4f46e5;
+  color: #0284c7;
 }
 
 .chart-controls {
@@ -2377,7 +2377,7 @@ export default {
 .bug-id {
   font-family: 'Monaco', 'Menlo', monospace;
   font-weight: 600;
-  color: #8b5cf6;
+  color: #38bdf8;
 }
 
 .status-tag,
@@ -2431,8 +2431,8 @@ export default {
 .spinner-ring {
   width: 48px;
   height: 48px;
-  border: 3px solid rgba(139, 92, 246, 0.1);
-  border-top-color: #8b5cf6;
+  border: 3px solid rgba(56, 189, 248, 0.1);
+  border-top-color: #38bdf8;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   position: absolute;
@@ -2441,16 +2441,16 @@ export default {
 .spinner-ring:nth-child(2) {
   width: 36px;
   height: 36px;
-  border-color: rgba(139, 92, 246, 0.15);
-  border-top-color: #a78bfa;
+  border-color: rgba(56, 189, 248, 0.15);
+  border-top-color: #7dd3fc;
   animation-duration: 0.8s;
 }
 
 .spinner-ring:nth-child(3) {
   width: 24px;
   height: 24px;
-  border-color: rgba(139, 92, 246, 0.2);
-  border-top-color: #c4b5fd;
+  border-color: rgba(56, 189, 248, 0.2);
+  border-top-color: #7dd3fc;
   animation-duration: 0.6s;
 }
 

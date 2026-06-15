@@ -1735,7 +1735,7 @@ def export_data():
                 })
                 
         elif export_type == 'projects':
-            # 导出项目数据
+            # 导出项目数据（按项目详情字段导出）
             query = Project.query
             
             # 权限检查：管理员可以查看所有项目，其他用户只能查看自己参与的项目
@@ -1757,15 +1757,78 @@ def export_data():
                     Bug.status.in_([BugStatus.RESOLVED.value, BugStatus.VERIFIED.value, BugStatus.CLOSED.value])
                 ).count()
                 
+                # 获取项目经理和创建者姓名
+                owner_name = None
+                manager_name = None
+                try:
+                    if project.owner:
+                        owner_name = f'{project.owner.first_name} {project.owner.last_name}'.strip()
+                except Exception:
+                    pass
+                try:
+                    if project.manager:
+                        manager_name = f'{project.manager.first_name} {project.manager.last_name}'.strip()
+                except Exception:
+                    pass
+                
+                # 获取项目成员信息
+                members = ProjectMember.query.filter_by(project_id=project.id).all()
+                members_info = []
+                for m in members:
+                    try:
+                        member_name = f'{m.user.first_name} {m.user.last_name}'.strip() if m.user else ''
+                        members_info.append(f"{member_name or m.user.username}({m.role})")
+                    except Exception:
+                        pass
+                
+                # 转换 cost 字段为字符串标识
+                cost_value = project.cost
+                if cost_value is None:
+                    cost_str = ''
+                elif cost_value == 0.0:
+                    cost_str = 'normal'
+                elif cost_value > 0:
+                    cost_str = 'over'
+                else:
+                    cost_str = 'under'
+                
                 export_data.append({
                     'id': project.id,
                     'name': project.name,
                     'code': project.code,
                     'description': project.description,
                     'owner_id': project.owner_id,
+                    'owner_name': owner_name,
+                    'manager_id': project.manager_id,
+                    'manager_name': manager_name,
                     'status': project.status,
+                    'priority': project.priority,
+                    'current_stage': project.current_stage,
+                    'progress': project.progress,
+                    'quality': project.quality,
+                    'risk': project.risk,
+                    'resources': project.resources,
+                    'cost': cost_str,
+                    'start_date': project.start_date.isoformat() if project.start_date else '',
+                    'end_date': project.end_date.isoformat() if project.end_date else '',
                     'created_at': project.created_at.isoformat() if project.created_at else '',
                     'updated_at': project.updated_at.isoformat() if project.updated_at else '',
+                    'project_type': project.project_type,
+                    'client_name': project.client_name,
+                    'client_contact': project.client_contact,
+                    'contract_value': project.contract_value,
+                    'budget': project.budget,
+                    'actual_cost': project.actual_cost,
+                    'estimated_hours': project.estimated_hours,
+                    'actual_hours': project.actual_hours,
+                    'team_size': project.team_size,
+                    'technology_stack': project.technology_stack,
+                    'tags': project.tags,
+                    'milestones': project.milestones,
+                    'versions': project.versions,
+                    'modules': project.modules,
+                    'members': ', '.join(members_info),
+                    'member_count': len(members_info),
                     'total_tasks': total_tasks,
                     'completed_tasks': completed_tasks,
                     'total_bugs': total_bugs,

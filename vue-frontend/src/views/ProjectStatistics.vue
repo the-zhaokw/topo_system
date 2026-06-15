@@ -268,7 +268,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(102, 126, 234, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1f2937' },
           padding: [12, 16],
@@ -325,7 +325,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(102, 126, 234, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1f2937' },
           padding: [12, 16],
@@ -360,8 +360,8 @@ export default {
             data: reqCounts,
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#667eea' },
-                { offset: 1, color: '#764ba2' }
+                { offset: 0, color: '#7dd3fc' },
+                { offset: 1, color: '#38bdf8' }
               ]),
               borderRadius: [8, 8, 0, 0]
             },
@@ -392,7 +392,7 @@ export default {
       }
       
       const series = []
-      const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#fa709a', '#fee140', '#43e97b', '#4facfe']
+      const colors = ['#7dd3fc', '#38bdf8', '#f093fb', '#f5576c', '#fa709a', '#fee140', '#43e97b', '#4facfe']
       let colorIndex = 0
       
       for (const [projectName, trendData] of Object.entries(bugTrends)) {
@@ -418,7 +418,7 @@ export default {
         tooltip: { 
           trigger: 'axis',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'rgba(102, 126, 234, 0.2)',
+          borderColor: 'rgba(56, 189, 248, 0.2)',
           borderWidth: 1,
           textStyle: { color: '#1f2937' },
           padding: [12, 16],
@@ -518,8 +518,8 @@ export default {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(102, 126, 234, 0.4) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 80%, rgba(240, 147, 251, 0.3) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 30% 20%, rgba(56, 189, 248, 0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(56, 189, 248, 0.3) 0%, transparent 50%);
   pointer-events: none;
   animation: aurora 15s ease infinite;
 }
@@ -624,7 +624,7 @@ export default {
   right: 0;
   width: 120px;
   height: 120px;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -637,7 +637,7 @@ export default {
   transform: scaleX(1);
 }
 
-.kpi-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.kpi-card-total::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .kpi-card-active::before { background: linear-gradient(90deg, #43e97b, #38f9d7); }
 .kpi-card-tasks::before { background: linear-gradient(90deg, #4facfe, #00f2fe); }
 .kpi-card-bugs::before { background: linear-gradient(90deg, #ff6b6b, #ee5a6f); }
@@ -674,8 +674,8 @@ export default {
 
 .kpi-icon-total {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+  color: #7dd3fc;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);
 }
 
 .kpi-icon-active {
@@ -751,7 +751,7 @@ export default {
   transform: translateY(-50%);
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.4s;
   pointer-events: none;
@@ -802,7 +802,7 @@ export default {
 }
 
 .chart-title .el-icon {
-  color: #667eea;
+  color: #7dd3fc;
   font-size: 20px;
 }
 
@@ -831,7 +831,7 @@ export default {
 }
 
 .table-title .el-icon {
-  color: #667eea;
+  color: #7dd3fc;
   font-size: 20px;
 }
 
@@ -844,7 +844,7 @@ export default {
 }
 
 .custom-table :deep(.el-table__row:hover) {
-  background: rgba(102, 126, 234, 0.04);
+  background: rgba(56, 189, 248, 0.04);
 }
 
 .status-tag {

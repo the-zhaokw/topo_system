@@ -551,11 +551,12 @@ export const apiService = {
     getMonthlyReport: (params = {}) => api.get('/attendance/reports/monthly', { params }),
     getReportsOverview: (params = {}) => api.get('/attendance/reports/overview', { params }),
     getReportsDetail: (params = {}) => api.get('/attendance/reports/detail', { params }),
-    exportAttendanceReport: (params = {}) => api.get('/attendance/reports/export', { params }),
+    exportAttendanceReport: (params = {}) => api.get('/attendance/reports/export', { params, responseType: 'blob' }),
     getDepartmentReport: (params = {}) => api.get('/attendance/reports/department', { params }),
     exportData: (params = {}) => api.get('/attendance/export', { params }),
     getAbsenceSummary: (params = {}) => api.get('/attendance/summary/absence', { params }),
-    getOvertimeSummary: (params = {}) => api.get('/attendance/summary/overtime', { params })
+    getOvertimeSummary: (params = {}) => api.get('/attendance/summary/overtime', { params }),
+    getMySummary: (params = {}) => api.get('/attendance/my-summary', { params })
   },
   
   // 物料管理

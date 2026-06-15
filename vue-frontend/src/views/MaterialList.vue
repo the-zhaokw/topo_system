@@ -643,10 +643,10 @@ export default {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -657,7 +657,7 @@ export default {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -799,7 +799,7 @@ export default {
   transform: scaleX(1);
 }
 
-.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-total::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-active::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
 .stat-card-warning::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .stat-card-inventory::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
@@ -821,8 +821,8 @@ export default {
 
 .stat-icon-wrapper-total {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-icon-wrapper-active {
@@ -858,7 +858,7 @@ export default {
 }
 
 .stat-card-total .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -929,7 +929,7 @@ export default {
 }
 
 .card-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 18px;
 }
 
@@ -944,7 +944,7 @@ export default {
 
 /* 按钮样式 */
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -952,7 +952,7 @@ export default {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 .btn-success {
@@ -984,9 +984,9 @@ export default {
 }
 
 .btn-secondary:hover {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: #6366f1;
-  color: #6366f1;
+  background: rgba(56, 189, 248, 0.1);
+  border-color: #0ea5e9;
+  color: #0ea5e9;
 }
 
 /* 内容区域 */
@@ -1008,7 +1008,7 @@ export default {
 }
 
 .table-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 20px;
 }
 
@@ -1031,7 +1031,7 @@ export default {
 /* 自定义表格 */
 .custom-table {
   --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
-  --el-table-row-hover-bg-color: rgba(99, 102, 241, 0.05);
+  --el-table-row-hover-bg-color: rgba(56, 189, 248, 0.05);
 }
 
 .custom-table :deep(.el-table__header th) {
@@ -1105,7 +1105,7 @@ export default {
 
 /* 对话框样式 */
 :deep(.material-dialog .el-dialog__header) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   padding: 20px;
   border-radius: 16px 16px 0 0;
   margin-right: 0;

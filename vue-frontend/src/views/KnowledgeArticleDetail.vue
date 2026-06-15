@@ -505,10 +505,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -519,7 +519,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -703,8 +703,8 @@ onMounted(() => {
 }
 
 .meta-item:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
+  background: rgba(56, 189, 248, 0.1);
+  color: #0ea5e9;
 }
 
 .meta-item .el-icon {
@@ -732,7 +732,7 @@ onMounted(() => {
 
 .tag-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
 }
 
 .article-actions {
@@ -782,7 +782,7 @@ onMounted(() => {
 
 .article-content :deep(h1) {
   font-size: 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -790,7 +790,7 @@ onMounted(() => {
 
 .article-content :deep(h2) {
   font-size: 24px;
-  border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+  border-bottom: 2px solid rgba(56, 189, 248, 0.2);
   padding-bottom: 8px;
 }
 
@@ -803,12 +803,12 @@ onMounted(() => {
 }
 
 .article-content :deep(code) {
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(56, 189, 248, 0.1);
   padding: 2px 8px;
   border-radius: 6px;
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 14px;
-  color: #6366f1;
+  color: #0ea5e9;
 }
 
 .article-content :deep(pre) {
@@ -837,10 +837,10 @@ onMounted(() => {
 }
 
 .article-content :deep(blockquote) {
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #7dd3fc;
   padding: 16px 20px;
   margin: 20px 0;
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(56, 189, 248, 0.05);
   border-radius: 0 12px 12px 0;
   color: #475569;
   font-style: italic;
@@ -902,8 +902,8 @@ onMounted(() => {
 }
 
 .article-stats-bar .stat-item:hover {
-  color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+  color: #0ea5e9;
+  background: rgba(56, 189, 248, 0.1);
   transform: translateY(-2px);
 }
 
@@ -927,7 +927,7 @@ onMounted(() => {
 }
 
 .section-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 22px;
 }
 
@@ -970,7 +970,7 @@ onMounted(() => {
 
 .attachment-icon {
   font-size: 22px;
-  color: #6366f1;
+  color: #0ea5e9;
 }
 
 .attachment-name {
@@ -1011,8 +1011,8 @@ onMounted(() => {
 }
 
 .comment-input :deep(.el-textarea__inner:focus) {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
 }
 
 .comment-actions {
@@ -1021,7 +1021,7 @@ onMounted(() => {
 }
 
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   border-radius: 10px;
@@ -1032,7 +1032,7 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 .comment-list {

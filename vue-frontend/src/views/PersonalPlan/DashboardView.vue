@@ -429,7 +429,7 @@ onMounted(() => {
 
 /* 欢迎横幅 */
 .welcome-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 16px;
   padding: 32px 40px;
   color: #fff;
@@ -437,7 +437,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
 }
 
 .welcome-content h1 {

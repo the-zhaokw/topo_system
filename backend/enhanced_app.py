@@ -3278,6 +3278,35 @@ def register_api_blueprints():
     _api_blueprints_registered = True
     print("API blueprints registered successfully")
 
+    # 注册全局错误处理
+    @app.errorhandler(500)
+    def app_internal_error(error):
+        import traceback
+        logger.error(f"App 500 error: {error}\n{traceback.format_exc()}")
+        return jsonify({
+            'success': False,
+            'error': '服务器内部错误',
+            'code': 'INTERNAL_ERROR'
+        }), 500
+
+    @app.errorhandler(Exception)
+    def app_handle_exception(error):
+        import traceback
+        logger.error(f"App unhandled exception: {error}\n{traceback.format_exc()}")
+        # 如果是HTTP异常，使用其状态码
+        from werkzeug.exceptions import HTTPException
+        if isinstance(error, HTTPException):
+            return jsonify({
+                'success': False,
+                'error': error.description or str(error),
+                'code': f'HTTP_{error.code}'
+            }), error.code
+        return jsonify({
+            'success': False,
+            'error': f'请求处理失败: {str(error)}',
+            'code': 'UNHANDLED_ERROR'
+        }), 500
+
 # 注意：API 蓝图在 if __name__ == '__main__': 块中注册
 # 对于 WSGI 服务器，请在 wsgi.py 中调用 register_api_blueprints()
 

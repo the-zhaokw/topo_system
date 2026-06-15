@@ -448,10 +448,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -462,7 +462,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -652,7 +652,7 @@ onMounted(() => {
 }
 
 /* 4种不同的渐变配色 */
-.stat-card-members::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-members::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-projects::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
 .stat-card-activities::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .stat-card-todos::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
@@ -674,8 +674,8 @@ onMounted(() => {
 
 .stat-icon-wrapper-members {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-icon-wrapper-projects {
@@ -711,7 +711,7 @@ onMounted(() => {
 }
 
 .stat-card-members .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -758,7 +758,7 @@ onMounted(() => {
 }
 
 .card-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 18px;
 }
 
@@ -817,28 +817,28 @@ onMounted(() => {
 }
 
 .department-item:hover {
-  border-color: #667eea;
-  background: rgba(102, 126, 234, 0.05);
+  border-color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.05);
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 12px 24px -8px rgba(56, 189, 248, 0.2);
 }
 
 .department-item.active {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 12px 24px -8px rgba(102, 126, 234, 0.4);
+  border-color: #7dd3fc;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  box-shadow: 0 12px 24px -8px rgba(56, 189, 248, 0.4);
 }
 
 .dept-icon {
   width: 44px;
   height: 44px;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(56, 189, 248, 0.1);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
-  color: #667eea;
+  color: #7dd3fc;
   transition: all 0.3s;
 }
 
@@ -890,7 +890,7 @@ onMounted(() => {
 }
 
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -898,7 +898,7 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 /* 职位筛选 */
@@ -946,7 +946,7 @@ onMounted(() => {
 .position-icon {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -1000,7 +1000,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #7dd3fc, #38bdf8);
   transform: scaleX(0);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1025,7 +1025,7 @@ onMounted(() => {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1043,7 +1043,7 @@ onMounted(() => {
   left: -3px;
   right: -3px;
   bottom: -3px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #f093fb 100%);
   border-radius: 50%;
   z-index: 0;
   opacity: 0;
@@ -1112,7 +1112,7 @@ onMounted(() => {
 .position-tag {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
   border-color: transparent;
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .status-tag {
@@ -1134,7 +1134,7 @@ onMounted(() => {
 }
 
 .view-btn {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 /* 空成员状态 */

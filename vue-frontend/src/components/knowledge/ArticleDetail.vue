@@ -724,7 +724,7 @@ onMounted(() => {
   }
 
   .detail-author-link .meta-text {
-    color: var(--color-primary, #6366f1);
+    color: var(--color-primary, #0ea5e9);
     max-width: 80px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -848,7 +848,7 @@ onMounted(() => {
   }
 
   .detail-content :deep(blockquote) {
-    border-left: 3px solid var(--color-primary, #6366f1);
+    border-left: 3px solid var(--color-primary, #0ea5e9);
     padding-left: 12px;
     margin-left: 0;
     margin-bottom: 12px;
@@ -898,7 +898,7 @@ onMounted(() => {
   }
 
   .detail-stats .stat-item:hover {
-    background: rgba(99, 102, 241, 0.08);
+    background: rgba(56, 189, 248, 0.08);
   }
 
   /* 区块 - 移动端优化 */
@@ -926,7 +926,7 @@ onMounted(() => {
 
   .attachment-icon {
     font-size: 18px;
-    color: var(--color-primary, #6366f1);
+    color: var(--color-primary, #0ea5e9);
   }
 
   .attachment-name {

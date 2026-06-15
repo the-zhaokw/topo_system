@@ -573,10 +573,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -587,7 +587,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -740,7 +740,7 @@ onMounted(() => {
   transform: scaleX(1);
 }
 
-.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-total::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-progress::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
 .stat-card-completed::before { background: linear-gradient(90deg, #10b981, #34d399); }
 .stat-card-overdue::before { background: linear-gradient(90deg, #ef4444, #f87171); }
@@ -762,8 +762,8 @@ onMounted(() => {
 
 .stat-icon-wrapper-total {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-icon-wrapper-progress {
@@ -799,7 +799,7 @@ onMounted(() => {
 }
 
 .stat-card-total .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1078,7 +1078,7 @@ onMounted(() => {
 
 /* 按钮样式 */
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -1086,12 +1086,12 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 /* 对话框样式 */
 .task-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   padding: 20px 24px;
   margin-right: 0;
 }

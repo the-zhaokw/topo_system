@@ -6,7 +6,7 @@
 
     <div class="stats-cards">
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);">
           <el-icon><Clock /></el-icon>
         </div>
         <div class="stat-content">
@@ -285,7 +285,7 @@ const getTypeColor = (type) => {
 
 .bar {
   width: 32px;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 4px 4px 0 0;
   transition: height 0.3s;
 }

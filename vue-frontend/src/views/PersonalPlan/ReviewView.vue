@@ -424,7 +424,7 @@ onMounted(() => {
 }
 
 .metric-icon.blue {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
 }
 
 .metric-icon.green {

@@ -653,10 +653,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -667,7 +667,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -789,7 +789,7 @@ onMounted(() => {
 }
 
 .btn-gradient-sm {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -797,7 +797,7 @@ onMounted(() => {
 
 .btn-gradient-sm:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 8px 20px -5px rgba(56, 189, 248, 0.5);
 }
 
 .btn-danger-sm {
@@ -864,7 +864,7 @@ onMounted(() => {
 }
 
 /* 统计卡片不同配色 */
-.stat-card-projects::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-projects::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-bugs::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .stat-card-resolved::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
 .stat-card-activities::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
@@ -886,8 +886,8 @@ onMounted(() => {
 
 .stat-icon-wrapper-projects {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-icon-wrapper-bugs {
@@ -923,7 +923,7 @@ onMounted(() => {
 }
 
 .stat-card-projects .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1002,9 +1002,9 @@ onMounted(() => {
   position: relative;
   display: inline-block;
   padding: 6px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #f093fb 100%);
   border-radius: 50%;
-  box-shadow: 0 0 30px rgba(102, 126, 234, 0.4), 0 0 60px rgba(118, 75, 162, 0.2);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), 0 0 60px rgba(14, 165, 233, 0.2);
   animation: glow-pulse 3s ease-in-out infinite;
 }
 
@@ -1021,10 +1021,10 @@ onMounted(() => {
 
 @keyframes glow-pulse {
   0%, 100% {
-    box-shadow: 0 0 30px rgba(102, 126, 234, 0.4), 0 0 60px rgba(118, 75, 162, 0.2);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), 0 0 60px rgba(14, 165, 233, 0.2);
   }
   50% {
-    box-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 0 80px rgba(118, 75, 162, 0.3);
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), 0 0 80px rgba(14, 165, 233, 0.3);
   }
 }
 
@@ -1126,17 +1126,17 @@ onMounted(() => {
 }
 
 .status-option:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #7dd3fc;
+  color: #7dd3fc;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
 }
 
 .status-option.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-color: transparent;
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
 }
 
 /* 状态点样式 */
@@ -1182,7 +1182,7 @@ onMounted(() => {
 }
 
 .section-title .el-icon {
-  color: #667eea;
+  color: #7dd3fc;
   font-size: 22px;
 }
 
@@ -1200,11 +1200,11 @@ onMounted(() => {
 }
 
 .gradient-input :deep(.el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5) inset;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5) inset;
 }
 
 .gradient-input :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3) inset, 0 0 0 1px #667eea inset;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3) inset, 0 0 0 1px #7dd3fc inset;
 }
 
 .disabled-input :deep(.el-input__wrapper) {
@@ -1218,11 +1218,11 @@ onMounted(() => {
 }
 
 .gradient-select :deep(.el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5) inset;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5) inset;
 }
 
 .gradient-select :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3) inset, 0 0 0 1px #667eea inset;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3) inset, 0 0 0 1px #7dd3fc inset;
 }
 
 .gradient-date-picker :deep(.el-input__wrapper) {
@@ -1232,11 +1232,11 @@ onMounted(() => {
 }
 
 .gradient-date-picker :deep(.el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5) inset;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5) inset;
 }
 
 .gradient-date-picker :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3) inset, 0 0 0 1px #667eea inset;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3) inset, 0 0 0 1px #7dd3fc inset;
 }
 
 /* 密码区域 */

@@ -448,6 +448,120 @@ def get_leave_applications():
         traceback.print_exc()
         return jsonify({'error': '获取请假申请失败'}), 500
 
+# 创建请假申请
+@attendance_bp.route('/leave-applications', methods=['POST'])
+@jwt_required()
+def create_leave_application():
+    """创建请假申请"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+    from models.enums import LeaveType
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        data = request.get_json(silent=True) or {}
+
+        # 必填字段校验
+        leave_type = data.get('leave_type')
+        start_date_str = data.get('start_date')
+        end_date_str = data.get('end_date')
+        reason = data.get('reason')
+
+        if not leave_type or not start_date_str or not end_date_str or not reason:
+            return jsonify({'error': '请假类型、起止日期和请假原因均为必填项'}), 400
+
+        # 解析日期
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': '开始日期格式错误，应为 YYYY-MM-DD'}), 400
+
+        try:
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': '结束日期格式错误，应为 YYYY-MM-DD'}), 400
+
+        if end_date < start_date:
+            return jsonify({'error': '结束日期不能早于开始日期'}), 400
+
+        # 计算请假天数
+        days = data.get('days')
+        if days is None or days == '':
+            days = (end_date - start_date).days + 1
+        try:
+            days = float(days)
+        except (TypeError, ValueError):
+            return jsonify({'error': '请假天数格式错误'}), 400
+        if days <= 0:
+            return jsonify({'error': '请假天数必须大于0'}), 400
+
+        # 校验请假类型
+        valid_leave_types = {lt.value for lt in LeaveType}
+        if leave_type not in valid_leave_types:
+            return jsonify({'error': f'无效的请假类型: {leave_type}'}), 400
+
+        # 审批人（可选）
+        approver_id = data.get('approver_id')
+        if approver_id is not None and approver_id != '':
+            try:
+                approver_id = int(approver_id)
+                approver = User.query.get(approver_id)
+                if not approver:
+                    return jsonify({'error': '指定的审批人不存在'}), 400
+            except (TypeError, ValueError):
+                approver_id = None
+        else:
+            approver_id = None
+
+        # 附件（可选）
+        attachment = data.get('attachment') or data.get('attachment_path') or None
+
+        application = LeaveApplication(
+            user_id=current_user_id,
+            leave_type=leave_type,
+            start_date=start_date,
+            end_date=end_date,
+            days=days,
+            reason=reason,
+            status=ApprovalStatus.PENDING.value,
+            approver_id=approver_id,
+            attachment=attachment
+        )
+
+        db.session.add(application)
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='create',
+                resource_type='leave_application',
+                resource_id=application.id,
+                details=f'提交请假申请: {leave_type} {start_date_str} 至 {end_date_str}, {days}天',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '请假申请提交成功',
+            'application': application.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error creating leave application: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '提交请假申请失败'}), 500
+
+
 # 获取加班申请列表
 @attendance_bp.route('/overtime-applications', methods=['GET'])
 @jwt_required()
@@ -527,6 +641,90 @@ def get_overtime_applications():
         traceback.print_exc()
         return jsonify({'error': '获取加班申请失败'}), 500
 
+# 创建加班申请
+@attendance_bp.route('/overtime', methods=['POST'])
+@jwt_required()
+def create_overtime_application():
+    """创建加班申请"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        data = request.get_json(silent=True) or {}
+
+        # 必填字段校验
+        date_str = data.get('date')
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
+        reason = data.get('reason')
+
+        if not date_str or not start_time or not end_time or not reason:
+            return jsonify({'error': '日期、开始时间、结束时间和加班原因均为必填项'}), 400
+
+        # 解析日期
+        try:
+            overtime_date = datetime.strptime(date_str, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': '日期格式错误，应为 YYYY-MM-DD'}), 400
+
+        # 时间格式校验
+        import re
+        time_pattern = re.compile(r'^([01]\d|2[0-3]):[0-5]\d$')
+        if not time_pattern.match(start_time) or not time_pattern.match(end_time):
+            return jsonify({'error': '时间格式错误，应为 HH:MM'}), 400
+
+        # 审批人（可选）
+        approver_id = data.get('approver_id')
+        if approver_id is not None:
+            try:
+                approver_id = int(approver_id)
+            except (TypeError, ValueError):
+                approver_id = None
+
+        application = OvertimeApplication(
+            user_id=current_user_id,
+            date=overtime_date,
+            start_time=start_time,
+            end_time=end_time,
+            reason=reason,
+            status=ApprovalStatus.PENDING.value,
+            approver_id=approver_id
+        )
+
+        db.session.add(application)
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='create',
+                resource_type='overtime_application',
+                resource_id=application.id,
+                details=f'提交加班申请: {date_str} {start_time}-{end_time}',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '加班申请提交成功',
+            'application': application.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error creating overtime application: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '提交加班申请失败'}), 500
+
 # 获取班次列表
 @attendance_bp.route('/shifts', methods=['GET'])
 @jwt_required()
@@ -544,6 +742,175 @@ def get_shifts():
         import traceback
         traceback.print_exc()
         return jsonify({'error': '获取班次列表失败'}), 500
+
+# 创建班次
+@attendance_bp.route('/shifts', methods=['POST'])
+@jwt_required()
+def create_shift():
+    """创建班次"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, _, _, _, _, ShiftSchedule, _, _, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user or current_user.role != 'admin':
+            return jsonify({'error': '无权限操作'}), 403
+
+        data = request.get_json(silent=True) or {}
+        name = (data.get('name') or '').strip()
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
+        shift_type = data.get('shift_type') or 'day'
+
+        if not name or not start_time or not end_time:
+            return jsonify({'error': '班次名称、开始时间、结束时间为必填项'}), 400
+
+        import re
+        time_pattern = re.compile(r'^([01]\d|2[0-3]):[0-5]\d$')
+        if not time_pattern.match(start_time) or not time_pattern.match(end_time):
+            return jsonify({'error': '时间格式错误，应为 HH:MM'}), 400
+
+        if ShiftSchedule.query.filter_by(name=name).first():
+            return jsonify({'error': '班次名称已存在'}), 400
+
+        shift = ShiftSchedule(
+            name=name,
+            start_time=start_time,
+            end_time=end_time,
+            shift_type=shift_type,
+            flexible_range=int(data.get('flexible_range') or 30),
+            overtime_threshold=int(data.get('overtime_threshold') or 60),
+            is_active=bool(data.get('is_active', True)),
+            description=data.get('description')
+        )
+        db.session.add(shift)
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='create',
+                resource_type='shift_schedule',
+                resource_id=shift.id,
+                details=f'创建班次: {shift.name}',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({'message': '创建成功', 'shift': shift.to_dict()}), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error creating shift: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '创建班次失败'}), 500
+
+# 更新班次
+@attendance_bp.route('/shifts/<int:shift_id>', methods=['PUT'])
+@jwt_required()
+def update_shift(shift_id):
+    """更新班次"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, _, _, _, _, ShiftSchedule, _, _, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user or current_user.role != 'admin':
+            return jsonify({'error': '无权限操作'}), 403
+
+        shift = ShiftSchedule.query.get(shift_id)
+        if not shift:
+            return jsonify({'error': '班次不存在'}), 404
+
+        data = request.get_json(silent=True) or {}
+
+        if 'name' in data:
+            new_name = (data.get('name') or '').strip()
+            if not new_name:
+                return jsonify({'error': '班次名称不能为空'}), 400
+            if new_name != shift.name and ShiftSchedule.query.filter_by(name=new_name).first():
+                return jsonify({'error': '班次名称已存在'}), 400
+            shift.name = new_name
+        if 'start_time' in data:
+            shift.start_time = data.get('start_time')
+        if 'end_time' in data:
+            shift.end_time = data.get('end_time')
+        if 'shift_type' in data and data.get('shift_type'):
+            shift.shift_type = data.get('shift_type')
+        if 'flexible_range' in data and data.get('flexible_range') is not None:
+            shift.flexible_range = int(data.get('flexible_range'))
+        if 'overtime_threshold' in data and data.get('overtime_threshold') is not None:
+            shift.overtime_threshold = int(data.get('overtime_threshold'))
+        if 'is_active' in data:
+            shift.is_active = bool(data.get('is_active'))
+        if 'description' in data:
+            shift.description = data.get('description')
+
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='update',
+                resource_type='shift_schedule',
+                resource_id=shift.id,
+                details=f'更新班次: {shift.name}',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({'message': '更新成功', 'shift': shift.to_dict()})
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error updating shift: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '更新班次失败'}), 500
+
+# 删除班次
+@attendance_bp.route('/shifts/<int:shift_id>', methods=['DELETE'])
+@jwt_required()
+def delete_shift(shift_id):
+    """删除班次（软删除：停用）"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, _, _, _, _, ShiftSchedule, UserShift, _, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user or current_user.role != 'admin':
+            return jsonify({'error': '无权限操作'}), 403
+
+        shift = ShiftSchedule.query.get(shift_id)
+        if not shift:
+            return jsonify({'error': '班次不存在'}), 404
+
+        # 如果已被用户排班使用，禁止硬删除；采用停用方式
+        in_use = UserShift.query.filter_by(shift_id=shift_id).first()
+        if in_use:
+            shift.is_active = False
+            db.session.commit()
+            return jsonify({'message': '班次已被使用，已切换为停用状态'})
+        else:
+            db.session.delete(shift)
+            db.session.commit()
+            return jsonify({'message': '删除成功'})
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error deleting shift: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '删除班次失败'}), 500
 
 # 获取用户班次安排
 @attendance_bp.route('/user-shifts', methods=['GET'])
@@ -600,6 +967,129 @@ def get_user_shifts():
         import traceback
         traceback.print_exc()
         return jsonify({'error': '获取用户班次安排失败'}), 500
+
+# 批量创建用户排班
+@attendance_bp.route('/user-shifts/batch', methods=['POST'])
+@jwt_required()
+def create_user_shifts_batch():
+    """批量为多个用户在日期范围内创建/更新排班"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, _, _, _, _, ShiftSchedule, UserShift, _, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user or current_user.role != 'admin':
+            return jsonify({'error': '无权限操作'}), 403
+
+        data = request.get_json(silent=True) or {}
+        user_ids = data.get('user_ids') or []
+        shift_id = data.get('shift_id')
+        date_range = data.get('date_range') or []
+
+        if not user_ids or not shift_id:
+            return jsonify({'error': '员工和班次均为必填项'}), 400
+
+        # date_range 可能是 ['2025-01-01', '2025-01-31'] 或 null（表示永久生效）
+        shift = ShiftSchedule.query.get(shift_id)
+        if not shift:
+            return jsonify({'error': '班次不存在'}), 404
+
+        effective_date = None
+        expire_date = None
+        if isinstance(date_range, list) and len(date_range) == 2 and date_range[0] and date_range[1]:
+            try:
+                effective_date = datetime.strptime(date_range[0], '%Y-%m-%d')
+                expire_date = datetime.strptime(date_range[1], '%Y-%m-%d')
+            except ValueError:
+                return jsonify({'error': '日期格式错误，应为 YYYY-MM-DD'}), 400
+            if expire_date < effective_date:
+                return jsonify({'error': '结束日期不能早于开始日期'}), 400
+
+        created_count = 0
+        for uid in user_ids:
+            try:
+                uid_int = int(uid)
+            except (TypeError, ValueError):
+                continue
+            target_user = User.query.get(uid_int)
+            if not target_user:
+                continue
+            us = UserShift(
+                user_id=uid_int,
+                shift_id=shift_id,
+                effective_date=effective_date or datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0),
+                expire_date=expire_date
+            )
+            db.session.add(us)
+            created_count += 1
+
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='batch_create',
+                resource_type='user_shift',
+                resource_id=None,
+                details=f'批量排班: 班次ID={shift_id}, 员工数={created_count}',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({'message': f'批量排班成功，共创建 {created_count} 条记录', 'count': created_count}), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error batch creating user shifts: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '批量排班失败'}), 500
+
+# 删除用户排班安排
+@attendance_bp.route('/user-shifts/<int:user_shift_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user_shift(user_shift_id):
+    """删除用户排班安排"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, _, _, _, _, _, UserShift, _, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user or current_user.role != 'admin':
+            return jsonify({'error': '无权限操作'}), 403
+
+        us = UserShift.query.get(user_shift_id)
+        if not us:
+            return jsonify({'error': '排班安排不存在'}), 404
+
+        db.session.delete(us)
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='delete',
+                resource_type='user_shift',
+                resource_id=user_shift_id,
+                details=f'删除排班: ID={user_shift_id}',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({'message': '删除成功'})
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error deleting user shift: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '删除排班失败'}), 500
 
 # 获取考勤异常列表
 @attendance_bp.route('/exceptions', methods=['GET'])
@@ -964,3 +1454,449 @@ def get_reports_detail():
         import traceback
         traceback.print_exc()
         return jsonify({'error': '获取详细报告失败'}), 500
+
+
+# 获取个人考勤汇总（我的考勤）
+@attendance_bp.route('/my-summary', methods=['GET'])
+@jwt_required()
+def get_my_attendance_summary():
+    """获取个人考勤汇总信息"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        # 支持自定义日期范围，默认本月
+        date_str = request.args.get('date')
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+
+        year = request.args.get('year', target_date.year, type=int)
+        month = request.args.get('month', target_date.month, type=int)
+
+        # 计算月份起止日期
+        start_date = datetime(year, month, 1).date()
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1).date() - timedelta(days=1)
+        else:
+            end_date = datetime(year, month + 1, 1).date() - timedelta(days=1)
+
+        # 1) 应出勤天数：根据工作日历统计本月工作日
+        work_calendar_entries = WorkCalendar.query.filter(
+            db.func.date(WorkCalendar.date) >= start_date,
+            db.func.date(WorkCalendar.date) <= end_date
+        ).all()
+        if work_calendar_entries:
+            expected_days = sum(1 for d in work_calendar_entries if d.is_working_day and not d.is_holiday)
+        else:
+            # 没有工作日历时，按周一到周五计算
+            expected_days = 0
+            cur = start_date
+            while cur <= end_date:
+                if cur.weekday() < 5:
+                    expected_days += 1
+                cur += timedelta(days=1)
+
+        # 2) 实际出勤天数：状态为 present / late / early_leave / overtime / business_trip 的天数
+        records = AttendanceRecord.query.filter(
+            AttendanceRecord.user_id == current_user_id,
+            AttendanceRecord.record_date >= start_date,
+            AttendanceRecord.record_date <= end_date
+        ).all()
+
+        valid_statuses = {
+            AttendanceStatus.PRESENT.value,
+            AttendanceStatus.LATE.value,
+            AttendanceStatus.EARLY_LEAVE.value,
+            AttendanceStatus.OVERTIME.value,
+            AttendanceStatus.BUSINESS_TRIP.value
+        }
+        actual_days = sum(1 for r in records if r.status in valid_statuses)
+
+        # 3) 迟到/早退 次数及时长
+        late_count = sum(1 for r in records if r.late_minutes and r.late_minutes > 0)
+        late_minutes_total = sum((r.late_minutes or 0) for r in records)
+        early_leave_count = sum(1 for r in records if r.early_leave_minutes and r.early_leave_minutes > 0)
+        early_leave_minutes_total = sum((r.early_leave_minutes or 0) for r in records)
+
+        # 迟到分级
+        if late_count == 0:
+            late_level = 'normal'
+            late_message = '正常'
+        elif late_count <= 3:
+            late_level = 'warning'
+            late_message = '警告：建议调整作息'
+        else:
+            late_level = 'danger'
+            late_message = '严重：已达3次以上警告线'
+
+        # 4) 旷工天数：状态为 absent 或工作日未打卡且无请假
+        absent_count = sum(1 for r in records if r.status == AttendanceStatus.ABSENT.value)
+        # 缺卡但未补卡的次数
+        missing_count = sum(1 for r in records if (
+            (not r.clock_in_time or not r.clock_out_time)
+            and r.status != AttendanceStatus.LEAVE.value
+            and r.status != AttendanceStatus.ABSENT.value
+        ))
+
+        # 5) 请假时长（按类型统计）
+        leave_records = LeaveApplication.query.filter(
+            LeaveApplication.user_id == current_user_id,
+            LeaveApplication.start_date <= end_date,
+            LeaveApplication.end_date >= start_date,
+            LeaveApplication.status == ApprovalStatus.APPROVED.value
+        ).all()
+
+        leave_breakdown = {}
+        leave_total_days = 0.0
+        for lv in leave_records:
+            lv_type = lv.leave_type or 'other'
+            days = lv.days or 0
+            leave_breakdown[lv_type] = round(leave_breakdown.get(lv_type, 0) + days, 2)
+            leave_total_days += days
+
+        # 6) 加班时长（按类型：工作日加班 / 周末加班 / 节假日加班）
+        overtime_records = OvertimeApplication.query.filter(
+            OvertimeApplication.user_id == current_user_id,
+            db.func.date(OvertimeApplication.date) >= start_date,
+            db.func.date(OvertimeApplication.date) <= end_date,
+            OvertimeApplication.status == ApprovalStatus.APPROVED.value
+        ).all()
+
+        def _parse_hours(start, end):
+            try:
+                sh, sm = [int(x) for x in start.split(':')[:2]]
+                eh, em = [int(x) for x in end.split(':')[:2]]
+                return max(0.0, (eh * 60 + em - sh * 60 - sm) / 60.0)
+            except Exception:
+                return 0.0
+
+        overtime_workday = 0.0
+        overtime_weekend = 0.0
+        overtime_holiday = 0.0
+        overtime_total = 0.0
+        for ot in overtime_records:
+            hours = _parse_hours(ot.start_time, ot.end_time)
+            overtime_total += hours
+            try:
+                d = ot.date.date() if hasattr(ot.date, 'date') else ot.date
+                wd = d.weekday()
+                cal_entry = WorkCalendar.query.filter(db.func.date(WorkCalendar.date) == d).first()
+                if cal_entry and cal_entry.is_holiday:
+                    overtime_holiday += hours
+                elif wd >= 5:
+                    overtime_weekend += hours
+                else:
+                    overtime_workday += hours
+            except Exception:
+                overtime_workday += hours
+
+        overtime_breakdown = {
+            'workday': round(overtime_workday, 2),
+            'weekend': round(overtime_weekend, 2),
+            'holiday': round(overtime_holiday, 2)
+        }
+
+        # 7) 年假余额（这里采用通用约定：每满一年5天，传入用户入职信息，若无则默认为5天）
+        annual_leave_quota = 5.0
+        annual_leave_used = leave_breakdown.get('annual_leave', 0)
+        annual_leave_remaining = max(0.0, round(annual_leave_quota - annual_leave_used, 2))
+
+        # 迟到分级提示
+        late_grade = {
+            'level': late_level,
+            'message': late_message,
+            'count': late_count,
+            'threshold_warn': 3,
+            'threshold_danger': 5
+        }
+
+        return jsonify({
+            'period': {
+                'year': year,
+                'month': month,
+                'start_date': start_date.strftime('%Y-%m-%d'),
+                'end_date': end_date.strftime('%Y-%m-%d')
+            },
+            'expected_days': expected_days,
+            'actual_days': actual_days,
+            'attendance_rate': round((actual_days / expected_days * 100) if expected_days > 0 else 0, 2),
+            'late': {
+                'count': late_count,
+                'minutes': late_minutes_total,
+                'hours': round(late_minutes_total / 60.0, 2),
+                'grade': late_grade
+            },
+            'early_leave': {
+                'count': early_leave_count,
+                'minutes': early_leave_minutes_total,
+                'hours': round(early_leave_minutes_total / 60.0, 2)
+            },
+            'absent_days': absent_count,
+            'missing_count': missing_count,
+            'leave': {
+                'total_days': round(leave_total_days, 2),
+                'breakdown': leave_breakdown,
+                'annual_leave': {
+                    'quota': annual_leave_quota,
+                    'used': annual_leave_used,
+                    'remaining': annual_leave_remaining
+                }
+            },
+            'overtime': {
+                'total_hours': round(overtime_total, 2),
+                'breakdown': overtime_breakdown
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error getting my attendance summary: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取个人考勤汇总失败'}), 500
+
+
+# 考勤状态中文映射
+ATTENDANCE_STATUS_LABELS = {
+    'present': '正常',
+    'absent': '旷工',
+    'late': '迟到',
+    'early_leave': '早退',
+    'leave': '请假',
+    'business_trip': '出差',
+    'overtime': '加班',
+    'missing': '缺卡'
+}
+
+
+def _build_attendance_export_rows(query, User, AttendanceRecord):
+    """根据查询构造考勤导出数据行"""
+    rows = []
+    for record in query.all():
+        user = record.user
+        rows.append({
+            'ID': record.id,
+            '员工账号': user.username if user else '',
+            '员工姓名': f"{user.first_name or ''} {user.last_name or ''}".strip() or (user.username if user else '未知'),
+            '部门': user.department if user and getattr(user, 'department', None) else '',
+            '日期': record.record_date.strftime('%Y-%m-%d') if record.record_date else '',
+            '上班打卡': record.clock_in_time.strftime('%H:%M:%S') if record.clock_in_time else '',
+            '上班IP': record.clock_in_ip or '',
+            '下班打卡': record.clock_out_time.strftime('%H:%M:%S') if record.clock_out_time else '',
+            '下班IP': record.clock_out_ip or '',
+            '工作时长(小时)': round(record.work_hours, 2) if record.work_hours else 0,
+            '加班时长(小时)': round(record.overtime_hours, 2) if record.overtime_hours else 0,
+            '迟到(分钟)': record.late_minutes or 0,
+            '早退(分钟)': record.early_leave_minutes or 0,
+            '考勤状态': ATTENDANCE_STATUS_LABELS.get(record.status, record.status or '')
+        })
+    return rows
+
+
+# 导出考勤记录
+@attendance_bp.route('/records/export', methods=['GET'])
+@jwt_required()
+def export_attendance_records():
+    """导出考勤记录为 Excel 文件"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, AttendanceRecord, _, _, _, _, _, _, AttendanceStatus, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        # 解析筛选条件（与 /records 保持一致）
+        start_date = request.args.get('start_date') or request.args.get('dateRange[0]')
+        end_date = request.args.get('end_date') or request.args.get('dateRange[1]')
+        user_id = request.args.get('user_id', type=int) or request.args.get('userId', type=int)
+        status = request.args.get('status')
+
+        query = AttendanceRecord.query
+
+        # 非管理员仅能导出自己的数据
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+        elif user_id:
+            query = query.filter_by(user_id=user_id)
+
+        if start_date:
+            query = query.filter(AttendanceRecord.record_date >= start_date)
+        if end_date:
+            query = query.filter(AttendanceRecord.record_date <= end_date)
+        if status:
+            # 前端可能传入 normal/late/early_leave/missing/overtime，需要兼容枚举值
+            status_map = {
+                'normal': AttendanceStatus.PRESENT.value,
+                'late': AttendanceStatus.LATE.value,
+                'early_leave': AttendanceStatus.EARLY_LEAVE.value,
+                'missing': AttendanceStatus.MISSING.value,
+                'overtime': AttendanceStatus.OVERTIME.value
+            }
+            mapped_status = status_map.get(status, status)
+            query = query.filter(AttendanceRecord.status == mapped_status)
+
+        query = query.order_by(AttendanceRecord.record_date.desc())
+        rows = _build_attendance_export_rows(query, User, AttendanceRecord)
+
+        # 生成 Excel 文件
+        try:
+            import pandas as pd
+            from io import BytesIO
+            from flask import send_file, make_response
+        except ImportError:
+            return jsonify({'error': '缺少 pandas 依赖，无法导出 Excel'}), 500
+
+        filename = f'考勤记录_{datetime.now().strftime("%Y-%m-%d")}.xlsx'
+        if not rows:
+            # 没有任何数据时仍然返回带表头的空文件
+            rows = []
+
+        df = pd.DataFrame(rows)
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='考勤记录')
+        output.seek(0)
+
+        response = make_response(send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=filename
+        ))
+        origin = request.headers.get('Origin')
+        response.headers['Access-Control-Allow-Origin'] = origin or '*'
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+
+        # 记录审计日志
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='export',
+                resource_type='attendance',
+                resource_id=None,
+                details=f'导出考勤记录 {len(rows)} 条',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return response
+    except Exception as e:
+        logger.error(f"Error exporting attendance records: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '导出考勤记录失败'}), 500
+
+
+# 导出考勤报表
+@attendance_bp.route('/reports/export', methods=['GET'])
+@jwt_required()
+def export_attendance_report():
+    """导出考勤统计报表为 Excel 文件"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, AttendanceRecord, _, _, _, _, _, _, AttendanceStatus, _, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        period = request.args.get('period', 'daily')
+        date_str = request.args.get('date')
+        department = request.args.get('department')
+        start_date = request.args.get('start_date') or request.args.get('dateRange[0]')
+        end_date = request.args.get('end_date') or request.args.get('dateRange[1]')
+
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+
+        # 自定义周期优先使用 dateRange
+        if period == 'custom' and start_date and end_date:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date() if isinstance(start_date, str) else start_date
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date() if isinstance(end_date, str) else end_date
+        elif period == 'daily':
+            start_date_obj = end_date_obj = target_date
+        elif period == 'weekly':
+            start_date_obj = target_date - timedelta(days=target_date.weekday())
+            end_date_obj = start_date_obj + timedelta(days=6)
+        elif period == 'monthly':
+            start_date_obj = target_date.replace(day=1)
+            if target_date.month == 12:
+                end_date_obj = target_date.replace(year=target_date.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                end_date_obj = target_date.replace(month=target_date.month + 1, day=1) - timedelta(days=1)
+        else:
+            start_date_obj = end_date_obj = target_date
+
+        query = AttendanceRecord.query.filter(
+            AttendanceRecord.record_date >= start_date_obj,
+            AttendanceRecord.record_date <= end_date_obj
+        )
+        if department:
+            query = query.join(User).filter(User.department == department)
+        if current_user.role != 'admin':
+            query = query.filter_by(user_id=current_user_id)
+
+        query = query.order_by(AttendanceRecord.record_date.desc())
+        rows = _build_attendance_export_rows(query, User, AttendanceRecord)
+
+        try:
+            import pandas as pd
+            from io import BytesIO
+            from flask import send_file, make_response
+        except ImportError:
+            return jsonify({'error': '缺少 pandas 依赖，无法导出 Excel'}), 500
+
+        period_label = {
+            'daily': '日报',
+            'weekly': '周报',
+            'monthly': '月报',
+            'custom': '自定义'
+        }.get(period, period)
+        filename = f'考勤报表_{period_label}_{start_date_obj}_{end_date_obj}.xlsx'
+
+        df = pd.DataFrame(rows)
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='考勤报表')
+        output.seek(0)
+
+        response = make_response(send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=filename
+        ))
+        origin = request.headers.get('Origin')
+        response.headers['Access-Control-Allow-Origin'] = origin or '*'
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='export',
+                resource_type='attendance_report',
+                resource_id=None,
+                details=f'导出考勤报表 {len(rows)} 条 ({period_label} {start_date_obj}~{end_date_obj})',
+                request=request
+            )
+        except Exception:
+            pass
+
+        return response
+    except Exception as e:
+        logger.error(f"Error exporting attendance report: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '导出考勤报表失败'}), 500

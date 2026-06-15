@@ -13,17 +13,17 @@
    CSS 变量定义 - 精致色彩系统
    ============================================ */
 :root {
-  /* 主色调 - 深邃靛蓝紫 */
-  --primary-50: #f5f3ff;
-  --primary-100: #ede9fe;
-  --primary-200: #ddd6fe;
-  --primary-300: #c4b5fd;
-  --primary-400: #a78bfa;
-  --primary-500: #8b5cf6;
-  --primary-600: #7c3aed;
-  --primary-700: #6d28d9;
-  --primary-800: #5b21b6;
-  --primary-900: #4c1d95;
+  /* 主色调 - 淡蓝天空 */
+  --primary-50: #f0f9ff;
+  --primary-100: #e0f2fe;
+  --primary-200: #bae6fd;
+  --primary-300: #7dd3fc;
+  --primary-400: #38bdf8;
+  --primary-500: #0ea5e9;
+  --primary-600: #0284c7;
+  --primary-700: #0369a1;
+  --primary-800: #075985;
+  --primary-900: #0c4a6e;
   
   /* 辅助色 - 珊瑚活力橙 */
   --coral-50: #fff7ed;
@@ -110,16 +110,16 @@
   --text-tertiary: #94a3b8;
   --text-inverse: #ffffff;
   
-  /* 精致渐变定义 */
-  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
-  --gradient-primary-soft: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+  /* 精致渐变定义 - 淡蓝主调 */
+  --gradient-primary: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
+  --gradient-primary-soft: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   --gradient-coral: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
   --gradient-mint: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
   --gradient-sky: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
   --gradient-rose: linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%);
   --gradient-amber: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
-  --gradient-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%);
-  --gradient-hero: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4c1d95 50%, #7c3aed 100%);
+  --gradient-dark: linear-gradient(135deg, #0c4a6e 0%, #075985 50%, #0c4a6e 100%);
+  --gradient-hero: linear-gradient(135deg, #0c4a6e 0%, #075985 25%, #0369a1 50%, #0ea5e9 100%);
   
   /* 玻璃拟态渐变 */
   --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
@@ -132,7 +132,7 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-  --shadow-glow-primary: 0 0 30px rgba(139, 92, 246, 0.25);
+  --shadow-glow-primary: 0 0 30px rgba(56, 189, 248, 0.25);
   --shadow-glow-mint: 0 0 30px rgba(34, 197, 94, 0.25);
   --shadow-glow-coral: 0 0 30px rgba(249, 115, 22, 0.25);
   --shadow-glow-rose: 0 0 30px rgba(244, 63, 94, 0.25);
@@ -254,10 +254,10 @@
 /* 发光脉冲 */
 @keyframes glowPulse {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
   }
   50% {
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.4), 0 0 60px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.4), 0 0 60px rgba(56, 189, 248, 0.2);
   }
 }
 
@@ -387,13 +387,13 @@
 /* 光晕扩散 */
 @keyframes glowExpand {
   0% {
-    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 20px rgba(139, 92, 246, 0);
+    box-shadow: 0 0 0 20px rgba(56, 189, 248, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
   }
 }
 
@@ -447,7 +447,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.03) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -590,9 +590,9 @@
 }
 
 .stat-icon-elegant.primary {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.2) 100%);
   color: var(--primary-600);
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
 }
 
 .stat-icon-elegant.mint {
@@ -678,12 +678,12 @@
 .btn-elegant-primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
 }
 
 .btn-elegant-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
 }
 
 .btn-elegant-mint {
@@ -714,7 +714,7 @@
 }
 
 .tag-elegant-primary {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(56, 189, 248, 0.1);
   color: var(--primary-600);
 }
 
@@ -758,8 +758,8 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 80%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 30% 20%, rgba(56, 189, 248, 0.3) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(14, 165, 233, 0.2) 0%, transparent 50%);
   pointer-events: none;
 }
 

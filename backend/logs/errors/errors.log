@@ -21401,3 +21401,10 @@ REQUEST:
 None
 USER:
 None
+2026-06-15 19:43:12,321 - ERROR - 记录请求日志失败: EnhancedLogger.log_request() got multiple values for argument 'user_id'
+EXCEPTION:
+None
+REQUEST:
+None
+USER:
+None

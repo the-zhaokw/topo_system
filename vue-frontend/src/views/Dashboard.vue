@@ -122,6 +122,12 @@
                 </div>
                 <span class="nav-text">我的部门</span>
               </div>
+              <div class="nav-item" @click="$router.push('/my-attendance')">
+                <div class="nav-icon-wrapper nav-icon-attendance">
+                  <el-icon><AlarmClock /></el-icon>
+                </div>
+                <span class="nav-text">我的考勤</span>
+              </div>
               <div class="nav-item" @click="$router.push('/profile')">
                 <div class="nav-icon-wrapper nav-icon-profile">
                   <el-icon><User /></el-icon>
@@ -477,7 +483,7 @@ import {
   Folder, ArrowRight, Grid, Promotion, Warning, FolderOpened, 
   UserFilled, Histogram, PieChart, Setting, Tools, Clock,
   Bell, Timer, TrendCharts, WarningFilled, CirclePlusFilled,
-  InfoFilled, CircleCheckFilled, Monitor, Management
+  InfoFilled, CircleCheckFilled, Monitor, Management, AlarmClock
 } from '@element-plus/icons-vue'
 import { formatDate } from '@/utils/dateUtils'
 import { apiService } from '@/services/api'
@@ -797,7 +803,7 @@ const updateCharts = () => {
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#5b6df5' },
-              { offset: 1, color: '#7c3aed' }
+              { offset: 1, color: '#0284c7' }
             ]),
             borderRadius: [8, 8, 0, 0]
           }
@@ -1037,7 +1043,7 @@ const getActionText = (action) => {
 .orb-1 {
   width: 600px;
   height: 600px;
-  background: linear-gradient(135deg, rgba(91, 109, 245, 0.3) 0%, rgba(124, 58, 237, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(14, 165, 233, 0.2) 100%);
   top: -200px;
   right: -100px;
   animation-delay: 0s;
@@ -1070,12 +1076,12 @@ const getActionText = (action) => {
 .dashboard-header {
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  background: linear-gradient(135deg, #bae6fd 0%, #7dd3fc 50%, #38bdf8 100%);
   border-radius: 20px;
-  color: white;
+  color: #0c4a6e;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(30, 27, 75, 0.3);
+  box-shadow: 0 20px 40px rgba(56, 189, 248, 0.35);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1089,8 +1095,8 @@ const getActionText = (action) => {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(91, 109, 245, 0.25) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 80%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(56, 189, 248, 0.4) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -1101,7 +1107,7 @@ const getActionText = (action) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   opacity: 0.5;
   pointer-events: none;
 }
@@ -1117,19 +1123,19 @@ const getActionText = (action) => {
 .header-icon {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
   border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.3);
 }
 
 .header-icon .el-icon {
   font-size: 32px;
-  color: #a5b4fc;
+  color: #ffffff;
 }
 
 .header-text h2 {
@@ -1137,17 +1143,16 @@ const getActionText = (action) => {
   font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0c4a6e;
+  -webkit-text-fill-color: #0c4a6e;
 }
 
 .header-text p {
   margin: 0;
   font-size: 14px;
-  opacity: 0.75;
-  font-weight: 400;
+  color: #075985;
+  opacity: 0.85;
+  font-weight: 500;
 }
 
 .header-stats {
@@ -1168,22 +1173,21 @@ const getActionText = (action) => {
 .header-stat-value {
   font-size: 28px;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0c4a6e;
+  -webkit-text-fill-color: #0c4a6e;
 }
 
 .header-stat-label {
   font-size: 12px;
-  opacity: 0.7;
+  color: #075985;
+  opacity: 0.8;
   font-weight: 500;
 }
 
 .header-stat-divider {
   width: 1px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(14, 165, 233, 0.4);
 }
 
 /* 玻璃拟态卡片 */
@@ -1246,7 +1250,7 @@ const getActionText = (action) => {
 
 .card-icon-purple {
   background: linear-gradient(135deg, #f3e8ff 0%, #d8b4fe 100%);
-  color: #7c3aed;
+  color: #0284c7;
 }
 
 .card-icon-orange {
@@ -1334,7 +1338,7 @@ const getActionText = (action) => {
   background: white;
   transform: translateX(6px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  border-color: rgba(91, 109, 245, 0.15);
+  border-color: rgba(56, 189, 248, 0.15);
 }
 
 .org-item:last-child {
@@ -1351,14 +1355,14 @@ const getActionText = (action) => {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #5b6df5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #5b6df5 0%, #0284c7 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(91, 109, 245, 0.3);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
 }
 
 .project-details {
@@ -1399,6 +1403,28 @@ const getActionText = (action) => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+
+.navigation-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navigation-grid::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.6);
+  border-radius: 3px;
+}
+
+.navigation-grid::-webkit-scrollbar-thumb {
+  background: rgba(91, 109, 245, 0.3);
+  border-radius: 3px;
+}
+
+.navigation-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(91, 109, 245, 0.5);
 }
 
 .nav-item {
@@ -1420,7 +1446,7 @@ const getActionText = (action) => {
   background: white;
   transform: translateY(-6px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-  border-color: rgba(91, 109, 245, 0.15);
+  border-color: rgba(56, 189, 248, 0.15);
 }
 
 .nav-icon-wrapper {
@@ -1463,14 +1489,20 @@ const getActionText = (action) => {
 
 .nav-icon-team {
   background: linear-gradient(135deg, #e0e7ff 0%, #a5b4fc 100%);
-  color: #4f46e5;
+  color: #0284c7;
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
 }
 
 .nav-icon-dept {
-  background: linear-gradient(135deg, #f3e8ff 0%, #d8b4fe 100%);
-  color: #7c3aed;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0284c7;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+.nav-icon-attendance {
+  background: linear-gradient(135deg, #ffedd5 0%, #fdba74 100%);
+  color: #ea580c;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
 }
 
 .nav-icon-profile {
@@ -1548,7 +1580,7 @@ const getActionText = (action) => {
   background: white;
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
-  border-color: rgba(91, 109, 245, 0.15);
+  border-color: rgba(56, 189, 248, 0.15);
 }
 
 .access-icon-wrapper {
@@ -1585,7 +1617,7 @@ const getActionText = (action) => {
 
 .access-activity .access-icon-wrapper {
   background: linear-gradient(135deg, #f3e8ff 0%, #c084fc 100%);
-  color: #7c3aed;
+  color: #0284c7;
   box-shadow: 0 4px 16px rgba(192, 132, 252, 0.25);
 }
 
@@ -1597,7 +1629,7 @@ const getActionText = (action) => {
 
 .access-settings .access-icon-wrapper {
   background: linear-gradient(135deg, #e0e7ff 0%, #818cf8 100%);
-  color: #4338ca;
+  color: #0369a1;
   box-shadow: 0 4px 16px rgba(129, 140, 248, 0.25);
 }
 
@@ -1718,7 +1750,7 @@ const getActionText = (action) => {
   background: white;
   transform: translateY(-6px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-  border-color: rgba(91, 109, 245, 0.15);
+  border-color: rgba(56, 189, 248, 0.15);
 }
 
 .stat-icon-item:hover .stat-glow {
@@ -1768,7 +1800,7 @@ const getActionText = (action) => {
 
 .stat-project .stat-icon-wrapper {
   background: linear-gradient(135deg, #f3e8ff 0%, #c084fc 100%);
-  color: #7c3aed;
+  color: #0284c7;
   box-shadow: 0 4px 12px rgba(192, 132, 252, 0.25);
 }
 
@@ -1791,7 +1823,7 @@ const getActionText = (action) => {
 .stat-number {
   font-size: 22px;
   font-weight: 800;
-  background: linear-gradient(135deg, #5b6df5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #5b6df5 0%, #0284c7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1812,7 +1844,7 @@ const getActionText = (action) => {
   transform: translate(-50%, -50%);
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, rgba(91, 109, 245, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -1870,8 +1902,8 @@ const getActionText = (action) => {
 
 .chart-icon-purple {
   background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-  color: #7c3aed;
-  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);
+  color: #0284c7;
+  box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
 }
 
 .chart-icon-orange {
@@ -1921,7 +1953,7 @@ const getActionText = (action) => {
 }
 
 .bug-title-link:hover {
-  color: #4f46e5;
+  color: #0284c7;
   text-decoration: underline;
 }
 
@@ -1952,7 +1984,7 @@ const getActionText = (action) => {
 }
 
 .custom-table :deep(.el-table__row:hover) {
-  background: rgba(91, 109, 245, 0.04);
+  background: rgba(56, 189, 248, 0.04);
 }
 
 /* 动画 */
@@ -2044,8 +2076,8 @@ const getActionText = (action) => {
   }
 
   .navigation-grid {
-    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
+    max-height: 240px;
   }
 
   .nav-item {

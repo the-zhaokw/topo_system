@@ -3,8 +3,31 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 import re
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+# 全局错误处理
+@auth_bp.errorhandler(500)
+def internal_error(error):
+    logger.error(f"Auth 500 error: {error}")
+    return jsonify({
+        'success': False,
+        'error': '服务器内部错误',
+        'code': 'INTERNAL_ERROR'
+    }), 500
+
+@auth_bp.errorhandler(Exception)
+def handle_exception(error):
+    logger.error(f"Auth unhandled exception: {error}\n{traceback.format_exc()}")
+    return jsonify({
+        'success': False,
+        'error': f'请求处理失败: {str(error)}',
+        'code': 'UNHANDLED_ERROR'
+    }), 500
 
 # 延迟导入数据库和模型，避免循环导入
 def get_db():
@@ -184,98 +207,136 @@ def register():
 # 用户登录
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    
-    if not data or 'username' not in data or 'password' not in data:
+    try:
+        data = request.get_json(silent=True)
+
+        if not data or 'username' not in data or 'password' not in data:
+            return jsonify({
+                'success': False,
+                'error': '用户名和密码为必填项',
+                'code': 'VALIDATION_ERROR'
+            }), 400
+
+        username = data.get('username', '').strip() if isinstance(data.get('username'), str) else data.get('username')
+        password = data.get('password', '')
+
+        if not username or not password:
+            return jsonify({
+                'success': False,
+                'error': '用户名和密码为必填项',
+                'code': 'VALIDATION_ERROR'
+            }), 400
+
+        # 延迟导入数据库模型和函数
+        from enhanced_app import app
+        db = get_db()
+        User, UserRole = get_models()
+        create_audit_log = get_create_audit_log()
+
+        with app.app_context():
+            session = db.session
+            # 查找用户
+            user = session.query(User).filter_by(username=username).first()
+
+            if not user:
+                return jsonify({
+                    'success': False,
+                    'error': '用户名或密码错误',
+                    'code': 'AUTHENTICATION_ERROR'
+                }), 401
+
+            # 验证密码
+            if not user.check_password(password):
+                return jsonify({
+                    'success': False,
+                    'error': '用户名或密码错误',
+                    'code': 'AUTHENTICATION_ERROR'
+                }), 401
+
+            # 更新用户的last_login时间和状态为在线
+            try:
+                user.last_login = datetime.utcnow()
+                user.status = 'online'
+                user.last_activity = datetime.utcnow()
+            except Exception as field_err:
+                logger.warning(f"更新用户状态字段失败（忽略继续）: {field_err}")
+
+            # 创建访问令牌
+            access_token = create_access_token(identity=user.id)
+
+            # 创建log
+            try:
+                create_audit_log(
+                    user_id=user.id,
+                    action='user_login',
+                    resource_type='user',
+                    resource_id=user.id,
+                    details=f'用户登录: {user.username}',
+                    request=request
+                )
+            except Exception as log_err:
+                logger.warning(f"创建审计日志失败（忽略继续）: {log_err}")
+
+            # 提交所有更改
+            try:
+                db.session.commit()
+            except Exception as commit_err:
+                logger.error(f"提交登录事务失败: {commit_err}")
+                db.session.rollback()
+                return jsonify({
+                    'success': False,
+                    'error': '登录状态保存失败，请重试',
+                    'code': 'COMMIT_ERROR'
+                }), 500
+
+            # 获取职位信息
+            try:
+                position_info = user.get_position_info()
+                is_admin = user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))
+            except Exception as pos_err:
+                logger.warning(f"获取职位信息失败: {pos_err}")
+                position_info = None
+                is_admin = user.is_super_admin
+
+            # 返回用户信息和令牌
+            return jsonify({
+                'success': True,
+                'message': '登录成功',
+                'data': {
+                    'access_token': access_token,
+                    'user': {
+                        'id': user.id,
+                        'username': user.username,
+                        'email': user.email,
+                        'role': user.role.value if hasattr(user.role, 'value') else str(user.role),
+                        'department': user.department,
+                        'position': user.position,
+                        'is_super_admin': user.is_super_admin,
+                        'is_admin': is_admin,
+                        'phone': user.phone,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'employee_id': user.employee_id,
+                        'company_phone': user.company_phone,
+                        'mobile_phone': user.mobile_phone,
+                        'birthday': user.birthday.isoformat() if user.birthday else None,
+                        'gender': user.gender,
+                        'work_language': user.work_language,
+                        'avatar': user.avatar,
+                        'status': user.status or 'online',
+                        'created_at': user.created_at.isoformat() if user.created_at else None,
+                        'updated_at': user.updated_at.isoformat() if user.updated_at else None,
+                        'last_login': user.last_login.isoformat() if user.last_login else None
+                    }
+                }
+            }), 200
+    except Exception as e:
+        logger.error(f"登录异常: {e}\n{traceback.format_exc()}")
         return jsonify({
             'success': False,
-            'error': '用户名和密码为必填项',
-            'code': 'VALIDATION_ERROR'
-        }), 400
-    
-    # 延迟导入数据库模型和函数
-    from enhanced_app import app
-    db = get_db()
-    User, UserRole = get_models()
-    create_audit_log = get_create_audit_log()
-    
-    with app.app_context():
-        session = db.session
-        # 查找用户
-        user = session.query(User).filter_by(username=data['username']).first()
-        
-        if not user:
-            return jsonify({
-                'success': False,
-                'error': '用户名或密码错误',
-                'code': 'AUTHENTICATION_ERROR'
-            }), 401
-        
-        # 验证密码
-        if not user.check_password(data['password']):
-            return jsonify({
-                'success': False,
-                'error': '用户名或密码错误',
-                'code': 'AUTHENTICATION_ERROR'
-            }), 401
-        
-        # 更新用户的last_login时间和状态为在线
-        user.last_login = datetime.utcnow()
-        user.status = 'online'
-        user.last_activity = datetime.utcnow()
-        
-        # 创建访问令牌
-        access_token = create_access_token(identity=user.id)
-        
-        # 创建log
-        create_audit_log(
-            user_id=user.id,
-            action='user_login',
-            resource_type='user',
-            resource_id=user.id,
-            details=f'用户登录: {user.username}',
-            request=request
-        )
-        
-        # 提交所有更改
-        db.session.commit()
-        
-        # 获取职位信息
-        position_info = user.get_position_info()
-        is_admin = user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))
-
-        # 返回用户信息和令牌
-        return jsonify({
-            'success': True,
-            'message': '登录成功',
-            'data': {
-                'access_token': access_token,
-                'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'email': user.email,
-                    'role': user.role.value if hasattr(user.role, 'value') else str(user.role),
-                    'department': user.department,
-                    'position': user.position,
-                    'is_super_admin': user.is_super_admin,
-                    'is_admin': is_admin,
-                    'phone': user.phone,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'employee_id': user.employee_id,
-                    'company_phone': user.company_phone,
-                    'mobile_phone': user.mobile_phone,
-                    'birthday': user.birthday.isoformat() if user.birthday else None,
-                    'gender': user.gender,
-                    'work_language': user.work_language,
-                    'avatar': user.avatar,
-                    'status': user.status or 'online',
-                    'created_at': user.created_at.isoformat() if user.created_at else None,
-                    'updated_at': user.updated_at.isoformat() if user.updated_at else None,
-                    'last_login': user.last_login.isoformat() if user.last_login else None
-                }
-            }
-        }), 200
+            'error': f'登录失败: {str(e)}',
+            'code': 'INTERNAL_ERROR'
+        }), 500
 
 # 获取当前用户信息
 @auth_bp.route('/me', methods=['GET'])

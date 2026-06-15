@@ -325,10 +325,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -339,7 +339,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -476,7 +476,7 @@ onMounted(() => {
   transform: scaleX(1);
 }
 
-.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-total::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-month::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
 .stat-card-likes::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .stat-card-favorites::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
@@ -498,8 +498,8 @@ onMounted(() => {
 
 .stat-icon-wrapper-total {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-icon-wrapper-month {
@@ -535,7 +535,7 @@ onMounted(() => {
 }
 
 .stat-card-total .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -600,14 +600,14 @@ onMounted(() => {
 .password-icon-wrapper {
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 28px;
   color: white;
-  box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 20px -5px rgba(56, 189, 248, 0.4);
 }
 
 .password-title h3 {
@@ -654,7 +654,7 @@ onMounted(() => {
   align-items: center;
   gap: 6px;
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
+  color: #7dd3fc;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
@@ -784,10 +784,10 @@ onMounted(() => {
 }
 
 .article-content :deep(blockquote) {
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #7dd3fc;
   margin: 24px 0;
   padding: 16px 24px;
-  background: rgba(102, 126, 234, 0.05);
+  background: rgba(56, 189, 248, 0.05);
   border-radius: 0 12px 12px 0;
   color: #475569;
 }
@@ -885,7 +885,7 @@ onMounted(() => {
 }
 
 .btn-download {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   padding: 12px 24px;
@@ -895,13 +895,13 @@ onMounted(() => {
 
 .btn-download:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
   color: white;
 }
 
 /* 按钮样式 */
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -911,7 +911,7 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
   color: white;
 }
 

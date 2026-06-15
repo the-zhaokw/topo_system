@@ -908,22 +908,31 @@ const getStatusType = (status) => {
   const typeMap = {
     'planning': 'info',
     'in_progress': 'warning',
+    'active': 'success',
+    'inprogress': 'warning',
     'completed': 'success',
     'on_hold': 'danger',
-    'cancelled': 'danger'
+    'paused': 'warning',
+    'cancelled': 'danger',
+    'archived': 'info'
   }
-  return typeMap[status] || 'info'
+  return typeMap[status?.toLowerCase()] || 'info'
 }
 
 const getStatusText = (status) => {
   const textMap = {
     'planning': '规划中',
     'in_progress': '进行中',
+    'active': '进行中',
+    'inprogress': '进行中',
     'completed': '已完成',
     'on_hold': '暂停',
-    'cancelled': '已取消'
+    'paused': '暂停',
+    'cancelled': '已取消',
+    'archived': '已归档'
   }
-  return textMap[status] || status
+  const key = status?.toLowerCase()
+  return textMap[key] || status || '未设置'
 }
 
 // 项目类型文本转换
@@ -940,22 +949,27 @@ const getProjectTypeText = (projectType) => {
 // 优先级类型映射
 const getPriorityType = (priority) => {
   const typeMap = {
-    'Critical': 'danger',
-    'High': 'warning',
-    'Medium': 'primary',
-    'Low': 'info'
+    'critical': 'danger',
+    'urgent': 'danger',
+    'high': 'warning',
+    'medium': 'primary',
+    'normal': 'primary',
+    'low': 'info'
   }
-  return typeMap[priority] || 'info'
+  return typeMap[priority?.toLowerCase()] || 'info'
 }
 
 const getPriorityText = (priority) => {
   const textMap = {
-    'Critical': '紧急',
-    'High': '高',
-    'Medium': '中',
-    'Low': '低'
+    'critical': '紧急',
+    'urgent': '紧急',
+    'high': '高',
+    'medium': '中',
+    'normal': '中',
+    'low': '低'
   }
-  return textMap[priority] || priority || '未设置'
+  const key = priority?.toLowerCase()
+  return textMap[key] || priority || '未设置'
 }
 
 // 质量类型映射
@@ -1067,10 +1081,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -1081,7 +1095,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -1257,7 +1271,7 @@ onMounted(() => {
 }
 
 /* 5种不同的渐变配色 */
-.stat-card-total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.stat-card-total::before { background: linear-gradient(90deg, #7dd3fc, #38bdf8); }
 .stat-card-open::before { background: linear-gradient(90deg, #ef4444, #f87171); }
 .stat-card-progress::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .stat-card-closed::before { background: linear-gradient(90deg, #10b981, #34d399); }
@@ -1280,8 +1294,8 @@ onMounted(() => {
 
 .stat-icon-wrapper-total {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #667eea;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  color: #7dd3fc;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .stat-icon-wrapper-open {
@@ -1323,7 +1337,7 @@ onMounted(() => {
 }
 
 .stat-card-total .stat-value {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1389,14 +1403,14 @@ onMounted(() => {
 }
 
 .tab-item:hover {
-  background: rgba(99, 102, 241, 0.08);
-  color: #6366f1;
+  background: rgba(56, 189, 248, 0.08);
+  color: #0ea5e9;
 }
 
 .tab-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   color: white;
-  box-shadow: 0 4px 12px -2px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px -2px rgba(56, 189, 248, 0.4);
 }
 
 .tab-icon {
@@ -1441,7 +1455,7 @@ onMounted(() => {
 }
 
 .card-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 18px;
 }
 
@@ -1485,7 +1499,7 @@ onMounted(() => {
 }
 
 .custom-progress :deep(.el-progress-bar__inner) {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 8px;
 }
 
@@ -1503,7 +1517,7 @@ onMounted(() => {
 
 .tech-value {
   color: #1e293b;
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(56, 189, 248, 0.08);
   padding: 4px 12px;
   border-radius: 6px;
 }
@@ -1585,21 +1599,21 @@ onMounted(() => {
 }
 
 .user-link {
-  color: #6366f1;
+  color: #0ea5e9;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s;
 }
 
 .user-link:hover {
-  color: #4f46e5;
+  color: #0284c7;
   text-decoration: underline;
 }
 
 /* 自定义表格 */
 .custom-table {
   --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
-  --el-table-row-hover-bg-color: rgba(99, 102, 241, 0.05);
+  --el-table-row-hover-bg-color: rgba(56, 189, 248, 0.05);
 }
 
 .custom-table :deep(.el-table__header th) {
@@ -1632,8 +1646,8 @@ onMounted(() => {
 }
 
 .mini-stat-total {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-color: rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+  border-color: rgba(56, 189, 248, 0.3);
 }
 
 .mini-stat-open {
@@ -1682,7 +1696,7 @@ onMounted(() => {
 }
 
 .section-title .el-icon {
-  color: #6366f1;
+  color: #0ea5e9;
 }
 
 .severity-item,
@@ -1710,7 +1724,7 @@ onMounted(() => {
 }
 
 .severity-medium {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
 }
 
 .severity-low {
@@ -1773,7 +1787,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   margin-right: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   color: white;
   font-size: 20px;
 }
@@ -1821,13 +1835,13 @@ onMounted(() => {
 }
 
 .subfunction-item:hover .arrow-icon {
-  color: #6366f1;
+  color: #0ea5e9;
   transform: translateX(4px);
 }
 
 /* 按钮样式 */
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -1835,12 +1849,12 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 /* 对话框样式 */
 :deep(.custom-dialog .el-dialog__header) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   padding: 20px;
   margin-right: 0;
 }

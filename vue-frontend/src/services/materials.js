@@ -297,6 +297,38 @@ class MaterialsService {
   }
 
   /**
+   * 获取库存汇总报表
+   */
+  async getInventorySummary(params = {}) {
+    const response = await api.get('/materials/reports/inventory-summary', { params });
+    return response;
+  }
+
+  /**
+   * 获取物料流水报表
+   */
+  async getTransactionReport(params = {}) {
+    const response = await api.get('/materials/reports/material-flow', { params });
+    return response;
+  }
+
+  /**
+   * 获取库存预警信息
+   */
+  async getInventoryAlerts(params = {}) {
+    const response = await api.get('/materials/alerts', { params });
+    return response;
+  }
+
+  /**
+   * 获取物料预警报表
+   */
+  async getMaterialAlerts(params = {}) {
+    const response = await api.get('/materials/reports/material-alerts', { params });
+    return response;
+  }
+
+  /**
    * 获取物料周转率统计
    */
   async getMaterialTurnover(params = {}) {

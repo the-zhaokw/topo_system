@@ -43,9 +43,9 @@
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#00d9ff"/>
-                  <stop offset="50%" style="stop-color:#00ff88"/>
-                  <stop offset="100%" style="stop-color:#ff00ff"/>
+                  <stop offset="0%" style="stop-color:#7dd3fc"/>
+                  <stop offset="50%" style="stop-color:#38bdf8"/>
+                  <stop offset="100%" style="stop-color:#0ea5e9"/>
                 </linearGradient>
                 <filter id="glow">
                   <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
@@ -359,7 +359,7 @@ const initMatrixEffect = () => {
     ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     
-    ctx.fillStyle = '#00d9ff'
+    ctx.fillStyle = '#38bdf8'
     ctx.font = fontSize + 'px monospace'
     
     for (let i = 0; i < drops.length; i++) {
@@ -448,8 +448,8 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
   animation: gridMove 20s linear infinite;
 }
@@ -471,7 +471,7 @@ onUnmounted(() => {
   position: absolute;
   width: 100px;
   height: 115px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 0, 255, 0.1));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.1));
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   animation: rotateHex 20s linear infinite;
 }
@@ -486,7 +486,7 @@ onUnmounted(() => {
   height: 0;
   border-left: 40px solid transparent;
   border-right: 40px solid transparent;
-  border-bottom: 70px solid rgba(0, 255, 136, 0.08);
+  border-bottom: 70px solid rgba(125, 211, 252, 0.08);
   animation: floatTriangle 15s ease-in-out infinite;
 }
 
@@ -496,7 +496,7 @@ onUnmounted(() => {
 .circle {
   position: absolute;
   border-radius: 50%;
-  border: 2px solid rgba(0, 217, 255, 0.2);
+  border: 2px solid rgba(56, 189, 248, 0.2);
   animation: pulseCircle 8s ease-in-out infinite;
 }
 
@@ -532,7 +532,7 @@ onUnmounted(() => {
 .neon-orb-1 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(0, 217, 255, 0.8) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.8) 0%, transparent 70%);
   left: -20%;
   top: -20%;
   animation-duration: 15s;
@@ -541,7 +541,7 @@ onUnmounted(() => {
 .neon-orb-2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(255, 0, 255, 0.6) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.6) 0%, transparent 70%);
   right: -15%;
   bottom: -15%;
   animation-duration: 18s;
@@ -551,7 +551,7 @@ onUnmounted(() => {
 .neon-orb-3 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(0, 255, 136, 0.5) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(125, 211, 252, 0.5) 0%, transparent 70%);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -604,7 +604,7 @@ onUnmounted(() => {
   background: rgba(10, 10, 15, 0.8);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(0, 217, 255, 0.3);
+  border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 4px;
   padding: 48px 40px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -625,7 +625,7 @@ onUnmounted(() => {
 .card-glow {
   position: absolute;
   inset: -2px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.5), rgba(255, 0, 255, 0.5));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.5), rgba(14, 165, 233, 0.5));
   border-radius: 6px;
   z-index: -1;
   filter: blur(20px);
@@ -643,7 +643,7 @@ onUnmounted(() => {
   inset: 0;
   border-radius: 4px;
   padding: 2px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.8), rgba(255, 0, 255, 0.8), rgba(0, 255, 136, 0.8));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.8), rgba(14, 165, 233, 0.8), rgba(125, 211, 252, 0.8));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -661,7 +661,7 @@ onUnmounted(() => {
   position: absolute;
   width: 20px;
   height: 20px;
-  border-color: rgba(0, 217, 255, 0.8);
+  border-color: rgba(56, 189, 248, 0.8);
   border-style: solid;
 }
 
@@ -685,7 +685,7 @@ onUnmounted(() => {
 .logo-ring {
   position: absolute;
   inset: -15px;
-  border: 2px solid rgba(0, 217, 255, 0.3);
+  border: 2px solid rgba(56, 189, 248, 0.3);
   border-radius: 50%;
   animation: ringPulse 2s ease-in-out infinite;
 }
@@ -701,7 +701,7 @@ onUnmounted(() => {
   position: relative;
   z-index: 1;
   animation: logoFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.5));
+  filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.5));
 }
 
 @keyframes logoFloat {
@@ -718,7 +718,7 @@ onUnmounted(() => {
   position: absolute;
   width: 4px;
   height: 4px;
-  background: rgba(0, 217, 255, 0.8);
+  background: rgba(56, 189, 248, 0.8);
   border-radius: 50%;
   animation: particleOrbit 3s linear infinite;
 }
@@ -762,7 +762,7 @@ onUnmounted(() => {
 
 .title::before {
   left: 2px;
-  text-shadow: -2px 0 #ff00ff;
+  text-shadow: -2px 0 #0ea5e9;
   clip: rect(24px, 550px, 90px, 0);
   animation: glitchAnim1 3s infinite linear alternate-reverse;
 }
@@ -813,7 +813,7 @@ onUnmounted(() => {
 }
 
 .cursor {
-  color: #00d9ff;
+  color: #38bdf8;
   font-weight: bold;
   animation: blink 1s infinite;
 }
@@ -858,7 +858,7 @@ onUnmounted(() => {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #00d9ff, #ff00ff, #00ff88);
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9, #7dd3fc);
   transition: width 0.4s ease;
   z-index: 1;
 }
@@ -871,7 +871,7 @@ onUnmounted(() => {
 .input-glow {
   position: absolute;
   inset: 0;
-  background: rgba(0, 217, 255, 0.1);
+  background: rgba(56, 189, 248, 0.1);
   border-radius: 4px;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -884,8 +884,8 @@ onUnmounted(() => {
 }
 
 @keyframes inputGlowPulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(0, 217, 255, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(0, 217, 255, 0.5); }
+  0%, 100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); }
 }
 
 /* 输入框样式 */
@@ -895,7 +895,7 @@ onUnmounted(() => {
 
 .cyber-input :deep(.el-input__wrapper) {
   background: rgba(0, 0, 0, 0.4) !important;
-  border: 1px solid rgba(0, 217, 255, 0.2) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
   border-radius: 4px !important;
   box-shadow: none !important;
   padding: 12px 16px !important;
@@ -903,13 +903,13 @@ onUnmounted(() => {
 }
 
 .cyber-input :deep(.el-input__wrapper:hover) {
-  border-color: rgba(0, 217, 255, 0.4) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
 }
 
 .cyber-input :deep(.el-input__wrapper.is-focus) {
-  background: rgba(0, 217, 255, 0.05) !important;
-  border-color: #00d9ff !important;
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3) !important;
 }
 
 .cyber-input :deep(.el-input__inner) {
@@ -925,13 +925,13 @@ onUnmounted(() => {
 .input-icon {
   width: 20px;
   height: 20px;
-  color: rgba(0, 217, 255, 0.6);
+  color: rgba(56, 189, 248, 0.6);
   transition: all 0.3s ease;
 }
 
 .cyber-input :deep(.el-input__wrapper.is-focus) .input-icon {
-  color: #00d9ff;
-  filter: drop-shadow(0 0 5px rgba(0, 217, 255, 0.5));
+  color: #38bdf8;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
 }
 
 .cyber-input :deep(.el-form-item__error) {
@@ -957,7 +957,7 @@ onUnmounted(() => {
   height: 54px;
   border: none;
   border-radius: 4px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(255, 0, 255, 0.2));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(14, 165, 233, 0.2));
   color: #ffffff;
   font-size: 16px;
   font-weight: 700;
@@ -987,7 +987,7 @@ onUnmounted(() => {
   left: 2px;
   right: 2px;
   bottom: 2px;
-  background: linear-gradient(135deg, #00d9ff, #ff00ff);
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
   border-radius: 2px;
   z-index: -1;
   opacity: 0.8;
@@ -997,7 +997,7 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(255, 0, 255, 0.3));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(14, 165, 233, 0.3));
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1009,8 +1009,8 @@ onUnmounted(() => {
 .cyber-btn:hover {
   transform: translateY(-3px);
   box-shadow: 
-    0 10px 30px rgba(0, 217, 255, 0.3),
-    0 0 60px rgba(255, 0, 255, 0.2);
+    0 10px 30px rgba(56, 189, 248, 0.3),
+    0 0 60px rgba(14, 165, 233, 0.2);
   letter-spacing: 4px;
 }
 
@@ -1066,7 +1066,7 @@ onUnmounted(() => {
   position: absolute;
   width: 4px;
   height: 4px;
-  background: #00d9ff;
+  background: #38bdf8;
   border-radius: 50%;
   opacity: 0;
   transition: opacity 0.3s;
@@ -1123,7 +1123,7 @@ onUnmounted(() => {
 .divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
 }
 
 .divider-text {
@@ -1139,7 +1139,7 @@ onUnmounted(() => {
 }
 
 .link {
-  color: #00d9ff;
+  color: #38bdf8;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -1152,7 +1152,7 @@ onUnmounted(() => {
   left: 0;
   width: 0;
   height: 1px;
-  background: #00d9ff;
+  background: #38bdf8;
   transition: width 0.3s ease;
 }
 
@@ -1162,7 +1162,7 @@ onUnmounted(() => {
 
 .link:hover {
   color: #00ffff;
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 /* 底部状态栏 */
@@ -1192,14 +1192,14 @@ onUnmounted(() => {
 .status-dot {
   width: 6px;
   height: 6px;
-  background: #00ff88;
+  background: #7dd3fc;
   border-radius: 50%;
   animation: statusPulse 2s ease-in-out infinite;
 }
 
 @keyframes statusPulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 5px #00ff88; }
-  50% { opacity: 0.5; box-shadow: 0 0 15px #00ff88; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px #7dd3fc; }
+  50% { opacity: 0.5; box-shadow: 0 0 15px #7dd3fc; }
 }
 
 /* 移动端适配 */
@@ -1270,7 +1270,7 @@ body .register-dialog {
   background: rgba(10, 10, 15, 0.98) !important;
   backdrop-filter: blur(30px) !important;
   -webkit-backdrop-filter: blur(30px) !important;
-  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
   border-radius: 4px !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
 }
@@ -1279,7 +1279,7 @@ body .register-dialog::before {
   content: '';
   position: absolute;
   inset: -2px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.5), rgba(255, 0, 255, 0.5));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.5), rgba(14, 165, 233, 0.5));
   border-radius: 6px;
   z-index: -1;
   filter: blur(10px);
@@ -1288,7 +1288,7 @@ body .register-dialog::before {
 
 body .register-dialog .el-dialog__header {
   padding: 24px 28px 16px !important;
-  border-bottom: 1px solid rgba(0, 217, 255, 0.2) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2) !important;
   margin: 0 !important;
 }
 
@@ -1297,19 +1297,19 @@ body .register-dialog .el-dialog__title {
   font-weight: 700;
   font-size: 20px !important;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #00d9ff, #ff00ff);
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 body .register-dialog .el-dialog__close {
-  color: rgba(0, 217, 255, 0.6) !important;
+  color: rgba(56, 189, 248, 0.6) !important;
 }
 
 body .register-dialog .el-dialog__close:hover {
-  color: #00d9ff !important;
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  color: #38bdf8 !important;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 body .register-dialog .el-dialog__body {
@@ -1318,7 +1318,7 @@ body .register-dialog .el-dialog__body {
 
 body .register-dialog .el-dialog__footer {
   padding: 16px 28px 24px !important;
-  border-top: 1px solid rgba(0, 217, 255, 0.2) !important;
+  border-top: 1px solid rgba(56, 189, 248, 0.2) !important;
 }
 
 body .register-dialog .el-form-item__label {
@@ -1334,20 +1334,20 @@ body .register-dialog .el-form-item__error {
 
 body .register-dialog .el-input__wrapper {
   background: rgba(0, 0, 0, 0.4) !important;
-  border: 1px solid rgba(0, 217, 255, 0.2) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
   border-radius: 4px !important;
   box-shadow: none !important;
   transition: all 0.3s !important;
 }
 
 body .register-dialog .el-input__wrapper:hover {
-  border-color: rgba(0, 217, 255, 0.4) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
 }
 
 body .register-dialog .el-input__wrapper.is-focus {
-  background: rgba(0, 217, 255, 0.05) !important;
-  border-color: #00d9ff !important;
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3) !important;
 }
 
 body .register-dialog .el-input__inner {
@@ -1364,7 +1364,7 @@ body .register-dialog .el-select {
 
 body .register-dialog .el-select .el-input__wrapper {
   background: rgba(0, 0, 0, 0.4) !important;
-  border-color: rgba(0, 217, 255, 0.2) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
 }
 
 body .register-dialog .dialog-footer {
@@ -1377,7 +1377,7 @@ body .register-dialog .dialog-btn {
   min-width: 100px;
   height: 42px;
   border-radius: 4px !important;
-  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
   background: rgba(0, 0, 0, 0.4) !important;
   color: rgba(255, 255, 255, 0.8) !important;
   font-weight: 600;
@@ -1386,22 +1386,22 @@ body .register-dialog .dialog-btn {
 }
 
 body .register-dialog .dialog-btn:hover {
-  background: rgba(0, 217, 255, 0.1) !important;
-  border-color: rgba(0, 217, 255, 0.5) !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
   color: #ffffff !important;
   transform: translateY(-2px);
 }
 
 body .register-dialog .dialog-btn-primary {
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(255, 0, 255, 0.3)) !important;
-  border: 1px solid #00d9ff !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(14, 165, 233, 0.3)) !important;
+  border: 1px solid #38bdf8 !important;
   color: #ffffff !important;
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.3) !important;
 }
 
 body .register-dialog .dialog-btn-primary:hover {
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.5), rgba(255, 0, 255, 0.5)) !important;
-  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5) !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.5), rgba(14, 165, 233, 0.5)) !important;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.5) !important;
   transform: translateY(-3px);
 }
 
@@ -1419,7 +1419,7 @@ body .register-dialog .full-width {
 body .el-select-dropdown {
   background: rgba(10, 10, 15, 0.98) !important;
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
   border-radius: 4px !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
 }
@@ -1431,12 +1431,12 @@ body .el-select-dropdown__item {
 
 body .el-select-dropdown__item.hover,
 body .el-select-dropdown__item:hover {
-  background: rgba(0, 217, 255, 0.2) !important;
-  color: #00d9ff !important;
+  background: rgba(56, 189, 248, 0.2) !important;
+  color: #38bdf8 !important;
 }
 
 body .el-select-dropdown__item.selected {
-  background: rgba(0, 217, 255, 0.3) !important;
+  background: rgba(56, 189, 248, 0.3) !important;
   color: #00ffff !important;
   font-weight: 600;
 }

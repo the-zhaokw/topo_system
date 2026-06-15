@@ -683,10 +683,10 @@ onMounted(() => {
   position: relative;
   margin-bottom: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.4);
 }
 
 .page-header::before {
@@ -697,7 +697,7 @@ onMounted(() => {
   width: 200%;
   height: 200%;
   background: radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at bottom left, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+              radial-gradient(ellipse at bottom left, rgba(14, 165, 233, 0.3) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -829,13 +829,13 @@ onMounted(() => {
 }
 
 .settings-tabs :deep(.el-tabs__item:hover) {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .settings-tabs :deep(.el-tabs__item.is-active) {
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
 }
 
 .settings-tabs :deep(.el-tabs__active-bar) {
@@ -883,13 +883,13 @@ onMounted(() => {
 }
 
 .card-title .el-icon {
-  color: #667eea;
+  color: #7dd3fc;
   font-size: 20px;
 }
 
 /* 按钮样式 */
 .btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -900,7 +900,7 @@ onMounted(() => {
 
 .btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 .btn-warning {
@@ -943,7 +943,7 @@ onMounted(() => {
 }
 
 .btn-test {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  background: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
   border: none;
   color: white;
   transition: all 0.3s;
@@ -954,7 +954,7 @@ onMounted(() => {
 
 .btn-test:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.5);
 }
 
 .btn-test:disabled {
@@ -981,8 +981,8 @@ onMounted(() => {
 
 /* 时间显示卡片 */
 .time-display-card {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-  border: 1px solid rgba(102, 126, 234, 0.2);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.2);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 32px;
@@ -1008,7 +1008,7 @@ onMounted(() => {
 }
 
 .time-label .el-icon {
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 .time-value {
@@ -1016,7 +1016,7 @@ onMounted(() => {
   font-weight: 700;
   color: #1e293b;
   font-family: 'Monaco', 'Menlo', monospace;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1108,7 +1108,7 @@ onMounted(() => {
 }
 
 .custom-input :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
 }
 
 .custom-select :deep(.el-input__wrapper) {
@@ -1130,7 +1130,7 @@ onMounted(() => {
 }
 
 .custom-switch.is-checked :deep(.el-switch__core) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
 }
 
 .custom-switch :deep(.el-switch__action) {
@@ -1146,30 +1146,30 @@ onMounted(() => {
 }
 
 .custom-checkbox :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  border-color: #7dd3fc;
 }
 
 .custom-checkbox :deep(.el-checkbox__input.is-checked + .el-checkbox__label) {
-  color: #667eea;
+  color: #7dd3fc;
   font-weight: 500;
 }
 
 /* 自定义单选框 */
 .custom-radio-group :deep(.el-radio__input.is-checked .el-radio__inner) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  border-color: #7dd3fc;
 }
 
 .custom-radio-group :deep(.el-radio__input.is-checked + .el-radio__label) {
-  color: #667eea;
+  color: #7dd3fc;
   font-weight: 500;
 }
 
 /* 自定义表格 */
 .custom-table {
   --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
-  --el-table-row-hover-bg-color: rgba(102, 126, 234, 0.05);
+  --el-table-row-hover-bg-color: rgba(56, 189, 248, 0.05);
 }
 
 .custom-table :deep(.el-table__header th) {
@@ -1189,13 +1189,13 @@ onMounted(() => {
 }
 
 .file-icon {
-  color: #667eea;
+  color: #7dd3fc;
   font-size: 18px;
 }
 
 .size-badge {
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
+  background: rgba(56, 189, 248, 0.1);
+  color: #7dd3fc;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 13px;
@@ -1214,7 +1214,7 @@ onMounted(() => {
 }
 
 .table-icon {
-  color: #667eea;
+  color: #7dd3fc;
   font-size: 18px;
 }
 
@@ -1302,7 +1302,7 @@ onMounted(() => {
 .empty-icon-wrapper {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1312,7 +1312,7 @@ onMounted(() => {
 
 .empty-icon-wrapper .el-icon {
   font-size: 40px;
-  color: #667eea;
+  color: #7dd3fc;
 }
 
 /* 间距工具类 */

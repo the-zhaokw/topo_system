@@ -35,7 +35,7 @@
           router
           class="sidebar-menu"
           background-color="transparent"
-          text-color="#cbd5e1"
+          text-color="#0c4a6e"
           active-text-color="#ffffff"
         >
           <el-menu-item index="/dashboard">
@@ -646,7 +646,7 @@ onUnmounted(() => {
 }
 
 .loading-spinner span {
-  color: #6366f1;
+  color: #0ea5e9;
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.5px;
@@ -654,9 +654,9 @@ onUnmounted(() => {
 
 .loading-icon {
   font-size: 56px;
-  color: #667eea;
+  color: #0ea5e9;
   animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.5));
+  filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.5));
 }
 
 @keyframes spin {
@@ -705,16 +705,16 @@ onUnmounted(() => {
 }
 
 .notification-item:hover {
-  background: rgba(99, 102, 241, 0.04);
+  background: rgba(56, 189, 248, 0.04);
 }
 
 .notification-item.unread {
-  background: rgba(99, 102, 241, 0.06);
-  border-left: 3px solid #667eea;
+  background: rgba(56, 189, 248, 0.06);
+  border-left: 3px solid #38bdf8;
 }
 
 .notification-item.unread:hover {
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(56, 189, 248, 0.1);
 }
 
 .notification-title {
@@ -757,10 +757,10 @@ onUnmounted(() => {
   height: 100vh;
 }
 
-/* 侧边栏 - 人工美学深色渐变 */
+/* 侧边栏 - 淡蓝主题 */
 .sidebar {
-  background: linear-gradient(180deg, #1e1b4b 0%, #312e81 30%, #1e293b 100%) !important;
-  color: #cbd5e1;
+  background: linear-gradient(180deg, #bae6fd 0%, #7dd3fc 100%) !important;
+  color: #0c4a6e;
   position: relative;
   overflow: hidden;
 }
@@ -773,8 +773,8 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(ellipse at top, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+    radial-gradient(ellipse at top, rgba(56, 189, 248, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(14, 165, 233, 0.3) 0%, transparent 40%);
   pointer-events: none;
 }
 
@@ -785,7 +785,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%236366f1' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2338bdf8' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
   opacity: 0.6;
   pointer-events: none;
 }
@@ -798,9 +798,9 @@ onUnmounted(() => {
   gap: 12px;
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.2) 100%);
+  color: #0c4a6e;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.25);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.5) 0%, rgba(14, 165, 233, 0.4) 100%);
   position: relative;
   z-index: 1;
 }
@@ -808,12 +808,12 @@ onUnmounted(() => {
 .logo-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.5);
 }
 
 .logo-icon .el-icon {
@@ -822,6 +822,11 @@ onUnmounted(() => {
 }
 
 .sidebar-menu {
+  --el-menu-text-color: #0c4a6e;
+  --el-menu-hover-text-color: #075985;
+  --el-menu-active-color: #ffffff;
+  --el-menu-bg-color: transparent;
+  --el-menu-border-color: transparent;
   border: none;
   background: transparent !important;
   position: relative;
@@ -840,12 +845,12 @@ onUnmounted(() => {
 }
 
 .sidebar-menu::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.3);
+  background: rgba(56, 189, 248, 0.3);
   border-radius: 2px;
 }
 
 .sidebar-menu::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.5);
+  background: rgba(56, 189, 248, 0.5);
 }
 
 .sidebar-menu .el-menu-item,
@@ -857,18 +862,20 @@ onUnmounted(() => {
   padding-right: 16px !important;
   height: 46px;
   line-height: 46px;
+  color: #0c4a6e !important;
+  font-weight: 500;
 }
 
 .sidebar-menu .el-menu-item:hover,
 .sidebar-menu .el-sub-menu__title:hover {
-  background: rgba(102, 126, 234, 0.2) !important;
-  color: #ffffff !important;
+  background: rgba(14, 165, 233, 0.25) !important;
+  color: #0c4a6e !important;
 }
 
 .sidebar-menu .el-menu-item.is-active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.3) 100%) !important;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.7) 0%, rgba(2, 132, 199, 0.6) 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px -3px rgba(14, 165, 233, 0.5);
 }
 
 .sidebar-menu .el-menu-item.is-active::before {
@@ -879,27 +886,29 @@ onUnmounted(() => {
   transform: translateY(-50%);
   width: 3px;
   height: 50%;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%);
   border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
 }
 
 /* 子菜单样式 */
 .sidebar-menu .el-sub-menu .el-menu-item {
-  background: rgba(0, 0, 0, 0.15) !important;
+  background: rgba(14, 165, 233, 0.15) !important;
   margin: 3px 12px;
   padding-left: 36px !important;
   border-radius: 8px;
   height: 40px;
   line-height: 40px;
+  color: #0c4a6e !important;
 }
 
 .sidebar-menu .el-sub-menu .el-menu-item:hover {
-  background: rgba(102, 126, 234, 0.25) !important;
+  background: rgba(14, 165, 233, 0.3) !important;
 }
 
 .sidebar-menu .el-sub-menu .el-menu-item.is-active {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.4) 0%, transparent 100%) !important;
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.6) 0%, rgba(56, 189, 248, 0.3) 100%) !important;
+  color: #ffffff !important;
 }
 
 .sidebar-menu .el-sub-menu .el-menu-item.is-active::before {
@@ -912,11 +921,12 @@ onUnmounted(() => {
   width: 20px;
   margin-right: 10px;
   transition: all 0.3s;
+  color: #0369a1 !important;
 }
 
 .sidebar-menu .el-menu-item:hover .el-icon,
 .sidebar-menu .el-sub-menu__title:hover .el-icon {
-  color: #667eea;
+  color: #0c4a6e !important;
   transform: scale(1.1);
 }
 
@@ -961,7 +971,7 @@ onUnmounted(() => {
 }
 
 .user-info:hover {
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(56, 189, 248, 0.08);
 }
 
 .username {
@@ -1098,7 +1108,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -1189,13 +1199,13 @@ onUnmounted(() => {
 }
 
 .status-option:hover {
-  background: rgba(102, 126, 234, 0.08);
+  background: rgba(56, 189, 248, 0.08);
   transform: translateX(4px);
 }
 
 .status-option.active {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
-  color: #6366f1;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.12) 0%, rgba(14, 165, 233, 0.12) 100%);
+  color: #0ea5e9;
   font-weight: 500;
 }
 
@@ -1212,8 +1222,8 @@ onUnmounted(() => {
 }
 
 .dropdown-menu-item:hover {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-  color: #6366f1;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+  color: #0ea5e9;
   transform: translateX(4px);
 }
 
@@ -1257,7 +1267,7 @@ onUnmounted(() => {
 }
 
 .notification-icon:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(56, 189, 248, 0.1);
   transform: scale(1.05);
 }
 
@@ -1276,7 +1286,7 @@ onUnmounted(() => {
 }
 
 .user-info:hover {
-  background: rgba(102, 126, 234, 0.08);
+  background: rgba(56, 189, 248, 0.08);
 }
 
 /* 状态指示器 - 小 */
@@ -1331,7 +1341,7 @@ onUnmounted(() => {
 
   .menu-btn:hover,
   .menu-btn:active {
-    background-color: rgba(102, 126, 234, 0.1);
+    background-color: rgba(56, 189, 248, 0.1);
     border-radius: 8px;
   }
 
