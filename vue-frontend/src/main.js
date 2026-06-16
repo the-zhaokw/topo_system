@@ -17,11 +17,31 @@ console.error = function(...args) {
   const message = args[0]?.toString() || ''
   // 过滤掉 Chrome 扩展相关的运行时错误
   if (message.includes('runtime.lastError') || 
-      message.includes('message channel closed')) {
+      message.includes('message channel closed') ||
+      message.includes('Unchecked runtime')) {
     return
   }
   originalConsoleError.apply(console, args)
 }
+
+// 抑制 Chrome 扩展的未捕获错误
+window.addEventListener('error', (event) => {
+  if (event.message && (
+    event.message.includes('runtime.lastError') ||
+    event.message.includes('message channel closed')
+  )) {
+    event.preventDefault()
+  }
+})
+
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason && event.reason.message && (
+    event.reason.message.includes('runtime.lastError') ||
+    event.reason.message.includes('message channel closed')
+  )) {
+    event.preventDefault()
+  }
+})
 
 const app = createApp(App)
 
@@ -37,3 +57,17 @@ app.use(ElementPlus, {
 })
 
 app.mount('#app')
+
+// 注册 Service Worker (PWA)
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        console.log('SW registered:', reg.scope)
+      })
+      .catch((err) => {
+        console.log('SW registration failed:', err)
+      })
+  })
+}

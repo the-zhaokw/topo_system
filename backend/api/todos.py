@@ -110,11 +110,11 @@ def get_todo_summary():
         summary['approvals']['total'] = leave_count + overtime_count + exception_count + contract_count
         
         open_statuses = [
-            models['BugStatus'].NEW,
-            models['BugStatus'].ASSIGNED,
-            models['BugStatus'].IN_PROGRESS,
-            models['BugStatus'].REOPENED,
-            models['BugStatus'].OPEN
+            models['BugStatus'].NEW.value,
+            models['BugStatus'].ASSIGNED.value,
+            models['BugStatus'].IN_PROGRESS.value,
+            models['BugStatus'].REOPENED.value,
+            models['BugStatus'].OPEN.value
         ]
 
         to_resolve_count = models['Bug'].query.filter(
@@ -125,8 +125,8 @@ def get_todo_summary():
             models['Bug'].status.in_(open_statuses)
         ).count()
         summary['bugs']['to_resolve'] = to_resolve_count
-        
-        to_verify_statuses = [models['BugStatus'].RESOLVED, models['BugStatus'].FIXED]
+
+        to_verify_statuses = [models['BugStatus'].RESOLVED.value, models['BugStatus'].FIXED.value]
         to_verify_count = models['Bug'].query.filter(
             models['Bug'].verifier_id == current_user_id,
             models['Bug'].status.in_(to_verify_statuses)
@@ -341,12 +341,12 @@ def get_bug_todos():
         bugs = []
         
         open_statuses = [
-            models['BugStatus'].NEW,
-            models['BugStatus'].ASSIGNED,
-            models['BugStatus'].IN_PROGRESS,
-            models['BugStatus'].REOPENED,
-            models['BugStatus'].OPEN,
-            models['BugStatus'].FIXED
+            models['BugStatus'].NEW.value,
+            models['BugStatus'].ASSIGNED.value,
+            models['BugStatus'].IN_PROGRESS.value,
+            models['BugStatus'].REOPENED.value,
+            models['BugStatus'].OPEN.value,
+            models['BugStatus'].FIXED.value
         ]
 
         to_resolve = models['Bug'].query.filter(
@@ -374,7 +374,7 @@ def get_bug_todos():
                 'link': f'/bugs/{bug.id}'
             })
         
-        to_verify_statuses = [models['BugStatus'].RESOLVED, models['BugStatus'].FIXED]
+        to_verify_statuses = [models['BugStatus'].RESOLVED.value, models['BugStatus'].FIXED.value]
         to_verify = models['Bug'].query.filter(
             models['Bug'].verifier_id == current_user_id,
             models['Bug'].status.in_(to_verify_statuses)
@@ -644,12 +644,12 @@ def get_all_todos():
                 })
         
         open_statuses = [
-            models['BugStatus'].NEW,
-            models['BugStatus'].ASSIGNED,
-            models['BugStatus'].IN_PROGRESS,
-            models['BugStatus'].REOPENED,
-            models['BugStatus'].OPEN,
-            models['BugStatus'].FIXED
+            models['BugStatus'].NEW.value,
+            models['BugStatus'].ASSIGNED.value,
+            models['BugStatus'].IN_PROGRESS.value,
+            models['BugStatus'].REOPENED.value,
+            models['BugStatus'].OPEN.value,
+            models['BugStatus'].FIXED.value
         ]
 
         to_resolve = models['Bug'].query.filter(
@@ -680,7 +680,7 @@ def get_all_todos():
                 'link': f'/bugs/{bug.id}'
             })
         
-        to_verify_statuses = [models['BugStatus'].RESOLVED, models['BugStatus'].FIXED]
+        to_verify_statuses = [models['BugStatus'].RESOLVED.value, models['BugStatus'].FIXED.value]
         to_verify = models['Bug'].query.filter(
             models['Bug'].verifier_id == current_user_id,
             models['Bug'].status.in_(to_verify_statuses)

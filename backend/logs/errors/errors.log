@@ -21408,3 +21408,297 @@ REQUEST:
 None
 USER:
 None
+2026-06-16 14:56:35,423 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 14:56:38,291 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 14:56:41,263 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 14:56:44,226 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 14:56:46,533 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 14:57:00,205 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:03:47,846 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:03:57,167 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:06:16,051 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:07:09,926 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:07:15,218 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:10:12,151 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:10:52,665 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None
+2026-06-16 15:11:53,074 - ERROR - API api.statistics.get_dashboard_stats failed
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[get_enum_value(bug.severity)] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+REQUEST:
+None
+USER:
+None

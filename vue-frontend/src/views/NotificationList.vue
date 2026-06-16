@@ -142,8 +142,8 @@
           <el-table-column prop="is_read" label="状态" width="80" align="center">
             <template #default="{ row }">
               <div class="status-indicator" :class="{ 'unread': !row.is_read }">
-                <el-icon v-if="!row.is_read" class="unread-dot"><CircleFilled /></el-icon>
-                <el-icon v-else class="read-dot"><CircleCheck /></el-icon>
+                <el-icon v-if="!row.is_read" class="unread-dot"><BellFilled /></el-icon>
+                <el-icon v-else class="read-dot"><Check /></el-icon>
               </div>
             </template>
           </el-table-column>
@@ -230,7 +230,7 @@ import { useRouter } from 'vue-router'
 import { apiService } from '@/services/api'
 import { systemTimeService } from '@/services/systemTimeService'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Check, Delete, Bell, List, Message, Calendar, Filter, Document, CircleFilled, CircleCheck, StarFilled } from '@element-plus/icons-vue'
+import { Search, Refresh, Check, Delete, Bell, List, Message, Calendar, Filter, Document, BellFilled, StarFilled } from '@element-plus/icons-vue'
 
 const router = useRouter()
 

@@ -7,195 +7,244 @@
   padding-bottom: 120rpx;
 }
 
-.header {
+.todayCard {
+  margin: $spacing-md $page-padding;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.todayHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.todayDate {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.statusBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.statusNormal {
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+}
+.statusLate {
+  background: rgba($color-warning, 0.1);
+  color: $color-warning;
+}
+.statusAbsent {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+}
+.statusLeave {
+  background: rgba($color-info, 0.1);
+  color: $color-info;
+}
+
+.clockTimes {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: $spacing-md 0;
+  background: $color-bg-secondary;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+}
+
+.clockItem {
+  flex: 1;
+  text-align: center;
+}
+
+.clockLabel {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 8rpx;
+}
+
+.clockTime {
+  display: block;
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  line-height: 1.2;
+  font-family: monospace;
+}
+
+.clockDivider {
+  width: 2rpx;
+  height: 80rpx;
+  background: $color-divider;
+}
+
+.workHours {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-md;
+}
+
+.clockActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.clockBtn {
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
   background: $gradient-primary;
-  padding: 40rpx $page-padding 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-md;
+  transition: transform $transition-fast;
 
-  .dateInfo {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: $font-size-sm;
-    margin-bottom: 8rpx;
-  }
-
-  .time {
-    color: $color-text-white;
-    font-size: 64rpx;
-    font-weight: $font-weight-bold;
-    margin-bottom: $spacing-sm;
-  }
-
-  .weekday {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: $font-size-md;
+  &:active {
+    transform: scale(0.98);
   }
 }
 
-.clockCard {
-  margin: -40rpx $page-padding $spacing-lg;
-  background: $color-bg-card;
-  border-radius: $radius-xl;
-  padding: $spacing-xl;
-  box-shadow: $shadow-card-hover;
+.clockBtnSecondary {
+  background: $color-bg-secondary;
+  box-shadow: none;
+}
 
-  .clockStatus {
-    text-align: center;
-    margin-bottom: $spacing-xl;
+.clockBtnText {
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
 
-    .status {
-      font-size: $font-size-xl;
-      color: $color-text-primary;
-      font-weight: $font-weight-semibold;
-      margin-bottom: 8rpx;
-    }
-
-    .time {
-      font-size: $font-size-sm;
-      color: $color-text-tertiary;
-    }
-  }
-
-  .clockButtons {
-    display: flex;
-    gap: $spacing-md;
-
-    .clockBtn {
-      flex: 1;
-      height: $button-height-lg;
-      border-radius: $radius-button;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: $font-size-lg;
-      font-weight: $font-weight-semibold;
-
-      &.checkIn {
-        background: $gradient-primary;
-        color: $color-text-white;
-      }
-
-      &.checkOut {
-        background: $gradient-secondary;
-        color: $color-text-white;
-      }
-
-      &.disabled {
-        background: $color-bg-secondary;
-        color: $color-text-disabled;
-      }
-    }
-  }
+.clockBtnTextSecondary {
+  color: $color-text-primary;
 }
 
 .statsSection {
   padding: 0 $page-padding $spacing-lg;
-
-  .sectionTitle {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    margin-bottom: $spacing-md;
-  }
-
-  .statsGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-sm;
-
-    .statCard {
-      background: $color-bg-card;
-      border-radius: $radius-lg;
-      padding: $spacing-md;
-      text-align: center;
-      box-shadow: $shadow-card;
-
-      .value {
-        font-size: $font-size-xl;
-        font-weight: $font-weight-bold;
-        color: $color-primary;
-      }
-
-      .label {
-        font-size: $font-size-xs;
-        color: $color-text-tertiary;
-        margin-top: 4rpx;
-      }
-    }
-  }
 }
 
-.recordSection {
-  padding: 0 $page-padding;
-
-  .sectionTitle {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    margin-bottom: $spacing-md;
-  }
-
-  .recordCard {
-    background: $color-bg-card;
-    border-radius: $radius-lg;
-    padding: $spacing-md;
-    margin-bottom: $spacing-sm;
-    box-shadow: $shadow-card;
-
-    .date {
-      font-size: $font-size-sm;
-      color: $color-text-tertiary;
-      margin-bottom: $spacing-sm;
-    }
-
-    .times {
-      display: flex;
-      justify-content: space-around;
-
-      .timeItem {
-        text-align: center;
-
-        .label {
-          font-size: $font-size-xs;
-          color: $color-text-tertiary;
-          margin-bottom: 4rpx;
-        }
-
-        .value {
-          font-size: $font-size-md;
-          color: $color-text-primary;
-          font-weight: $font-weight-medium;
-        }
-      }
-    }
-  }
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
 }
 
-.tabBar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100rpx;
-  background: $color-bg-card;
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+}
+
+.statCard {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-  padding-bottom: env(safe-area-inset-bottom);
+  gap: $spacing-sm;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
 
-  .tabItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: $color-text-tertiary;
-    font-size: $font-size-xs;
+.statIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
 
-    &.active {
-      color: $color-primary;
-    }
+.statContent {
+  flex: 1;
+  min-width: 0;
+}
 
-    .icon {
-      font-size: 40rpx;
-      margin-bottom: 4rpx;
-    }
-  }
+.statValue {
+  display: block;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.2;
+}
+
+.statLabel {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.historyList {
+  padding: 0 $page-padding 120rpx;
+}
+
+.recordCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.recordHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.recordDate {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.statusTag {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.recordTimes {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.recordTime {
+  text-align: center;
+}
+
+.timeLabel {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.timeValue {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  font-family: monospace;
 }

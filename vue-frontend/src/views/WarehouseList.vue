@@ -9,7 +9,7 @@
       <div class="header-content">
         <div class="header-title">
           <div class="title-icon-wrapper">
-            <el-icon class="title-icon"><Warehouse /></el-icon>
+            <el-icon class="title-icon"><OfficeBuilding /></el-icon>
           </div>
           <div class="title-text">
             <h1>仓库管理</h1>
@@ -246,16 +246,16 @@ import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import materialsService from '@/services/materials'
 import { formatDate } from '@/utils/dateUtils'
-import { 
-  Warehouse, Plus, OfficeBuilding, Check, Close, Box, 
-  List, House, Location, User, Edit, Delete, Key, 
-  Collection, Goods, RefreshLeft, Phone 
+import {
+  Plus, OfficeBuilding, Check, Close, Box,
+  List, House, Location, User, Edit, Delete, Key,
+  Collection, Goods, RefreshLeft, Phone
 } from '@element-plus/icons-vue'
 
 export default {
   name: 'WarehouseList',
   components: {
-    Warehouse, Plus, OfficeBuilding, Check, Close, Box,
+    Plus, OfficeBuilding, Check, Close, Box,
     List, House, Location, User, Edit, Delete, Key,
     Collection, Goods, RefreshLeft, Phone
   },

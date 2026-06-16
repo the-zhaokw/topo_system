@@ -14960,3 +14960,670 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2026-06-15 20:28:05,635 - enhanced_app - INFO - 数据库表创建完成
 2026-06-15 20:28:05,825 - enhanced_app - INFO - 管理员用户已存在，跳过创建
 2026-06-15 20:28:05,826 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 14:56:28,117 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 14:56:28,158 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 14:56:28,160 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 14:56:28,171 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 14:56:28,172 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 14:56:28,172 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 14:56:28,631 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 14:56:28,647 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 14:56:34,074 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 14:56:34,420 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 14:56:34,421 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 14:56:34,461 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 14:56:35,253 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 14:56:35,254 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 793.12ms
+2026-06-16 14:56:35,390 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 970.73ms
+2026-06-16 14:56:35,442 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 14:56:38,204 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 14:56:38,204 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 14:56:38,205 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 14:56:38,210 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 14:56:38,266 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 14:56:38,267 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 57.52ms
+2026-06-16 14:56:38,287 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 82.36ms
+2026-06-16 14:56:38,294 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 14:56:40,965 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 14:56:40,966 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 14:56:41,013 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 14:56:41,192 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 14:56:41,243 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 14:56:41,245 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 53.82ms
+2026-06-16 14:56:41,260 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 293.98ms
+2026-06-16 14:56:41,266 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 14:56:44,148 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 14:56:44,151 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 14:56:44,151 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 14:56:44,163 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 14:56:44,204 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 14:56:44,206 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 42.90ms
+2026-06-16 14:56:44,224 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 73.37ms
+2026-06-16 14:56:44,229 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 14:56:46,435 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 14:56:46,437 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 14:56:46,441 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 14:56:46,447 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 14:56:46,485 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 14:56:46,491 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 44.28ms
+2026-06-16 14:56:46,525 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 89.29ms
+2026-06-16 14:56:46,536 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 14:57:00,109 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 14:57:00,114 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 14:57:00,117 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 14:57:00,141 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 14:57:00,189 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 14:57:00,191 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 50.38ms
+2026-06-16 14:57:00,203 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 88.49ms
+2026-06-16 14:57:00,206 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:01:18,523 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:01:18,524 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:01:18,524 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:01:18,524 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:01:18,552 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:01:18,553 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:01:18,553 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 29.11ms
+2026-06-16 15:01:18,553 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 29.11ms
+2026-06-16 15:03:47,726 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:03:47,728 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:03:47,730 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:03:47,734 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:03:47,804 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:03:47,809 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 75.49ms
+2026-06-16 15:03:47,844 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 113.31ms
+2026-06-16 15:03:47,849 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:03:53,680 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:03:53,681 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:03:53,681 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:03:53,682 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:03:53,695 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:03:53,697 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 16.80ms
+2026-06-16 15:03:53,698 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:03:53,701 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 19.05ms
+2026-06-16 15:03:57,087 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:03:57,088 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:03:57,090 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:03:57,099 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:03:57,135 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:03:57,138 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 38.90ms
+2026-06-16 15:03:57,166 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 78.70ms
+2026-06-16 15:03:57,169 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:04:14,214 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:04:14,216 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:04:14,436 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:04:14,437 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 221.47ms
+2026-06-16 15:04:20,050 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:04:20,055 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:04:20,074 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:04:20,074 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 19.43ms
+2026-06-16 15:04:26,958 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:04:26,962 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:04:26,979 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:04:26,979 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 17.11ms
+2026-06-16 15:06:15,936 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:06:15,937 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:06:15,946 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:06:15,950 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:06:16,031 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:06:16,032 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 82.18ms
+2026-06-16 15:06:16,046 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 99.99ms
+2026-06-16 15:06:16,057 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:06:50,143 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 15:06:50,154 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 15:06:50,157 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 15:06:50,173 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 15:06:50,174 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 15:06:50,176 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 15:06:50,638 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 15:06:50,639 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 15:07:09,365 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:07:09,372 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:07:09,375 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:07:09,377 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:07:09,659 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:07:09,678 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 299.87ms
+2026-06-16 15:07:09,900 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 525.41ms
+2026-06-16 15:07:09,940 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:07:15,110 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:07:15,115 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:07:15,115 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:07:15,122 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:07:15,164 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:07:15,168 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 45.86ms
+2026-06-16 15:07:15,209 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 93.71ms
+2026-06-16 15:07:15,222 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:10:12,045 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:10:12,049 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:10:12,057 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:10:12,076 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:10:12,129 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:10:12,130 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 53.17ms
+2026-06-16 15:10:12,148 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 99.30ms
+2026-06-16 15:10:12,153 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:10:37,432 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 15:10:37,451 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 15:10:37,461 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 15:10:37,472 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 15:10:37,473 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 15:10:37,473 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 15:10:37,873 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 15:10:37,875 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 15:10:52,194 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:10:52,206 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:10:52,206 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:10:52,214 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:10:52,349 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:10:52,379 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 164.97ms
+2026-06-16 15:10:52,657 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 451.92ms
+2026-06-16 15:10:52,668 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[bug.severity.value] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:11:52,957 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:11:52,958 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:11:52,966 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:11:52,981 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:11:53,020 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:11:53,027 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 46.38ms
+2026-06-16 15:11:53,049 - enhanced_app - ERROR - API Call Failed: api.statistics.get_dashboard_stats - Error: 'str' object has no attribute 'value' - Duration: 90.97ms
+2026-06-16 15:11:53,080 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 101, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\logging_decorators.py", line 160, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\statistics.py", line 114, in get_dashboard_stats
+    severity_distribution[get_enum_value(bug.severity)] += 1
+                          ^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-06-16 15:12:17,253 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 15:12:17,261 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 15:12:17,267 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 15:12:17,271 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 15:12:17,271 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 15:12:17,272 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 15:12:17,581 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 15:12:17,582 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 15:12:21,337 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:12:21,339 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:12:21,344 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:12:21,356 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:12:21,496 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:12:21,512 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 155.85ms
+2026-06-16 15:12:21,665 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:12:21,666 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 326.56ms
+2026-06-16 15:12:24,869 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:12:24,869 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:12:24,874 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:12:24,879 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:12:24,934 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:12:24,936 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 57.11ms
+2026-06-16 15:12:24,951 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:12:24,952 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 82.27ms
+2026-06-16 15:12:44,307 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-06-16 15:12:44,310 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:12:44,326 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:12:44,327 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 17.06ms
+2026-06-16 15:25:28,117 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:25:28,122 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:25:28,135 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:25:28,135 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 12.69ms
+2026-06-16 15:25:44,226 - enhanced_app - INFO - log - 用户ID: 1, 操作: create, 资源类型: overtime_application, 资源ID: 2, 详情: 提交加班申请: 2026-06-16 15:25-22:25, IP: 127.0.0.1
+2026-06-16 15:25:48,782 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:25:48,785 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:25:48,786 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:25:48,791 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:25:48,848 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:25:48,850 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 59.25ms
+2026-06-16 15:25:48,874 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:25:48,874 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 88.61ms
+2026-06-16 15:26:07,716 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 15:26:24,280 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 15:29:18,240 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 15:29:22,319 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 15:29:23,552 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 15:29:24,564 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 15:29:24,890 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:29:24,895 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:29:24,896 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:29:24,899 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:29:24,931 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:29:24,933 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 37.58ms
+2026-06-16 15:29:24,948 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:29:24,948 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 48.83ms
+2026-06-16 15:29:34,037 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:29:34,037 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:29:34,045 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:29:34,046 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:29:34,046 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 8.26ms
+2026-06-16 15:29:34,046 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:29:34,052 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:29:34,052 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 5.97ms
+2026-06-16 15:29:41,939 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:29:41,940 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:29:41,951 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:29:41,952 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 12.91ms
+2026-06-16 15:29:53,439 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:29:53,439 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:29:53,447 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:29:53,448 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 8.62ms
+2026-06-16 15:30:16,824 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 15:30:53,623 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects
+2026-06-16 15:30:53,623 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-06-16 15:30:53,624 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:30:53,624 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:30:53,634 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:30:53,634 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:30:53,634 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 10.50ms
+2026-06-16 15:30:53,634 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 10.50ms
+2026-06-16 15:30:58,858 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:30:58,859 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:30:58,868 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:30:58,869 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:30:58,898 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:30:58,900 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 31.04ms
+2026-06-16 15:30:58,914 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:30:58,915 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 55.79ms
+2026-06-16 15:31:06,659 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-16 15:31:06,765 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 488, 详情: Bug状态变更: reopened -> in_progress, IP: 127.0.0.1
+2026-06-16 15:31:06,844 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-16 15:31:14,386 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-16 15:31:17,071 - enhanced_app - ERROR - 发送邮件到 zhaokangwei@chenxiaotech.com 失败: (535, b'Error: authentication failed')
+2026-06-16 15:31:17,072 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-16 15:31:18,941 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-16 15:31:19,037 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 488, 详情: Bug状态变更: resolved -> resolved, IP: 127.0.0.1
+2026-06-16 15:31:19,141 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-16 15:31:37,091 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:31:37,091 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:31:37,097 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:31:37,100 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:31:37,158 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:31:37,161 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 60.66ms
+2026-06-16 15:31:37,175 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:31:37,176 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 84.55ms
+2026-06-16 15:31:58,871 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:31:58,872 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:31:59,028 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:31:59,029 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:31:59,205 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:31:59,219 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 189.83ms
+2026-06-16 15:31:59,291 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:31:59,298 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 425.93ms
+2026-06-16 15:33:07,523 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:33:07,526 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:33:07,547 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:33:07,547 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 20.60ms
+2026-06-16 15:33:08,989 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 15:33:08,992 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 15:33:09,003 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 15:33:09,004 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 11.80ms
+2026-06-16 15:33:11,239 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:33:11,245 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:33:11,245 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:33:11,251 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:33:11,287 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:33:11,288 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 37.33ms
+2026-06-16 15:33:11,301 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:33:11,302 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 56.66ms
+2026-06-16 15:33:19,519 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:33:19,524 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:33:19,524 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:33:19,527 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:33:19,566 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:33:19,567 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.29ms
+2026-06-16 15:33:19,582 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:33:19,582 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 57.83ms
+2026-06-16 15:33:24,478 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:33:24,480 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:33:24,484 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:33:24,489 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:33:24,529 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:33:24,530 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.91ms
+2026-06-16 15:33:24,544 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:33:24,544 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 60.65ms
+2026-06-16 15:35:40,659 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:35:40,661 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:35:40,670 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:35:40,674 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:35:40,725 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:35:40,727 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 52.91ms
+2026-06-16 15:35:40,744 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:35:40,744 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 83.20ms
+2026-06-16 15:40:21,058 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 15:40:21,059 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 15:40:21,061 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 15:40:21,069 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 15:40:21,115 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 15:40:21,117 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 47.82ms
+2026-06-16 15:40:21,135 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 15:40:21,135 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 75.99ms

@@ -19,6 +19,9 @@
       @close="closeMenu"
     />
 
+    <!-- 移动端底部 Tab 栏 -->
+    <MobileTabBar v-if="!isInitializing && isRouteReady && $route.path !== '/login' && isMobile" />
+
     <!-- 桌面端布局 -->
     <el-container v-if="!isInitializing && isRouteReady && $route.path !== '/login'" class="app-container" :class="{ 'mobile-layout': isMobile }">
       <!-- 侧边栏导航（仅桌面端显示） -->
@@ -328,6 +331,7 @@ import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, Arr
 import { apiService } from '@/services/api'
 import { ElMessage } from 'element-plus'
 import MobileMenu from '@/components/mobile/MobileMenu.vue'
+import MobileTabBar from '@/components/mobile/MobileTabBar.vue'
 import { useResponsive } from '@/composables/useResponsive'
 
 const { isMobile, isMobileRef, isMenuOpen, isMenuOpenRef, toggleMenu, closeMenu } = useResponsive()
@@ -1367,6 +1371,7 @@ onUnmounted(() => {
 
   .main-content {
     padding: 16px;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     min-height: calc(100vh - 56px);
@@ -1434,6 +1439,7 @@ onUnmounted(() => {
 
   .main-content {
     padding: 12px;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
   .menu-btn .el-icon {

@@ -502,10 +502,22 @@ def create_leave_application():
         if days <= 0:
             return jsonify({'error': '请假天数必须大于0'}), 400
 
-        # 校验请假类型
+        # 校验请假类型（兼容前端短名与枚举完整名）
+        leave_type_aliases = {
+            'annual': 'annual_leave',
+            'sick': 'sick_leave',
+            'personal': 'personal_leave',
+            'compensatory': 'other',
+            'marriage': 'marriage_leave',
+            'maternity': 'maternity_leave',
+            'paternity': 'paternity_leave',
+            'bereavement': 'bereavement_leave',
+        }
+        if leave_type in leave_type_aliases:
+            leave_type = leave_type_aliases[leave_type]
         valid_leave_types = {lt.value for lt in LeaveType}
         if leave_type not in valid_leave_types:
-            return jsonify({'error': f'无效的请假类型: {leave_type}'}), 400
+            return jsonify({'error': f'无效的请假类型: {leave_type}', 'valid_types': sorted(valid_leave_types)}), 400
 
         # 审批人（可选）
         approver_id = data.get('approver_id')
@@ -724,6 +736,70 @@ def create_overtime_application():
         import traceback
         traceback.print_exc()
         return jsonify({'error': '提交加班申请失败'}), 500
+
+# 审批/拒绝加班申请
+@attendance_bp.route('/overtime-applications/<int:application_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_overtime_application(application_id):
+    """审批/拒绝加班申请（action=approve|reject）"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, _, OvertimeApplication, _, _, _, _, _, ApprovalStatus, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        application = OvertimeApplication.query.get(application_id)
+        if not application:
+            return jsonify({'error': '加班申请不存在'}), 404
+
+        if application.status != ApprovalStatus.PENDING.value:
+            return jsonify({'error': f'当前状态为 {application.status}，不可重复审批'}), 400
+
+        data = request.get_json(silent=True) or {}
+        action = (data.get('action') or 'approve').lower()
+        comment = data.get('comment') or data.get('rejection_reason') or ''
+
+        if action == 'reject':
+            if not comment:
+                return jsonify({'error': '拒绝时必须填写审批意见'}), 400
+            application.status = ApprovalStatus.REJECTED.value
+            application.rejection_reason = comment
+        else:
+            application.status = ApprovalStatus.APPROVED.value
+            if comment:
+                application.rejection_reason = comment
+
+        application.approver_id = current_user_id
+        application.approved_at = datetime.utcnow()
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='approve' if action != 'reject' else 'reject',
+                resource_type='overtime_application',
+                resource_id=application.id,
+                details=f"{'审批通过' if action != 'reject' else '拒绝'}加班申请 #{application.id}",
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '审批通过' if action != 'reject' else '已拒绝',
+            'application': application.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error approving overtime application: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '审批操作失败'}), 500
 
 # 获取班次列表
 @attendance_bp.route('/shifts', methods=['GET'])

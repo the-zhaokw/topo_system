@@ -34,7 +34,9 @@
     </div>
 
     <div class="list-content" v-if="currentView === 'list'">
+      <!-- 桌面端表格 -->
       <el-table
+        v-if="!isMobile"
         :data="filteredTasks"
         row-key="id"
         :tree-props="{ children: 'subtasks', hasChildren: 'hasSubtasks' }"
@@ -132,6 +134,65 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 移动端卡片列表 -->
+      <div v-else class="mobile-task-list">
+        <div
+          v-for="task in filteredTasks"
+          :key="task.id"
+          class="mobile-task-card"
+          :class="{ completed: task.completed, overdue: isOverdue(task) }"
+          @click="editTask(task)"
+        >
+          <div class="task-card-top">
+            <el-checkbox
+              :model-value="task.completed"
+              @change="toggleTaskComplete(task)"
+              @click.stop
+            />
+            <span class="task-priority-dot" :class="task.priority"></span>
+            <span class="task-card-title" :class="{ completed: task.completed }">{{ task.title }}</span>
+          </div>
+          <div class="task-card-meta">
+            <span v-if="task.due_date" class="task-card-due" :class="{ overdue: isOverdue(task) }">
+              <el-icon><Clock /></el-icon>
+              {{ formatDate(task.due_date) }}
+            </span>
+            <div class="task-card-progress">
+              <el-progress
+                :percentage="task.progress || 0"
+                :stroke-width="4"
+                :show-text="false"
+              />
+              <span class="progress-text">{{ task.progress || 0 }}%</span>
+            </div>
+          </div>
+          <div v-if="task.tags" class="task-card-tags">
+            <el-tag
+              v-for="tag in (task.tags || '').split(',').filter(t => t).slice(0, 3)"
+              :key="tag"
+              size="small"
+              type="info"
+            >
+              #{{ tag }}
+            </el-tag>
+          </div>
+          <div class="task-card-actions" @click.stop>
+            <el-button text size="small" @click="editTask(task)">
+              <el-icon><Edit /></el-icon>
+            </el-button>
+            <el-button text size="small" @click="copyTask(task)">
+              <el-icon><CopyDocument /></el-icon>
+            </el-button>
+            <el-button text size="small" type="danger" @click="deleteTask(task)">
+              <el-icon><Delete /></el-icon>
+            </el-button>
+          </div>
+        </div>
+        <div v-if="filteredTasks.length === 0" class="empty-state">
+          <el-empty description="暂无任务" />
+        </div>
+      </div>
     </div>
 
     <div class="kanban-content" v-else>
@@ -316,6 +377,9 @@ import {
   List, Grid, Plus, Edit, Delete, CopyDocument, Clock, ArrowDown, ArrowUp
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { useResponsive } from '@/composables/useResponsive'
+
+const { isMobile } = useResponsive()
 
 const route = useRoute()
 
@@ -975,5 +1039,196 @@ onMounted(() => {
 
 .subtask-item .el-input {
   flex: 1;
+}
+
+.mobile-task-list {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .plan-list-view {
+    padding: 0;
+  }
+
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .header-left {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header-left .el-radio-group {
+    width: 100%;
+  }
+
+  .header-left .el-radio-group :deep(.el-radio-button__inner) {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .filter-select {
+    width: calc(50% - 4px) !important;
+    flex: 1;
+  }
+
+  .list-content {
+    padding: 8px;
+    background: transparent;
+  }
+
+  .mobile-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-task-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-task-card:active {
+    transform: scale(0.98);
+    background: #f5f7fa;
+  }
+
+  .mobile-task-card.overdue {
+    border-left: 3px solid #f56c6c;
+  }
+
+  .mobile-task-card.completed {
+    opacity: 0.6;
+  }
+
+  .task-card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .task-priority-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .task-priority-dot.urgent { background: #f56c6c; }
+  .task-priority-dot.high { background: #e6a23c; }
+  .task-priority-dot.medium { background: #409EFF; }
+  .task-priority-dot.low { background: #67c23a; }
+
+  .task-card-title {
+    flex: 1;
+    font-size: 14px;
+    color: #303133;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .task-card-title.completed {
+    text-decoration: line-through;
+    color: #909399;
+  }
+
+  .task-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .task-card-due {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #909399;
+  }
+
+  .task-card-due.overdue {
+    color: #f56c6c;
+    font-weight: 500;
+  }
+
+  .task-card-progress {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    max-width: 140px;
+  }
+
+  .task-card-progress .progress-text {
+    font-size: 12px;
+    color: #909399;
+    min-width: 32px;
+  }
+
+  .task-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .task-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding-top: 6px;
+    border-top: 1px solid #f5f5f5;
+  }
+
+  .empty-state {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px 16px;
+  }
+
+  .kanban-content {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .kanban-column {
+    flex: 0 0 auto;
+    width: 100%;
+    max-height: none;
+  }
+
+  .batch-actions {
+    bottom: 16px;
+    padding: 10px 16px;
+    font-size: 13px;
+    width: calc(100% - 32px);
+    max-width: 400px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .batch-actions .el-button {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header-left .el-radio-group :deep(.el-radio-button__inner) {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
 }
 </style>

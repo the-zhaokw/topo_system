@@ -542,4 +542,64 @@ onMounted(() => {
 .task-template-item .el-input {
   flex: 1;
 }
+
+@media screen and (max-width: 768px) {
+  .settings-view {
+    padding: 0;
+  }
+
+  .settings-header {
+    padding: 12px;
+  }
+
+  .settings-header h2 {
+    font-size: 18px;
+  }
+
+  .settings-content {
+    padding: 12px;
+  }
+
+  .settings-section {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .settings-section h3 {
+    font-size: 15px;
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .setting-label {
+    width: 100% !important;
+  }
+
+  .setting-control {
+    width: 100%;
+  }
+
+  .tag-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tag-input-row .el-input {
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+
+  .task-template-item {
+    flex-wrap: wrap;
+  }
+
+  .sync-link {
+    max-width: 100%;
+  }
+}
 </style>

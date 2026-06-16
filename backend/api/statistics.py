@@ -111,11 +111,11 @@ def get_dashboard_stats():
     severity_distribution = defaultdict(int)
     all_bugs = Bug.query.filter(Bug.project_id.in_(project_ids)).all()
     for bug in all_bugs:
-        severity_distribution[bug.severity.value] += 1
+        severity_distribution[get_enum_value(bug.severity)] += 1
 
     priority_distribution = defaultdict(int)
     for bug in all_bugs:
-        priority_distribution[bug.priority.value] += 1
+        priority_distribution[get_enum_value(bug.priority)] += 1
 
     try:
         log_manager.log_business(

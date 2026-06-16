@@ -825,4 +825,81 @@ onMounted(() => {
   color: #606266;
   flex: 1;
 }
+
+@media screen and (max-width: 768px) {
+  .gantt-view {
+    padding: 0;
+  }
+
+  .gantt-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .toolbar-left .el-radio-group,
+  .toolbar-left .el-radio-group :deep(.el-radio-button__inner) {
+    width: 100%;
+    flex: 1;
+  }
+
+  .toolbar-left .el-slider {
+    width: 100% !important;
+  }
+
+  .toolbar-left .el-switch {
+    font-size: 12px;
+  }
+
+  .toolbar-left .el-switch__label {
+    font-size: 12px;
+  }
+
+  .gantt-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .gantt-header,
+  .gantt-row {
+    min-width: 600px;
+  }
+
+  .gantt-row-label {
+    width: 120px !important;
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
+
+  .gantt-bar {
+    height: 18px !important;
+  }
+
+  .task-detail-popover {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    min-width: 0;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .gantt-toolbar {
+    padding: 6px;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    gap: 6px;
+  }
+}
 </style>

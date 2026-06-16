@@ -12,6 +12,120 @@ export interface User {
   joinDate: string;
 }
 
+// ============== 项目 ==============
+export interface Project {
+  id: number;
+  name: string;
+  description: string;
+  status: 'planning' | 'active' | 'completed' | 'suspended';
+  start_date: string;
+  end_date?: string;
+  manager_name: string;
+  member_count: number;
+  bug_count: number;
+  completion_rate: number;
+}
+
+// ============== 待办事项 ==============
+export type TodoPriority = 'urgent' | 'high' | 'medium' | 'low';
+export type TodoStatus = 'pending' | 'in_progress' | 'completed';
+export type TodoCategory = 'approval' | 'bug' | 'review' | 'contract';
+
+export interface Todo {
+  id: number;
+  title: string;
+  description?: string;
+  priority: TodoPriority;
+  status: TodoStatus;
+  category?: TodoCategory;
+  due_date?: string;
+  created_at: string;
+  assignee_name?: string;
+  project_name?: string;
+}
+
+// ============== 考勤 ==============
+export type AttendanceStatus = 'normal' | 'late' | 'absent' | 'leave';
+
+export interface Attendance {
+  id: number;
+  user_name: string;
+  date: string;
+  check_in_time?: string;
+  check_out_time?: string;
+  status: AttendanceStatus;
+  work_hours: number;
+}
+
+// ============== 物料 ==============
+export interface Material {
+  id: number;
+  name: string;
+  code: string;
+  category: string;
+  unit: string;
+  stock: number;
+  price: number;
+  warehouse: string;
+  location: string;
+}
+
+// ============== 知识库 ==============
+export interface KnowledgeArticle {
+  id: number;
+  title: string;
+  category: string;
+  author: string;
+  created_at: string;
+  view_count: number;
+  summary?: string;
+  content?: string;
+}
+
+// ============== 通知 ==============
+export type NotificationType = 'info' | 'warning' | 'success' | 'error';
+
+export interface Notification {
+  id: number;
+  title: string;
+  content: string;
+  type: NotificationType;
+  is_read: boolean;
+  created_at: string;
+  link?: string;
+  target_type?: string;
+  target_id?: number;
+}
+
+// ============== 个人计划 ==============
+export type PlanType = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+export type PlanStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
+
+export interface PersonalPlan {
+  id: number;
+  title: string;
+  plan_type: PlanType;
+  start_time: string;
+  end_time: string;
+  status: PlanStatus;
+  progress: number;
+  description?: string;
+}
+
+// ============== 合同（与 businessData 中的 mockContracts 字段保持一致） ==============
+export type ContractStatus = 'draft' | 'pending' | 'signed' | 'completed' | 'terminated';
+
+export interface Contract {
+  id: number;
+  contract_no: string;
+  name: string;
+  customer_name: string;
+  amount: number;
+  sign_date: string;
+  status: ContractStatus;
+  project_name?: string;
+}
+
 export interface Department {
   id: number;
   departmentName: string;

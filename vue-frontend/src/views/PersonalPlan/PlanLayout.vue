@@ -97,7 +97,7 @@
           <el-dropdown trigger="click" @command="handleQuickCreate">
             <el-button type="primary">
               <el-icon><Plus /></el-icon>
-              快速创建
+              <span class="btn-text">快速创建</span>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -134,6 +134,20 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
+        </div>
+      </div>
+
+      <!-- 移动端 Tab 切换 -->
+      <div v-if="isMobile" class="mobile-tabs">
+        <div
+          v-for="tab in mobileTabs"
+          :key="tab.key"
+          class="mobile-tab"
+          :class="{ active: activeMenu === tab.key }"
+          @click="handleMenuSelect(tab.key)"
+        >
+          <el-icon><component :is="tab.icon" /></el-icon>
+          <span>{{ tab.label }}</span>
         </div>
       </div>
 
@@ -251,6 +265,9 @@ import {
   Search, Bell, Edit, Document, User, SwitchButton, Calendar
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { useResponsive } from '@/composables/useResponsive'
+
+const { isMobile } = useResponsive()
 
 const route = useRoute()
 const router = useRouter()
@@ -286,6 +303,14 @@ const myTags = ref([
   { name: '开发', type: 'success' },
   { name: '文档', type: 'info' }
 ])
+
+const mobileTabs = [
+  { key: 'dashboard', label: '工作台', icon: House },
+  { key: 'plans', label: '计划', icon: List },
+  { key: 'gantt', label: '甘特', icon: TrendCharts },
+  { key: 'review', label: '复盘', icon: DataAnalysis },
+  { key: 'settings', label: '设置', icon: Setting }
+]
 
 const tagForm = ref({
   name: '',
@@ -594,5 +619,116 @@ onMounted(() => {
 
 :deep(.el-menu--collapse) {
   width: 64px;
+}
+
+.mobile-tabs {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .plan-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .plan-sidebar {
+    display: none;
+  }
+
+  .plan-main {
+    width: 100%;
+  }
+
+  .main-header {
+    padding: 0 12px;
+    height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .header-right {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .global-search {
+    width: 140px;
+  }
+
+  .global-search :deep(.el-input__wrapper) {
+    padding: 4px 8px;
+  }
+
+  .main-content {
+    padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .main-header :deep(.el-breadcrumb) {
+    font-size: 13px;
+  }
+
+  .main-header .el-button span {
+    display: none;
+  }
+
+  .main-header .el-button .el-icon + span {
+    display: none;
+  }
+
+  .mobile-tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 6px 4px;
+    position: sticky;
+    top: 56px;
+    z-index: 9;
+    overflow-x: auto;
+    gap: 2px;
+  }
+
+  .mobile-tab {
+    flex: 1;
+    min-width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    font-size: 11px;
+    color: #666;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tab.active {
+    color: #409EFF;
+    background: rgba(64, 158, 255, 0.1);
+  }
+
+  .mobile-tab .el-icon {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .main-header {
+    padding: 0 8px;
+  }
+
+  .global-search {
+    width: 110px;
+  }
+
+  .main-content {
+    padding: 8px;
+  }
 }
 </style>
