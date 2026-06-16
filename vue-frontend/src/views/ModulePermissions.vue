@@ -181,12 +181,13 @@
               <el-tag v-else type="warning" size="small">已自定义</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="260" fixed="right">
             <template #default="{ row }">
               <el-button
                 type="primary"
                 size="small"
                 link
+                v-permission="'module_perm:edit'"
                 :disabled="row.is_super_admin"
                 @click="openEditDialog(row)"
               >
@@ -194,10 +195,22 @@
                 配置模块
               </el-button>
               <el-button
+                v-permission="'template:apply'"
+                type="success"
+                size="small"
+                link
+                :disabled="row.is_super_admin"
+                @click="openApplyToUserDialog(row)"
+              >
+                <el-icon><Promotion /></el-icon>
+                应用模板
+              </el-button>
+              <el-button
                 v-if="!row.is_super_admin && !row.is_default"
                 type="info"
                 size="small"
                 link
+                v-permission="'module_perm:reset'"
                 @click="handleReset(row)"
               >
                 <el-icon><RefreshLeft /></el-icon>
@@ -306,47 +319,116 @@
                 />
               </div>
 
+              <!-- 细分权限工具栏 -->
+              <div class="perm-toolbar">
+                <el-input
+                  v-model="permKeyword"
+                  placeholder="搜索权限名称 / 编码 / 描述"
+                  clearable
+                  size="small"
+                  class="perm-search"
+                >
+                  <template #prefix>
+                    <el-icon><Search /></el-icon>
+                  </template>
+                </el-input>
+                <el-button-group>
+                  <el-button size="small" @click="permExpandAll = !permExpandAll">
+                    <el-icon><component :is="permExpandAll ? 'ArrowUp' : 'ArrowDown'" /></el-icon>
+                    {{ permExpandAll ? '收起全部' : '展开全部' }}
+                  </el-button>
+                </el-button-group>
+              </div>
+
               <el-tabs v-model="permTabActive" class="perm-tabs">
+                <!-- 额外权限 -->
                 <el-tab-pane :label="`额外权限 (${selectedAllowedPermissions.length})`" name="allowed">
-                  <div v-for="(category, key) in allPermissions" :key="key" class="perm-category">
-                    <div class="perm-category-title">{{ category.name }}</div>
-                    <el-checkbox-group v-model="selectedAllowedPermissions" class="perm-checkbox-grid">
-                      <el-checkbox
-                        v-for="perm in category.permissions"
-                        :key="`allowed-${perm.code}`"
-                        :value="perm.code"
-                        :label="perm.code"
-                        border
-                        class="perm-card"
-                      >
-                        <div class="perm-card-content">
-                          <div class="perm-card-name">{{ perm.name }}</div>
-                          <div class="perm-card-desc">{{ perm.description }}</div>
-                        </div>
-                      </el-checkbox>
-                    </el-checkbox-group>
+                  <div class="perm-quick-actions">
+                    <el-button size="small" @click="selectPermAll('allowed')">全选</el-button>
+                    <el-button size="small" @click="selectPermInverse('allowed')">反选</el-button>
+                    <el-button size="small" @click="selectPermNone('allowed')">清空</el-button>
+                    <el-button size="small" @click="selectPermFromVisible('allowed')">仅选筛选项</el-button>
                   </div>
+
+                  <el-collapse v-model="permActiveNames" class="perm-collapse">
+                    <el-collapse-item
+                      v-for="(category, key) in filteredPermissions"
+                      :key="key"
+                      :name="`allowed-${key}`"
+                      class="perm-collapse-item"
+                    >
+                      <template #title>
+                        <div class="perm-collapse-title">
+                          <span class="perm-collapse-name">{{ category.name }}</span>
+                          <el-tag size="small" effect="plain" class="perm-count-tag">
+                            {{ countSelectedInCategory('allowed', category.permissions) }} / {{ category.permissions.length }}
+                          </el-tag>
+                        </div>
+                      </template>
+
+                      <el-checkbox-group v-model="selectedAllowedPermissions" class="perm-checkbox-grid">
+                        <el-checkbox
+                          v-for="perm in category.permissions"
+                          :key="`allowed-${perm.code}`"
+                          :value="perm.code"
+                          :label="perm.code"
+                          border
+                          class="perm-card"
+                        >
+                          <div class="perm-card-content">
+                            <div class="perm-card-name">{{ perm.name }}</div>
+                            <div class="perm-card-desc">{{ perm.description }}</div>
+                            <div class="perm-card-code">{{ perm.code }}</div>
+                          </div>
+                        </el-checkbox>
+                      </el-checkbox-group>
+                    </el-collapse-item>
+                  </el-collapse>
                 </el-tab-pane>
 
+                <!-- 限制权限 -->
                 <el-tab-pane :label="`限制权限 (${selectedDeniedPermissions.length})`" name="denied">
-                  <div v-for="(category, key) in allPermissions" :key="key" class="perm-category">
-                    <div class="perm-category-title">{{ category.name }}</div>
-                    <el-checkbox-group v-model="selectedDeniedPermissions" class="perm-checkbox-grid">
-                      <el-checkbox
-                        v-for="perm in category.permissions"
-                        :key="`denied-${perm.code}`"
-                        :value="perm.code"
-                        :label="perm.code"
-                        border
-                        class="perm-card"
-                      >
-                        <div class="perm-card-content">
-                          <div class="perm-card-name">{{ perm.name }}</div>
-                          <div class="perm-card-desc">{{ perm.description }}</div>
-                        </div>
-                      </el-checkbox>
-                    </el-checkbox-group>
+                  <div class="perm-quick-actions">
+                    <el-button size="small" @click="selectPermAll('denied')">全选</el-button>
+                    <el-button size="small" @click="selectPermInverse('denied')">反选</el-button>
+                    <el-button size="small" @click="selectPermNone('denied')">清空</el-button>
+                    <el-button size="small" @click="selectPermFromVisible('denied')">仅选筛选项</el-button>
                   </div>
+
+                  <el-collapse v-model="permActiveNames" class="perm-collapse">
+                    <el-collapse-item
+                      v-for="(category, key) in filteredPermissions"
+                      :key="key"
+                      :name="`denied-${key}`"
+                      class="perm-collapse-item"
+                    >
+                      <template #title>
+                        <div class="perm-collapse-title">
+                          <span class="perm-collapse-name">{{ category.name }}</span>
+                          <el-tag size="small" effect="plain" class="perm-count-tag">
+                            {{ countSelectedInCategory('denied', category.permissions) }} / {{ category.permissions.length }}
+                          </el-tag>
+                        </div>
+                      </template>
+
+                      <el-checkbox-group v-model="selectedDeniedPermissions" class="perm-checkbox-grid">
+                        <el-checkbox
+                          v-for="perm in category.permissions"
+                          :key="`denied-${perm.code}`"
+                          :value="perm.code"
+                          :label="perm.code"
+                          border
+                          class="perm-card"
+                        >
+                          <div class="perm-card-content">
+                            <div class="perm-card-name">{{ perm.name }}</div>
+                            <div class="perm-card-desc">{{ perm.description }}</div>
+                            <div class="perm-card-code">{{ perm.code }}</div>
+                          </div>
+                        </el-checkbox>
+                      </el-checkbox-group>
+                    </el-collapse-item>
+                  </el-collapse>
                 </el-tab-pane>
               </el-tabs>
             </el-tab-pane>
@@ -358,10 +440,172 @@
         <el-button @click="editDialogVisible = false">取消</el-button>
         <el-button
           v-if="!isDefaultConfig"
+          v-permission="'module_perm:reset'"
           @click="handleReset(editingUser, true)"
         >恢复默认</el-button>
-        <el-button type="primary" :loading="saving" @click="handleSave">
+        <el-button
+          v-permission="'template:create'"
+          @click="openSaveAsTemplateDialog"
+        >
+          <el-icon><CollectionTag /></el-icon>
+          另存为模板
+        </el-button>
+        <el-button
+          type="primary"
+          :loading="saving"
+          v-permission="'module_perm:edit'"
+          @click="handleSave"
+        >
           保存配置
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 应用模板对话框 -->
+    <el-dialog
+      v-model="applyDialogVisible"
+      title="一键应用权限模板"
+      width="520px"
+      :close-on-click-modal="false"
+      @closed="handleApplyDialogClosed"
+    >
+      <div v-if="applyingToUser" class="apply-tpl-dialog">
+        <div class="apply-user-info">
+          <el-avatar :size="40" :src="applyingToUser.avatar || '/avatar-placeholder.png'">
+            {{ applyingToUser.username?.charAt(0).toUpperCase() }}
+          </el-avatar>
+          <div class="apply-user-text">
+            <div class="apply-user-name">
+              {{ applyingToUser.username }}
+              <el-tag v-if="applyingToUser.is_admin" type="warning" size="small">管理员</el-tag>
+            </div>
+            <div class="apply-user-meta">
+              {{ applyingToUser.department || '-' }} · {{ applyingToUser.position || '-' }}
+            </div>
+          </div>
+        </div>
+
+        <el-alert
+          type="warning"
+          :closable="false"
+          show-icon
+          title="此操作将覆盖该用户当前的「可见模块」「额外权限」「限制权限」配置"
+        />
+
+        <el-form-item label="选择模板" style="margin-top: 16px;">
+          <el-select
+            v-model="selectedTemplateId"
+            placeholder="请选择要应用的模板"
+            style="width: 100%;"
+            filterable
+          >
+            <el-option
+              v-for="tpl in availableTemplates"
+              :key="tpl.id"
+              :label="`${tpl.name}${tpl.is_builtin ? ' (内置)' : ''}`"
+              :value="tpl.id"
+              :disabled="!tpl.is_active"
+            >
+              <div class="tpl-option">
+                <div class="tpl-option-name">
+                  <el-icon><CollectionTag /></el-icon>
+                  <span>{{ tpl.name }}</span>
+                  <el-tag v-if="tpl.is_builtin" type="success" size="small">内置</el-tag>
+                  <el-tag v-else-if="tpl.category === 'role'" type="warning" size="small">角色</el-tag>
+                </div>
+                <div class="tpl-option-desc">{{ tpl.description || '（暂无描述）' }}</div>
+                <div class="tpl-option-meta">
+                  {{ tpl.module_count || 0 }} 个模块 · {{ tpl.permission_count || 0 }} 个细分权限
+                </div>
+              </div>
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <div v-if="selectedTemplateId && getSelectedTemplate()" class="tpl-preview">
+          <h4>模板预览：{{ getSelectedTemplate().name }}</h4>
+          <div class="tpl-preview-content">
+            <div class="tpl-preview-row">
+              <b>可见模块：</b>
+              <span>{{ (getSelectedTemplate().modules || []).length }} 个</span>
+            </div>
+            <div class="tpl-preview-row">
+              <b>额外权限：</b>
+              <span>{{ (getSelectedTemplate().allowed_permissions || []).length }} 个</span>
+            </div>
+            <div class="tpl-preview-row">
+              <b>限制权限：</b>
+              <span>{{ (getSelectedTemplate().denied_permissions || []).length }} 个</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="applyDialogVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="applyingTemplate"
+          :disabled="!selectedTemplateId"
+          @click="handleApplyTemplate"
+        >
+          立即应用
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 另存为模板 -->
+    <el-dialog
+      v-model="saveAsTplDialogVisible"
+      title="另存为权限模板"
+      width="520px"
+      :close-on-click-modal="false"
+      @closed="saveAsTplForm = { name: '', description: '', category: 'custom' }"
+    >
+      <el-alert
+        type="info"
+        :closable="false"
+        show-icon
+        title="将当前用户配置的「可见模块 + 额外/限制权限」保存为一个可复用的模板"
+      />
+      <el-form-item label="模板名称" required style="margin-top: 16px;">
+        <el-input
+          v-model="saveAsTplForm.name"
+          placeholder="例如：测试工程师模板"
+          maxlength="50"
+          show-word-limit
+        />
+      </el-form-item>
+      <el-form-item label="分类">
+        <el-select v-model="saveAsTplForm.category" style="width: 100%;">
+          <el-option label="角色模板" value="role" />
+          <el-option label="自定义模板" value="custom" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input
+          v-model="saveAsTplForm.description"
+          type="textarea"
+          :rows="2"
+          placeholder="简单说明此模板的适用场景"
+          maxlength="200"
+          show-word-limit
+        />
+      </el-form-item>
+      <div class="save-as-summary">
+        将保存：<b>{{ selectedModules.length }}</b> 个模块、
+        <b>{{ selectedAllowedPermissions.length }}</b> 个额外权限、
+        <b>{{ selectedDeniedPermissions.length }}</b> 个限制权限
+      </div>
+
+      <template #footer>
+        <el-button @click="saveAsTplDialogVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="savingAsTpl"
+          @click="handleSaveAsTemplate"
+        >
+          保存
         </el-button>
       </template>
     </el-dialog>
@@ -371,6 +615,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { apiService as api } from '@/services/api'
 
@@ -380,6 +625,7 @@ const loading = ref(false)
 const saving = ref(false)
 const userList = ref([])
 const total = ref(0)
+const customCountTotal = ref(0)
 const catalog = ref([])
 const defaultModuleCodes = ref([])
 const allPermissions = ref({})
@@ -393,6 +639,9 @@ const pagination = ref({
 const editDialogVisible = ref(false)
 const editTabActive = ref('modules')
 const permTabActive = ref('allowed')
+const permKeyword = ref('')
+const permActiveNames = ref([])
+const permExpandAll = ref(false)
 const editingUser = ref(null)
 const selectedModules = ref([])
 const selectedAllowedPermissions = ref([])
@@ -407,16 +656,122 @@ const isDefaultConfig = computed(() => {
   return true
 })
 
+/** 把 allPermissions 转成 { key, name, permissions[] } 的扁平数组，供列表渲染 */
+const permissionCategoryList = computed(() => {
+  const arr = []
+  for (const [key, cat] of Object.entries(allPermissions.value || {})) {
+    arr.push({
+      key,
+      name: cat.name,
+      order: cat.order ?? 999,
+      permissions: cat.permissions || []
+    })
+  }
+  arr.sort((a, b) => a.order - b.order)
+  return arr
+})
+
+/** 根据 permKeyword 过滤后的分类列表（仅显示含匹配项的分类） */
+const filteredPermissions = computed(() => {
+  const kw = (permKeyword.value || '').trim().toLowerCase()
+  if (!kw) return permissionCategoryList.value
+  return permissionCategoryList.value
+    .map(cat => {
+      const perms = (cat.permissions || []).filter(p => {
+        return (
+          (p.name || '').toLowerCase().includes(kw) ||
+          (p.code || '').toLowerCase().includes(kw) ||
+          (p.description || '').toLowerCase().includes(kw)
+        )
+      })
+      return perms.length ? { ...cat, permissions: perms } : null
+    })
+    .filter(Boolean)
+})
+
+/** 当前过滤结果中所有可见的权限编码 */
+const visiblePermCodes = computed(() => {
+  const set = new Set()
+  for (const cat of filteredPermissions.value) {
+    for (const p of cat.permissions) set.add(p.code)
+  }
+  return set
+})
+
+/** 当前分类下已选数量 */
+function countSelectedInCategory(type, perms) {
+  const list = type === 'allowed' ? selectedAllowedPermissions.value : selectedDeniedPermissions.value
+  const set = new Set(list)
+  return perms.filter(p => set.has(p.code)).length
+}
+
+function selectPermAll(type) {
+  const list = type === 'allowed' ? selectedAllowedPermissions : selectedDeniedPermissions
+  // 收集所有分类的全部权限编码
+  const codes = []
+  for (const cat of permissionCategoryList.value) {
+    for (const p of cat.permissions) codes.push(p.code)
+  }
+  list.value = Array.from(new Set(codes))
+}
+
+function selectPermNone(type) {
+  const list = type === 'allowed' ? selectedAllowedPermissions : selectedDeniedPermissions
+  list.value = []
+}
+
+function selectPermFromVisible(type) {
+  const list = type === 'allowed' ? selectedAllowedPermissions : selectedDeniedPermissions
+  const set = new Set(list.value)
+  for (const code of visiblePermCodes.value) set.add(code)
+  list.value = Array.from(set)
+}
+
+function selectPermInverse(type) {
+  const list = type === 'allowed' ? selectedAllowedPermissions : selectedDeniedPermissions
+  const all = new Set()
+  for (const cat of permissionCategoryList.value) {
+    for (const p of cat.permissions) all.add(p.code)
+  }
+  const current = new Set(list.value)
+  list.value = Array.from(all).filter(c => !current.has(c))
+}
+
+// 监听 permExpandAll：true 展开所有面板；false 收起
+watch(permExpandAll, (val) => {
+  if (!permissionCategoryList.value.length) return
+  const prefix = permTabActive.value === 'allowed' ? 'allowed-' : 'denied-'
+  if (val) {
+    permActiveNames.value = permissionCategoryList.value.map(c => prefix + c.key)
+  } else {
+    permActiveNames.value = []
+  }
+})
+
 const isAdmin = computed(() => {
+  // 模块权限管理页面访问权：系统管理员 / 职位管理员 / 经理 / 拥有 module_perm:view 权限
   const u = userStore.currentUser
   if (!u) return false
-  return u.is_super_admin || u.is_admin
+  if (u.is_super_admin || u.is_admin) return true
+  return userStore.hasPermission('module_perm:view')
+})
+
+const canEditPerm = computed(() => {
+  const u = userStore.currentUser
+  if (!u) return false
+  if (u.is_super_admin || u.is_admin) return true
+  return userStore.hasPermission('module_perm:edit')
+})
+
+const canResetPerm = computed(() => {
+  const u = userStore.currentUser
+  if (!u) return false
+  if (u.is_super_admin || u.is_admin) return true
+  return userStore.hasPermission('module_perm:reset')
 })
 
 const defaultCount = computed(() => defaultModuleCodes.value.length)
-const customCount = computed(() =>
-  userList.value.filter(u => !u.is_super_admin && !u.is_default).length
-)
+const customCount = computed(() => customCountTotal.value)
 
 let searchDebounce = null
 const handleSearch = () => {
@@ -468,6 +823,7 @@ const fetchUsers = async () => {
     })
     userList.value = res.items || []
     total.value = res.total || 0
+    customCountTotal.value = typeof res.custom_count === 'number' ? res.custom_count : 0
   } catch (error) {
     console.error('获取用户模块权限列表失败:', error)
     if (error.response?.status === 403) {
@@ -496,6 +852,9 @@ const openEditDialog = async (user) => {
   selectedDeniedPermissions.value = []
   editTabActive.value = 'modules'
   permTabActive.value = 'allowed'
+  permKeyword.value = ''
+  permActiveNames.value = []
+  permExpandAll.value = false
   editDialogVisible.value = true
 
   // 拉取该用户的细分权限
@@ -514,6 +873,9 @@ const handleDialogClosed = () => {
   selectedModules.value = []
   selectedAllowedPermissions.value = []
   selectedDeniedPermissions.value = []
+  permKeyword.value = ''
+  permActiveNames.value = []
+  permExpandAll.value = false
 }
 
 const selectAll = () => {
@@ -609,6 +971,112 @@ onMounted(async () => {
   await fetchPermissions()
   await fetchUsers()
 })
+
+// ============================================================
+// 一键应用模板（针对单个用户）
+// ============================================================
+const applyDialogVisible = ref(false)
+const applyingToUser = ref(null)
+const availableTemplates = ref([])
+const selectedTemplateId = ref(null)
+const applyingTemplate = ref(false)
+
+const getSelectedTemplate = () => {
+  if (!selectedTemplateId.value) return null
+  return availableTemplates.value.find(t => t.id === selectedTemplateId.value) || null
+}
+
+const openApplyToUserDialog = async (row) => {
+  applyingToUser.value = row
+  selectedTemplateId.value = null
+  applyDialogVisible.value = true
+  // 加载模板列表（不包含完整内容，只用于选择）
+  try {
+    const res = await api.users.listPermissionTemplates({ include_content: true })
+    availableTemplates.value = (res.items || []).filter(t => t.is_active)
+  } catch (e) {
+    console.error('获取模板列表失败:', e)
+    ElMessage.error('获取模板列表失败')
+  }
+}
+
+const handleApplyDialogClosed = () => {
+  applyingToUser.value = null
+  selectedTemplateId.value = null
+  availableTemplates.value = []
+}
+
+const handleApplyTemplate = async () => {
+  if (!applyingToUser.value || !selectedTemplateId.value) return
+  try {
+    await ElMessageBox.confirm(
+      `确认将模板应用到用户 "${applyingToUser.value.username}"？该操作将覆盖其当前的模块和细分权限配置。`,
+      '应用确认',
+      { type: 'warning', confirmButtonText: '确认', cancelButtonText: '取消' }
+    )
+  } catch (e) {
+    return
+  }
+  applyingTemplate.value = true
+  try {
+    const res = await api.users.applyPermissionTemplate(selectedTemplateId.value, [applyingToUser.value.id])
+    const appliedCount = res.applied_count || 0
+    if (appliedCount > 0) {
+      ElMessage.success(`已成功应用模板 "${res.template_name || ''}" 到用户 ${applyingToUser.value.username}`)
+    } else {
+      ElMessage.warning('应用未生效（可能因系统管理员被跳过）')
+    }
+    applyDialogVisible.value = false
+    await fetchUsers()
+  } catch (e) {
+    console.error('应用模板失败:', e)
+    ElMessage.error(e.response?.data?.error || '应用失败')
+  } finally {
+    applyingTemplate.value = false
+  }
+}
+
+// ============================================================
+// 另存为模板
+// ============================================================
+const saveAsTplDialogVisible = ref(false)
+const saveAsTplForm = ref({ name: '', description: '', category: 'custom' })
+const savingAsTpl = ref(false)
+
+const openSaveAsTemplateDialog = () => {
+  if (!editingUser.value) return
+  saveAsTplForm.value = {
+    name: `${editingUser.value.username} 权限配置`,
+    description: `基于用户 ${editingUser.value.username} 的当前配置生成`,
+    category: 'custom'
+  }
+  saveAsTplDialogVisible.value = true
+}
+
+const handleSaveAsTemplate = async () => {
+  if (!saveAsTplForm.value.name || !saveAsTplForm.value.name.trim()) {
+    ElMessage.warning('请输入模板名称')
+    return
+  }
+  savingAsTpl.value = true
+  try {
+    await api.users.createPermissionTemplate({
+      name: saveAsTplForm.value.name.trim(),
+      description: saveAsTplForm.value.description,
+      category: saveAsTplForm.value.category,
+      modules: [...selectedModules.value],
+      allowed_permissions: [...selectedAllowedPermissions.value],
+      denied_permissions: [...selectedDeniedPermissions.value]
+    })
+    ElMessage.success('模板已保存')
+    saveAsTplDialogVisible.value = false
+  } catch (e) {
+    console.error('保存模板失败:', e)
+    ElMessage.error(e.response?.data?.error || '保存失败')
+  } finally {
+    savingAsTpl.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -943,11 +1411,76 @@ onMounted(async () => {
   line-height: 1.4;
 }
 
-.module-card-path {
+.perm-card-code {
   font-size: 11px;
   color: #94a3b8;
   font-family: 'Courier New', monospace;
   margin-top: 2px;
+}
+
+.perm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.perm-search {
+  flex: 1;
+  max-width: 360px;
+}
+
+.perm-quick-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 12px 0;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 8px;
+  border: 1px dashed #bae6fd;
+}
+
+.perm-collapse {
+  border: 1px solid #e0f2fe;
+  border-radius: 8px;
+  margin-top: 4px;
+  background: #fff;
+}
+
+.perm-collapse-item {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.perm-collapse-item:last-child {
+  border-bottom: none;
+}
+
+.perm-collapse-item :deep(.el-collapse-item__header) {
+  padding-left: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.perm-collapse-item :deep(.el-collapse-item__content) {
+  padding: 14px 16px;
+}
+
+.perm-collapse-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.perm-collapse-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0c4a6e;
+}
+
+.perm-count-tag {
+  font-family: 'Courier New', monospace;
 }
 
 .edit-tabs {
@@ -1037,5 +1570,105 @@ onMounted(async () => {
   font-size: 11px;
   color: #64748b;
   line-height: 1.4;
+}
+
+.apply-tpl-dialog {
+  padding: 0 4px;
+}
+
+.apply-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.06) 0%, rgba(14, 165, 233, 0.04) 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  margin-bottom: 12px;
+}
+
+.apply-user-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.apply-user-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0c4a6e;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.apply-user-meta {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.tpl-option {
+  padding: 4px 0;
+}
+
+.tpl-option-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #0c4a6e;
+}
+
+.tpl-option-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.tpl-option-meta {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.tpl-preview {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.tpl-preview h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #0c4a6e;
+}
+
+.tpl-preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tpl-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.tpl-preview-row b {
+  color: #0c4a6e;
+}
+
+.save-as-summary {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0c4a6e;
 }
 </style>

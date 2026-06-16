@@ -150,6 +150,9 @@
           <el-menu-item v-if="currentUser && isAdmin" index="/users/module-permissions" @click="closeMenu">
             <span>模块权限管理</span>
           </el-menu-item>
+          <el-menu-item v-if="currentUser && isAdmin" index="/users/permission-templates" @click="closeMenu">
+            <span>权限模板</span>
+          </el-menu-item>
         </el-sub-menu>
 
         <el-menu-item v-if="currentUser && hasModule('module:settings')" index="/settings" @click="closeMenu">

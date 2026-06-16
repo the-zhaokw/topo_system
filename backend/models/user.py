@@ -253,7 +253,7 @@ class Position(BaseModel):
     """职位模型"""
     __tablename__ = 'positions'
     __table_args__ = {'extend_existing': True}
-    
+
     name = Column(String(100), unique=True, nullable=False)
     description = Column(Text)
     permissions = Column(Text, default='[]')
@@ -371,16 +371,16 @@ class FocusSession(BaseModel):
 
 
 class HabitRecord(BaseModel):
-    """习惯记录模型"""
+    """涔犳儻璁板綍妯″瀷"""
     __tablename__ = 'habit_records'
     __table_args__ = {'extend_existing': True}
-    
+
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     task_id = Column(Integer, ForeignKey('personal_tasks.id'))
     completed_date = Column(Date, nullable=False)
     duration_minutes = Column(Integer)
     note = Column(String(200))
-    
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -391,3 +391,6 @@ class HabitRecord(BaseModel):
             'note': self.note,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+
+
+

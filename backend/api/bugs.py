@@ -10,6 +10,37 @@ from flask import Blueprint, request, jsonify, send_file, make_response
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from logging_decorators import log_api_call, log_business_operation
+from functools import wraps
+from enhanced_app import db as _app_db, User as _AppUser
+
+
+def _check_perm(user, perm_code):
+    if not user:
+        return False
+    if user.is_super_admin:
+        return True
+    pos = user.get_position_info()
+    if pos and (pos.is_admin or pos.is_manager):
+        return True
+    return user.check_permission(perm_code)
+
+
+def require_bug_permission(perm_code):
+    """缺陷子路由权限校验装饰器"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            user = _app_db.session.query(_AppUser).get(current_user_id)
+            if not user:
+                return jsonify({'error': '用户不存在'}), 404
+            if not _check_perm(user, perm_code):
+                return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}), 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import joinedload
 
@@ -267,6 +298,7 @@ def get_bugs():
 # 创建缺陷
 @bugs_bp.route('/', methods=['POST'])
 @jwt_required()
+@require_bug_permission('bug:create')
 def create_bug():
     """创建缺陷"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -565,6 +597,7 @@ def get_bug_by_id(bug_id):
 # 更新缺陷
 @bugs_bp.route('/<int:bug_id>', methods=['PUT'])
 @jwt_required()
+@require_bug_permission('bug:edit')
 def update_bug(bug_id):
     """更新缺陷"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -871,6 +904,7 @@ def update_bug(bug_id):
 # 更新缺陷状态
 @bugs_bp.route('/<int:bug_id>/status', methods=['PUT'])
 @jwt_required()
+@require_bug_permission('bug:update_status')
 def update_bug_status(bug_id):
     """更新缺陷状态"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -1171,6 +1205,7 @@ def transition_bug_status(bug_id):
 # 分配缺陷
 @bugs_bp.route('/<int:bug_id>/assign', methods=['PUT'])
 @jwt_required()
+@require_bug_permission('bug:assign')
 def assign_bug(bug_id):
     """分配缺陷"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -1414,6 +1449,7 @@ def export_bugs():
 # 删除缺陷
 @bugs_bp.route('/<int:bug_id>', methods=['DELETE'])
 @jwt_required()
+@require_bug_permission('bug:delete')
 def delete_bug(bug_id):
     """删除缺陷"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()

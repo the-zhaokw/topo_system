@@ -17,15 +17,15 @@
           </div>
         </div>
         <div class="header-actions">
-          <el-button class="btn-gradient" @click="$router.push('/bugs/new')">
+          <el-button class="btn-gradient" v-permission="'bug:create'" @click="$router.push('/bugs/new')">
             <el-icon><Plus /></el-icon>
             新建Bug
           </el-button>
-          <el-button class="btn-success-gradient" @click="handleExport">
+          <el-button class="btn-success-gradient" v-permission="'bug:export'" @click="handleExport">
             <el-icon><Download /></el-icon>
             导出缺陷
           </el-button>
-          <el-button class="btn-warning-gradient" @click="showImportDialog = true">
+          <el-button class="btn-warning-gradient" v-permission="'bug:import'" @click="showImportDialog = true">
             <el-icon><Upload /></el-icon>
             导入缺陷
           </el-button>
@@ -281,7 +281,7 @@
             <el-icon><Warning /></el-icon>
             批量修改严重程度
           </el-button>
-          <el-button type="danger" size="small" @click="handleBatchDelete" class="batch-btn">
+          <el-button type="danger" size="small" v-permission="'bug:delete'" @click="handleBatchDelete" class="batch-btn">
             <el-icon><Delete /></el-icon>
             批量删除
           </el-button>
@@ -480,10 +480,11 @@
               >
                 <el-icon><Check /></el-icon>标记解决
               </el-button>
-              <el-button 
-                type="danger" 
-                link 
-                size="small" 
+              <el-button
+                type="danger"
+                link
+                size="small"
+                v-permission="'bug:delete'"
                 @click="handleDelete(row)"
                 class="action-btn"
               >

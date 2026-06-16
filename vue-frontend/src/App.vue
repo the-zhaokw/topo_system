@@ -178,9 +178,13 @@
             <el-icon><List /></el-icon>
             <span>用户列表</span>
           </el-menu-item>
-          <el-menu-item v-if="currentUser && isAdmin" index="/users/module-permissions">
+          <el-menu-item v-if="currentUser && canManageModulePerms" index="/users/module-permissions">
             <el-icon><Lock /></el-icon>
             <span>模块权限管理</span>
+          </el-menu-item>
+          <el-menu-item v-if="currentUser && canManageTemplates" index="/users/permission-templates">
+            <el-icon><CollectionTag /></el-icon>
+            <span>权限模板</span>
           </el-menu-item>
         </el-sub-menu>
 
@@ -469,6 +473,26 @@ const currentRouteName = computed(() => {
 const currentUser = computed(() => userStore.currentUser)
 const isAdmin = computed(() => {
   return currentUser.value?.role === 'admin' || currentUser.value?.role === 'manager'
+})
+
+// 「模块权限管理」菜单可见性：
+//   - 系统管理员 / 职位管理员 / 经理：可见
+//   - 普通用户：必须有 module_perm:view 权限
+const canManageModulePerms = computed(() => {
+  const u = currentUser.value
+  if (!u) return false
+  if (u.is_super_admin || u.is_admin || u.role === 'admin' || u.role === 'manager') return true
+  return userStore.hasPermission('module_perm:view')
+})
+
+// 「权限模板」菜单可见性：
+//   - 系统管理员 / 职位管理员 / 经理：可见
+//   - 普通用户：必须有 template:view 权限
+const canManageTemplates = computed(() => {
+  const u = currentUser.value
+  if (!u) return false
+  if (u.is_super_admin || u.is_admin || u.role === 'admin' || u.role === 'manager') return true
+  return userStore.hasPermission('template:view')
 })
 
 /**

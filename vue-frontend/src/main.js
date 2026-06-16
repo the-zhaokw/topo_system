@@ -10,6 +10,7 @@ import './styles/mobile-utils.css'
 
 import App from './App.vue'
 import router from './router'
+import permissionDirective from './directives/permission'
 
 // 抑制 Chrome 扩展的非关键错误
 const originalConsoleError = console.error
@@ -52,6 +53,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(createPinia())
 app.use(router)
+app.use(permissionDirective)
 app.use(ElementPlus, {
   locale: zhCn,
 })

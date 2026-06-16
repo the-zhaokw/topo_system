@@ -17,11 +17,11 @@
           </div>
         </div>
         <div class="header-actions">
-          <el-button type="primary" @click="handlePunch" v-if="hasPunchPermission" class="btn-gradient">
+          <el-button type="primary" @click="handlePunch" v-if="hasPunchPermission" v-permission="['attendance:clock_in', 'attendance:clock_out']" class="btn-gradient">
             <el-icon><Timer /></el-icon>
             打卡
           </el-button>
-          <el-button @click="handleExport" v-if="hasManagePermission" class="btn-secondary">
+          <el-button @click="handleExport" v-if="hasManagePermission" v-permission="'attendance:export'" class="btn-secondary">
             <el-icon><Download /></el-icon>
             导出数据
           </el-button>

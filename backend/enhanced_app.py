@@ -381,31 +381,8 @@ class User(db.Model):
         return False
 
     def can(self, permission):
-        """检查用户是否具有特定权限 - 完全基于职位"""
-        if self.is_super_admin:
-            return True
-
-        position_info = self.get_position_info()
-        if position_info:
-            if position_info.is_admin or position_info.is_manager:
-                return True
-
-            import json
-            try:
-                perms = json.loads(position_info.permissions) if position_info.permissions else []
-                if permission in perms:
-                    return True
-            except:
-                pass
-
-        custom_perms = self.get_custom_permissions()
-        if permission_code in custom_perms.get('allowed', []):
-            return True
-
-        if permission_code in custom_perms.get('denied', []):
-            return False
-
-        return False
+        """检查用户是否具有特定权限 - 综合考虑职位权限和自定义额外/限制权限"""
+        return self.check_permission(permission)
 
     def get_custom_permissions(self):
         """获取用户的自定义权限"""

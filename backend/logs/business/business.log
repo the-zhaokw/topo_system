@@ -1278,3 +1278,15 @@
 2026-06-16 16:57:30,177 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
 2026-06-16 16:57:32,259 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
 2026-06-16 16:57:32,297 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 2, 'new_bugs': 1, 'fixed_bugs': 8, 'active_projects': 3, 'days': 30}
+2026-06-16 18:32:32,425 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-06-16 18:32:32,640 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 2, 'new_bugs': 1, 'fixed_bugs': 8, 'active_projects': 3, 'days': 30}
+2026-06-16 18:34:01,523 - enhanced_business - INFO - user_module_permissions_updated - USER:1 - {'target_user_id': 18, 'username': 'zhaokangwei', 'modules': ['module:dashboard', 'module:todo', 'module:plan', 'module:attendance', 'module:project', 'module:bug', 'module:requirement', 'module:test', 'module:risk', 'module:material', 'module:contract', 'module:department', 'module:settings', 'module:activity', 'module:knowledge'], 'reset_to_default': False}
+2026-06-16 18:42:18,911 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 50, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 18:44:54,042 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 18:51:43,395 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 18:54:53,414 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 18:54:59,098 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 18:55:15,453 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 18:59:42,176 - enhanced_business - INFO - users_listed - USER:1 - {'total_users': 15, 'page': 1, 'per_page': 20, 'filtered_by_department': None, 'search_term': ''}
+2026-06-16 19:14:03,479 - enhanced_business - INFO - projects_listed - USER:1 - {'total_projects': 3, 'page': 1, 'per_page': 20, 'filtered_by_status': None, 'filtered_by_manager': None, 'search_term': '', 'only_my_projects': False}
+2026-06-16 19:14:03,738 - enhanced_business - INFO - 获取仪表盘统计 - USER:1 - {'my_bugs': 2, 'new_bugs': 1, 'fixed_bugs': 8, 'active_projects': 3, 'days': 30}

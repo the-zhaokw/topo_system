@@ -210,7 +210,15 @@ export const apiService = {
     listUsersModulePermissions: (params = {}) => api.get('/users/module-permissions/users', { params }),
     getUserModulePermissions: (userId) => api.get(`/users/${userId}/module-permissions`),
     updateUserModulePermissions: (userId, modules, allowed = [], denied = []) => api.put(`/users/${userId}/module-permissions`, { modules, allowed, denied }),
-    resetUserModulePermissions: (userId) => api.post(`/users/${userId}/module-permissions/reset`)
+    resetUserModulePermissions: (userId) => api.post(`/users/${userId}/module-permissions/reset`),
+
+    // 权限模板管理
+    listPermissionTemplates: (params = {}) => api.get('/users/permission-templates', { params }),
+    getPermissionTemplate: (id) => api.get(`/users/permission-templates/${id}`),
+    createPermissionTemplate: (data) => api.post('/users/permission-templates', data),
+    updatePermissionTemplate: (id, data) => api.put(`/users/permission-templates/${id}`, data),
+    deletePermissionTemplate: (id) => api.delete(`/users/permission-templates/${id}`),
+    applyPermissionTemplate: (id, userIds) => api.post(`/users/permission-templates/${id}/apply`, { user_ids: userIds })
   },
 
   // 通用模块

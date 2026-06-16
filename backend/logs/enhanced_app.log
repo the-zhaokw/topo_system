@@ -16387,3 +16387,531 @@ AttributeError: 'User' object has no attribute 'get_accessible_modules'
 2026-06-16 16:57:32,271 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 54.47ms
 2026-06-16 16:57:32,300 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-06-16 16:57:32,301 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 87.12ms
+2026-06-16 18:32:25,142 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 18:32:25,161 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 18:32:25,162 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 18:32:25,164 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 18:32:25,164 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 18:32:25,164 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 18:32:25,399 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 18:32:25,400 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 18:32:32,179 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 18:32:32,179 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 18:32:32,202 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 18:32:32,220 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 18:32:32,469 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 18:32:32,484 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 263.45ms
+2026-06-16 18:32:32,642 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 18:32:32,642 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 463.01ms
+2026-06-16 18:34:01,406 - enhanced_app - INFO - API Call Start: api.users.update_user_module_permissions - Method: PUT - Path: /api/users/18/module-permissions
+2026-06-16 18:34:01,407 - enhanced_app - INFO - Business Operation Start: api.users.update_user_module_permissions
+2026-06-16 18:34:01,524 - enhanced_app - INFO - log - 用户ID: 1, 操作: update_user_module_permissions, 资源类型: user, 资源ID: 18, 详情: {'username': 'zhaokangwei', 'modules': ['module:dashboard', 'module:todo', 'module:plan', 'module:attendance', 'module:project', 'module:bug', 'module:requirement', 'module:test', 'module:risk', 'module:material', 'module:contract', 'module:department', 'module:settings', 'module:activity', 'module:knowledge']}, IP: None
+2026-06-16 18:34:01,524 - enhanced_app - INFO - Business Operation Complete: api.users.update_user_module_permissions
+2026-06-16 18:34:01,524 - enhanced_app - INFO - API Call Complete: api.users.update_user_module_permissions - Status: Success - Duration: 116.74ms
+2026-06-16 18:34:47,605 - enhanced_app - INFO - API Call Start: api.users.reset_user_module_permissions - Method: POST - Path: /api/users/18/module-permissions/reset
+2026-06-16 18:34:47,786 - enhanced_app - INFO - log - 用户ID: 1, 操作: reset_user_module_permissions, 资源类型: user, 资源ID: 18, 详情: {'username': 'zhaokangwei'}, IP: None
+2026-06-16 18:34:47,787 - enhanced_app - INFO - API Call Complete: api.users.reset_user_module_permissions - Status: Success - Duration: 181.97ms
+2026-06-16 18:42:18,896 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:42:18,898 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:42:18,911 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:42:18,912 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.40ms
+2026-06-16 18:44:54,023 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:44:54,027 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:44:54,043 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:44:54,043 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.69ms
+2026-06-16 18:51:43,383 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:51:43,386 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:51:43,396 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:51:43,396 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 10.11ms
+2026-06-16 18:54:53,403 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:54:53,403 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:54:53,416 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:54:53,417 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.13ms
+2026-06-16 18:54:59,084 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:54:59,085 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:54:59,101 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:54:59,102 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.85ms
+2026-06-16 18:55:15,438 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:55:15,443 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:55:15,456 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:55:15,456 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.59ms
+2026-06-16 18:57:28,930 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 18:57:39,506 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 18:57:48,002 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 18:57:50,541 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 18:57:50,861 - enhanced_app - ERROR - App unhandled exception: reverse_property 'user' on relationship User.projects references relationship ProjectMember.user, which does not reference mapper Mapper[User(users)]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 2715, in list_permission_templates
+    current_user = db.session.query(User).get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2190, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 293, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 516, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_clauseelement
+    compiled_sql, extracted_params, cache_hit = elem._compile_w_cache(
+                                                ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 704, in _compile_w_cache
+    compiled_sql = self._compiler(
+                   ^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 316, in _compiler
+    return dialect.statement_compiler(dialect, self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 1426, in __init__
+    Compiled.__init__(self, dialect, statement, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 867, in __init__
+    self.string = self.process(self.statement, **compile_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 912, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\visitors.py", line 143, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 4590, in visit_select
+    compile_state = select_stmt._compile_state_factory(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\base.py", line 687, in create_for_statement
+    return klass.create_for_statement(statement, compiler, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 1091, in create_for_statement
+    _QueryEntity.to_compile_state(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 2537, in to_compile_state
+    _MapperEntity(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 2635, in __init__
+    self._with_polymorphic_mappers = ext_info.with_polymorphic_mappers
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2690, in _with_polymorphic_mappers
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4240, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2403, in _post_configure_properties
+    prop.init()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\interfaces.py", line 579, in init
+    self.do_init()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\relationships.py", line 1640, in do_init
+    self._generate_backref()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\relationships.py", line 2129, in _generate_backref
+    self._add_reverse_property(self.back_populates)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\relationships.py", line 1595, in _add_reverse_property
+    raise sa_exc.ArgumentError(
+sqlalchemy.exc.ArgumentError: reverse_property 'user' on relationship User.projects references relationship ProjectMember.user, which does not reference mapper Mapper[User(users)]
+
+2026-06-16 18:57:50,870 - enhanced_app - ERROR - App unhandled exception: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: reverse_property 'user' on relationship User.projects references relationship ProjectMember.user, which does not reference mapper Mapper[User(users)]
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 2776, in create_permission_template
+    current_user = db.session.query(User).get(current_user_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\deprecations.py", line 386, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1136, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\query.py", line 1145, in _get_impl
+    return self.session._get_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 3833, in _get_impl
+    return db_load_fn(
+           ^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\loading.py", line 690, in load_on_pk_identity
+    session.execute(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\session.py", line 2190, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 293, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 516, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_clauseelement
+    compiled_sql, extracted_params, cache_hit = elem._compile_w_cache(
+                                                ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 704, in _compile_w_cache
+    compiled_sql = self._compiler(
+                   ^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\elements.py", line 316, in _compiler
+    return dialect.statement_compiler(dialect, self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 1426, in __init__
+    Compiled.__init__(self, dialect, statement, **kwargs)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 867, in __init__
+    self.string = self.process(self.statement, **compile_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 912, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\visitors.py", line 143, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\compiler.py", line 4590, in visit_select
+    compile_state = select_stmt._compile_state_factory(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\sql\base.py", line 687, in create_for_statement
+    return klass.create_for_statement(statement, compiler, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 1091, in create_for_statement
+    _QueryEntity.to_compile_state(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 2537, in to_compile_state
+    _MapperEntity(
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\context.py", line 2635, in __init__
+    self._with_polymorphic_mappers = ext_info.with_polymorphic_mappers
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1260, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2690, in _with_polymorphic_mappers
+    self._check_configure()
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2386, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4199, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "D:\Achenxiao\test\python\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4236, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[User(users)]'. Original exception was: reverse_property 'user' on relationship User.projects references relationship ProjectMember.user, which does not reference mapper Mapper[User(users)]
+
+2026-06-16 18:58:29,823 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 18:59:11,535 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 18:59:21,982 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 18:59:32,328 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 18:59:42,168 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 18:59:42,169 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 18:59:42,176 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 18:59:42,178 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 9.05ms
+2026-06-16 18:59:53,979 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:00:34,333 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:00:44,979 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:00:54,309 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:01:27,619 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:01:44,260 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:02:16,747 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:09:09,229 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 19:09:09,231 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 19:09:09,231 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 19:09:09,233 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 19:09:09,233 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 19:09:09,233 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 19:09:09,436 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 19:09:09,436 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 19:09:09,673 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 19:09:35,533 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 19:09:35,534 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 19:09:35,535 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 19:09:35,537 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 19:09:35,537 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 19:09:35,537 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 19:09:35,758 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 19:09:35,758 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 19:09:36,008 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 19:09:36,331 - enhanced_app - INFO - log - 用户ID: 1, 操作: apply_permission_template, 资源类型: permission_template, 资源ID: 1, 详情: {'template_name': '新人默认模板', 'applied_user_ids': [2, 3, 4], 'skipped': []}, IP: None
+2026-06-16 19:10:10,226 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 19:10:10,228 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 19:10:10,230 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 19:10:10,231 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 19:10:10,232 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 19:10:10,232 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 19:10:10,497 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 19:10:10,497 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 19:10:10,791 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 19:10:11,385 - enhanced_app - INFO - log - 用户ID: 1, 操作: apply_permission_template, 资源类型: permission_template, 资源ID: 6, 详情: {'template_name': 'TEST_自定义模板_001', 'applied_user_ids': [2], 'skipped': []}, IP: None
+2026-06-16 19:13:10,313 - enhanced_app - ERROR - App unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2026-06-16 19:13:26,417 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 19:13:26,419 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 19:13:26,420 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 19:13:26,421 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 19:13:26,421 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 19:13:26,421 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 19:13:26,682 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 19:13:26,683 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 19:14:03,291 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 19:14:03,294 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 19:14:03,298 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 19:14:03,301 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 19:14:03,495 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 19:14:03,695 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 393.19ms
+2026-06-16 19:14:03,739 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 19:14:03,740 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 442.16ms
+2026-06-16 19:14:35,849 - enhanced_app - INFO - log - 用户ID: 1, 操作: apply_permission_template, 资源类型: permission_template, 资源ID: 6, 详情: {'template_name': '测试', 'applied_user_ids': [2], 'skipped': []}, IP: None

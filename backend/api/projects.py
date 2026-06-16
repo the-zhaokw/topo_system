@@ -3,8 +3,38 @@ from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
 import logging
+from functools import wraps
 from logging_config import get_log_manager
 from logging_decorators import log_api_call, log_business_operation
+from enhanced_app import db as _proj_db, User as _ProjUser
+
+
+def _check_proj_perm(user, perm_code):
+    if not user:
+        return False
+    if user.is_super_admin:
+        return True
+    pos = user.get_position_info()
+    if pos and (pos.is_admin or pos.is_manager):
+        return True
+    return user.check_permission(perm_code)
+
+
+def require_project_permission(perm_code):
+    """项目子路由权限校验装饰器"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            user = _proj_db.session.query(_ProjUser).get(current_user_id)
+            if not user:
+                return jsonify({'error': '用户不存在'}), 404
+            if not _check_proj_perm(user, perm_code):
+                return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}), 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
 
 logger = logging.getLogger(__name__)
 
@@ -385,6 +415,7 @@ def get_project(project_id):
 @log_api_call
 @log_business_operation
 @jwt_required()
+@require_project_permission('project:create')
 def create_project():
     log_manager = get_log_manager_safe()
 
@@ -637,6 +668,7 @@ def create_project():
 @log_api_call
 @log_business_operation
 @jwt_required()
+@require_project_permission('project:edit')
 def update_project(project_id):
     log_manager = get_log_manager_safe()
 
@@ -1371,6 +1403,8 @@ def remove_project_member(project_id, member_id):
 @projects_bp.route('/<int:project_id>', methods=['DELETE'])
 @log_api_call
 @log_business_operation
+@jwt_required()
+@require_project_permission('project:delete')
 def delete_project(project_id):
     log_manager = get_log_manager_safe()
 

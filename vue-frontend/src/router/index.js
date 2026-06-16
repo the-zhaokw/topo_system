@@ -423,6 +423,12 @@ const routes = [
         name: 'UserModulePermissions',
         component: () => import('@/views/ModulePermissions.vue'),
         meta: { requiresAuth: true, allowedRoles: ['admin', 'manager'] }
+      },
+      {
+        path: 'permission-templates',
+        name: 'UserPermissionTemplates',
+        component: () => import('@/views/PermissionTemplates.vue'),
+        meta: { requiresAuth: true, allowedRoles: ['admin', 'manager'] }
       }
     ]
   },
@@ -609,6 +615,10 @@ const permissionConfig = {
   '/users/module-permissions': {
     allowedRoles: ['admin', 'manager'],
     errorMessage: '权限不足，只有管理员可以访问模块权限管理页面'
+  },
+  '/users/permission-templates': {
+    allowedRoles: ['admin', 'manager'],
+    errorMessage: '权限不足，只有管理员可以访问权限模板管理页面'
   },
   '/users': {
     allowedRoles: ['admin', 'manager'],

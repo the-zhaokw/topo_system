@@ -20,9 +20,38 @@ def get_create_audit_log():
     from enhanced_app import create_audit_log
     return create_audit_log
 
-def get_require_permission():
-    from enhanced_app import require_permission
-    return require_permission
+def require_permission(perm_code):
+    """考勤子路由权限校验装饰器
+
+    用法：@require_permission(PermissionCodes.CLOCK_IN)
+    规则：
+        - 系统管理员（is_super_admin）放行
+        - 职位是 admin/manager 放行
+        - 否则必须 check_permission(perm_code) 为 True，否则 403
+    """
+    from functools import wraps
+    from flask import jsonify as _jsonify
+    from models.permissions import PermissionCodes
+
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            db = get_db()
+            from enhanced_app import User
+            current_user_id = get_jwt_identity()
+            user = db.session.query(User).get(current_user_id)
+            if not user:
+                return _jsonify({'error': '用户不存在'}), 404
+            if user.is_super_admin:
+                return f(*args, **kwargs)
+            position_info = user.get_position_info()
+            if position_info and (position_info.is_admin or position_info.is_manager):
+                return f(*args, **kwargs)
+            if not user.check_permission(perm_code):
+                return _jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}), 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
 
 def get_models():
     from enhanced_app import (
@@ -181,6 +210,7 @@ def get_attendance_records():
 # 打卡
 @attendance_bp.route('/clock-in', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:clock_in')
 def clock_in():
     """上班打卡"""
     db = get_db()
@@ -268,6 +298,7 @@ def clock_in():
 # 下班打卡
 @attendance_bp.route('/clock-out', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:clock_out')
 def clock_out():
     """下班打卡"""
     db = get_db()
@@ -451,8 +482,9 @@ def get_leave_applications():
 # 创建请假申请
 @attendance_bp.route('/leave-applications', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:leave_apply')
 def create_leave_application():
-    """创建请假申请"""
+    """提交请假申请"""
     db = get_db()
     logger = get_logger()
     create_audit_log = get_create_audit_log()
@@ -656,6 +688,7 @@ def get_overtime_applications():
 # 创建加班申请
 @attendance_bp.route('/overtime', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:overtime_apply')
 def create_overtime_application():
     """创建加班申请"""
     db = get_db()
@@ -740,6 +773,7 @@ def create_overtime_application():
 # 审批/拒绝加班申请
 @attendance_bp.route('/overtime-applications/<int:application_id>/approve', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:overtime_approve')
 def approve_overtime_application(application_id):
     """审批/拒绝加班申请（action=approve|reject）"""
     db = get_db()
@@ -822,6 +856,7 @@ def get_shifts():
 # 创建班次
 @attendance_bp.route('/shifts', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:shift_manage')
 def create_shift():
     """创建班次"""
     db = get_db()
@@ -1047,6 +1082,7 @@ def get_user_shifts():
 # 批量创建用户排班
 @attendance_bp.route('/user-shifts/batch', methods=['POST'])
 @jwt_required()
+@require_permission('attendance:user_shift_assign')
 def create_user_shifts_batch():
     """批量为多个用户在日期范围内创建/更新排班"""
     db = get_db()
@@ -1368,6 +1404,7 @@ def get_statistics():
 # 获取报告概览
 @attendance_bp.route('/reports/overview', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:report')
 def get_reports_overview():
     """获取考勤报告概览"""
     db = get_db()
