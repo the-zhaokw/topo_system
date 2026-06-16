@@ -2,6 +2,25 @@ from datetime import datetime
 
 class PermissionCodes:
     """权限代码常量类"""
+    # 顶层模块（侧边栏大功能）权限码：控制用户能看到哪些一级菜单
+    MODULE_DASHBOARD = 'module:dashboard'
+    MODULE_PROJECT = 'module:project'
+    MODULE_BUG = 'module:bug'
+    MODULE_ATTENDANCE = 'module:attendance'
+    MODULE_MATERIAL = 'module:material'
+    MODULE_CONTRACT = 'module:contract'
+    MODULE_USER = 'module:user'
+    MODULE_SETTINGS = 'module:settings'
+    MODULE_ACTIVITY = 'module:activity'
+    MODULE_KNOWLEDGE = 'module:knowledge'
+    MODULE_MONITORING = 'module:monitoring'
+    MODULE_TEST = 'module:test'
+    MODULE_REQUIREMENT = 'module:requirement'
+    MODULE_RISK = 'module:risk'
+    MODULE_TODO = 'module:todo'
+    MODULE_PLAN = 'module:plan'
+    MODULE_DEPARTMENT = 'module:department'
+
     SYSTEM_ADMIN = 'system:admin'
 
     USER_VIEW = 'user:view'
@@ -209,5 +228,157 @@ DEFAULT_ROLES = {
         ]
     }
 }
+
+
+# 系统中所有的大功能模块（与侧边栏菜单一一对应）
+# 用于在「模块权限管理」页面中给管理员勾选用户可见的功能
+MODULE_CATALOG = [
+    {
+        'code': PermissionCodes.MODULE_DASHBOARD,
+        'name': '个人工作台',
+        'icon': 'House',
+        'path': '/dashboard',
+        'description': '个人工作台、待办、计划等',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_TODO,
+        'name': '个人待办',
+        'icon': 'List',
+        'path': '/my-todos',
+        'description': '个人待办事项管理',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_PLAN,
+        'name': '个人计划',
+        'icon': 'Calendar',
+        'path': '/personal-plan',
+        'description': '个人工作计划',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_ATTENDANCE,
+        'name': '考勤管理',
+        'icon': 'Clock',
+        'path': '/attendance',
+        'description': '考勤管理系统（打卡、请假、加班等）',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_PROJECT,
+        'name': '项目管理',
+        'icon': 'Folder',
+        'path': '/projects',
+        'description': '项目列表、统计、自定义报表',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_BUG,
+        'name': '缺陷管理',
+        'icon': 'Document',
+        'path': '/bugs',
+        'description': '缺陷列表、缺陷统计',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_REQUIREMENT,
+        'name': '需求管理',
+        'icon': 'Tickets',
+        'path': '/requirements',
+        'description': '需求文档管理、跟踪矩阵等',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_TEST,
+        'name': '测试管理',
+        'icon': 'MagicStick',
+        'path': '/test-management',
+        'description': '测试集、用例、执行、报告',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_RISK,
+        'name': '风险管理',
+        'icon': 'Warning',
+        'path': '/risks',
+        'description': '项目风险、问题跟踪',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_MATERIAL,
+        'name': '物料管理',
+        'icon': 'Box',
+        'path': '/materials',
+        'description': '物料分类、仓库、库存、序列号等',
+        'default': False
+    },
+    {
+        'code': PermissionCodes.MODULE_CONTRACT,
+        'name': '合同管理',
+        'icon': 'Document',
+        'path': '/contracts',
+        'description': '合同列表、合同统计',
+        'default': False
+    },
+    {
+        'code': PermissionCodes.MODULE_USER,
+        'name': '用户管理',
+        'icon': 'User',
+        'path': '/users',
+        'description': '用户、部门、职位、模块权限',
+        'default': False
+    },
+    {
+        'code': PermissionCodes.MODULE_DEPARTMENT,
+        'name': '我的部门',
+        'icon': 'OfficeBuilding',
+        'path': '/my-department',
+        'description': '我的部门成员',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_SETTINGS,
+        'name': '系统设置',
+        'icon': 'Setting',
+        'path': '/settings',
+        'description': '系统参数与配置',
+        'default': False
+    },
+    {
+        'code': PermissionCodes.MODULE_ACTIVITY,
+        'name': '活动记录',
+        'icon': 'Clock',
+        'path': '/activities',
+        'description': '系统活动记录',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_KNOWLEDGE,
+        'name': '知识库',
+        'icon': 'Reading',
+        'path': '/knowledge',
+        'description': '知识库文章管理',
+        'default': True
+    },
+    {
+        'code': PermissionCodes.MODULE_MONITORING,
+        'name': '系统监控',
+        'icon': 'Monitor',
+        'path': '/monitoring',
+        'description': '系统运行监控',
+        'default': False
+    }
+]
+
+
+def get_module_catalog():
+    """获取大功能模块目录"""
+    return MODULE_CATALOG
+
+
+def get_default_accessible_modules():
+    """获取默认应可见的模块权限码列表"""
+    return [m['code'] for m in MODULE_CATALOG if m.get('default', False)]
 
 

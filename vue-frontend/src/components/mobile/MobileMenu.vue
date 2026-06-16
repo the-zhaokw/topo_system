@@ -23,7 +23,7 @@
           <span>个人工作台</span>
         </el-menu-item>
 
-        <el-sub-menu index="projects">
+        <el-sub-menu v-if="currentUser && hasModule('module:project')" index="projects">
           <template #title>
             <el-icon><Folder /></el-icon>
             <span>项目管理</span>
@@ -39,7 +39,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="bugs">
+        <el-sub-menu v-if="currentUser && hasModule('module:bug')" index="bugs">
           <template #title>
             <el-icon><Ticket /></el-icon>
             <span>缺陷管理</span>
@@ -52,7 +52,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="attendance">
+        <el-sub-menu v-if="currentUser && hasModule('module:attendance')" index="attendance">
           <template #title>
             <el-icon><Calendar /></el-icon>
             <span>考勤管理系统</span>
@@ -80,7 +80,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="materials" v-if="currentUser && hasMaterialManagePermission">
+        <el-sub-menu v-if="currentUser && hasModule('module:material')" index="materials">
           <template #title>
             <el-icon><Box /></el-icon>
             <span>物料管理系统</span>
@@ -111,7 +111,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="contracts" v-if="currentUser && hasContractManagePermission">
+        <el-sub-menu v-if="currentUser && hasModule('module:contract')" index="contracts">
           <template #title>
             <el-icon><Document /></el-icon>
             <span>合同管理系统</span>
@@ -124,27 +124,35 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-menu-item index="/activities" @click="closeMenu">
+        <el-menu-item v-if="currentUser && hasModule('module:activity')" index="/activities" @click="closeMenu">
           <el-icon><Clock /></el-icon>
           <span>活动记录</span>
         </el-menu-item>
 
-        <el-menu-item index="/knowledge" @click="closeMenu">
+        <el-menu-item v-if="currentUser && hasModule('module:knowledge')" index="/knowledge" @click="closeMenu">
           <el-icon><Reading /></el-icon>
           <span>知识库</span>
         </el-menu-item>
 
-        <el-menu-item index="/monitoring" @click="closeMenu">
+        <el-menu-item v-if="currentUser && hasModule('module:monitoring')" index="/monitoring" @click="closeMenu">
           <el-icon><Monitor /></el-icon>
           <span>系统监控</span>
         </el-menu-item>
 
-        <el-menu-item v-if="currentUser && isAdmin" index="/users" @click="closeMenu">
-          <el-icon><UserFilled /></el-icon>
-          <span>用户管理</span>
-        </el-menu-item>
+        <el-sub-menu v-if="currentUser && hasModule('module:user')" index="users">
+          <template #title>
+            <el-icon><UserFilled /></el-icon>
+            <span>用户管理</span>
+          </template>
+          <el-menu-item index="/users/list" @click="closeMenu">
+            <span>用户列表</span>
+          </el-menu-item>
+          <el-menu-item v-if="currentUser && isAdmin" index="/users/module-permissions" @click="closeMenu">
+            <span>模块权限管理</span>
+          </el-menu-item>
+        </el-sub-menu>
 
-        <el-menu-item v-if="currentUser && isAdmin" index="/settings" @click="closeMenu">
+        <el-menu-item v-if="currentUser && hasModule('module:settings')" index="/settings" @click="closeMenu">
           <el-icon><Setting /></el-icon>
           <span>系统设置</span>
         </el-menu-item>
@@ -174,6 +182,20 @@ const currentUser = computed(() => userStore.currentUser)
 const isAdmin = computed(() => {
   return currentUser.value?.role === 'admin' || currentUser.value?.role === 'manager'
 })
+
+/**
+ * 判断当前用户是否可访问指定大功能模块
+ */
+const hasModule = (moduleCode) => {
+  const u = currentUser.value
+  if (!u) return false
+  if (u.is_super_admin || u.is_admin) return true
+  const list = u.accessible_modules
+  if (Array.isArray(list)) {
+    return list.includes(moduleCode)
+  }
+  return false
+}
 
 const hasAttendanceManagePermission = computed(() => {
   return currentUser.value?.role === 'admin' || currentUser.value?.role === 'manager' || currentUser.value?.role === 'project_manager' || currentUser.value?.role === 'hr' || currentUser.value?.role === 'department_manager'

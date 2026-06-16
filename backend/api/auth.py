@@ -326,7 +326,8 @@ def login():
                         'status': user.status or 'online',
                         'created_at': user.created_at.isoformat() if user.created_at else None,
                         'updated_at': user.updated_at.isoformat() if user.updated_at else None,
-                        'last_login': user.last_login.isoformat() if user.last_login else None
+                        'last_login': user.last_login.isoformat() if user.last_login else None,
+                        'accessible_modules': user.get_accessible_modules()
                     }
                 }
             }), 200
@@ -388,7 +389,8 @@ def get_current_user():
                     'status': user.status or 'online',
                     'created_at': user.created_at.isoformat() if user.created_at else None,
                     'updated_at': user.updated_at.isoformat() if user.updated_at else None,
-                    'last_login': user.last_login.isoformat() if user.last_login else None
+                    'last_login': user.last_login.isoformat() if user.last_login else None,
+                    'accessible_modules': user.get_accessible_modules()
                 }
             }
         }), 200

@@ -2402,3 +2402,317 @@ def get_my_department():
         response_data['message'] = '您不是部门经理，无法查看部门员工列表'
 
     return jsonify(response_data), 200
+
+
+# ==================== 大功能模块（侧边栏一级菜单）可见性管理 ====================
+
+def _module_codes():
+    """获取所有大功能模块编码集合（用于校验入参）"""
+    from models.permissions import get_module_catalog
+    return {m['code'] for m in get_module_catalog()}
+
+
+def _serialize_module(module):
+    """序列化单个模块信息"""
+    return {
+        'code': module['code'],
+        'name': module['name'],
+        'icon': module.get('icon', ''),
+        'path': module.get('path', ''),
+        'description': module.get('description', ''),
+        'default': module.get('default', False)
+    }
+
+
+@users_bp.route('/module-permissions/catalog', methods=['GET'])
+@jwt_required()
+def get_module_permissions_catalog():
+    """获取系统所有的大功能模块列表（用于配置页面的选项）"""
+    db = get_db()
+    User, _, _, _ = get_models()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    # 仅管理员可见
+    position_info = current_user.get_position_info()
+    if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
+        return jsonify({'error': '权限不足'}), 403
+
+    from models.permissions import get_module_catalog
+    modules = [_serialize_module(m) for m in get_module_catalog()]
+    return jsonify({'modules': modules}), 200
+
+
+@users_bp.route('/module-permissions/users', methods=['GET'])
+@jwt_required()
+def list_users_module_permissions():
+    """获取用户的模块可见性概览列表
+
+    Query 参数:
+        keyword: 模糊搜索用户名/邮箱
+        page, per_page: 分页
+    """
+    db = get_db()
+    User, _, _, _ = get_models()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    position_info = current_user.get_position_info()
+    if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
+        return jsonify({'error': '权限不足'}), 403
+
+    from models.permissions import get_module_catalog
+    catalog = get_module_catalog()
+    total_module_count = len(catalog)
+
+    keyword = request.args.get('keyword', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+
+    query = User.query
+    if keyword:
+        query = query.filter(
+            (User.username.contains(keyword)) |
+            (User.email.contains(keyword)) |
+            (User.first_name.contains(keyword)) |
+            (User.last_name.contains(keyword))
+        )
+
+    pagination = query.order_by(User.id.asc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+
+    items = []
+    for user in pagination.items:
+        accessible = user.get_accessible_modules()
+        is_admin_user = user.is_system_admin()
+        items.append({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'position': user.position,
+            'department': user.department,
+            'is_active': user.is_active,
+            'is_super_admin': user.is_super_admin,
+            'is_admin': is_admin_user,
+            'accessible_modules': accessible,
+            'accessible_count': len(accessible),
+            'total_module_count': total_module_count,
+            'is_default': not bool(user.accessible_modules)
+        })
+
+    return jsonify({
+        'items': items,
+        'total': pagination.total,
+        'page': pagination.page,
+        'pages': pagination.pages,
+        'per_page': pagination.per_page
+    }), 200
+
+
+@users_bp.route('/<int:user_id>/module-permissions', methods=['GET'])
+@jwt_required()
+def get_user_module_permissions(user_id):
+    """获取指定用户的可访问模块（含全量模块信息）和细分权限（额外/限制）"""
+    db = get_db()
+    User, _, _, _ = get_models()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    position_info = current_user.get_position_info()
+    if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
+        return jsonify({'error': '权限不足'}), 403
+
+    target_user = db.session.query(User).get(user_id)
+    if not target_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    from models.permissions import get_module_catalog
+    catalog = get_module_catalog()
+    accessible = set(target_user.get_accessible_modules())
+    modules = []
+    for m in catalog:
+        item = _serialize_module(m)
+        item['accessible'] = m['code'] in accessible
+        modules.append(item)
+
+    custom_perms = target_user.get_custom_permissions() or {}
+    return jsonify({
+        'user_id': user_id,
+        'username': target_user.username,
+        'is_super_admin': target_user.is_super_admin,
+        'is_admin': target_user.is_system_admin(),
+        'is_default': not bool(target_user.accessible_modules),
+        'modules': modules,
+        'custom_permissions': {
+            'allowed': custom_perms.get('allowed', []) or [],
+            'denied': custom_perms.get('denied', []) or []
+        }
+    }), 200
+
+
+@users_bp.route('/<int:user_id>/module-permissions', methods=['PUT'])
+@log_api_call
+@log_business_operation
+@jwt_required()
+def update_user_module_permissions(user_id):
+    """更新指定用户的可访问模块和细分权限
+
+    Body:
+        {
+            "modules": ["module:project", "module:bug", ...],   // 可见模块编码
+            "allowed": ["attendance:view", ...],                 // 额外权限
+            "denied": ["attendance:leave_approve", ...]          // 限制权限
+        }
+    """
+    db, User, _, create_audit_log = get_db_and_models()
+
+    data = request.get_json() or {}
+    modules = data.get('modules', [])
+
+    if not isinstance(modules, list):
+        return jsonify({'error': 'modules 字段必须为列表'}), 400
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    position_info = current_user.get_position_info()
+    if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
+        return jsonify({'error': '权限不足'}), 403
+
+    target_user = db.session.query(User).get(user_id)
+    if not target_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    # 系统管理员本身始终拥有所有模块，配置无效
+    if target_user.is_super_admin:
+        return jsonify({'error': '系统管理员默认拥有所有模块，无需配置'}), 400
+
+    valid_codes = _module_codes()
+    invalid = [m for m in modules if m not in valid_codes]
+    if invalid:
+        return jsonify({'error': f'包含无效的模块编码: {", ".join(invalid)}'}), 400
+
+    # 处理细分权限
+    allowed_perms = data.get('allowed', None)
+    denied_perms = data.get('denied', None)
+    if allowed_perms is not None and not isinstance(allowed_perms, list):
+        return jsonify({'error': 'allowed 字段必须为列表'}), 400
+    if denied_perms is not None and not isinstance(denied_perms, list):
+        return jsonify({'error': 'denied 字段必须为列表'}), 400
+
+    # 空数组视为重置为系统默认
+    target_user.set_accessible_modules(modules)
+
+    # 合并保存细分权限：未传 allowed/denied 时保留原有值
+    if allowed_perms is not None or denied_perms is not None:
+        existing = target_user.get_custom_permissions() or {}
+        new_custom = {
+            'allowed': list(allowed_perms) if allowed_perms is not None else list(existing.get('allowed', []) or []),
+            'denied': list(denied_perms) if denied_perms is not None else list(existing.get('denied', []) or [])
+        }
+        target_user.set_custom_permissions(new_custom)
+
+    try:
+        db.session.commit()
+
+        try:
+            log_manager = get_log_manager()
+            log_manager.log_business(
+                operation='user_module_permissions_updated',
+                user_id=current_user_id,
+                details={
+                    'target_user_id': user_id,
+                    'username': target_user.username,
+                    'modules': modules,
+                    'reset_to_default': len(modules) == 0
+                }
+            )
+        except Exception:
+            pass
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='update_user_module_permissions',
+                resource_type='user',
+                resource_id=user_id,
+                details={'username': target_user.username, 'modules': modules}
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '模块权限更新成功',
+            'user_id': user_id,
+            'username': target_user.username,
+            'modules': modules
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"更新用户模块权限失败: {e}")
+        return jsonify({'error': '更新失败'}), 500
+
+
+@users_bp.route('/<int:user_id>/module-permissions/reset', methods=['POST'])
+@log_api_call
+@jwt_required()
+def reset_user_module_permissions(user_id):
+    """将指定用户的模块可见性重置为系统默认"""
+    db, User, _, create_audit_log = get_db_and_models()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    position_info = current_user.get_position_info()
+    if not (current_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))):
+        return jsonify({'error': '权限不足'}), 403
+
+    target_user = db.session.query(User).get(user_id)
+    if not target_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if target_user.is_super_admin:
+        return jsonify({'error': '系统管理员无需重置'}), 400
+
+    target_user.reset_accessible_modules()
+    # 同时清空细分权限
+    target_user.set_custom_permissions({'allowed': [], 'denied': []})
+    try:
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='reset_user_module_permissions',
+                resource_type='user',
+                resource_id=user_id,
+                details={'username': target_user.username}
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '已重置为系统默认模块可见性',
+            'user_id': user_id,
+            'username': target_user.username
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"重置用户模块权限失败: {e}")
+        return jsonify({'error': '重置失败'}), 500

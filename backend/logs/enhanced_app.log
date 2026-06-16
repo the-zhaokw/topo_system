@@ -16168,3 +16168,222 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 2026-06-16 16:01:45,891 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
 2026-06-16 16:01:45,961 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 49, 详情: Bug状态变更: resolved -> closed, IP: 127.0.0.1
 2026-06-16 16:01:46,028 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-16 16:03:40,531 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:03:40,534 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:03:40,567 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:03:40,567 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 32.98ms
+2026-06-16 16:05:25,576 - enhanced_app - INFO - API Call Start: api.users.update_user_permissions - Method: PUT - Path: /api/users/5/permissions
+2026-06-16 16:05:25,579 - enhanced_app - INFO - Business Operation Start: api.users.update_user_permissions
+2026-06-16 16:05:25,649 - enhanced_app - INFO - log - 用户ID: 1, 操作: update_user_permissions, 资源类型: user, 资源ID: 5, 详情: {'username': 'tester1', 'permissions': {'allowed': ['attendance:leave_apply'], 'denied': []}}, IP: None
+2026-06-16 16:05:25,650 - enhanced_app - INFO - Business Operation Complete: api.users.update_user_permissions
+2026-06-16 16:05:25,650 - enhanced_app - INFO - API Call Complete: api.users.update_user_permissions - Status: Success - Duration: 70.92ms
+2026-06-16 16:05:33,661 - enhanced_app - INFO - API Call Start: api.users.update_user_permissions - Method: PUT - Path: /api/users/7/permissions
+2026-06-16 16:05:33,661 - enhanced_app - INFO - Business Operation Start: api.users.update_user_permissions
+2026-06-16 16:05:33,666 - enhanced_app - INFO - Business Operation Complete: api.users.update_user_permissions
+2026-06-16 16:05:33,666 - enhanced_app - INFO - API Call Complete: api.users.update_user_permissions - Status: Success - Duration: 4.21ms
+2026-06-16 16:13:26,225 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:13:26,229 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:13:26,254 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:13:26,256 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 26.17ms
+2026-06-16 16:18:28,547 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:18:28,548 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:18:28,563 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:18:28,563 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 15.29ms
+2026-06-16 16:20:15,675 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:20:15,690 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:20:15,709 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:20:15,709 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 18.74ms
+2026-06-16 16:20:26,208 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:20:26,210 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:20:26,230 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:20:26,231 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 21.26ms
+2026-06-16 16:22:17,613 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:22:17,617 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:22:17,621 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:22:17,626 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:22:17,733 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:22:17,737 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 111.13ms
+2026-06-16 16:22:17,777 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:22:17,778 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 161.33ms
+2026-06-16 16:22:31,494 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:22:31,495 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:22:31,504 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:22:31,509 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:22:31,563 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:22:31,568 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 59.03ms
+2026-06-16 16:22:31,601 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:22:31,602 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 106.29ms
+2026-06-16 16:28:35,820 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 16:28:35,823 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 16:28:35,823 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 16:28:35,824 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 16:28:35,826 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 16:28:35,826 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 16:28:36,095 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 16:28:36,096 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 16:28:44,623 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:28:44,626 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:28:44,629 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:28:44,634 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:28:44,819 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:28:44,947 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 312.90ms
+2026-06-16 16:28:44,966 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:28:44,968 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 339.24ms
+2026-06-16 16:28:50,172 - enhanced_app - ERROR - App unhandled exception: 'User' object has no attribute 'get_accessible_modules'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 2493, in list_users_module_permissions
+    accessible = user.get_accessible_modules()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'get_accessible_modules'
+
+2026-06-16 16:29:01,904 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:29:01,906 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:29:01,924 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:29:01,924 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 17.15ms
+2026-06-16 16:29:03,012 - enhanced_app - ERROR - App unhandled exception: 'User' object has no attribute 'get_accessible_modules'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 2493, in list_users_module_permissions
+    accessible = user.get_accessible_modules()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'get_accessible_modules'
+
+2026-06-16 16:29:26,162 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:29:26,167 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:29:26,181 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:29:26,181 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 14.12ms
+2026-06-16 16:30:22,209 - enhanced_app - ERROR - App unhandled exception: 'User' object has no attribute 'get_accessible_modules'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 2493, in list_users_module_permissions
+    accessible = user.get_accessible_modules()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'get_accessible_modules'
+
+2026-06-16 16:38:33,282 - enhanced_app - ERROR - App unhandled exception: 'User' object has no attribute 'get_accessible_modules'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\users.py", line 2493, in list_users_module_permissions
+    accessible = user.get_accessible_modules()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'get_accessible_modules'
+
+2026-06-16 16:44:35,500 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-16 16:44:35,502 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-16 16:44:35,503 - enhanced_app - INFO - 职位权限修复完成
+2026-06-16 16:44:35,505 - enhanced_app - INFO - 默认职位创建成功
+2026-06-16 16:44:35,506 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-16 16:44:35,506 - enhanced_app - INFO - 数据库表创建完成
+2026-06-16 16:44:35,768 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-16 16:44:35,770 - enhanced_app - INFO - 数据库初始化完成
+2026-06-16 16:44:55,546 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:44:55,547 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:44:55,549 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:44:55,559 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:44:55,830 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:44:55,830 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 270.85ms
+2026-06-16 16:44:55,848 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:44:55,849 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 301.50ms
+2026-06-16 16:45:42,309 - enhanced_app - INFO - API Call Start: api.users.update_user_module_permissions - Method: PUT - Path: /api/users/18/module-permissions
+2026-06-16 16:45:42,309 - enhanced_app - INFO - Business Operation Start: api.users.update_user_module_permissions
+2026-06-16 16:45:42,389 - enhanced_app - INFO - log - 用户ID: 1, 操作: update_user_module_permissions, 资源类型: user, 资源ID: 18, 详情: {'username': 'zhaokangwei', 'modules': ['module:dashboard', 'module:todo', 'module:plan', 'module:attendance', 'module:project', 'module:bug', 'module:requirement', 'module:test', 'module:risk', 'module:material', 'module:contract', 'module:department', 'module:activity', 'module:knowledge', 'module:monitoring']}, IP: None
+2026-06-16 16:45:42,389 - enhanced_app - INFO - Business Operation Complete: api.users.update_user_module_permissions
+2026-06-16 16:45:42,389 - enhanced_app - INFO - API Call Complete: api.users.update_user_module_permissions - Status: Success - Duration: 79.60ms
+2026-06-16 16:45:55,654 - enhanced_app - INFO - log - 用户ID: 18, 操作: user_login, 资源类型: user, 资源ID: 18, 详情: 用户登录: zhaokangwei, IP: 127.0.0.1
+2026-06-16 16:45:55,965 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:45:55,973 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:45:55,978 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:45:55,984 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:45:56,040 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:45:56,040 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 55.97ms
+2026-06-16 16:45:56,059 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:45:56,060 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 86.23ms
+2026-06-16 16:46:25,794 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 16:46:26,122 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:46:26,131 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:46:26,140 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:46:26,148 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:46:26,210 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:46:26,210 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 61.95ms
+2026-06-16 16:46:26,223 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:46:26,223 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 92.93ms
+2026-06-16 16:46:43,293 - enhanced_app - INFO - API Call Start: api.users.update_user_module_permissions - Method: PUT - Path: /api/users/18/module-permissions
+2026-06-16 16:46:43,293 - enhanced_app - INFO - Business Operation Start: api.users.update_user_module_permissions
+2026-06-16 16:46:43,379 - enhanced_app - INFO - log - 用户ID: 1, 操作: update_user_module_permissions, 资源类型: user, 资源ID: 18, 详情: {'username': 'zhaokangwei', 'modules': ['module:dashboard', 'module:todo', 'module:plan', 'module:attendance', 'module:project', 'module:bug', 'module:requirement', 'module:test', 'module:risk', 'module:material', 'module:contract', 'module:department', 'module:settings', 'module:activity', 'module:knowledge']}, IP: None
+2026-06-16 16:46:43,379 - enhanced_app - INFO - Business Operation Complete: api.users.update_user_module_permissions
+2026-06-16 16:46:43,380 - enhanced_app - INFO - API Call Complete: api.users.update_user_module_permissions - Status: Success - Duration: 87.23ms
+2026-06-16 16:46:50,790 - enhanced_app - INFO - log - 用户ID: 18, 操作: user_login, 资源类型: user, 资源ID: 18, 详情: 用户登录: zhaokangwei, IP: 127.0.0.1
+2026-06-16 16:46:51,000 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:46:51,002 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:46:51,004 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:46:51,015 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:46:51,231 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:46:51,232 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 216.89ms
+2026-06-16 16:46:51,249 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:46:51,253 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 250.15ms
+2026-06-16 16:46:59,347 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-16 16:46:59,536 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:46:59,541 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:46:59,543 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:46:59,551 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:46:59,611 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:46:59,611 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 60.12ms
+2026-06-16 16:46:59,624 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:46:59,624 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 83.34ms
+2026-06-16 16:48:13,724 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:48:13,727 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:48:13,746 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:48:13,746 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 18.95ms
+2026-06-16 16:49:16,324 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:49:16,329 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:49:16,349 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:49:16,349 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 19.53ms
+2026-06-16 16:53:13,930 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:53:13,936 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:53:13,952 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:53:13,952 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 16.05ms
+2026-06-16 16:57:30,159 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-16 16:57:30,164 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-16 16:57:30,177 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-16 16:57:30,178 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 13.48ms
+2026-06-16 16:57:32,211 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-16 16:57:32,213 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-16 16:57:32,214 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-16 16:57:32,216 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-16 16:57:32,264 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-16 16:57:32,271 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 54.47ms
+2026-06-16 16:57:32,300 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-16 16:57:32,301 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 87.12ms

@@ -204,7 +204,13 @@ export const apiService = {
     getPositions: () => api.get('/users/positions'),
     getMyDepartment: (params = {}) => api.get('/users/my-department', { params }),
     updateStatus: (userId, statusData) => api.put(`/users/${userId}/status`, statusData),
-    updateActivity: (userId) => api.post(`/users/${userId}/activity`)
+    updateActivity: (userId) => api.post(`/users/${userId}/activity`),
+    // 大功能模块权限管理
+    getModuleCatalog: () => api.get('/users/module-permissions/catalog'),
+    listUsersModulePermissions: (params = {}) => api.get('/users/module-permissions/users', { params }),
+    getUserModulePermissions: (userId) => api.get(`/users/${userId}/module-permissions`),
+    updateUserModulePermissions: (userId, modules, allowed = [], denied = []) => api.put(`/users/${userId}/module-permissions`, { modules, allowed, denied }),
+    resetUserModulePermissions: (userId) => api.post(`/users/${userId}/module-permissions/reset`)
   },
 
   // 通用模块

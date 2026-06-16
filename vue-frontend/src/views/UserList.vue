@@ -37,6 +37,10 @@
               <el-icon><Plus /></el-icon>
               新建用户
             </el-button>
+            <el-button class="btn-info-gradient" @click="goToModulePermissions">
+              <el-icon><Lock /></el-icon>
+              模块权限管理
+            </el-button>
             <el-button class="btn-success-gradient" @click="exportUsers('csv')">
               <el-icon><Download /></el-icon>
               导出CSV
@@ -419,7 +423,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column label="操作" width="300" fixed="right">
+          <el-table-column label="操作" width="260" fixed="right">
             <template #default="{ row }">
               <div class="action-buttons">
                 <el-button
@@ -430,15 +434,6 @@
                   class="action-btn"
                 >
                   <el-icon><Edit /></el-icon>编辑
-                </el-button>
-                <el-button
-                  type="warning"
-                  link
-                  size="small"
-                  @click="openPermissionDialog(row)"
-                  class="action-btn"
-                >
-                  <el-icon><Key /></el-icon>权限
                 </el-button>
                 <el-button
                   type="danger"
@@ -816,116 +811,6 @@
           </div>
         </template>
       </el-dialog>
-
-      <!-- 权限管理对话框 -->
-      <el-dialog
-        v-model="showPermissionDialog"
-        title="用户权限管理"
-        width="800px"
-        class="custom-dialog"
-      >
-        <div v-if="permissionLoading" class="permission-loading">
-          <el-icon class="is-loading"><Loading /></el-icon>
-          加载中...
-        </div>
-        <div v-else-if="permissionUser" class="permission-content">
-          <el-alert
-            v-if="permissionUser.is_super_admin"
-            title="系统管理员"
-            type="warning"
-            description="此用户为系统管理员，拥有系统全部权限，无法修改"
-            :closable="false"
-            show-icon
-            class="admin-alert"
-          />
-          <div class="permission-user-info">
-            <el-avatar :size="50" class="user-avatar">
-              {{ permissionUser.username?.charAt(0).toUpperCase() }}
-            </el-avatar>
-            <div class="user-info-text">
-              <h4>{{ permissionUser.username }}</h4>
-              <el-tag v-if="permissionUser.position" size="small" type="info">
-                {{ permissionUser.position }}
-              </el-tag>
-            </div>
-          </div>
-
-          <el-divider />
-
-          <div class="permission-section">
-            <h4>职位权限</h4>
-            <p class="permission-desc">基于用户职位的默认权限</p>
-            <div v-if="currentRolePermissions.length > 0" class="permission-tags">
-              <el-tag
-                v-for="perm in currentRolePermissions"
-                :key="perm.code"
-                size="small"
-                type="info"
-                class="permission-tag"
-                effect="light"
-              >
-                {{ perm.name }}
-              </el-tag>
-            </div>
-            <el-tag v-else size="small" type="success" effect="light">拥有全部权限</el-tag>
-          </div>
-
-          <el-divider />
-
-          <div class="permission-section">
-            <h4>自定义权限</h4>
-            <p class="permission-desc">在职位权限基础上额外添加或移除的权限</p>
-            <el-tabs v-model="permissionTabActive" class="permission-tabs">
-              <el-tab-pane label="额外权限" name="allowed">
-                <div class="permission-category" v-for="(category, key) in allPermissions" :key="key">
-                  <h5>{{ category.name }}</h5>
-                  <el-checkbox-group v-model="selectedAllowedPermissions">
-                    <el-checkbox
-                      v-for="perm in category.permissions"
-                      :key="perm.code"
-                      :label="perm.code"
-                      :disabled="permissionUser.is_super_admin"
-                    >
-                      {{ perm.name }}
-                      <span class="perm-desc">{{ perm.description }}</span>
-                    </el-checkbox>
-                  </el-checkbox-group>
-                </div>
-              </el-tab-pane>
-              <el-tab-pane label="限制权限" name="denied">
-                <div class="permission-category" v-for="(category, key) in allPermissions" :key="key">
-                  <h5>{{ category.name }}</h5>
-                  <el-checkbox-group v-model="selectedDeniedPermissions">
-                    <el-checkbox
-                      v-for="perm in category.permissions"
-                      :key="perm.code"
-                      :label="perm.code"
-                      :disabled="permissionUser.is_super_admin"
-                    >
-                      {{ perm.name }}
-                      <span class="perm-desc">{{ perm.description }}</span>
-                    </el-checkbox>
-                  </el-checkbox-group>
-                </div>
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-        </div>
-
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="showPermissionDialog = false">取消</el-button>
-            <el-button
-              type="primary"
-              @click="saveUserPermissions"
-              :disabled="permissionUser?.is_super_admin"
-              class="btn-gradient"
-            >
-              保存
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
     </div>
   </div>
 </template>
@@ -949,7 +834,6 @@ import {
   OfficeBuilding, 
   Postcard, 
   List,
-  Key,
   Switch,
   Lock,
   Search
@@ -1008,15 +892,6 @@ const deletePositionFormRef = ref(null)
 const deletePositionForm = reactive({
   positionName: ''
 })
-
-const showPermissionDialog = ref(false)
-const permissionUser = ref(null)
-const permissionLoading = ref(false)
-const permissionTabActive = ref('allowed')
-const allPermissions = ref({})
-const selectedAllowedPermissions = ref([])
-const selectedDeniedPermissions = ref([])
-const currentRolePermissions = ref([])
 
 // 筛选条件
 const filters = reactive({
@@ -1528,6 +1403,11 @@ const viewUserDetail = (user) => {
   router.push(`/users/${user.id}`)
 }
 
+// 跳转到模块权限管理页
+const goToModulePermissions = () => {
+  router.push('/users/module-permissions')
+}
+
 // 重置用户密码
 const resetUserPassword = async (user) => {
   try {
@@ -1615,77 +1495,6 @@ const resetUserForm = () => {
   editingUser.value = null
   if (userFormRef.value) {
     userFormRef.value.resetFields()
-  }
-}
-
-// 打开权限管理对话框
-const openPermissionDialog = async (user) => {
-  permissionUser.value = user
-  showPermissionDialog.value = true
-  permissionLoading.value = true
-  permissionTabActive.value = 'allowed'
-  selectedAllowedPermissions.value = []
-  selectedDeniedPermissions.value = []
-  currentRolePermissions.value = []
-
-  try {
-    const [permsResponse, userPermsResponse] = await Promise.all([
-      api.users.getAllPermissions(),
-      api.users.getUserPermissions(user.id)
-    ])
-
-    allPermissions.value = permsResponse.permissions || {}
-
-    if (userPermsResponse.position) {
-      const posPerms = userPermsResponse.position_permissions || []
-      const permMap = {}
-      Object.values(allPermissions.value).forEach(cat => {
-        cat.permissions.forEach(p => {
-          permMap[p.code] = p
-        })
-      })
-      currentRolePermissions.value = posPerms.map(code => permMap[code] || { code, name: code })
-    }
-
-    if (userPermsResponse.is_super_admin || (userPermsResponse.position && userPermsResponse.position.is_admin)) {
-      permissionUser.value = { ...user, is_super_admin: true }
-    } else {
-      permissionUser.value = { ...user, is_super_admin: false }
-    }
-
-    const customPerms = userPermsResponse.custom_permissions || {}
-    selectedAllowedPermissions.value = customPerms.allowed || []
-    selectedDeniedPermissions.value = customPerms.denied || []
-  } catch (error) {
-    console.error('获取权限信息失败:', error)
-    ElMessage.error('获取权限信息失败')
-  } finally {
-    permissionLoading.value = false
-  }
-}
-
-// 保存用户权限
-const saveUserPermissions = async () => {
-  if (!permissionUser.value || permissionUser.value.is_super_admin) {
-    ElMessage.warning('无法修改系统管理员的权限')
-    return
-  }
-
-  if (permissionUser.value.position && permissionUser.value.position.is_admin) {
-    ElMessage.warning('无法修改管理员的权限')
-    return
-  }
-
-  try {
-    await api.users.updateUserPermissions(permissionUser.value.id, {
-      allowed: selectedAllowedPermissions.value,
-      denied: selectedDeniedPermissions.value
-    })
-    ElMessage.success('权限更新成功')
-    showPermissionDialog.value = false
-  } catch (error) {
-    console.error('保存权限失败:', error)
-    ElMessage.error(error.response?.data?.error || '保存权限失败')
   }
 }
 
@@ -2200,97 +2009,6 @@ onMounted(() => {
   margin: 4px;
 }
 
-/* 权限管理 */
-.permission-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 40px;
-  color: var(--text-secondary);
-}
-
-.permission-content {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.admin-alert {
-  margin-bottom: 16px;
-}
-
-.permission-user-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 8px 0;
-}
-
-.user-avatar {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-  color: white;
-  font-weight: 600;
-}
-
-.user-info-text h4 {
-  margin: 0 0 8px 0;
-  color: var(--text-primary);
-}
-
-.permission-section {
-  margin-bottom: 20px;
-}
-
-.permission-section h4 {
-  margin: 0 0 4px 0;
-  color: var(--text-primary);
-}
-
-.permission-desc {
-  margin: 0 0 12px 0;
-  color: var(--text-tertiary);
-  font-size: 13px;
-}
-
-.permission-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.permission-tag {
-  margin-bottom: 4px;
-  border-radius: var(--radius-sm);
-}
-
-.permission-category {
-  margin-bottom: 16px;
-}
-
-.permission-category h5 {
-  margin: 0 0 8px 0;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.permission-category .el-checkbox {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 8px;
-  white-space: normal;
-}
-
-.permission-category .el-checkbox .perm-desc {
-  display: block;
-  font-size: 12px;
-  color: var(--text-tertiary);
-  margin-left: 20px;
-}
-
-.permission-tabs {
-  margin-top: 16px;
-}
-
 /* 权限拒绝页面 */
 .permission-denied {
   display: flex;
@@ -2390,12 +2108,6 @@ onMounted(() => {
   .action-buttons {
     flex-direction: column;
     gap: 4px;
-  }
-  
-  .permission-user-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
   }
 }
 

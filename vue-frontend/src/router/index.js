@@ -417,6 +417,12 @@ const routes = [
         name: 'UserDetail',
         component: UserDetail,
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'module-permissions',
+        name: 'UserModulePermissions',
+        component: () => import('@/views/ModulePermissions.vue'),
+        meta: { requiresAuth: true, allowedRoles: ['admin', 'manager'] }
       }
     ]
   },
@@ -596,6 +602,14 @@ router.beforeEach((to, from, next) => {
 
 // 权限配置
 const permissionConfig = {
+  '/users/list': {
+    allowedRoles: ['admin', 'manager'],
+    errorMessage: '权限不足，只有管理员可以访问用户管理页面'
+  },
+  '/users/module-permissions': {
+    allowedRoles: ['admin', 'manager'],
+    errorMessage: '权限不足，只有管理员可以访问模块权限管理页面'
+  },
   '/users': {
     allowedRoles: ['admin', 'manager'],
     errorMessage: '权限不足，只有管理员可以访问用户管理页面'
@@ -620,6 +634,35 @@ const permissionConfig = {
     allowedRoles: ['admin', 'manager', 'project_manager', 'hr', 'department_manager'],
     errorMessage: '权限不足，无法访问统计报表页面'
   }
+}
+
+// 路由前缀 -> 大功能模块编码映射（用于模块权限拦截）
+// 命中后，即使 route meta 没有 allowedRoles 也会被模块权限拦截
+const routeModuleMap = {
+  '/projects': 'module:project',
+  '/bugs': 'module:bug',
+  '/attendance': 'module:attendance',
+  '/materials': 'module:material',
+  '/contracts': 'module:contract',
+  '/users': 'module:user',
+  '/settings': 'module:settings',
+  '/monitoring': 'module:monitoring',
+  '/activities': 'module:activity',
+  '/knowledge': 'module:knowledge',
+  '/my-todos': 'module:todo',
+  '/personal-plan': 'module:plan',
+  '/my-department': 'module:department'
+}
+
+// 根据路径找出对应的大功能模块编码
+function getRequiredModuleCode(path) {
+  if (!path) return null
+  for (const [prefix, code] of Object.entries(routeModuleMap)) {
+    if (path === prefix || path.startsWith(prefix + '/')) {
+      return code
+    }
+  }
+  return null
 }
 
 // 检查用户是否有权限访问指定路径
@@ -696,11 +739,26 @@ function continueHandleRoute(to, next, userStore) {
   const userRole = userStore.currentUser?.role
   const isSuperAdmin = userStore.currentUser?.is_super_admin
   const isAdmin = userStore.currentUser?.is_admin
+  const accessibleModules = userStore.currentUser?.accessible_modules
 
   // 系统管理员和管理员拥有所有权限，直接放行
   if (isSuperAdmin || isAdmin) {
     next()
     return
+  }
+
+  // 大功能模块权限拦截
+  const requiredModule = getRequiredModuleCode(to.path)
+  if (requiredModule) {
+    if (!Array.isArray(accessibleModules) || !accessibleModules.includes(requiredModule)) {
+      next('/dashboard')
+      setTimeout(() => {
+        import('element-plus').then(({ ElMessage }) => {
+          ElMessage.error('您没有访问该功能的权限')
+        })
+      }, 100)
+      return
+    }
   }
 
   // 首先检查路由的 meta.allowedRoles 配置
@@ -724,7 +782,7 @@ function continueHandleRoute(to, next, userStore) {
     }, 100)
     return
   }
-  
+
   // 权限检查通过，允许访问
   next()
 }

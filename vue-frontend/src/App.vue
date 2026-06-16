@@ -46,7 +46,7 @@
           <span>个人工作台</span>
         </el-menu-item>
 
-        <el-sub-menu index="projects">
+        <el-sub-menu v-if="currentUser && hasModule('module:project')" index="projects">
           <template #title>
             <el-icon><Folder /></el-icon>
             <span>项目管理</span>
@@ -64,8 +64,8 @@
             <span>自定义报表</span>
           </el-menu-item>
         </el-sub-menu>
-        
-        <el-sub-menu index="bugs">
+
+        <el-sub-menu v-if="currentUser && hasModule('module:bug')" index="bugs">
           <template #title>
             <el-icon><Document /></el-icon>
             <span>缺陷管理</span>
@@ -79,8 +79,8 @@
             <span>Bug 统计</span>
           </el-menu-item>
         </el-sub-menu>
-        
-        <el-sub-menu index="attendance">
+
+        <el-sub-menu v-if="currentUser && hasModule('module:attendance')" index="attendance">
           <template #title>
             <el-icon><Clock /></el-icon>
             <span>考勤管理系统</span>
@@ -114,8 +114,8 @@
             <span>统计报表</span>
           </el-menu-item>
         </el-sub-menu>
-        
-        <el-sub-menu index="materials" v-if="currentUser && hasMaterialManagePermission">
+
+        <el-sub-menu v-if="currentUser && hasModule('module:material')" index="materials">
           <template #title>
             <el-icon><Box /></el-icon>
             <span>物料管理系统</span>
@@ -154,7 +154,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="contracts" v-if="currentUser && hasContractManagePermission">
+        <el-sub-menu v-if="currentUser && hasModule('module:contract')" index="contracts">
           <template #title>
             <el-icon><Document /></el-icon>
             <span>合同管理系统</span>
@@ -169,27 +169,37 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <el-menu-item v-if="currentUser && isAdmin" index="/users">
-          <el-icon><User /></el-icon>
-          <span>用户管理</span>
-        </el-menu-item>
-        
-        <el-menu-item v-if="currentUser && isAdmin" index="/settings">
+        <el-sub-menu index="users" v-if="currentUser && hasModule('module:user')">
+          <template #title>
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
+          </template>
+          <el-menu-item index="/users/list">
+            <el-icon><List /></el-icon>
+            <span>用户列表</span>
+          </el-menu-item>
+          <el-menu-item v-if="currentUser && isAdmin" index="/users/module-permissions">
+            <el-icon><Lock /></el-icon>
+            <span>模块权限管理</span>
+          </el-menu-item>
+        </el-sub-menu>
+
+        <el-menu-item v-if="currentUser && hasModule('module:settings')" index="/settings">
           <el-icon><Setting /></el-icon>
           <span>系统设置</span>
         </el-menu-item>
-        
-        <el-menu-item index="/activities">
+
+        <el-menu-item v-if="currentUser && hasModule('module:activity')" index="/activities">
           <el-icon><Clock /></el-icon>
           <span>活动记录</span>
         </el-menu-item>
 
-        <el-menu-item index="/knowledge">
+        <el-menu-item v-if="currentUser && hasModule('module:knowledge')" index="/knowledge">
           <el-icon><Reading /></el-icon>
           <span>知识库</span>
         </el-menu-item>
 
-        <el-menu-item index="/monitoring">
+        <el-menu-item v-if="currentUser && hasModule('module:monitoring')" index="/monitoring">
           <el-icon><Monitor /></el-icon>
           <span>系统监控</span>
         </el-menu-item>
@@ -327,7 +337,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useUserStatusStore } from '@/stores/userStatus'
 import { systemTimeService } from '@/services/systemTimeService'
-import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, ArrowDown, DocumentAdd, Checked, Box, Collection, Goods, OfficeBuilding, TrendCharts, PieChart, Loading, Ticket, Link, FolderAdd, Bell, Check, Warning, Setting, DocumentChecked, Reading, Monitor, Fold, SwitchButton } from '@element-plus/icons-vue'
+import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, ArrowDown, DocumentAdd, Checked, Box, Collection, Goods, OfficeBuilding, TrendCharts, PieChart, Loading, Ticket, Link, FolderAdd, Bell, Check, Warning, Setting, DocumentChecked, Reading, Monitor, Fold, SwitchButton, Lock } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import { ElMessage } from 'element-plus'
 import MobileMenu from '@/components/mobile/MobileMenu.vue'
@@ -460,6 +470,23 @@ const currentUser = computed(() => userStore.currentUser)
 const isAdmin = computed(() => {
   return currentUser.value?.role === 'admin' || currentUser.value?.role === 'manager'
 })
+
+/**
+ * 判断当前用户是否可访问指定大功能模块
+ * - 系统管理员 / 职位是 admin|manager：拥有所有模块
+ * - 其他用户：依据 currentUser.accessible_modules
+ */
+const hasModule = (moduleCode) => {
+  const u = currentUser.value
+  if (!u) return false
+  // 超级管理员、admin/manager 角色默认拥有所有模块
+  if (u.is_super_admin || u.is_admin) return true
+  const list = u.accessible_modules
+  if (Array.isArray(list)) {
+    return list.includes(moduleCode)
+  }
+  return false
+}
 
 const hasAttendanceManagePermission = computed(() => {
   return currentUser.value?.role === 'admin' || currentUser.value?.role === 'manager' || currentUser.value?.role === 'project_manager' || currentUser.value?.role === 'hr' || currentUser.value?.role === 'department_manager'

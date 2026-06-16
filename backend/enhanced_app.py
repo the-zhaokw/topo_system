@@ -307,7 +307,8 @@ class User(db.Model):
     email_on_bug_closed = Column(Boolean, default=True)  # Bug关闭时邮件通知
     custom_permissions = Column(Text, default='{}')  # 用户自定义权限（JSON格式）
     is_super_admin = Column(Boolean, default=False)  # 是否为系统管理员（拥有所有系统权限，不可被修改）
-    
+    accessible_modules = Column(Text, default=None)  # 用户可见的大功能模块编码列表（JSON 数组），空表示使用系统默认
+
     # 关系
     projects = relationship("ProjectMember", back_populates="user", cascade="all, delete-orphan")
     
@@ -475,6 +476,59 @@ class User(db.Model):
     def update_activity(self):
         """更新用户最后活动时间"""
         self.last_activity = datetime.utcnow()
+
+    # ==================== 大功能模块（侧边栏一级菜单）可见性 ====================
+    def get_accessible_modules(self):
+        """获取用户可见的大功能模块编码列表
+
+        返回值：模块编码（module:xxx）列表
+        规则：
+        - 如果用户已经显式配置过 accessible_modules（即使为非空列表），以配置为准
+        - 如果 accessible_modules 为 None：
+            - 系统管理员 / 职位是管理员或经理：拥有所有模块
+            - 其他用户：返回系统默认模块
+        """
+        # 延迟导入，避免循环
+        from models.permissions import get_default_accessible_modules, MODULE_CATALOG
+
+        # 显式配置过（含空列表）则完全按配置返回，不被职位权限覆盖
+        if self.accessible_modules is not None:
+            try:
+                import json
+                modules = json.loads(self.accessible_modules)
+                if isinstance(modules, list):
+                    return modules
+            except Exception:
+                pass
+
+        # 未配置时：系统管理员/管理员/经理 -> 全部；普通用户 -> 默认
+        if self.is_system_admin():
+            return [m['code'] for m in MODULE_CATALOG]
+
+        return get_default_accessible_modules()
+
+    def set_accessible_modules(self, modules):
+        """设置用户可见的大功能模块编码列表
+
+        传入 [] 表示显式清空，传入 None 视为重置为系统默认
+        """
+        import json
+        if modules is None:
+            self.accessible_modules = None
+            return
+        if not isinstance(modules, list):
+            modules = []
+        # 去重
+        modules = list(dict.fromkeys(modules))
+        self.accessible_modules = json.dumps(modules, ensure_ascii=False)
+
+    def can_access_module(self, module_code):
+        """检查用户是否可访问指定大功能模块"""
+        return module_code in self.get_accessible_modules()
+
+    def reset_accessible_modules(self):
+        """重置用户可见模块为系统默认值（清除显式配置）"""
+        self.accessible_modules = None
 
 class Department(db.Model):
     __tablename__ = 'departments'
@@ -3697,6 +3751,7 @@ def migrate_database():
                 'email_notification_enabled': 'BOOLEAN DEFAULT 1',
                 'email_on_bug_assigned': 'BOOLEAN DEFAULT 1',
                 'email_on_bug_closed': 'BOOLEAN DEFAULT 1',
+                'accessible_modules': 'TEXT DEFAULT NULL',
             }
             
             for col_name, col_type in columns_to_check.items():
