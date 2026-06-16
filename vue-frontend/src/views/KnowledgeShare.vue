@@ -199,7 +199,7 @@ import { Lock, User, Folder, Timer, InfoFilled, Download, Share, Document, Calen
 const route = useRoute()
 const router = useRouter()
 
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
 
 const article = ref(null)
 const requirePassword = ref(false)

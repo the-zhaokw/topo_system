@@ -170,7 +170,7 @@ const props = defineProps({
 
 const emit = defineEmits(['edit', 'close'])
 
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
 
 const isAdmin = computed(() => {
   const user = userStore.currentUser

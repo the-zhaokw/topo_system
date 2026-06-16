@@ -8,10 +8,8 @@ import {
   mockProjects,
   mockTodos,
   mockNotifications,
-  mockActivity,
-  mockUser,
 } from '../../data/businessData';
-import { mockWorkStatistics } from '../../data/business';
+import { mockUser, mockActivity, mockWorkStatistics } from '../../data/business';
 import { Bug } from '../../types/bug';
 import { Project, Notification, Activity } from '../../types/business';
 

@@ -4,56 +4,51 @@
 .container {
   min-height: 100vh;
   background-color: $color-bg-page;
-  padding-bottom: 120rpx;
+  padding: $spacing-md $page-padding 120rpx;
 }
 
-.header {
-  background: $gradient-primary;
-  padding: 40rpx $page-padding 60rpx;
-
-  .title {
-    color: $color-text-white;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    margin-bottom: $spacing-md;
-  }
-}
-
-.content {
-  padding: 0 $page-padding;
-}
-
-.card {
+.activityItem {
   background: $color-bg-card;
   border-radius: $radius-lg;
   padding: $spacing-md;
   margin-bottom: $spacing-md;
   box-shadow: $shadow-card;
+  position: relative;
+  border-left: 6rpx solid $color-primary;
 }
 
-.listItem {
-  background: $color-bg-card;
-  border-radius: $radius-md;
-  padding: $spacing-md;
+.activityType {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
   margin-bottom: $spacing-sm;
-  box-shadow: $shadow-card;
 }
 
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 120rpx 40rpx;
+.activityTitle {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 8rpx;
+  line-height: $line-height-normal;
+}
+
+.activityContent {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+  margin-bottom: $spacing-sm;
+}
+
+.activityMeta {
+  display: block;
+  font-size: $font-size-xs;
   color: $color-text-tertiary;
-
-  .icon {
-    font-size: 160rpx;
-    margin-bottom: $spacing-md;
-    opacity: 0.5;
-  }
-
-  .text {
-    font-size: $font-size-md;
-  }
+  padding-top: $spacing-sm;
+  border-top: 1rpx solid $color-divider;
 }

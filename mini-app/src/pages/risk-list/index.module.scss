@@ -4,26 +4,10 @@
 .container {
   min-height: 100vh;
   background-color: $color-bg-page;
-  padding-bottom: 120rpx;
+  padding: $spacing-md $page-padding 120rpx;
 }
 
-.header {
-  background: $gradient-primary;
-  padding: 40rpx $page-padding 60rpx;
-
-  .title {
-    color: $color-text-white;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    margin-bottom: $spacing-md;
-  }
-}
-
-.content {
-  padding: 0 $page-padding;
-}
-
-.card {
+.riskItem {
   background: $color-bg-card;
   border-radius: $radius-lg;
   padding: $spacing-md;
@@ -31,29 +15,61 @@
   box-shadow: $shadow-card;
 }
 
-.listItem {
-  background: $color-bg-card;
-  border-radius: $radius-md;
-  padding: $spacing-md;
+.riskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: $spacing-sm;
-  box-shadow: $shadow-card;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1rpx solid $color-divider;
 }
 
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 120rpx 40rpx;
+.riskNo {
+  font-size: $font-size-xs;
   color: $color-text-tertiary;
+  font-family: monospace;
+}
 
-  .icon {
-    font-size: 160rpx;
-    margin-bottom: $spacing-md;
-    opacity: 0.5;
-  }
+.levelTag {
+  padding: 4rpx 16rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
 
-  .text {
-    font-size: $font-size-md;
-  }
+.levelSerious {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+}
+
+.levelHigh {
+  background: rgba($color-warning, 0.1);
+  color: $color-warning;
+}
+
+.levelMedium {
+  background: rgba($color-info, 0.1);
+  color: $color-info;
+}
+
+.levelLow {
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+}
+
+.riskName {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  line-height: $line-height-normal;
+}
+
+.riskInfo {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+  margin-bottom: 4rpx;
 }

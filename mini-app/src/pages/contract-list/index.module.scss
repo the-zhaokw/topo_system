@@ -1,1 +1,8 @@
+// Contract List Page Styles
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
 }

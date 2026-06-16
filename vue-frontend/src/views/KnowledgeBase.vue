@@ -409,8 +409,8 @@ import {
 } from '@element-plus/icons-vue'
 import ArticleForm from '@/components/knowledge/ArticleForm.vue'
 
-// API 基础 URL
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+// API 基础 URL：路径已带 /api 前缀，dev 模式留空走 Vite 代理，生产环境补全后端地址
+const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
 
 const router = useRouter()
 const userStore = useUserStore()

@@ -192,8 +192,8 @@ const emit = defineEmits(['save', 'cancel', 'refresh-categories'])
 
 const userStore = useUserStore()
 
-// API 基础 URL
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+// API 基础 URL：路径已带 /api 前缀，dev 模式留空走 Vite 代理
+const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
 
 // 获取用户头像URL
 const getUserAvatar = (avatar) => {

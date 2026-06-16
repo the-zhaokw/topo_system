@@ -220,7 +220,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000' : 'http://172.18.36.249:5000'
+const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
 
 // 状态
 const loading = ref(true)

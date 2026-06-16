@@ -7,53 +7,79 @@
   padding-bottom: 120rpx;
 }
 
-.header {
+.avatarSection {
   background: $gradient-primary;
-  padding: 40rpx $page-padding 60rpx;
-
-  .title {
-    color: $color-text-white;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    margin-bottom: $spacing-md;
-  }
-}
-
-.content {
-  padding: 0 $page-padding;
-}
-
-.card {
-  background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-md;
-  margin-bottom: $spacing-md;
-  box-shadow: $shadow-card;
-}
-
-.listItem {
-  background: $color-bg-card;
-  border-radius: $radius-md;
-  padding: $spacing-md;
-  margin-bottom: $spacing-sm;
-  box-shadow: $shadow-card;
-}
-
-.empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 120rpx 40rpx;
-  color: $color-text-tertiary;
+  padding: $spacing-xl $page-padding $spacing-2xl;
+  margin-bottom: $spacing-md;
+}
 
-  .icon {
-    font-size: 160rpx;
-    margin-bottom: $spacing-md;
-    opacity: 0.5;
-  }
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: $color-bg-card;
+  border: 6rpx solid rgba(255, 255, 255, 0.3);
+  margin-bottom: $spacing-md;
+}
 
-  .text {
-    font-size: $font-size-md;
+.userName {
+  display: block;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: 4rpx;
+}
+
+.userRole {
+  display: block;
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.card {
+  margin: 0 $page-padding $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.cardTitle {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
   }
+}
+
+.menuLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.menuArrow {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  max-width: 60%;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

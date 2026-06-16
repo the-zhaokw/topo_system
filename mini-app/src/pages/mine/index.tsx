@@ -3,7 +3,8 @@ import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockUser, mockProjects, mockTodos, mockWorkLogs, mockActivity } from '../../data/businessData';
+import { mockProjects, mockTodos, mockWorkLogs } from '../../data/businessData';
+import { mockUser, mockActivity } from '../../data/business';
 import { mockBugList } from '../../data/bugData';
 
 const MinePage: React.FC = () => {

@@ -8,7 +8,7 @@ const SystemSettingsPage: React.FC = () => {
       <View className={styles.placeholder}>
         <Text style={{ fontSize: '64rpx' }}>⚙️</Text>
         <Text className={styles.placeholderText}>系统设置</Text>
-        <Text style={{ fontSize: '24rpx', color: '#94A3B8', marginTop: '16rpx' }}>功能正在开发中...</Text>
+        <Text className={styles.placeholderHint}>功能正在开发中...</Text>
       </View>
     </View>
   );
