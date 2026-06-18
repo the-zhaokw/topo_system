@@ -7,6 +7,41 @@ import shutil
 import json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
+
+def require_system_perm(perm_code):
+    """系统管理子路由权限校验装饰器。"""
+    from functools import wraps
+    def decorator(f):
+        @wraps(f)
+        @jwt_required()
+        def wrapper(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            try:
+                current_user_id = int(current_user_id)
+            except (TypeError, ValueError):
+                pass
+            from enhanced_app import User
+            user = User.query.get(current_user_id)
+            if not user:
+                return jsonify({'error': '用户不存在'}), 404
+            if not _check_perm(user, perm_code):
+                return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}), 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
 system_bp = Blueprint('system', __name__, url_prefix='/system')
 
 def get_china_now():
@@ -38,7 +73,7 @@ def get_models():
 
 # 数据库备份 API (F-008-02)
 @system_bp.route('/backup', methods=['POST'])
-@jwt_required()
+@require_system_perm('settings:backup')
 def create_backup():
     """创建数据库备份"""
     from enhanced_app import app
@@ -89,7 +124,7 @@ def create_backup():
 
 
 @system_bp.route('/backups', methods=['GET'])
-@jwt_required()
+@require_system_perm('settings:backup')
 def list_backups():
     """获取备份列表"""
     from enhanced_app import app
@@ -128,7 +163,7 @@ def list_backups():
 
 
 @system_bp.route('/backups/<filename>', methods=['GET'])
-@jwt_required()
+@require_system_perm('settings:backup')
 def download_backup(filename):
     """下载备份文件"""
     from enhanced_app import app
@@ -154,7 +189,7 @@ def download_backup(filename):
 
 
 @system_bp.route('/backups/<filename>', methods=['DELETE'])
-@jwt_required()
+@require_system_perm('settings:backup')
 def delete_backup(filename):
     """删除备份文件"""
     from enhanced_app import app
@@ -225,7 +260,7 @@ def get_default_config():
     }
 
 @system_bp.route('/config', methods=['GET'])
-@jwt_required()
+@require_system_perm('settings:view')
 def get_config():
     """获取系统配置"""
     try:
@@ -248,7 +283,7 @@ def get_config():
 
 
 @system_bp.route('/config', methods=['PUT'])
-@jwt_required()
+@require_system_perm('settings:edit')
 def update_config():
     """更新系统配置"""
     try:
@@ -296,7 +331,7 @@ def update_config():
 
 # 数据库完整性检查 API (F-008-03)
 @system_bp.route('/integrity-check', methods=['POST'])
-@jwt_required()
+@require_system_perm('system:config')
 def integrity_check():
     """数据库完整性检查"""
     from enhanced_app import app
@@ -345,7 +380,7 @@ def integrity_check():
 
 
 @system_bp.route('/test-email', methods=['POST'])
-@jwt_required()
+@require_system_perm('system:config')
 def test_email():
     """测试邮件发送"""
     try:

@@ -16915,3 +16915,40 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 2026-06-16 19:14:03,739 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
 2026-06-16 19:14:03,740 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 442.16ms
 2026-06-16 19:14:35,849 - enhanced_app - INFO - log - 用户ID: 1, 操作: apply_permission_template, 资源类型: permission_template, 资源ID: 6, 详情: {'template_name': '测试', 'applied_user_ids': [2], 'skipped': []}, IP: None
+2026-06-18 11:46:08,200 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-18 11:46:08,280 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-18 11:46:08,282 - enhanced_app - INFO - 职位权限修复完成
+2026-06-18 11:46:08,283 - enhanced_app - INFO - 默认职位创建成功
+2026-06-18 11:46:08,283 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-18 11:46:08,283 - enhanced_app - INFO - 数据库表创建完成
+2026-06-18 11:46:08,661 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-18 11:46:08,662 - enhanced_app - INFO - 数据库初始化完成
+2026-06-18 11:46:31,036 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-06-18 11:46:34,055 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-18 11:46:34,068 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-18 11:46:34,071 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-18 11:46:34,073 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-18 11:46:35,681 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-18 11:46:35,689 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 1620.64ms
+2026-06-18 11:46:35,717 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-18 11:46:35,742 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 1668.63ms
+2026-06-18 11:47:15,545 - enhanced_app - INFO - log - 用户ID: 1, 操作: apply_permission_template, 资源类型: permission_template, 资源ID: 2, 详情: {'template_name': '开发工程师模板', 'applied_user_ids': [10], 'skipped': []}, IP: None
+2026-06-18 11:47:34,103 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-18 11:47:34,113 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-18 11:47:34,151 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-18 11:47:34,152 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 38.57ms
+2026-06-18 11:48:03,948 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-06-18 11:48:03,954 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-06-18 11:48:03,977 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-06-18 11:48:03,979 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 25.29ms
+2026-06-18 11:48:08,577 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-06-18 11:48:08,580 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-06-18 11:48:08,596 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-06-18 11:48:08,600 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-06-18 11:48:08,665 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-06-18 11:48:08,668 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 68.11ms
+2026-06-18 11:48:08,691 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-06-18 11:48:08,692 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 95.19ms
+2026-06-18 11:48:43,094 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 11:48:43,228 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 271, 详情: Bug状态变更: new -> in_progress, IP: 127.0.0.1
+2026-06-18 11:48:43,358 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status

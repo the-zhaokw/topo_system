@@ -13,6 +13,17 @@ from logging_decorators import log_api_call, log_business_operation
 from functools import wraps
 from enhanced_app import db as _app_db, User as _AppUser
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
 
 def _check_perm(user, perm_code):
     if not user:
@@ -119,6 +130,7 @@ bugs_bp = Blueprint('bugs', __name__, url_prefix='/bugs')
 # 获取缺陷列表
 @bugs_bp.route('/', methods=['GET'])
 @jwt_required()
+@require_bug_permission('bug:view')
 def get_bugs():
     """获取缺陷列表"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -472,6 +484,7 @@ def create_bug():
 # 获取缺陷的评论列表
 @bugs_bp.route('/<int:bug_id>/comments', methods=['GET'])
 @jwt_required()
+@require_bug_permission('bug:view')
 def get_bug_comments(bug_id):
     """获取缺陷的评论列表"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -499,6 +512,7 @@ def get_bug_comments(bug_id):
 # 创建缺陷评论
 @bugs_bp.route('/<int:bug_id>/comments', methods=['POST'])
 @jwt_required()
+@require_bug_permission('bug:comment')
 def create_bug_comment(bug_id):
     """创建缺陷评论"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -535,6 +549,7 @@ def create_bug_comment(bug_id):
 # 获取单个缺陷详情
 @bugs_bp.route('/<int:bug_id>', methods=['GET'])
 @jwt_required()
+@require_bug_permission('bug:view')
 def get_bug_by_id(bug_id):
     """获取单个缺陷详情"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -1295,6 +1310,7 @@ def assign_bug(bug_id):
 # 导出缺陷
 @bugs_bp.route('/export', methods=['GET'])
 @jwt_required()
+@require_bug_permission('bug:export')
 def export_bugs():
     """导出缺陷列表为 Excel 文件"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -1485,6 +1501,7 @@ def delete_bug(bug_id):
 # 批量删除缺陷
 @bugs_bp.route('/batch-delete', methods=['POST'])
 @jwt_required()
+@require_bug_permission('bug:batch')
 @log_business_operation()
 def batch_delete_bugs():
     """批量删除缺陷"""
@@ -1542,6 +1559,7 @@ def batch_delete_bugs():
 # 批量更新缺陷
 @bugs_bp.route('/batch-update', methods=['PUT'])
 @jwt_required()
+@require_bug_permission('bug:batch')
 @log_business_operation()
 def batch_update_bugs():
     """批量更新缺陷"""
@@ -1622,6 +1640,7 @@ def batch_update_bugs():
 # 导入缺陷
 @bugs_bp.route('/import', methods=['POST'])
 @jwt_required()
+@require_bug_permission('bug:import')
 def import_bugs():
     """从 Excel 文件导入缺陷"""
     import csv
@@ -1813,6 +1832,7 @@ def import_bugs():
 # 上传 Bug 附件
 @bugs_bp.route('/<int:bug_id>/attachments/upload', methods=['POST'])
 @jwt_required()
+@require_bug_permission('bug:upload_attachment')
 @log_business_operation()
 def upload_bug_attachment(bug_id):
     """上传 Bug 附件"""
@@ -1964,6 +1984,7 @@ def upload_bug_attachment(bug_id):
 # 获取 Bug 附件列表
 @bugs_bp.route('/<int:bug_id>/attachments', methods=['GET'])
 @jwt_required()
+@require_bug_permission('bug:view')
 def get_bug_attachments(bug_id):
     """获取 Bug 附件列表"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -1993,6 +2014,7 @@ def get_bug_attachments(bug_id):
 # 下载 Bug 附件
 @bugs_bp.route('/<int:bug_id>/attachments/<int:attachment_id>', methods=['GET'])
 @jwt_required()
+@require_bug_permission('bug:download_attachment')
 def download_bug_attachment(bug_id, attachment_id):
     """下载 Bug 附件"""
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
@@ -2040,6 +2062,7 @@ def download_bug_attachment(bug_id, attachment_id):
 # 删除 Bug 附件
 @bugs_bp.route('/<int:bug_id>/attachments/<int:attachment_id>', methods=['DELETE'])
 @jwt_required()
+@require_bug_permission('bug:upload_attachment')
 @log_business_operation()
 def delete_bug_attachment(bug_id, attachment_id):
     """删除 Bug 附件"""

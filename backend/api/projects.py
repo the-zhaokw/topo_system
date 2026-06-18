@@ -8,6 +8,17 @@ from logging_config import get_log_manager
 from logging_decorators import log_api_call, log_business_operation
 from enhanced_app import db as _proj_db, User as _ProjUser
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
 
 def _check_proj_perm(user, perm_code):
     if not user:
@@ -97,6 +108,7 @@ def get_db():
 
 # 获取项目列表
 @projects_bp.route('/', methods=['GET'])
+@require_project_permission('project:view')
 @log_api_call
 @log_business_operation
 @jwt_required()
@@ -291,6 +303,7 @@ def get_projects():
 # 获取项目详情
 @projects_bp.route('/<int:project_id>', methods=['GET'])
 @jwt_required()
+@require_project_permission('project:view')
 def get_project(project_id):
     
     current_user_id = get_jwt_identity()
@@ -1042,6 +1055,7 @@ def update_project(project_id):
 # 获取项目成员列表
 @projects_bp.route('/<int:project_id>/members', methods=['GET'])
 @log_api_call
+@require_project_permission('project:view')
 def get_project_members(project_id):
     log_manager = get_log_manager_safe()
 
@@ -1104,6 +1118,7 @@ def get_project_members(project_id):
 # 获取项目的风险列表
 @projects_bp.route('/<int:project_id>/risks', methods=['GET'])
 @jwt_required()
+@require_project_permission('risk:view')
 def get_project_risks(project_id):
     db = get_db()
     User, UserRole, Project, ProjectMember, ProjectStatus, Risk, Bug = get_models()
@@ -1180,6 +1195,7 @@ def get_project_risks(project_id):
 @projects_bp.route('/<int:project_id>/members', methods=['POST'])
 @log_api_call
 @log_business_operation
+@require_project_permission('project:assign_member')
 def add_project_member(project_id):
     log_manager = get_log_manager_safe()
 
@@ -1273,6 +1289,7 @@ def add_project_member(project_id):
 @projects_bp.route('/<int:project_id>/members/<int:member_id>', methods=['PUT'])
 @log_api_call
 @log_business_operation
+@require_project_permission('project:assign_member')
 def update_project_member(project_id, member_id):
     log_manager = get_log_manager_safe()
 
@@ -1342,6 +1359,7 @@ def update_project_member(project_id, member_id):
 @projects_bp.route('/<int:project_id>/members/<int:member_id>', methods=['DELETE'])
 @log_api_call
 @log_business_operation
+@require_project_permission('project:remove_member')
 def remove_project_member(project_id, member_id):
     log_manager = get_log_manager_safe()
 

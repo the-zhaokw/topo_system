@@ -699,7 +699,7 @@ function getPermissionErrorMessage(path) {
 function handleRoute(to, next, userStore) {
   // 检查是否有 token 存在（即使 currentUser 还没加载完成）
   const hasToken = !!localStorage.getItem('token')
-  
+
   // 如果有 token 但用户信息还没加载完成，需要等待
   if (hasToken && !userStore.currentUser && userStore.userLoading) {
     const waitForUserLoad = () => {
@@ -712,7 +712,7 @@ function handleRoute(to, next, userStore) {
     waitForUserLoad()
     return
   }
-  
+
   continueHandleRoute(to, next, userStore)
 }
 
@@ -724,35 +724,23 @@ function continueHandleRoute(to, next, userStore) {
   }
 
   // 对于登录页面，我们总是允许访问，不做自动重定向
-  // 这确保即使用户已登录，也能看到登录页面（比如想切换账号）
-  // 只有当用户明确点击登录按钮后才会跳转到 dashboard
   if (to.path === '/login') {
-    // 如果用户已经认证，可以显示登录页面但允许用户手动导航到其他页面
     if (userStore.isAuthenticated) {
-      // 用户已登录，允许访问登录页面（比如用户想切换账号）
       next()
     } else {
-      // 用户未登录，允许访问登录页面
       next()
     }
     return
   }
-  
+
   // 对于需要认证的页面，检查用户是否已认证
   if (!userStore.isAuthenticated) {
-    // 如果用户未认证，则重定向到登录页面
     next('/login')
     return
   }
-  
-  // 检查用户权限
-  const userRole = userStore.currentUser?.role
-  const isSuperAdmin = userStore.currentUser?.is_super_admin
-  const isAdmin = userStore.currentUser?.is_admin
-  const accessibleModules = userStore.currentUser?.accessible_modules
 
   // 系统管理员和管理员拥有所有权限，直接放行
-  if (isSuperAdmin || isAdmin) {
+  if (userStore.isSuperAdmin) {
     next()
     return
   }
@@ -760,7 +748,7 @@ function continueHandleRoute(to, next, userStore) {
   // 大功能模块权限拦截
   const requiredModule = getRequiredModuleCode(to.path)
   if (requiredModule) {
-    if (!Array.isArray(accessibleModules) || !accessibleModules.includes(requiredModule)) {
+    if (!userStore.canAccessModule(requiredModule)) {
       next('/dashboard')
       setTimeout(() => {
         import('element-plus').then(({ ElMessage }) => {
@@ -771,7 +759,24 @@ function continueHandleRoute(to, next, userStore) {
     }
   }
 
+  // 路由 meta 上的细分权限要求
+  if (to.meta?.permissions) {
+    const codes = Array.isArray(to.meta.permissions) ? to.meta.permissions : [to.meta.permissions]
+    const needAll = !!to.meta.permissionAll
+    const ok = needAll ? userStore.hasAllPermission(codes) : userStore.hasAnyPermission(codes)
+    if (!ok) {
+      next('/dashboard')
+      setTimeout(() => {
+        import('element-plus').then(({ ElMessage }) => {
+          ElMessage.error('权限不足，无法访问该页面')
+        })
+      }, 100)
+      return
+    }
+  }
+
   // 首先检查路由的 meta.allowedRoles 配置
+  const userRole = userStore.currentUser?.role
   if (to.meta?.allowedRoles) {
     if (!to.meta.allowedRoles.includes(userRole)) {
       next('/dashboard')
@@ -783,7 +788,6 @@ function continueHandleRoute(to, next, userStore) {
       return
     }
   } else if (!hasPermission(to.path, userRole)) {
-    // 无权限用户重定向到首页并显示权限不足提示
     next('/dashboard')
     setTimeout(() => {
       import('element-plus').then(({ ElMessage }) => {

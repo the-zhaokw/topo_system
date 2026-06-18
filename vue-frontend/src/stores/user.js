@@ -24,6 +24,18 @@ export const useUserStore = defineStore('user', {
     isAuthenticated: (state) => !!state.token && !!state.currentUser,
     isSuperAdmin: (state) => !!(state.currentUser && (state.currentUser.is_super_admin || state.currentUser.is_admin)),
     /**
+     * 检查用户是否可访问大功能模块
+     * @param {string} code - 模块编码，如 'module:bug'
+     */
+    canAccessModule: (state) => (code) => {
+      const u = state.currentUser
+      if (!u) return false
+      if (u.is_super_admin || u.is_admin) return true
+      const modules = u.accessible_modules
+      if (!Array.isArray(modules)) return false
+      return modules.includes(code)
+    },
+    /**
      * 检查用户是否拥有指定细分权限
      * @param {string} code - 权限编码，如 'bug:create'
      */
@@ -47,6 +59,18 @@ export const useUserStore = defineStore('user', {
     hasAnyPermission: (state) => (codes) => {
       if (!Array.isArray(codes) || codes.length === 0) return false
       return codes.some(c => state.currentUser && (state.currentUser.is_super_admin || state.currentUser.is_admin || (() => {
+        const cp = state.currentUser.custom_permissions || {}
+        if (Array.isArray(cp.denied) && cp.denied.includes(c)) return false
+        if (Array.isArray(cp.allowed) && cp.allowed.includes(c)) return true
+        return false
+      })()))
+    },
+    /**
+     * 检查用户是否拥有全部指定权限
+     */
+    hasAllPermission: (state) => (codes) => {
+      if (!Array.isArray(codes) || codes.length === 0) return false
+      return codes.every(c => state.currentUser && (state.currentUser.is_super_admin || state.currentUser.is_admin || (() => {
         const cp = state.currentUser.custom_permissions || {}
         if (Array.isArray(cp.denied) && cp.denied.includes(c)) return false
         if (Array.isArray(cp.allowed) && cp.allowed.includes(c)) return true

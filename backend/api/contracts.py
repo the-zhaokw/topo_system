@@ -10,6 +10,17 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import or_, func
 from datetime import datetime, timezone, timedelta
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
 def get_db():
     """延迟获取数据库实例，避免循环导入"""
     from enhanced_app import get_db_instance
@@ -28,10 +39,61 @@ contracts_bp = Blueprint('contracts', __name__, url_prefix='/contracts')
 contracts_api = Api(contracts_bp)
 
 
+def _check_perm_or_admin(user, perm_code):
+    """内部权限校验：管理员/超管直接放行，否则校验细分权限。"""
+    if not user:
+        return False
+    return _check_perm(user, perm_code)
+
+
+def require_contract_perm(perm_code):
+    """合同子路由权限校验装饰器。"""
+    from functools import wraps
+    def decorator(f):
+        @wraps(f)
+        @jwt_required()
+        def wrapper(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            try:
+                current_user_id = int(current_user_id)
+            except (TypeError, ValueError):
+                pass
+            from enhanced_app import User
+            user = User.query.get(current_user_id)
+            if not user:
+                return {'error': '用户不存在'}, 404
+            if not _check_perm_or_admin(user, perm_code):
+                return {'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}, 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+# 各资源方法的统一权限映射
+_CONTRACT_PERMS = {
+    'list':         'contract:view',
+    'create':       'contract:create',
+    'detail':       'contract:view',
+    'update':       'contract:edit',
+    'delete':       'contract:delete',
+    'approve':      'contract:approve',
+    'delivery':     'contract:edit',
+    'change':       'contract:edit',
+    'risk':         'contract:view',
+    'payment':      'contract:view_finance',
+    'attachment':   'contract:edit',
+    'statistics':   'contract:view_statistics',
+    'export':       'contract:export',
+}
+
+
 class ContractListResource(Resource):
     """合同列表API"""
-    
-    method_decorators = {'post': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:create')],
+    }
 
     def get(self):
         db = get_db()
@@ -164,8 +226,12 @@ class ContractListResource(Resource):
 
 class ContractDetailResource(Resource):
     """合同详情API"""
-    
-    method_decorators = {'put': [jwt_required()], 'delete': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'put': [require_contract_perm('contract:edit')],
+        'delete': [require_contract_perm('contract:delete')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -337,8 +403,13 @@ class ContractDetailResource(Resource):
 
 class ContractClauseResource(Resource):
     """合同条款API"""
-    
-    method_decorators = {'post': [jwt_required()], 'put': [jwt_required()], 'delete': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:edit')],
+        'put': [require_contract_perm('contract:edit')],
+        'delete': [require_contract_perm('contract:delete')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -379,8 +450,11 @@ class ContractClauseResource(Resource):
 
 class ContractApprovalResource(Resource):
     """合同审批API"""
-    
-    method_decorators = {'post': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:approve')],
+    }
     
     def post(self, contract_id):
         db = get_db()
@@ -437,8 +511,12 @@ class ContractApprovalResource(Resource):
 
 class ContractDeliveryResource(Resource):
     """合同交付API"""
-    
-    method_decorators = {'post': [jwt_required()], 'put': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:edit')],
+        'put': [require_contract_perm('contract:edit')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -519,8 +597,11 @@ class ContractDeliveryResource(Resource):
 
 class ContractChangeResource(Resource):
     """合同变更API"""
-    
-    method_decorators = {'post': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:edit')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -564,8 +645,12 @@ class ContractChangeResource(Resource):
 
 class ContractRiskResource(Resource):
     """合同风险API"""
-    
-    method_decorators = {'post': [jwt_required()], 'put': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:edit')],
+        'put': [require_contract_perm('contract:edit')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -636,9 +721,13 @@ class ContractRiskResource(Resource):
 
 
 class ContractPaymentResource(Resource):
-    """合同付款API"""
-    
-    method_decorators = {'post': [jwt_required()], 'put': [jwt_required()]}
+    """合同收付款API"""
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view_finance')],
+        'post': [require_contract_perm('contract:view_finance')],
+        'put': [require_contract_perm('contract:view_finance')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -721,8 +810,12 @@ class ContractPaymentResource(Resource):
 
 class ContractAttachmentResource(Resource):
     """合同附件API"""
-    
-    method_decorators = {'post': [jwt_required()]}
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:edit')],
+        'delete': [require_contract_perm('contract:delete')],
+    }
     
     def get(self, contract_id):
         db = get_db()
@@ -765,7 +858,11 @@ class ContractAttachmentResource(Resource):
 
 class ContractStatisticsResource(Resource):
     """合同统计报表API"""
-    
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view_statistics')],
+    }
+
     def get(self):
         db = get_db()
         app = get_app()
@@ -906,7 +1003,11 @@ class ContractStatisticsResource(Resource):
 
 class ContractExportControlResource(Resource):
     """出口管制检查API"""
-    
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+    }
+
     def get(self):
         db = get_db()
         app = get_app()
@@ -939,7 +1040,11 @@ class ContractExportControlResource(Resource):
 
 class ContractIPManagementResource(Resource):
     """知识产权管理API"""
-    
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+    }
+
     def get(self):
         db = get_db()
         app = get_app()
@@ -970,7 +1075,11 @@ class ContractIPManagementResource(Resource):
 
 class ContractSiteDeliveryResource(Resource):
     """站点交付管理API"""
-    
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+    }
+
     def get(self):
         db = get_db()
         app = get_app()
@@ -1012,7 +1121,11 @@ class ContractSiteDeliveryResource(Resource):
 
 class ContractSanctionCheckResource(Resource):
     """制裁清单检查API"""
-    
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+    }
+
     def get(self):
         db = get_db()
         app = get_app()
@@ -1045,7 +1158,11 @@ class ContractSanctionCheckResource(Resource):
 
 class ContractSearchEnhancedResource(Resource):
     """增强型合同搜索API"""
-    
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+    }
+
     def get(self):
         db = get_db()
         app = get_app()

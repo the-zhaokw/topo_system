@@ -9,6 +9,41 @@ from sqlalchemy import and_, or_, func
 from datetime import datetime, timedelta
 import json
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
+
+def require_audit_perm(perm_code):
+    """审计子路由权限校验装饰器。"""
+    from functools import wraps
+    def decorator(f):
+        @wraps(f)
+        @jwt_required()
+        def wrapper(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            try:
+                current_user_id = int(current_user_id)
+            except (TypeError, ValueError):
+                pass
+            from enhanced_app import User
+            user = User.query.get(current_user_id)
+            if not user:
+                return {'error': '用户不存在'}, 404
+            if not _check_perm(user, perm_code):
+                return {'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}, 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
 audit_bp = Blueprint('audit', __name__, url_prefix='/audit')
 audit_api = Api(audit_bp)
 
@@ -87,10 +122,12 @@ def log_action(action, resource_type, resource_id=None, details=None, user_id=No
         print(f"审计日志记录失败: {e}")
 
 class AuditLogListResource(Resource):
-    """审计日志列表 API"""
-    
-    method_decorators = {'get': [jwt_required()]}
-    
+    """审计日志列表API"""
+
+    method_decorators = {
+        'get': [require_audit_perm('audit:view')],
+    }
+
     def get(self):
         db, AuditLog, User = get_audit_models()
         
@@ -179,8 +216,8 @@ class AuditLogListResource(Resource):
 
 class AuditLogStatisticsResource(Resource):
     """审计日志统计 API"""
-    
-    method_decorators = {'get': [jwt_required()]}
+
+    method_decorators = {'get': [require_audit_perm('audit:view')]}
     
     def get(self):
         db, AuditLog, User = get_audit_models()
@@ -237,8 +274,8 @@ class AuditLogStatisticsResource(Resource):
 
 class AuditLogExportResource(Resource):
     """审计日志导出 API"""
-    
-    method_decorators = {'post': [jwt_required()]}
+
+    method_decorators = {'post': [require_audit_perm('audit:export')]}
     
     def post(self):
         db, AuditLog, User = get_audit_models()

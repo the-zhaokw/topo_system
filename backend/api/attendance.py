@@ -4,6 +4,17 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
 import json
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
 # 创建考勤管理蓝图
 attendance_bp = Blueprint('attendance', __name__, url_prefix='/attendance')
 
@@ -102,6 +113,7 @@ def sync_attendance_data(application):
 # 获取工作日历
 @attendance_bp.route('/work-calendar', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_work_calendar():
     """获取工作日历"""
     db = get_db()
@@ -128,6 +140,7 @@ def get_work_calendar():
 # 获取考勤记录
 @attendance_bp.route('/records', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_attendance_records():
     """获取考勤记录"""
     db = get_db()
@@ -353,6 +366,7 @@ def clock_out():
 # 获取今日考勤记录
 @attendance_bp.route('/records/today', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_today_record():
     """获取今日考勤记录"""
     db = get_db()
@@ -401,6 +415,7 @@ def get_today_record():
 # 获取请假申请列表
 @attendance_bp.route('/leave-applications', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_leave_applications():
     """获取请假申请列表"""
     db = get_db()
@@ -609,6 +624,7 @@ def create_leave_application():
 # 获取加班申请列表
 @attendance_bp.route('/overtime-applications', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_overtime_applications():
     """获取加班申请列表"""
     db = get_db()
@@ -838,6 +854,7 @@ def approve_overtime_application(application_id):
 # 获取班次列表
 @attendance_bp.route('/shifts', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:shift_manage')
 def get_shifts():
     """获取班次列表"""
     db = get_db()
@@ -923,6 +940,7 @@ def create_shift():
 # 更新班次
 @attendance_bp.route('/shifts/<int:shift_id>', methods=['PUT'])
 @jwt_required()
+@require_permission('attendance:shift_manage')
 def update_shift(shift_id):
     """更新班次"""
     db = get_db()
@@ -989,6 +1007,7 @@ def update_shift(shift_id):
 # 删除班次
 @attendance_bp.route('/shifts/<int:shift_id>', methods=['DELETE'])
 @jwt_required()
+@require_permission('attendance:shift_manage')
 def delete_shift(shift_id):
     """删除班次（软删除：停用）"""
     db = get_db()
@@ -1026,6 +1045,7 @@ def delete_shift(shift_id):
 # 获取用户班次安排
 @attendance_bp.route('/user-shifts', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:user_shift_assign')
 def get_user_shifts():
     """获取用户班次安排"""
     db = get_db()
@@ -1163,6 +1183,7 @@ def create_user_shifts_batch():
 # 删除用户排班安排
 @attendance_bp.route('/user-shifts/<int:user_shift_id>', methods=['DELETE'])
 @jwt_required()
+@require_permission('attendance:user_shift_assign')
 def delete_user_shift(user_shift_id):
     """删除用户排班安排"""
     db = get_db()
@@ -1206,6 +1227,7 @@ def delete_user_shift(user_shift_id):
 # 获取考勤异常列表
 @attendance_bp.route('/exceptions', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_exceptions():
     """获取考勤异常列表"""
     db = get_db()
@@ -1308,6 +1330,7 @@ def get_exceptions():
 # 获取考勤统计
 @attendance_bp.route('/statistics', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_statistics():
     """获取考勤统计"""
     db = get_db()
@@ -1484,6 +1507,7 @@ def get_reports_overview():
 # 获取详细报告
 @attendance_bp.route('/reports/detail', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:report')
 def get_reports_detail():
     """获取详细考勤报告"""
     db = get_db()
@@ -1572,6 +1596,7 @@ def get_reports_detail():
 # 获取个人考勤汇总（我的考勤）
 @attendance_bp.route('/my-summary', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:view')
 def get_my_attendance_summary():
     """获取个人考勤汇总信息"""
     db = get_db()
@@ -1812,6 +1837,7 @@ def _build_attendance_export_rows(query, User, AttendanceRecord):
 # 导出考勤记录
 @attendance_bp.route('/records/export', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:export')
 def export_attendance_records():
     """导出考勤记录为 Excel 文件"""
     db = get_db()
@@ -1912,6 +1938,7 @@ def export_attendance_records():
 # 导出考勤报表
 @attendance_bp.route('/reports/export', methods=['GET'])
 @jwt_required()
+@require_permission('attendance:export')
 def export_attendance_report():
     """导出考勤统计报表为 Excel 文件"""
     db = get_db()

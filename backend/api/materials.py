@@ -9,6 +9,17 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import or_, func
 from datetime import datetime, timezone, timedelta
 
+# 统一权限系统
+from utils.permission_unified import (
+    require_perm as _require_perm,
+    require_any as _require_any,
+    require_admin as _require_admin,
+    check_perm as _check_perm,
+    check_module as _check_module,
+    filter_query_by_perm as _filter_query_by_perm,
+    is_system_admin as _is_system_admin,
+)
+
 # 延迟导入数据库和模型以避免循环导入
 def get_db():
     """延迟获取数据库实例，避免循环导入"""
@@ -27,9 +38,46 @@ def get_models():
 materials_bp = Blueprint('materials', __name__, url_prefix='/materials')
 materials_api = Api(materials_bp)
 
+
+def _check_perm_or_admin(user, perm_code):
+    """内部权限校验：管理员/超管直接放行，否则校验细分权限。"""
+    if not user:
+        return False
+    return _check_perm(user, perm_code)
+
+
+def require_material_perm(perm_code):
+    """物料子路由权限校验装饰器。"""
+    from functools import wraps
+    def decorator(f):
+        @wraps(f)
+        @jwt_required()
+        def wrapper(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            try:
+                current_user_id = int(current_user_id)
+            except (TypeError, ValueError):
+                pass
+            from enhanced_app import User
+            user = User.query.get(current_user_id)
+            if not user:
+                return {'error': '用户不存在'}, 404
+            if not _check_perm_or_admin(user, perm_code):
+                return {'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': perm_code}, 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
 class MaterialCategoryResource(Resource):
     """物料分类管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:view')],
+        'post': [require_material_perm('material:category_manage')],
+        'put': [require_material_perm('material:category_manage')],
+        'delete': [require_material_perm('material:category_manage')],
+    }
+
     def get(self, category_id=None):
         """获取物料分类列表或单个分类详情"""
         db = get_db()
@@ -210,7 +258,14 @@ class MaterialCategoryResource(Resource):
 
 class MaterialResource(Resource):
     """物料主数据管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:view')],
+        'post': [require_material_perm('material:create')],
+        'put': [require_material_perm('material:edit')],
+        'delete': [require_material_perm('material:delete')],
+    }
+
     def get(self, material_id=None):
         """获取物料列表或单个物料详情"""
         db = get_db()
@@ -429,7 +484,14 @@ class MaterialResource(Resource):
 
 class WarehouseResource(Resource):
     """仓库管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:warehouse_manage')],
+        'post': [require_material_perm('material:warehouse_manage')],
+        'put': [require_material_perm('material:warehouse_manage')],
+        'delete': [require_material_perm('material:warehouse_manage')],
+    }
+
     def get(self, warehouse_id=None):
         """获取仓库列表或单个仓库详情"""
         db = get_db()
@@ -575,7 +637,14 @@ class WarehouseResource(Resource):
 
 class LocationResource(Resource):
     """库位管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:warehouse_manage')],
+        'post': [require_material_perm('material:warehouse_manage')],
+        'put': [require_material_perm('material:warehouse_manage')],
+        'delete': [require_material_perm('material:warehouse_manage')],
+    }
+
     def get(self, location_id=None):
         """获取库位列表或单个库位详情"""
         db = get_db()
@@ -777,7 +846,14 @@ class LocationResource(Resource):
 
 class InventoryResource(Resource):
     """库存管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:inventory_view')],
+        'post': [require_material_perm('material:inventory_edit')],
+        'put': [require_material_perm('material:inventory_edit')],
+        'delete': [require_material_perm('material:inventory_edit')],
+    }
+
     def get(self):
         """获取库存列表"""
         from enhanced_app import app, Inventory
@@ -957,6 +1033,8 @@ class InventoryResource(Resource):
 class InventoryStatsResource(Resource):
     """库存统计API"""
 
+    method_decorators = {'get': [require_material_perm('material:view_reports')]}
+
     def get(self):
         """获取库存统计数据"""
         try:
@@ -995,7 +1073,14 @@ class InventoryStatsResource(Resource):
 
 class InventoryTransactionResource(Resource):
     """库存交易管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:inventory_view')],
+        'post': [require_material_perm('material:inventory_edit')],
+        'put': [require_material_perm('material:inventory_edit')],
+        'delete': [require_material_perm('material:inventory_edit')],
+    }
+
     def get(self, transaction_id=None):
         """获取库存交易记录"""
         from enhanced_app import app
@@ -1354,7 +1439,14 @@ class InventoryTransactionResource(Resource):
 
 class SerialNumberResource(Resource):
     """序列号管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:serial_manage')],
+        'post': [require_material_perm('material:serial_manage')],
+        'put': [require_material_perm('material:serial_manage')],
+        'delete': [require_material_perm('material:serial_manage')],
+    }
+
     def get(self, serial_number_id=None):
         """获取序列号信息"""
         from enhanced_app import app, SerialNumber
@@ -1518,7 +1610,14 @@ class SerialNumberResource(Resource):
 
 class MaterialRelationshipResource(Resource):
     """物料关系管理API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:view')],
+        'post': [require_material_perm('material:edit')],
+        'put': [require_material_perm('material:edit')],
+        'delete': [require_material_perm('material:delete')],
+    }
+
     def get(self, relationship_id=None):
         """获取物料关系"""
         from enhanced_app import app, MaterialRelationship
@@ -1656,7 +1755,9 @@ class MaterialRelationshipResource(Resource):
 
 class SerialNumberTraceResource(Resource):
     """序列号溯源API"""
-    
+
+    method_decorators = {'get': [require_material_perm('material:serial_manage')]}
+
     def get(self, serial_number):
         """获取序列号全链路轨迹"""
         from enhanced_app import app
@@ -1737,7 +1838,9 @@ class SerialNumberTraceResource(Resource):
 
 class MaterialReportResource(Resource):
     """物料报表API"""
-    
+
+    method_decorators = {'get': [require_material_perm('material:view_reports')]}
+
     def get(self):
         """获取库存汇总报表"""
         from enhanced_app import app
@@ -1787,7 +1890,9 @@ class MaterialReportResource(Resource):
 
 class MaterialFlowReportResource(Resource):
     """物料流水报表API"""
-    
+
+    method_decorators = {'get': [require_material_perm('material:view_reports')]}
+
     def get(self):
         """获取物料流水报表"""
         from enhanced_app import app
@@ -1860,7 +1965,9 @@ class MaterialFlowReportResource(Resource):
 
 class MaterialAlertReportResource(Resource):
     """物料预警报表API"""
-    
+
+    method_decorators = {'get': [require_material_perm('material:view_reports')]}
+
     def get(self):
         """获取物料预警报表"""
         from enhanced_app import app
@@ -2049,7 +2156,14 @@ class MaterialAlertReportResource(Resource):
 
 class InventoryCheckResource(Resource):
     """库存盘点API"""
-    
+
+    method_decorators = {
+        'get': [require_material_perm('material:inventory_view')],
+        'post': [require_material_perm('material:inventory_edit')],
+        'put': [require_material_perm('material:inventory_edit')],
+        'delete': [require_material_perm('material:inventory_edit')],
+    }
+
     def get(self, check_id=None):
         """获取盘点记录"""
         from enhanced_app import app, InventoryCheck, InventoryCheckDetail
@@ -2221,7 +2335,9 @@ class InventoryCheckResource(Resource):
 
 class InventoryAlertResource(Resource):
     """库存预警API"""
-    
+
+    method_decorators = {'get': [require_material_perm('material:inventory_view')]}
+
     def get(self):
         """获取库存预警信息"""
         from enhanced_app import app
@@ -2286,7 +2402,7 @@ class InventoryAlertResource(Resource):
 
 # 物料导入导出 API (F-004-08)
 @materials_bp.route('/export', methods=['GET'])
-@jwt_required()
+@require_material_perm('material:export')
 def export_materials():
     """导出物料数据为Excel"""
     from enhanced_app import app
@@ -2356,7 +2472,7 @@ def export_materials():
 
 
 @materials_bp.route('/import', methods=['POST'])
-@jwt_required()
+@require_material_perm('material:import')
 def import_materials():
     """导入物料数据（Excel格式）"""
     from enhanced_app import app
@@ -2452,7 +2568,7 @@ def import_materials():
 # ==================== 物料统计报表 API (F-007-05) ====================
 
 @materials_bp.route('/reports/inventory-value', methods=['GET'])
-@jwt_required()
+@require_material_perm('material:view_reports')
 def get_inventory_value():
     """获取库存总价值统计"""
     from enhanced_app import app
@@ -2529,7 +2645,7 @@ def get_inventory_value():
 
 
 @materials_bp.route('/reports/top-materials', methods=['GET'])
-@jwt_required()
+@require_material_perm('material:view_reports')
 def get_top_materials():
     """获取出入库频率Top10物料"""
     from enhanced_app import app
@@ -2604,7 +2720,7 @@ def get_top_materials():
 
 
 @materials_bp.route('/reports/material-turnover', methods=['GET'])
-@jwt_required()
+@require_material_perm('material:view_reports')
 def get_material_turnover():
     """获取物料周转率统计"""
     from enhanced_app import app
