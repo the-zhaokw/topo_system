@@ -84,7 +84,7 @@ npm run dev
 ```
 topo_system/
 ├── backend/              # Flask 后端
-│   ├── api/             # API 路由 (33个模块)
+│   ├── api/             # API 路由 (35个模块)
 │   │   ├── activities.py      # 活动记录
 │   │   ├── attendance.py      # 考勤管理
 │   │   ├── audit.py           # 审计日志
@@ -97,28 +97,26 @@ topo_system/
 │   │   ├── contracts_statistics_enhanced.py # 合同统计
 │   │   ├── data_import_export.py # 数据导入导出
 │   │   ├── delivery_tracking.py # 配送跟踪
-│   │   ├── docs.py            # 文档
-│   │   ├── export.py          # 导出
+│   │   ├── docs.py            # API文档
+│   │   ├── export.py          # 通用导出
 │   │   ├── health.py          # 健康检查
-│   │   ├── knowledge.py       # 知识库
+│   │   ├── knowledge.py       # 知识库（v1.6 增强）
 │   │   ├── materials.py       # 物料管理
 │   │   ├── monitoring.py      # 系统监控
 │   │   ├── notifications.py   # 通知管理
 │   │   ├── performance.py     # 性能监控
-│   │   ├── personal_plan.py   # 个人计划
+│   │   ├── personal_plan.py   # 个人计划（v1.6 新增）
 │   │   ├── projects.py        # 项目管理
 │   │   ├── project_logs.py    # 项目日志
 │   │   ├── requirements.py    # 需求管理
-│   │   ├── risks.py           # 风险管理
+│   │   ├── risks.py           # 风险管理（v1.6 新增）
 │   │   ├── search.py          # 搜索
 │   │   ├── statistics.py      # 统计
 │   │   ├── system.py          # 系统管理
-│   │   ├── tasks.py           # 任务管理
 │   │   ├── test_management.py # 测试管理
 │   │   ├── todos.py           # 待办事项
-│   │   ├── users.py           # 用户管理
-│   │   ├── work_logs.py       # 工作日志
-│   │   └── system_config.json # 系统配置
+│   │   ├── users.py           # 用户管理（含模块权限、权限模板）
+│   │   └── work_logs.py       # 工作日志
 │   ├── models/          # 数据模型
 │   │   ├── materials.py       # 物料模型
 │   │   └── permissions.py     # 权限模型
@@ -143,7 +141,7 @@ topo_system/
 │
 ├── vue-frontend/        # Vue 3 前端
 │   ├── src/
-│   │   ├── views/       # 页面组件 (61个页面)
+│   │   ├── views/       # 页面组件 (65个页面)
 │   │   │   ├── ActivityList.vue        # 活动列表
 │   │   │   ├── AttendanceDetail.vue    # 考勤详情
 │   │   │   ├── AttendanceList.vue      # 考勤列表
@@ -158,9 +156,9 @@ topo_system/
 │   │   │   ├── CustomReport.vue        # 自定义报表
 │   │   │   ├── Dashboard.vue           # 仪表板
 │   │   │   ├── InventoryList.vue        # 库存列表
+│   │   │   ├── KnowledgeArticleDetail.vue # 知识文章详情
 │   │   │   ├── KnowledgeBase.vue        # 知识库
 │   │   │   ├── KnowledgeEnhanced.vue    # 知识增强
-│   │   │   ├── KnowledgeListFinal.vue   # 知识列表
 │   │   │   ├── KnowledgeShare.vue       # 知识分享
 │   │   │   ├── LeaveApplication.vue    # 请假申请
 │   │   │   ├── LeaveApproval.vue       # 请假审批
@@ -170,12 +168,16 @@ topo_system/
 │   │   │   ├── MaterialList.vue         # 物料列表
 │   │   │   ├── MaterialRelationshipList.vue # 物料关系
 │   │   │   ├── MaterialReport.vue       # 物料报表
+│   │   │   ├── ModulePermissions.vue    # 模块权限（v1.6 新增）
 │   │   │   ├── MonitoringList.vue      # 监控列表
+│   │   │   ├── MyAttendance.vue         # 我的考勤
 │   │   │   ├── MyDepartment.vue         # 我的部门
 │   │   │   ├── MyTodos.vue              # 我的待办
 │   │   │   ├── NotificationList.vue     # 通知列表
 │   │   │   ├── OvertimeApplication.vue  # 加班申请
 │   │   │   ├── OvertimeApproval.vue     # 加班审批
+│   │   │   ├── PermissionTemplates.vue  # 权限模板（v1.6 新增）
+│   │   │   ├── PersonalPlan.vue         # 个人计划（v1.6 新增）
 │   │   │   ├── ProjectBugList.vue       # 项目Bug
 │   │   │   ├── ProjectDetail.vue        # 项目详情
 │   │   │   ├── ProjectForm.vue          # 项目表单
@@ -186,11 +188,10 @@ topo_system/
 │   │   │   ├── RequirementDocumentDetail.vue # 需求详情
 │   │   │   ├── RequirementDocumentList.vue # 需求列表
 │   │   │   ├── RequirementTraceMatrix.vue # 需求追溯
+│   │   │   ├── RiskList.vue             # 风险与问题（v1.6 新增）
 │   │   │   ├── SerialNumberList.vue     # 序列号
 │   │   │   ├── ShiftManagement.vue      # 班次管理
 │   │   │   ├── SystemSettings.vue       # 系统设置
-│   │   │   ├── TaskDetail.vue           # 任务详情
-│   │   │   ├── TaskList.vue             # 任务列表
 │   │   │   ├── TestCaseDetail.vue       # 测试用例
 │   │   │   ├── TestCaseList.vue         # 测试用例
 │   │   │   ├── TestDashboard.vue        # 测试仪表板
@@ -308,7 +309,7 @@ const fetchBugs = async () => {
 
 ## 系统功能模块
 
-### 后端 API 模块 (28个)
+### 后端 API 模块 (33个)
 1. activities.py - 活动记录
 2. attendance.py - 考勤管理
 3. audit.py - 审计日志
@@ -321,42 +322,42 @@ const fetchBugs = async () => {
 10. contracts_statistics_enhanced.py - 合同统计
 11. data_import_export.py - 数据导入导出
 12. delivery_tracking.py - 配送跟踪
-13. docs.py - 文档
-14. export.py - 导出
+13. docs.py - API文档
+14. export.py - 通用导出
 15. health.py - 健康检查
-16. knowledge.py - 知识库
+16. knowledge.py - 知识库（v1.6 增强）
 17. materials.py - 物料管理
 18. monitoring.py - 系统监控
 19. notifications.py - 通知管理
 20. performance.py - 性能监控
-21. projects.py - 项目管理
-22. project_logs.py - 项目日志
-23. requirements.py - 需求管理
-24. search.py - 搜索
-25. statistics.py - 统计
-26. system.py - 系统管理
-27. tasks.py - 任务管理
-28. test_management.py - 测试管理
-29. todos.py - 待办事项
-30. users.py - 用户管理
-31. work_logs.py - 工作日志
-32. personal_plan.py - 个人计划
-33. risks.py - 风险管理
+21. personal_plan.py - 个人计划（v1.6 新增）
+22. projects.py - 项目管理
+23. project_logs.py - 项目日志
+24. requirements.py - 需求管理
+25. risks.py - 风险管理（v1.6 新增）
+26. search.py - 搜索
+27. statistics.py - 统计
+28. system.py - 系统管理
+29. test_management.py - 测试管理
+30. todos.py - 待办事项
+31. users.py - 用户管理（含模块权限、权限模板）
+32. work_logs.py - 工作日志
+33. __init__.py - 模块初始化
 
-### 前端页面 (63个)
+### 前端页面 (65个)
 - 仪表板：Dashboard
 - 项目管理：ProjectList, ProjectDetail, ProjectForm, ProjectStatistics, ProjectBugList, ProjectLogList
 - Bug管理：BugList, BugDetail, BugForm, BugStatistics
-- 任务管理：TaskList, TaskDetail
 - 物料管理：MaterialList, MaterialCategoryList, WarehouseList, LocationList, InventoryList, SerialNumberList, MaterialRelationshipList, MaterialReport
 - 合同管理：ContractList, ContractDetail, ContractStatistics
-- 考勤管理：AttendanceList, AttendanceDetail, AttendanceReport, ShiftManagement, LeaveApplication, LeaveApproval, OvertimeApplication, OvertimeApproval
+- 考勤管理：AttendanceList, AttendanceDetail, AttendanceReport, MyAttendance, ShiftManagement, LeaveApplication, LeaveApproval, OvertimeApplication, OvertimeApproval
 - 需求管理：RequirementDocumentList, RequirementDocumentDetail, RequirementDashboard, RequirementTraceMatrix
 - 测试管理：TestSuiteList, TestSuiteDetail, TestCaseList, TestCaseDetail, TestExecutionList, TestDashboard, TestReport
 - 用户管理：UserList, UserDetail, UserProfile, MyDepartment
-- 知识库：KnowledgeBase, KnowledgeListFinal, KnowledgeEnhanced, KnowledgeShare
-- 个人工作台：MyTodos, WorkLogs, WorkLogList, WorkStatisticsDetail, PersonalPlan
-- 风险管理：RiskList
+- 权限管理：ModulePermissions（v1.6 新增）, PermissionTemplates（v1.6 新增）
+- 知识库：KnowledgeBase, KnowledgeEnhanced, KnowledgeArticleDetail, KnowledgeShare
+- 个人工作台：MyTodos, WorkLogs, WorkLogList, WorkStatisticsDetail, PersonalPlan（v1.6 新增）
+- 风险管理：RiskList（v1.6 新增）
 - 系统功能：NotificationList, MonitoringList, ActivityList, SystemSettings, CustomReport, Login
 
 ---
@@ -396,6 +397,6 @@ npm install --legacy-peer-deps
 ---
 
 **文档创建时间**: 2026-03-16
-**最后更新**: 2026-04
+**最后更新**: 2026-06
 **VS Code 版本**: 1.111.0+
-**系统版本**: TOPO System v1.4.0
+**系统版本**: TOPO System v1.6.0

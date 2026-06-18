@@ -16952,3 +16952,29 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 2026-06-18 11:48:43,094 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
 2026-06-18 11:48:43,228 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 271, 详情: Bug状态变更: new -> in_progress, IP: 127.0.0.1
 2026-06-18 11:48:43,358 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-18 17:10:34,706 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 17:10:36,884 - enhanced_app - ERROR - 发送邮件到 zhaokangwei@chenxiaotech.com 失败: (535, b'Error: authentication failed')
+2026-06-18 17:10:36,887 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-18 17:11:48,193 - enhanced_app - INFO - 部门数据迁移成功
+2026-06-18 17:11:48,195 - enhanced_app - INFO - 职位数据迁移成功
+2026-06-18 17:11:48,196 - enhanced_app - INFO - 职位权限修复完成
+2026-06-18 17:11:48,196 - enhanced_app - INFO - 默认职位创建成功
+2026-06-18 17:11:48,198 - enhanced_app - INFO - 数据库迁移检查完成
+2026-06-18 17:11:48,198 - enhanced_app - INFO - 数据库表创建完成
+2026-06-18 17:11:48,403 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-06-18 17:11:48,404 - enhanced_app - INFO - 数据库初始化完成
+2026-06-18 17:12:05,835 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 17:12:05,927 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 271, 详情: Bug状态变更: resolved -> closed, IP: 127.0.0.1
+2026-06-18 17:12:06,062 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-18 17:12:09,305 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 17:12:10,116 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 271, 详情: Bug状态变更: closed -> reopened, IP: 127.0.0.1
+2026-06-18 17:12:10,498 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-18 17:12:13,382 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 17:12:13,472 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 271, 详情: Bug状态变更: reopened -> in_progress, IP: 127.0.0.1
+2026-06-18 17:12:13,553 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-18 17:12:18,489 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 17:12:20,711 - enhanced_app - ERROR - 发送邮件到 zhaokangwei@chenxiaotech.com 失败: (535, b'Error: authentication failed')
+2026-06-18 17:12:20,712 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status
+2026-06-18 17:12:24,792 - enhanced_app - INFO - Business Operation Start: api.bugs.transition_bug_status
+2026-06-18 17:12:24,855 - enhanced_app - INFO - log - 用户ID: 1, 操作: bug_status_transition, 资源类型: bug, 资源ID: 271, 详情: Bug状态变更: resolved -> resolved, IP: 127.0.0.1
+2026-06-18 17:12:24,936 - enhanced_app - INFO - Business Operation Complete: api.bugs.transition_bug_status

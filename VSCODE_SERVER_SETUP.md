@@ -401,6 +401,38 @@ server {
 topo_system/
 ├── backend/                    # 后端Flask应用
 │   ├── api/                   # API路由目录 (33个API模块)
+│   │   ├── activities.py
+│   │   ├── attendance.py
+│   │   ├── audit.py
+│   │   ├── auth.py
+│   │   ├── avatar.py
+│   │   ├── bug_statistics.py
+│   │   ├── bugs.py
+│   │   ├── contracts.py
+│   │   ├── contracts_enhanced.py
+│   │   ├── contracts_statistics_enhanced.py
+│   │   ├── data_import_export.py
+│   │   ├── delivery_tracking.py
+│   │   ├── docs.py
+│   │   ├── export.py
+│   │   ├── health.py
+│   │   ├── knowledge.py        # v1.6 增强
+│   │   ├── materials.py
+│   │   ├── monitoring.py
+│   │   ├── notifications.py
+│   │   ├── performance.py
+│   │   ├── personal_plan.py    # v1.6 新增
+│   │   ├── project_logs.py
+│   │   ├── projects.py
+│   │   ├── requirements.py
+│   │   ├── risks.py            # v1.6 新增
+│   │   ├── search.py
+│   │   ├── statistics.py
+│   │   ├── system.py
+│   │   ├── test_management.py
+│   │   ├── todos.py
+│   │   ├── users.py            # 含模块权限、权限模板
+│   │   └── work_logs.py
 │   ├── models/                # 数据模型定义
 │   ├── services/              # 业务服务
 │   ├── uploads/               # 文件上传目录
@@ -414,7 +446,15 @@ topo_system/
 │   └── logging_config.py     # 日志配置
 ├── vue-frontend/             # 前端Vue应用
 │   ├── src/                  # 源代码
-│   │   ├── views/           # 页面组件 (63个页面)
+│   │   ├── views/           # 页面组件 (65个页面)
+│   │   │   ├── Dashboard.vue
+│   │   │   ├── ModulePermissions.vue       # v1.6 新增
+│   │   │   ├── PermissionTemplates.vue     # v1.6 新增
+│   │   │   ├── PersonalPlan.vue            # v1.6 新增
+│   │   │   ├── RiskList.vue                # v1.6 新增
+│   │   │   ├── KnowledgeArticleDetail.vue
+│   │   │   ├── MyAttendance.vue
+│   │   │   ├── ... 等 65 个页面
 │   │   ├── components/      # 通用组件
 │   │   ├── router/          # 路由配置
 │   │   ├── services/        # API服务
@@ -427,4 +467,5 @@ topo_system/
 ---
 
 **安装时间**: 2026-03-16
-**最后更新**: 2026-04
+**最后更新**: 2026-06
+**系统版本**: TOPO System v1.6.0
