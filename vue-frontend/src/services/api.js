@@ -696,18 +696,4 @@ export const apiService = {
     getHealth: () => api.get('/monitoring/health'),
     getPerformance: () => api.get('/monitoring/performance'),
     getPerformanceHistory: (params) => api.get('/monitoring/performance/history', { params }),
-    getDatabaseStats: () => api.get('/monitoring/database'),
-    getApiStats: () => api.get('/monitoring/api/stats'),
-    getLogs: (params) => api.get('/monitoring/logs', { params }),
-    getAlerts: (params) => api.get('/monitoring/alerts', { params }),
-    createAlert: (data) => api.post('/monitoring/alerts', data),
-    resolveAlert: (id) => api.post(`/monitoring/alerts/${id}/resolve`),
-    getAlertRules: () => api.get('/monitoring/alert-rules'),
-    getSystemInfo: () => api.get('/monitoring/system-info'),
-    getDashboard: () => api.get('/monitoring/dashboard')
-  }
-}
-
-// 导出axios实例
-export { api as axios, api }
-export default api
+    getDatabaseStats: ()

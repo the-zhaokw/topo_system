@@ -32,9 +32,10 @@ def _check_proj_perm(user, perm_code):
 
 
 def require_project_permission(perm_code):
-    """项目子路由权限校验装饰器"""
+    """项目子路由权限校验装饰器 - 自动验证JWT后再检查权限"""
     def decorator(f):
         @wraps(f)
+        @jwt_required()
         def wrapper(*args, **kwargs):
             current_user_id = get_jwt_identity()
             user = _proj_db.session.query(_ProjUser).get(current_user_id)
@@ -111,7 +112,6 @@ def get_db():
 @require_project_permission('project:view')
 @log_api_call
 @log_business_operation
-@jwt_required()
 def get_projects():
     """获取项目列表"""
     log_manager = get_log_manager_safe()
@@ -302,7 +302,6 @@ def get_projects():
 
 # 获取项目详情
 @projects_bp.route('/<int:project_id>', methods=['GET'])
-@jwt_required()
 @require_project_permission('project:view')
 def get_project(project_id):
     
@@ -427,7 +426,6 @@ def get_project(project_id):
 @projects_bp.route('/', methods=['POST'])
 @log_api_call
 @log_business_operation
-@jwt_required()
 @require_project_permission('project:create')
 def create_project():
     log_manager = get_log_manager_safe()
@@ -680,7 +678,6 @@ def create_project():
 @projects_bp.route('/<int:project_id>', methods=['PUT'])
 @log_api_call
 @log_business_operation
-@jwt_required()
 @require_project_permission('project:edit')
 def update_project(project_id):
     log_manager = get_log_manager_safe()
@@ -1117,7 +1114,6 @@ def get_project_members(project_id):
 
 # 获取项目的风险列表
 @projects_bp.route('/<int:project_id>/risks', methods=['GET'])
-@jwt_required()
 @require_project_permission('risk:view')
 def get_project_risks(project_id):
     db = get_db()
@@ -1421,7 +1417,6 @@ def remove_project_member(project_id, member_id):
 @projects_bp.route('/<int:project_id>', methods=['DELETE'])
 @log_api_call
 @log_business_operation
-@jwt_required()
 @require_project_permission('project:delete')
 def delete_project(project_id):
     log_manager = get_log_manager_safe()

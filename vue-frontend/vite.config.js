@@ -61,23 +61,4 @@ export default defineConfig({
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.')
-          const ext = info[info.length - 1]
-          if (/\.(png|jpe?g|gif|svg|webp|ico)$/i.test(assetInfo.name)) {
-            return 'img/[name]-[hash][extname]'
-          }
-          if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name)) {
-            return 'fonts/[name]-[hash][extname]'
-          }
-          return 'assets/[name]-[hash][extname]'
-        }
-      }
-    },
-    // 压缩配置
-    minify: 'esbuild',
-    // 源码映射（生产环境关闭）
-    sourcemap: false,
-    // 报告压缩后大小
-    reportCompressedSize: true
-  }
-})
+          const info = assetInfo.name.
