@@ -2476,4 +2476,523 @@ def get_user_module_permissions(user_id):
     User, _, _, _ = get_models()
 
     current_user_id = get_jwt_identity()
-  
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_module_perm(current_user, 'module_perm:view'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'module_perm:view'}), 403
+
+    target_user = db.session.query(User).get(user_id)
+    if not target_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    from models.permissions import get_module_catalog
+    catalog = get_module_catalog()
+    accessible = set(target_user.get_accessible_modules())
+    modules = []
+    for m in catalog:
+        item = _serialize_module(m)
+        item['accessible'] = m['code'] in accessible
+        modules.append(item)
+
+    custom_perms = target_user.get_custom_permissions() or {}
+    return jsonify({
+        'user_id': user_id,
+        'username': target_user.username,
+        'is_super_admin': target_user.is_super_admin,
+        'is_admin': target_user.is_system_admin(),
+        'is_default': not bool(target_user.accessible_modules),
+        'modules': modules,
+        'custom_permissions': {
+            'allowed': custom_perms.get('allowed', []) or [],
+            'denied': custom_perms.get('denied', []) or []
+        }
+    }), 200
+
+
+@users_bp.route('/<int:user_id>/module-permissions', methods=['PUT'])
+@log_api_call
+@log_business_operation
+@jwt_required()
+def update_user_module_permissions(user_id):
+    """更新指定用户的可访问模块和细分权限
+
+    Body:
+        {
+            "modules": ["module:project", "module:bug", ...],   // 可见模块编码
+            "allowed": ["attendance:view", ...],                 // 额外权限
+            "denied": ["attendance:leave_approve", ...]          // 限制权限
+        }
+    """
+    db, User, _, create_audit_log = get_db_and_models()
+
+    data = request.get_json() or {}
+    modules = data.get('modules', [])
+
+    if not isinstance(modules, list):
+        return jsonify({'error': 'modules 字段必须为列表'}), 400
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_module_perm(current_user, 'module_perm:edit'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'module_perm:edit'}), 403
+
+    target_user = db.session.query(User).get(user_id)
+    if not target_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    # 系统管理员本身始终拥有所有模块，配置无效
+    if target_user.is_super_admin:
+        return jsonify({'error': '系统管理员默认拥有所有模块，无需配置'}), 400
+
+    valid_codes = _module_codes()
+    invalid = [m for m in modules if m not in valid_codes]
+    if invalid:
+        return jsonify({'error': f'包含无效的模块编码: {", ".join(invalid)}'}), 400
+
+    # 处理细分权限
+    allowed_perms = data.get('allowed', None)
+    denied_perms = data.get('denied', None)
+    if allowed_perms is not None and not isinstance(allowed_perms, list):
+        return jsonify({'error': 'allowed 字段必须为列表'}), 400
+    if denied_perms is not None and not isinstance(denied_perms, list):
+        return jsonify({'error': 'denied 字段必须为列表'}), 400
+
+    # 空数组视为重置为系统默认
+    target_user.set_accessible_modules(modules)
+
+    # 合并保存细分权限：未传 allowed/denied 时保留原有值
+    if allowed_perms is not None or denied_perms is not None:
+        existing = target_user.get_custom_permissions() or {}
+        new_custom = {
+            'allowed': list(allowed_perms) if allowed_perms is not None else list(existing.get('allowed', []) or []),
+            'denied': list(denied_perms) if denied_perms is not None else list(existing.get('denied', []) or [])
+        }
+        target_user.set_custom_permissions(new_custom)
+
+    try:
+        db.session.commit()
+
+        try:
+            log_manager = get_log_manager()
+            log_manager.log_business(
+                operation='user_module_permissions_updated',
+                user_id=current_user_id,
+                details={
+                    'target_user_id': user_id,
+                    'username': target_user.username,
+                    'modules': modules,
+                    'reset_to_default': len(modules) == 0
+                }
+            )
+        except Exception:
+            pass
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='update_user_module_permissions',
+                resource_type='user',
+                resource_id=user_id,
+                details={'username': target_user.username, 'modules': modules}
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '模块权限更新成功',
+            'user_id': user_id,
+            'username': target_user.username,
+            'modules': modules
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"更新用户模块权限失败: {e}")
+        return jsonify({'error': '更新失败'}), 500
+
+
+@users_bp.route('/<int:user_id>/module-permissions/reset', methods=['POST'])
+@log_api_call
+@jwt_required()
+def reset_user_module_permissions(user_id):
+    """将指定用户的模块可见性重置为系统默认"""
+    db, User, _, create_audit_log = get_db_and_models()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_module_perm(current_user, 'module_perm:reset'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'module_perm:reset'}), 403
+
+    target_user = db.session.query(User).get(user_id)
+    if not target_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if target_user.is_super_admin:
+        return jsonify({'error': '系统管理员无需重置'}), 400
+
+    target_user.reset_accessible_modules()
+    # 同时清空细分权限
+    target_user.set_custom_permissions({'allowed': [], 'denied': []})
+    try:
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='reset_user_module_permissions',
+                resource_type='user',
+                resource_id=user_id,
+                details={'username': target_user.username}
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '已重置为系统默认模块可见性',
+            'user_id': user_id,
+            'username': target_user.username
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"重置用户模块权限失败: {e}")
+        return jsonify({'error': '重置失败'}), 500
+
+
+# =============================================================================
+# 权限模板管理
+# =============================================================================
+def _check_template_perm(user, perm_code):
+    """校验用户是否可执行权限模板的某项操作
+
+    规则：
+    - 系统管理员（is_super_admin=True）放行
+    - 职位是 admin/manager 放行
+    - 否则要求 check_permission(perm_code) 为 True
+    """
+    if not user:
+        return False
+    if user.is_super_admin:
+        return True
+    pos = user.get_position_info()
+    if pos and (pos.is_admin or pos.is_manager):
+        return True
+    return user.check_permission(perm_code)
+
+
+def _load_template_model():
+    """延迟加载 PermissionTemplate 模型，避免循环导入
+
+    注意：不能从 models.user 引入，因为 models.user 中定义了与 enhanced_app 重复的 User 类，
+    会触发 SQLAlchemy "Multiple classes found for path 'User'" 错误。
+    """
+    from models.permission_template import PermissionTemplate
+    return PermissionTemplate
+
+
+def _load_user_model():
+    from enhanced_app import User
+    return User
+
+
+@users_bp.route('/permission-templates', methods=['GET'])
+@jwt_required()
+def list_permission_templates():
+    """获取权限模板列表
+
+    Query:
+        keyword: 模板名/描述模糊搜索
+        category: 按分类过滤 (builtin / role / custom)
+        include_content: 是否包含完整内容（默认 false，只返回概要）
+    """
+    db = get_db()
+    User = _load_user_model()
+    PermissionTemplate = _load_template_model()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_template_perm(current_user, 'template:view'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'template:view'}), 403
+
+    keyword = (request.args.get('keyword') or '').strip()
+    category = (request.args.get('category') or '').strip()
+    include_content = request.args.get('include_content', 'false').lower() == 'true'
+
+    query = db.session.query(PermissionTemplate)
+    if category:
+        query = query.filter(PermissionTemplate.category == category)
+    if keyword:
+        query = query.filter(
+            (PermissionTemplate.name.ilike(f'%{keyword}%')) |
+            (PermissionTemplate.description.ilike(f'%{keyword}%'))
+        )
+
+    query = query.order_by(PermissionTemplate.is_builtin.desc(), PermissionTemplate.sort_order.asc(), PermissionTemplate.id.asc())
+    items = [t.to_dict(with_content=include_content) for t in query.all()]
+
+    return jsonify({
+        'items': items,
+        'total': len(items)
+    }), 200
+
+
+@users_bp.route('/permission-templates/<int:template_id>', methods=['GET'])
+@jwt_required()
+def get_permission_template(template_id):
+    """获取单个权限模板详情"""
+    db = get_db()
+    User = _load_user_model()
+    PermissionTemplate = _load_template_model()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_template_perm(current_user, 'template:view'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'template:view'}), 403
+
+    tpl = db.session.query(PermissionTemplate).get(template_id)
+    if not tpl:
+        return jsonify({'error': '模板不存在'}), 404
+
+    return jsonify(tpl.to_dict(with_content=True)), 200
+
+
+@users_bp.route('/permission-templates', methods=['POST'])
+@jwt_required()
+def create_permission_template():
+    """创建权限模板"""
+    db = get_db()
+    User = _load_user_model()
+    PermissionTemplate = _load_template_model()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_template_perm(current_user, 'template:create'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'template:create'}), 403
+
+    data = request.get_json() or {}
+    name = (data.get('name') or '').strip()
+    if not name:
+        return jsonify({'error': '模板名称不能为空'}), 400
+
+    if db.session.query(PermissionTemplate).filter_by(name=name).first():
+        return jsonify({'error': '模板名称已存在'}), 400
+
+    tpl = PermissionTemplate(
+        name=name,
+        description=(data.get('description') or '').strip(),
+        category=(data.get('category') or 'custom').strip() or 'custom',
+        icon=(data.get('icon') or 'Document').strip() or 'Document',
+        is_builtin=False,
+        is_active=True,
+        sort_order=int(data.get('sort_order') or 100),
+        created_by=current_user_id
+    )
+    tpl.set_modules(data.get('modules') or [])
+    tpl.set_allowed_permissions(data.get('allowed_permissions') or [])
+    tpl.set_denied_permissions(data.get('denied_permissions') or [])
+
+    try:
+        db.session.add(tpl)
+        db.session.commit()
+        return jsonify(tpl.to_dict(with_content=True)), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"创建权限模板失败: {e}")
+        return jsonify({'error': '创建失败'}), 500
+
+
+@users_bp.route('/permission-templates/<int:template_id>', methods=['PUT'])
+@jwt_required()
+def update_permission_template(template_id):
+    """更新权限模板"""
+    db = get_db()
+    User = _load_user_model()
+    PermissionTemplate = _load_template_model()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_template_perm(current_user, 'template:edit'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'template:edit'}), 403
+
+    tpl = db.session.query(PermissionTemplate).get(template_id)
+    if not tpl:
+        return jsonify({'error': '模板不存在'}), 404
+
+    if tpl.is_builtin and not (current_user.is_super_admin or (current_user.get_position_info() and (current_user.get_position_info().is_admin or current_user.get_position_info().is_manager))):
+        return jsonify({'error': '内置模板仅管理员可编辑'}), 403
+
+    data = request.get_json() or {}
+
+    if 'name' in data:
+        new_name = (data.get('name') or '').strip()
+        if not new_name:
+            return jsonify({'error': '模板名称不能为空'}), 400
+        # 唯一性校验
+        exists = db.session.query(PermissionTemplate).filter(PermissionTemplate.name == new_name, PermissionTemplate.id != template_id).first()
+        if exists:
+            return jsonify({'error': '模板名称已存在'}), 400
+        tpl.name = new_name
+
+    if 'description' in data:
+        tpl.description = (data.get('description') or '').strip()
+    if 'icon' in data:
+        tpl.icon = (data.get('icon') or 'Document').strip() or 'Document'
+    if 'category' in data and not tpl.is_builtin:
+        tpl.category = (data.get('category') or 'custom').strip() or 'custom'
+    if 'is_active' in data:
+        tpl.is_active = bool(data.get('is_active'))
+    if 'sort_order' in data:
+        try:
+            tpl.sort_order = int(data.get('sort_order') or 0)
+        except (TypeError, ValueError):
+            pass
+
+    if 'modules' in data:
+        tpl.set_modules(data.get('modules') or [])
+    if 'allowed_permissions' in data:
+        tpl.set_allowed_permissions(data.get('allowed_permissions') or [])
+    if 'denied_permissions' in data:
+        tpl.set_denied_permissions(data.get('denied_permissions') or [])
+
+    try:
+        db.session.commit()
+        return jsonify(tpl.to_dict(with_content=True)), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"更新权限模板失败: {e}")
+        return jsonify({'error': '更新失败'}), 500
+
+
+@users_bp.route('/permission-templates/<int:template_id>', methods=['DELETE'])
+@jwt_required()
+def delete_permission_template(template_id):
+    """删除权限模板"""
+    db = get_db()
+    User = _load_user_model()
+    PermissionTemplate = _load_template_model()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_template_perm(current_user, 'template:delete'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'template:delete'}), 403
+
+    tpl = db.session.query(PermissionTemplate).get(template_id)
+    if not tpl:
+        return jsonify({'error': '模板不存在'}), 404
+
+    if tpl.is_builtin:
+        return jsonify({'error': '内置模板不允许删除'}), 400
+
+    try:
+        db.session.delete(tpl)
+        db.session.commit()
+        return jsonify({'message': '已删除'}), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"删除权限模板失败: {e}")
+        return jsonify({'error': '删除失败'}), 500
+
+
+@users_bp.route('/permission-templates/<int:template_id>/apply', methods=['POST'])
+@jwt_required()
+def apply_permission_template(template_id):
+    """把模板一键应用到一个或多个用户
+
+    Body:
+        { "user_ids": [1, 2, 3] }
+    """
+    db = get_db()
+    User = _load_user_model()
+    PermissionTemplate = _load_template_model()
+
+    current_user_id = get_jwt_identity()
+    current_user = db.session.query(User).get(current_user_id)
+    if not current_user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    if not _check_template_perm(current_user, 'template:apply'):
+        return jsonify({'error': '权限不足', 'code': 'PERMISSION_DENIED', 'required_permission': 'template:apply'}), 403
+
+    tpl = db.session.query(PermissionTemplate).get(template_id)
+    if not tpl:
+        return jsonify({'error': '模板不存在'}), 404
+    if not tpl.is_active:
+        return jsonify({'error': '模板已停用'}), 400
+
+    data = request.get_json() or {}
+    user_ids = data.get('user_ids') or []
+    if not isinstance(user_ids, list) or not user_ids:
+        return jsonify({'error': 'user_ids 必须为非空数组'}), 400
+
+    # 系统管理员不应用模板（已是全部权限）
+    targets = db.session.query(User).filter(User.id.in_(user_ids)).all()
+    if not targets:
+        return jsonify({'error': '未找到目标用户'}), 404
+
+    applied = []
+    skipped = []
+    for u in targets:
+        if u.is_super_admin:
+            skipped.append({'user_id': u.id, 'username': u.username, 'reason': '系统管理员不应用模板'})
+            continue
+        try:
+            tpl.apply_to_user(u)
+            applied.append({'user_id': u.id, 'username': u.username})
+        except Exception as e:
+            logger.error(f"应用模板到用户 {u.id} 失败: {e}")
+            skipped.append({'user_id': u.id, 'username': u.username, 'reason': '应用失败'})
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"提交模板应用失败: {e}")
+        return jsonify({'error': '应用失败'}), 500
+
+    # 审计日志
+    try:
+        from enhanced_app import create_audit_log
+        create_audit_log(
+            user_id=current_user_id,
+            action='apply_permission_template',
+            resource_type='permission_template',
+            resource_id=template_id,
+            details={
+                'template_name': tpl.name,
+                'applied_user_ids': [a['user_id'] for a in applied],
+                'skipped': skipped
+            }
+        )
+    except Exception:
+        pass
+
+    return jsonify({
+        'message': f'已成功应用模板到 {len(applied)} 个用户',
+        'template_id': template_id,
+        'template_name': tpl.name,
+        'applied': applied,
+        'skipped': skipped,
+        'applied_count': len(applied),
+        'skipped_count': len(skipped)
+    }), 200

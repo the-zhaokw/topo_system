@@ -502,4 +502,57 @@ def update_profile():
                                 user.birthday = data[field]
                             logger.info(f"成功解析 birthday: {user.birthday}")
                         except ValueError as e:
-                            logger.error(f"生日格式解析失败：{data[field]}, 错误�
+                            logger.error(f"生日格式解析失败：{data[field]}, 错误：{str(e)}")
+                            return jsonify({'error': '生日格式不正确，应为 YYYY-MM-DD 或 YYYY/MM/DD'}), 400
+                        except Exception as e:
+                            logger.error(f"生日解析异常：{str(e)}")
+                            return jsonify({'error': f'生日格式不正确：{str(e)}'}), 400
+                elif data[field] is not None and data[field] != '':
+                    try:
+                        setattr(user, field, data[field])
+                        logger.info(f"成功设置字段 {field} = {data[field]}")
+                    except Exception as e:
+                        logger.error(f"设置字段 {field} 失败: {str(e)}, 类型: {type(data[field])}")
+                        return jsonify({'error': f'更新字段 {field} 失败: {str(e)}'}), 500
+                else:
+                    # 设置为空值
+                    try:
+                        setattr(user, field, None)
+                        logger.info(f"成功设置字段 {field} = None")
+                    except Exception as e:
+                        logger.error(f"设置字段 {field} 为None失败: {str(e)}")
+        
+        try:
+            logger.info("准备提交数据库更改...")
+            db.session.commit()
+            logger.info("数据库提交成功")
+            
+            logger.info("准备返回成功响应")
+            return jsonify({
+            'message': '个人资料更新成功',
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,  # 现在role是字符串，直接返回
+                'department': user.department,
+                'position': user.position,
+                'phone': user.phone,  # 保留原字段，用于向后兼容
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'employee_id': user.employee_id,
+                'company_phone': user.company_phone,
+                'mobile_phone': user.mobile_phone,
+                'birthday': user.birthday.isoformat() if user.birthday else None,
+                'gender': user.gender,
+                'work_language': user.work_language,
+                'avatar': user.avatar,
+                'created_at': user.created_at.isoformat() if user.created_at else None,
+                'updated_at': user.updated_at.isoformat() if user.updated_at else None,
+                'last_login': user.last_login.isoformat() if user.last_login else None
+            }
+        }), 200
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"更新个人资料时发生异常: {str(e)}", exc_info=True)
+            return jsonify({'error': f'更新失败: {str(e)}'}), 500

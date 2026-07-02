@@ -3914,4 +3914,212 @@ def init_db():
             db.create_all()
             
             # 执行数据库迁移，添加缺失的列
-     
+            migrate_database()
+            
+            logger.info("数据库表创建完成")
+            
+            # 创建基本的默认用户（如果不存在）
+            try:
+                # 检查是否已存在管理员用户
+                existing_admin = User.query.filter_by(username='admin').first()
+                if not existing_admin:
+                    # 创建默认管理员用户
+                    import secrets
+                    salt = secrets.token_hex(16)
+                    admin_user = User(
+                        username='admin',
+                        email='admin@example.com',
+                        role=UserRole.ADMIN.value,
+                        is_admin=True,
+                        is_super_admin=True,
+                        position='系统管理员',
+                        department='',
+                        salt=salt
+                    )
+                    admin_user.set_password('admin123')
+
+                    # 添加到数据库
+                    db.session.add(admin_user)
+                    db.session.commit()
+
+                    logger.info("默认管理员用户创建成功: username=admin, email=admin@example.com, password=admin123")
+                else:
+                    # 更新已存在的admin用户为系统管理员
+                    if not existing_admin.is_super_admin:
+                        existing_admin.is_super_admin = True
+                        existing_admin.is_admin = True
+                        existing_admin.position = '系统管理员'
+                        existing_admin.department = ''
+                        db.session.commit()
+                        logger.info("已更新admin用户为系统管理员")
+                    logger.info("管理员用户已存在，跳过创建")
+                    
+            except Exception as e:
+                logger.warning(f"创建默认用户失败: {str(e)}")
+                db.session.rollback()
+                # 继续执行，不中断应用启动
+            
+            logger.info("数据库初始化完成")
+
+            # 创建测试数据 - 已禁用
+            # create_test_data()
+            
+    except Exception as e:
+        logger.error(f"数据库初始化失败: {str(e)}")
+        # 不抛出异常，让应用能够继续启动
+
+# JWT装饰器延迟导入函数
+def get_jwt_required():
+    """延迟导入jwt_required装饰器"""
+    from flask_jwt_extended import jwt_required
+    return jwt_required
+
+def get_jwt_identity():
+    """延迟导入get_jwt_identity函数"""
+    from flask_jwt_extended import get_jwt_identity as jwt_identity_func
+    return jwt_identity_func()
+
+# 主应用入口
+if __name__ == '__main__':
+    # 初始化扩展
+    init_extensions(app)
+    
+    # 初始化数据库
+    init_db()
+    
+    # 注册API路由（如果尚未注册）
+    register_api_blueprints()
+    
+    # 启动应用
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
+
+
+# ==================== 知识库增强模型 ====================
+
+class KnowledgeVersion(db.Model):
+    """知识库文章版本历史"""
+    __tablename__ = 'knowledge_versions'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    version_number = Column(Integer, nullable=False)
+    title = Column(String(200), nullable=False)
+    content = Column(Text, nullable=False)
+    created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    change_summary = Column(String(500))
+    
+    article = relationship('KnowledgeArticle', backref='versions')
+    creator = relationship('User', backref='knowledge_versions')
+
+
+class KnowledgeShare(db.Model):
+    """知识库文章分享"""
+    __tablename__ = 'knowledge_shares'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    share_token = Column(String(32), unique=True, nullable=False)
+    password = Column(String(64))
+    created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    expire_at = Column(DateTime)
+    allow_download = Column(Boolean, default=True)
+    view_count = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    
+    article = relationship('KnowledgeArticle', backref='shares')
+    creator = relationship('User', backref='knowledge_shares')
+
+
+class KnowledgeLink(db.Model):
+    """知识库文章双向链接"""
+    __tablename__ = 'knowledge_links'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    from_article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    to_article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    context = Column(String(200))
+    created_at = Column(DateTime, default=datetime.now)
+    
+    from_article = relationship('KnowledgeArticle', foreign_keys=[from_article_id], backref='outgoing_links')
+    to_article = relationship('KnowledgeArticle', foreign_keys=[to_article_id], backref='incoming_links')
+
+
+class KnowledgeTagEnhanced(db.Model):
+    """知识库标签（增强版）"""
+    __tablename__ = 'knowledge_tags'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True, nullable=False)
+    color = Column(String(7), default='#409EFF')
+    description = Column(String(200))
+    created_at = Column(DateTime, default=datetime.now)
+
+
+# 文章标签关联表
+article_tags = db.Table('article_tags',
+    db.Column('article_id', db.Integer, db.ForeignKey('knowledge_articles.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('knowledge_tags.id'), primary_key=True)
+)
+
+
+class KnowledgeFavorite(db.Model):
+    """知识库收藏"""
+    __tablename__ = 'knowledge_favorites'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    folder_name = Column(String(100))
+    
+    article = relationship('KnowledgeArticle', backref='favorites')
+    user = relationship('User', backref='knowledge_favorites')
+
+
+class KnowledgeReadRecord(db.Model):
+    """知识库阅读记录"""
+    __tablename__ = 'knowledge_read_records'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    read_at = Column(DateTime, default=datetime.now)
+    read_duration = Column(Integer, default=0)
+    is_finished = Column(Boolean, default=False)
+    
+    article = relationship('KnowledgeArticle', backref='read_records')
+    user = relationship('User', backref='knowledge_read_records')
+
+
+class KnowledgeComment(db.Model):
+    """知识库行内评论"""
+    __tablename__ = 'knowledge_comments'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    article_id = Column(Integer, ForeignKey('knowledge_articles.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    content = Column(Text, nullable=False)
+    block_id = Column(String(50))
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    parent_id = Column(Integer, ForeignKey('knowledge_comments.id'))
+    is_resolved = Column(Boolean, default=False)
+    
+    article = relationship('KnowledgeArticle', backref='comments')
+    user = relationship('User', backref='knowledge_comments')
+    parent = relationship('KnowledgeComment', remote_side=[id], backref='replies')
+
+
+# ==================== 知识库增强模型结束 ====================
+
+# 注意：API 蓝图在 if __name__ == '__main__': 块中注册，以避免循环导入问题
