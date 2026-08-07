@@ -1,0 +1,130 @@
+2026-07-24 15:52:11,602 - enhanced_app - INFO - 部门数据迁移成功
+2026-07-24 15:52:11,716 - enhanced_app - INFO - 职位数据迁移成功
+2026-07-24 15:52:11,718 - enhanced_app - INFO - 职位权限修复完成
+2026-07-24 15:52:11,722 - enhanced_app - INFO - 默认职位创建成功
+2026-07-24 15:52:11,722 - enhanced_app - INFO - 数据库迁移检查完成
+2026-07-24 15:52:11,723 - enhanced_app - INFO - 数据库表创建完成
+2026-07-24 15:52:12,409 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-07-24 15:52:12,409 - enhanced_app - INFO - 数据库初始化完成
+2026-07-24 16:00:06,038 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-07-24 16:00:06,975 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-07-24 16:00:06,977 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-07-24 16:00:07,055 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-07-24 16:00:07,089 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-07-24 16:00:07,404 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-07-24 16:00:07,407 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 317.89ms
+2026-07-24 16:00:07,419 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-07-24 16:00:07,423 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 445.87ms
+2026-07-24 16:00:14,416 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-07-24 16:00:14,420 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-07-24 16:00:14,444 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-07-24 16:00:14,445 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 25.02ms
+2026-07-24 16:01:06,986 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-07-24 16:01:06,991 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-07-24 16:01:06,994 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-07-24 16:01:07,006 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-07-24 16:01:07,045 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-07-24 16:01:07,047 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 40.78ms
+2026-07-24 16:01:07,062 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-07-24 16:01:07,062 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 71.21ms
+2026-07-24 16:01:29,829 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users
+2026-07-24 16:01:29,830 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects
+2026-07-24 16:01:29,830 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-07-24 16:01:29,830 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-07-24 16:01:29,837 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-07-24 16:01:29,841 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 10.11ms
+2026-07-24 16:01:29,842 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-07-24 16:01:29,843 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 12.10ms
+2026-08-04 14:28:55,135 - enhanced_app - INFO - 部门数据迁移成功
+2026-08-04 14:28:55,288 - enhanced_app - INFO - 职位数据迁移成功
+2026-08-04 14:28:55,290 - enhanced_app - INFO - 职位权限修复完成
+2026-08-04 14:28:55,291 - enhanced_app - INFO - 默认职位创建成功
+2026-08-04 14:28:55,291 - enhanced_app - INFO - 数据库迁移检查完成
+2026-08-04 14:28:55,291 - enhanced_app - INFO - 数据库表创建完成
+2026-08-04 14:28:55,665 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-08-04 14:28:55,665 - enhanced_app - INFO - 数据库初始化完成
+2026-08-04 14:29:17,771 - enhanced_app - INFO - log - 用户ID: 1, 操作: user_login, 资源类型: user, 资源ID: 1, 详情: 用户登录: admin, IP: 127.0.0.1
+2026-08-04 14:29:19,090 - enhanced_app - INFO - API Call Start: api.statistics.get_dashboard_stats - Method: GET - Path: /api/statistics/dashboard
+2026-08-04 14:29:19,092 - enhanced_app - INFO - Business Operation Start: api.statistics.get_dashboard_stats
+2026-08-04 14:29:19,154 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-08-04 14:29:19,157 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-08-04 14:29:19,691 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-08-04 14:29:19,695 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 538.02ms
+2026-08-04 14:29:19,729 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_dashboard_stats
+2026-08-04 14:29:19,737 - enhanced_app - INFO - API Call Complete: api.statistics.get_dashboard_stats - Status: Success - Duration: 644.22ms
+2026-08-04 14:29:35,969 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-08-04 14:29:35,972 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-08-04 14:29:35,974 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-08-04 14:29:35,978 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-08-04 14:29:35,997 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-08-04 14:29:35,999 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 26.68ms
+2026-08-04 14:29:35,999 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-08-04 14:29:36,002 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 23.87ms
+2026-08-04 14:29:42,177 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\bug_statistics.py", line 214, in get_project_bug_statistics
+    status_value = bug.status.value if bug.status else 'unknown'
+                   ^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-08-04 14:29:49,593 - enhanced_app - INFO - API Call Start: api.statistics.get_projects_statistics - Method: GET - Path: /api/statistics/projects
+2026-08-04 14:29:49,594 - enhanced_app - INFO - API Call Start: api.statistics.get_requirements_statistics - Method: GET - Path: /api/statistics/requirements
+2026-08-04 14:29:49,595 - enhanced_app - INFO - Business Operation Start: api.statistics.get_projects_statistics
+2026-08-04 14:29:49,595 - enhanced_app - INFO - Business Operation Start: api.statistics.get_requirements_statistics
+2026-08-04 14:29:49,620 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_requirements_statistics
+2026-08-04 14:29:49,621 - enhanced_app - INFO - API Call Complete: api.statistics.get_requirements_statistics - Status: Success - Duration: 26.23ms
+2026-08-04 14:29:49,755 - enhanced_app - INFO - Business Operation Complete: api.statistics.get_projects_statistics
+2026-08-04 14:29:49,757 - enhanced_app - INFO - API Call Complete: api.statistics.get_projects_statistics - Status: Success - Duration: 162.02ms
+2026-08-04 14:29:52,604 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-08-04 14:29:52,606 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-08-04 14:29:52,614 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-08-04 14:29:52,615 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 9.27ms
+2026-08-04 14:30:20,244 - enhanced_app - INFO - API Call Start: api.users.get_users - Method: GET - Path: /api/users/
+2026-08-04 14:30:20,245 - enhanced_app - INFO - API Call Start: api.projects.get_projects - Method: GET - Path: /api/projects/
+2026-08-04 14:30:20,245 - enhanced_app - INFO - Business Operation Start: api.users.get_users
+2026-08-04 14:30:20,245 - enhanced_app - INFO - Business Operation Start: api.projects.get_projects
+2026-08-04 14:30:20,264 - enhanced_app - INFO - Business Operation Complete: api.users.get_users
+2026-08-04 14:30:20,265 - enhanced_app - INFO - Business Operation Complete: api.projects.get_projects
+2026-08-04 14:30:20,265 - enhanced_app - INFO - API Call Complete: api.users.get_users - Status: Success - Duration: 20.33ms
+2026-08-04 14:30:20,265 - enhanced_app - INFO - API Call Complete: api.projects.get_projects - Status: Success - Duration: 20.33ms
+2026-08-04 14:30:23,759 - enhanced_app - ERROR - App unhandled exception: 'str' object has no attribute 'value'
+Traceback (most recent call last):
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Achenxiao\test\python\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\topo_system\backend\api\bug_statistics.py", line 214, in get_project_bug_statistics
+    status_value = bug.status.value if bug.status else 'unknown'
+                   ^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'value'
+
+2026-08-07 11:19:18,989 - enhanced_app - INFO - 部门数据迁移成功
+2026-08-07 11:19:18,992 - enhanced_app - INFO - 职位数据迁移成功
+2026-08-07 11:19:18,994 - enhanced_app - INFO - 职位权限修复完成
+2026-08-07 11:19:18,997 - enhanced_app - INFO - 默认职位创建成功
+2026-08-07 11:19:18,998 - enhanced_app - INFO - 数据库迁移检查完成
+2026-08-07 11:19:19,000 - enhanced_app - INFO - 数据库表创建完成
+2026-08-07 11:19:19,415 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-08-07 11:19:19,415 - enhanced_app - INFO - 数据库初始化完成
+2026-08-07 11:19:24,805 - enhanced_app - INFO - 部门数据迁移成功
+2026-08-07 11:19:24,807 - enhanced_app - INFO - 职位数据迁移成功
+2026-08-07 11:19:24,809 - enhanced_app - INFO - 职位权限修复完成
+2026-08-07 11:19:24,811 - enhanced_app - INFO - 默认职位创建成功
+2026-08-07 11:19:24,811 - enhanced_app - INFO - 数据库迁移检查完成
+2026-08-07 11:19:24,813 - enhanced_app - INFO - 数据库表创建完成
+2026-08-07 11:19:25,367 - enhanced_app - INFO - 管理员用户已存在，跳过创建
+2026-08-07 11:19:25,367 - enhanced_app - INFO - 数据库初始化完成

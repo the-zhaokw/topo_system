@@ -81,7 +81,7 @@
 
     <!-- 筛选条件 -->
     <div class="filter-section animate-fade-in-up delay-200">
-      <el-card class="filter-card glass-card" shadow="hover">
+      <el-card class="filter-card glass-card theme-cyan" shadow="hover">
         <template #header>
           <div class="card-header">
             <span class="card-title">
@@ -849,20 +849,7 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-/* 玻璃拟态卡片 */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.4s;
-}
-
-.glass-card:hover {
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-}
+/* 玻璃拟态卡片 - 由全局液态玻璃样式接管 */
 
 /* 筛选区域 */
 .filter-section {

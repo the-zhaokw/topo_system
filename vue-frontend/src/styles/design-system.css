@@ -1016,28 +1016,183 @@
 }
 
 /* ============================================
-   玻璃拟态卡片增强
+   玻璃拟态卡片增强 - 液态玻璃效果
    ============================================ */
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-lg);
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
     0 2px 4px -2px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transition: all var(--transition-slow);
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s ease;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 顶部高光层 */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
 }
 
 .glass-card:hover {
-  box-shadow: 
-    0 20px 40px -10px rgba(0, 0, 0, 0.12), 
-    0 10px 20px -5px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transform: translateY(-4px);
+  box-shadow:
+    0 20px 50px -10px rgba(31, 38, 135, 0.15),
+    0 10px 20px -5px rgba(31, 38, 135, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform: translateY(-6px) scale(1.005);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* 液态玻璃 - 蓝色主题 */
+.glass-card.theme-blue {
+  background: linear-gradient(
+    135deg,
+    rgba(186, 230, 253, 0.55) 0%,
+    rgba(125, 211, 252, 0.4) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(125, 211, 252, 0.35);
+  box-shadow:
+    0 4px 6px -1px rgba(56, 189, 248, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.glass-card.theme-blue:hover {
+  box-shadow:
+    0 20px 50px -10px rgba(56, 189, 248, 0.2),
+    0 10px 20px -5px rgba(56, 189, 248, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(125, 211, 252, 0.6);
+}
+
+/* 液态玻璃 - 紫色主题 */
+.glass-card.theme-purple {
+  background: linear-gradient(
+    135deg,
+    rgba(196, 181, 253, 0.5) 0%,
+    rgba(167, 139, 250, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+.glass-card.theme-purple:hover {
+  box-shadow:
+    0 20px 50px -10px rgba(139, 92, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(167, 139, 250, 0.55);
+}
+
+/* 液态玻璃 - 青色主题 */
+.glass-card.theme-cyan {
+  background: linear-gradient(
+    135deg,
+    rgba(165, 243, 252, 0.5) 0%,
+    rgba(34, 211, 238, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(34, 211, 238, 0.3);
+}
+
+.glass-card.theme-cyan:hover {
+  box-shadow:
+    0 20px 50px -10px rgba(34, 211, 238, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(34, 211, 238, 0.55);
+}
+
+/* 液态玻璃 - 绿色主题 */
+.glass-card.theme-green {
+  background: linear-gradient(
+    135deg,
+    rgba(187, 247, 208, 0.5) 0%,
+    rgba(74, 222, 128, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.glass-card.theme-green:hover {
+  box-shadow:
+    0 20px 50px -10px rgba(34, 197, 94, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(74, 222, 128, 0.55);
+}
+
+/* 液态玻璃 - 暖色主题 */
+.glass-card.theme-warm {
+  background: linear-gradient(
+    135deg,
+    rgba(254, 215, 170, 0.5) 0%,
+    rgba(251, 146, 60, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.glass-card.theme-warm:hover {
+  box-shadow:
+    0 20px 50px -10px rgba(249, 115, 22, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(251, 146, 60, 0.55);
+}
+
+/* 液态玻璃 - 玫红色主题 */
+.glass-card.theme-rose {
+  background: linear-gradient(
+    135deg,
+    rgba(254, 205, 211, 0.5) 0%,
+    rgba(251, 113, 133, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(251, 113, 133, 0.3);
+}
+
+.glass-card.theme-rose:hover {
+  box-shadow:
+    0 20px 50px -10px rgba(244, 63, 94, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(251, 113, 133, 0.55);
+}
+
+/* 响应式 - 移动端弱化悬浮 */
+@media (max-width: 768px) {
+  .glass-card:hover {
+    transform: translateY(-3px) scale(1);
+  }
+}
+
+/* 无障碍 - 减少动效 */
+@media (prefers-reduced-motion: reduce) {
+  .glass-card {
+    transition: none !important;
+  }
+  .glass-card:hover {
+    transform: none;
+  }
 }
 
 /* ============================================

@@ -238,7 +238,7 @@
           </el-card>
           
           <!-- Bug 活动记录 -->
-          <el-card class="field-changes-card glass-card" v-if="fieldChangeActivities.length > 0">
+          <el-card class="field-changes-card glass-card theme-warm" v-if="fieldChangeActivities.length > 0">
             <template #header>
               <div class="card-header">
                 <span class="card-title">
@@ -325,7 +325,7 @@
           <!-- 预期结果和实际结果 -->
           <el-row :gutter="20" v-if="bug.expected_result || bug.actual_result">
             <el-col :span="12">
-              <el-card class="result-card glass-card">
+              <el-card class="result-card glass-card theme-green">
                 <template #header>
                   <div class="card-header">
                     <span class="card-title">
@@ -342,7 +342,7 @@
             </el-col>
             
             <el-col :span="12">
-              <el-card class="result-card glass-card">
+              <el-card class="result-card glass-card theme-green">
                 <template #header>
                   <div class="card-header">
                     <span class="card-title">
@@ -362,7 +362,7 @@
         
         <el-col :span="8">
           <!-- 标签 -->
-          <el-card class="tags-card glass-card">
+          <el-card class="tags-card glass-card theme-purple">
             <template #header>
               <div class="card-header">
                 <span class="card-title">
@@ -1833,26 +1833,7 @@ onMounted(async () => {
   color: white;
 }
 
-/* 玻璃拟态卡片 */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.4s;
-  margin-bottom: 20px;
-}
-
-.glass-card:hover {
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-}
-
-.glass-card :deep(.el-card__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-}
+/* 玻璃拟态卡片 - 由全局液态玻璃样式接管 */
 
 .card-header {
   display: flex;

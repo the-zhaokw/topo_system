@@ -142,53 +142,59 @@
 
     <!-- 主内容区 -->
     <div class="main-content animate-fade-in-up delay-300">
-      <!-- 左侧边栏 -->
+      <!-- 左侧边栏 - 青色液态玻璃 -->
       <div class="sidebar">
-        <el-card shadow="never" class="sidebar-card">
-          <template #header>
-            <span class="sidebar-title">快捷导航</span>
-          </template>
-          <el-menu
-            :default-active="activeMenu"
-            @select="handleMenuSelect"
-            class="nav-menu"
-          >
-            <el-menu-item index="all">
-              <el-icon><Document /></el-icon>
-              <span>全部文章</span>
-            </el-menu-item>
-            <el-menu-item index="published">
-              <el-icon><CircleCheck /></el-icon>
-              <span>已发布</span>
-            </el-menu-item>
-            <el-menu-item index="draft">
-              <el-icon><EditPen /></el-icon>
-              <span>草稿箱</span>
-            </el-menu-item>
-            <el-menu-item index="my">
-              <el-icon><User /></el-icon>
-              <span>我的文章</span>
-            </el-menu-item>
-            <el-menu-item index="favorites">
-              <el-icon><Star /></el-icon>
-              <span>我的收藏</span>
-            </el-menu-item>
-            <el-menu-item index="recent">
-              <el-icon><Clock /></el-icon>
-              <span>最近浏览</span>
-            </el-menu-item>
-            <el-menu-item index="pinned">
-              <el-icon><Top /></el-icon>
-              <span>置顶文章</span>
-            </el-menu-item>
-          </el-menu>
-        </el-card>
+        <LiquidGlassCard theme="cyan" class="sidebar-liquid-wrap">
+          <el-card shadow="never" class="sidebar-card">
+            <template #header>
+              <span class="sidebar-title">
+                <el-icon><Reading /></el-icon>
+                快捷导航
+              </span>
+            </template>
+            <el-menu
+              :default-active="activeMenu"
+              @select="handleMenuSelect"
+              class="nav-menu"
+            >
+              <el-menu-item index="all">
+                <el-icon><Document /></el-icon>
+                <span>全部文章</span>
+              </el-menu-item>
+              <el-menu-item index="published">
+                <el-icon><CircleCheck /></el-icon>
+                <span>已发布</span>
+              </el-menu-item>
+              <el-menu-item index="draft">
+                <el-icon><EditPen /></el-icon>
+                <span>草稿箱</span>
+              </el-menu-item>
+              <el-menu-item index="my">
+                <el-icon><User /></el-icon>
+                <span>我的文章</span>
+              </el-menu-item>
+              <el-menu-item index="favorites">
+                <el-icon><Star /></el-icon>
+                <span>我的收藏</span>
+              </el-menu-item>
+              <el-menu-item index="recent">
+                <el-icon><Clock /></el-icon>
+                <span>最近浏览</span>
+              </el-menu-item>
+              <el-menu-item index="pinned">
+                <el-icon><Top /></el-icon>
+                <span>置顶文章</span>
+              </el-menu-item>
+            </el-menu>
+          </el-card>
+        </LiquidGlassCard>
       </div>
 
-      <!-- 右侧内容 -->
+      <!-- 右侧内容 - 蓝色液态玻璃 -->
       <div class="content">
-        <el-card shadow="never">
-          <!-- 工具栏 -->
+        <LiquidGlassCard theme="blue" class="content-liquid-wrap">
+          <el-card shadow="never">
+            <!-- 工具栏 -->
           <div class="toolbar">
             <div class="toolbar-left">
               <el-radio-group v-model="viewMode" size="small">
@@ -371,7 +377,8 @@
           <el-empty v-if="!loading && articles.length === 0" description="暂无文章">
             <el-button type="primary" @click="createArticle">创建第一篇文章</el-button>
           </el-empty>
-        </el-card>
+          </el-card>
+        </LiquidGlassCard>
       </div>
     </div>
 
@@ -405,9 +412,10 @@ import { useUserStore } from '@/stores/user'
 import {
   Plus, Refresh, Search, Document, CircleCheck, EditPen,
   User, Star, Clock, Top, List, Grid, View, ChatDotRound,
-  ArrowDown, Folder
+  ArrowDown, Folder, Reading
 } from '@element-plus/icons-vue'
 import ArticleForm from '@/components/knowledge/ArticleForm.vue'
+import LiquidGlassCard from '@/components/common/LiquidGlassCard.vue'
 
 // API 基础 URL：路径已带 /api 前缀，dev 模式留空走 Vite 代理，生产环境补全后端地址
 const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
@@ -1159,6 +1167,49 @@ onMounted(() => {
 .sidebar {
   width: 220px;
   flex-shrink: 0;
+}
+
+/* 液态玻璃包裹 - 知识库左侧栏 */
+.sidebar-liquid-wrap {
+  height: 100%;
+}
+
+.sidebar-liquid-wrap :deep(.el-card) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.sidebar-liquid-wrap :deep(.el-card__header) {
+  border-bottom: 1px solid rgba(34, 211, 238, 0.15);
+  background: transparent;
+  padding: 16px 20px;
+}
+
+.sidebar-liquid-wrap :deep(.el-card__body) {
+  background: transparent;
+  padding: 14px 16px 18px;
+}
+
+/* 液态玻璃包裹 - 知识库右侧内容 */
+.content-liquid-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.content-liquid-wrap :deep(.el-card) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.content-liquid-wrap :deep(.el-card__body) {
+  background: transparent;
+  padding: 20px 22px;
 }
 
 .sidebar-card {

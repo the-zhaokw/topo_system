@@ -86,7 +86,7 @@
     </el-row>
     
     <!-- 状态灯颜色说明 - 玻璃拟态卡片 -->
-    <el-card class="status-legend-card glass-card" shadow="never">
+    <el-card class="status-legend-card glass-card theme-cyan" shadow="never">
       <template #header>
         <div class="card-header">
           <span class="card-title">
@@ -116,7 +116,7 @@
     </el-card>
     
     <!-- 项目列表 - 玻璃拟态卡片 -->
-    <el-card class="project-table-card glass-card" shadow="never">
+    <el-card class="project-table-card glass-card theme-blue" shadow="never">
       <template #header>
         <div class="card-header">
           <span class="card-title">
@@ -1950,14 +1950,6 @@ onMounted(() => {
   color: var(--text-secondary);
   font-weight: 500;
   margin-top: 4px;
-}
-
-/* 玻璃拟态卡片 */
-.glass-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* 状态说明卡片 */

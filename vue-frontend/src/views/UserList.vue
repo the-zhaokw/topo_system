@@ -343,7 +343,7 @@
       </el-card>
 
       <!-- 用户表格 - 玻璃拟态卡片 -->
-      <el-card shadow="never" class="table-card glass-card">
+      <el-card shadow="never" class="table-card glass-card theme-blue">
         <template #header>
           <div class="card-header">
             <span class="card-title">
@@ -1825,14 +1825,7 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-/* 玻璃拟态卡片 */
-.glass-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 24px;
-}
+/* 玻璃拟态卡片 - 由全局液态玻璃样式接管，只保留 margin-bottom */
 
 /* 卡片头部 */
 .card-header {

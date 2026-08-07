@@ -359,7 +359,7 @@
     </el-dialog>
     
     <!-- Bug表格 - 玻璃拟态卡片 -->
-    <el-card class="bug-table-card glass-card" shadow="never">
+    <el-card class="bug-table-card glass-card theme-purple" shadow="never">
       <el-table 
         :data="bugs" 
         v-loading="loading"
@@ -1609,17 +1609,11 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-/* 玻璃拟态卡片 */
-.glass-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
+/* 玻璃拟态卡片 - 由全局液态玻璃样式接管 */
 .glass-card-warning {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
   border: 1px solid rgba(245, 158, 11, 0.3);
+  margin-bottom: 16px;
 }
 
 /* 筛选卡片 */

@@ -30,112 +30,99 @@
       </div>
     </div>
     
-    <!-- 个人参与的项目和工作统计 -->
+    <!-- 个人参与的项目和工作统计 - 左右两列液态玻璃面板 -->
     <div class="organization-section">
       <el-row :gutter="20">
+        <!-- 左侧：个人参与的项目 - 蓝色液态玻璃 -->
         <el-col :span="12" :xs="24" class="animate-fade-in-up delay-100">
-          <el-card class="org-card project-card glass-card" shadow="hover">
-            <template #header>
-              <div class="card-header">
-                <div class="card-title">
-                  <div class="card-icon-wrapper card-icon-blue">
-                    <el-icon><Folder /></el-icon>
+          <LiquidGlassCard
+            theme="blue"
+            :animate="true"
+            enter-from="left"
+            :delay="1"
+            class="org-card-wrap"
+          >
+            <el-card class="org-card project-card" shadow="never">
+              <template #header>
+                <div class="card-header">
+                  <div class="card-title">
+                    <div class="card-icon-wrapper card-icon-blue liquid-glass-icon">
+                      <el-icon><Folder /></el-icon>
+                    </div>
+                    <span>个人参与的项目</span>
                   </div>
-                  <span>个人参与的项目</span>
+                  <el-tag type="info" effect="plain" round>{{ userProjects.length }}个项目</el-tag>
                 </div>
-                <el-tag type="info" effect="plain" round>{{ userProjects.length }}个项目</el-tag>
-              </div>
-            </template>
-            <div class="org-content">
-              <div v-for="(project, index) in userProjects" :key="project.id" 
-                   class="org-item" 
-                   :style="{ animationDelay: `${index * 50}ms` }"
-                   @click="$router.push(`/projects/${project.id}`)">
-                <div class="project-info">
-                  <div class="project-avatar">
-                    {{ project.name.charAt(0).toUpperCase() }}
+              </template>
+              <div class="org-content">
+                <div
+                  v-for="(project, index) in userProjects"
+                  :key="project.id"
+                  class="org-item liquid-glass-list-item"
+                  :style="{ animationDelay: `${index * 50}ms` }"
+                  @click="$router.push(`/projects/${project.id}`)"
+                >
+                  <div class="project-info">
+                    <div class="project-avatar">
+                      {{ project.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <div class="project-details">
+                      <span class="project-name">{{ project.name }}</span>
+                      <span class="project-manager">
+                        <el-icon><User /></el-icon>
+                        {{ project.manager }}
+                      </span>
+                    </div>
                   </div>
-                  <div class="project-details">
-                    <span class="project-name">{{ project.name }}</span>
-                    <span class="project-manager">
-                      <el-icon><User /></el-icon>
-                      {{ project.manager }}
-                    </span>
-                  </div>
+                  <el-button type="primary" link class="project-link">
+                    <el-icon><ArrowRight /></el-icon>
+                  </el-button>
                 </div>
-                <el-button type="primary" link class="project-link">
-                  <el-icon><ArrowRight /></el-icon>
-                </el-button>
+                <el-empty v-if="userProjects.length === 0" description="暂无参与的项目" :image-size="60" />
               </div>
-              <el-empty v-if="userProjects.length === 0" description="暂无参与的项目" :image-size="60" />
-            </div>
-          </el-card>
+            </el-card>
+          </LiquidGlassCard>
         </el-col>
-        
+
+        <!-- 右侧：功能导航 - 紫色液态玻璃 -->
         <el-col :span="12" :xs="24" class="animate-fade-in-up delay-200">
-          <el-card class="nav-card glass-card" shadow="hover">
-            <template #header>
-              <div class="card-header">
-                <div class="card-title">
-                  <div class="card-icon-wrapper card-icon-purple">
-                    <el-icon><Grid /></el-icon>
+          <LiquidGlassCard
+            theme="purple"
+            :animate="true"
+            enter-from="right"
+            :delay="2"
+            class="org-card-wrap"
+          >
+            <el-card class="nav-card" shadow="never">
+              <template #header>
+                <div class="card-header">
+                  <div class="card-title">
+                    <div class="card-icon-wrapper card-icon-purple liquid-glass-icon">
+                      <el-icon><Grid /></el-icon>
+                    </div>
+                    <span>功能导航</span>
                   </div>
-                  <span>功能导航</span>
+                </div>
+              </template>
+              <div class="navigation-grid">
+                <div
+                  v-for="(nav, idx) in navigationItems"
+                  :key="nav.path || nav.label"
+                  class="nav-item liquid-glass-list-item"
+                  :class="{ 'has-badge': nav.badge }"
+                  @click="nav.action ? nav.action() : $router.push(nav.path)"
+                >
+                  <div :class="['nav-icon-wrapper', nav.iconClass]">
+                    <el-icon><component :is="nav.icon" /></el-icon>
+                  </div>
+                  <span class="nav-text">{{ nav.label }}</span>
+                  <span v-if="nav.badge" class="liquid-glass-badge todo-badge">
+                    {{ nav.badge > 99 ? '99+' : nav.badge }}
+                  </span>
                 </div>
               </div>
-            </template>
-            <div class="navigation-grid">
-              <div class="nav-item" @click="goToMyTasks" :class="{ 'has-badge': todoCount > 0 }">
-                <div class="nav-icon-wrapper nav-icon-todo">
-                  <el-icon><Document /></el-icon>
-                </div>
-                <span class="nav-text">待办事项</span>
-                <span v-if="todoCount > 0" class="todo-badge">{{ todoCount > 99 ? '99+' : todoCount }}</span>
-              </div>
-              <div class="nav-item" @click="$router.push('/personal-plan')">
-                <div class="nav-icon-wrapper nav-icon-plan">
-                  <el-icon><List /></el-icon>
-                </div>
-                <span class="nav-text">工作计划</span>
-              </div>
-              <div class="nav-item" @click="$router.push('/activities')">
-                <div class="nav-icon-wrapper nav-icon-activity">
-                  <el-icon><DataLine /></el-icon>
-                </div>
-                <span class="nav-text">活动记录</span>
-              </div>
-              <div class="nav-item" @click="$router.push('/work-logs')">
-                <div class="nav-icon-wrapper nav-icon-log">
-                  <el-icon><Notebook /></el-icon>
-                </div>
-                <span class="nav-text">我的日志</span>
-              </div>
-              <div v-if="isDepartmentManager" class="nav-item" @click="$router.push('/work-logs?view=all')">
-                <div class="nav-icon-wrapper nav-icon-team">
-                  <el-icon><Management /></el-icon>
-                </div>
-                <span class="nav-text">员工日志</span>
-              </div>
-              <div class="nav-item" @click="$router.push('/my-department')">
-                <div class="nav-icon-wrapper nav-icon-dept">
-                  <el-icon><OfficeBuilding /></el-icon>
-                </div>
-                <span class="nav-text">我的部门</span>
-              </div>
-              <div class="nav-item" @click="$router.push('/my-attendance')">
-                <div class="nav-icon-wrapper nav-icon-attendance">
-                  <el-icon><AlarmClock /></el-icon>
-                </div>
-                <span class="nav-text">我的考勤</span>
-              </div>
-              <div class="nav-item" @click="$router.push('/profile')">
-                <div class="nav-icon-wrapper nav-icon-profile">
-                  <el-icon><User /></el-icon>
-                </div>
-                <span class="nav-text">个人中心</span>
-              </div>
-            </div>
-          </el-card>
+            </el-card>
+          </LiquidGlassCard>
         </el-col>
       </el-row>
     </div>
@@ -478,15 +465,16 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import * as echarts from 'echarts'
 import { ElMessage } from 'element-plus'
-import { 
-  Document, List, DataLine, Notebook, User, OfficeBuilding, 
-  Folder, ArrowRight, Grid, Promotion, Warning, FolderOpened, 
+import {
+  Document, List, DataLine, Notebook, User, OfficeBuilding,
+  Folder, ArrowRight, Grid, Promotion, Warning, FolderOpened,
   UserFilled, Histogram, PieChart, Setting, Tools, Clock,
   Bell, Timer, TrendCharts, WarningFilled, CirclePlusFilled,
   InfoFilled, CircleCheckFilled, Monitor, Management, AlarmClock
 } from '@element-plus/icons-vue'
 import { formatDate } from '@/utils/dateUtils'
 import { apiService } from '@/services/api'
+import LiquidGlassCard from '@/components/common/LiquidGlassCard.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -504,17 +492,36 @@ const isDepartmentManager = computed(() => {
   return user.position?.includes('经理') || user.position?.includes('主管')
 })
 
+// 跳转到我的待办
+const goToMyTasks = () => {
+  router.push('/my-todos')
+}
+
+// 功能导航列表 - 数据驱动
+const navigationItems = computed(() => {
+  const items = [
+    { label: '待办事项', path: '/my-todos', icon: Document, iconClass: 'nav-icon-todo', badge: todoCount.value },
+    { label: '工作计划', path: '/personal-plan', icon: List, iconClass: 'nav-icon-plan' },
+    { label: '活动记录', path: '/activities', icon: DataLine, iconClass: 'nav-icon-activity' },
+    { label: '我的日志', path: '/work-logs', icon: Notebook, iconClass: 'nav-icon-log' }
+  ]
+  if (isDepartmentManager.value) {
+    items.push({ label: '员工日志', path: '/work-logs?view=all', icon: Management, iconClass: 'nav-icon-team' })
+  }
+  items.push(
+    { label: '我的部门', path: '/my-department', icon: OfficeBuilding, iconClass: 'nav-icon-dept' },
+    { label: '我的考勤', path: '/my-attendance', icon: AlarmClock, iconClass: 'nav-icon-attendance' },
+    { label: '个人中心', path: '/profile', icon: User, iconClass: 'nav-icon-profile' }
+  )
+  return items
+})
+
 const statistics = ref({})
 const recentBugs = ref([])
 const todoCount = ref(0)
 const severityChart = ref(null)
 const priorityChart = ref(null)
 const activityChart = ref(null)
-
-// 跳转到我的待办
-const goToMyTasks = () => {
-  router.push('/my-todos')
-}
 
 // 用户参与的项目数据
 const userProjects = ref([])
@@ -1207,6 +1214,32 @@ const getActionText = (action) => {
   transform: translateY(-4px);
 }
 
+/* 液态玻璃面板包裹器 - 让内层 el-card 透明化，与外层 LiquidGlassCard 融合 */
+.org-card-wrap {
+  padding: 0;
+  /* 让 LiquidGlassCard 的高度自适应内部内容 */
+  height: auto;
+}
+
+.org-card-wrap :deep(.el-card) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.org-card-wrap :deep(.el-card__header) {
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.4);
+  background: transparent;
+}
+
+.org-card-wrap :deep(.el-card__body) {
+  padding: 14px 20px 20px;
+  background: transparent;
+}
+
 .organization-section {
   margin-bottom: 24px;
   position: relative;
@@ -1334,6 +1367,40 @@ const getActionText = (action) => {
   border: 1px solid transparent;
 }
 
+/* 与液态玻璃列表项组合时，补充必要的定位 */
+.org-item.liquid-glass-list-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.org-item.liquid-glass-list-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%);
+  border-radius: 0 3px 3px 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.org-item.liquid-glass-list-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateX(6px);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.18);
+  border-color: rgba(125, 211, 252, 0.4);
+}
+
+.org-item.liquid-glass-list-item:hover::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
 .org-item:hover {
   background: white;
   transform: translateX(6px);
@@ -1402,7 +1469,7 @@ const getActionText = (action) => {
 .navigation-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
   max-height: 280px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1425,6 +1492,34 @@ const getActionText = (action) => {
 
 .navigation-grid::-webkit-scrollbar-thumb:hover {
   background: rgba(91, 109, 245, 0.5);
+}
+
+/* 导航项 - 与液态玻璃列表项组合时，覆盖 flex 方向 */
+.nav-item.liquid-glass-list-item {
+  flex-direction: column;
+  text-align: center;
+  padding: 20px 10px;
+  margin-bottom: 0;
+  position: relative;
+  border: 1px solid transparent;
+  background: rgba(241, 245, 249, 0.5);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 导航项左侧装饰条不需要 */
+.nav-item.liquid-glass-list-item::before {
+  display: none;
+}
+
+.nav-item.liquid-glass-list-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 12px 32px rgba(56, 189, 248, 0.18);
+  border-color: rgba(125, 211, 252, 0.4);
+}
+
+.nav-item.liquid-glass-list-item:hover::before {
+  display: none;
 }
 
 .nav-item {

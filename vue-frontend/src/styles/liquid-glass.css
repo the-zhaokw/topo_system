@@ -1,0 +1,571 @@
+/**
+ * TOPO 系统 - 高级液态玻璃样式
+ * Liquid Glass Effects (Apple-style)
+ *
+ * 包含以下高级动效：
+ * - 弹性悬停回弹 (Elastic Hover)
+ * - 点击波纹涟漪 (Click Ripple)
+ * - 光泽流动效果 (Light Flow Shimmer)
+ * - 立体层次感 (3D Depth)
+ * - 物理驱动反馈 (Spring Physics)
+ *
+ * 适配现代浏览器，使用 backdrop-filter 实现真正的玻璃效果
+ */
+
+/* ============================================
+   1. 核心液态玻璃容器 - 基础面板
+   ============================================ */
+.liquid-glass-panel {
+  position: relative;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(31, 38, 135, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  isolation: isolate;
+  /* 弹性过渡曲线 - 接近 spring 物理 */
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s ease;
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+}
+
+/* 顶部高光层 - 模拟光从上方照射 */
+.liquid-glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+/* 底部反光层 - 模拟玻璃下方的折射 */
+.liquid-glass-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(
+    0deg,
+    rgba(56, 189, 248, 0.04) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 悬停态 - 弹性上浮 + 增强阴影 */
+.liquid-glass-panel:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 20px 60px rgba(31, 38, 135, 0.15),
+    0 8px 24px rgba(56, 189, 248, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* 按下态 - 弹性回弹 */
+.liquid-glass-panel.is-pressed {
+  transform: translateY(-2px) scale(0.98);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   2. 光泽流动层 - 鼠标移动时的光斑
+   ============================================ */
+.liquid-glass-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.15) 30%,
+    transparent 60%
+  );
+}
+
+.liquid-glass-panel:hover .liquid-glass-shimmer {
+  opacity: 1;
+}
+
+/* ============================================
+   3. 点击波纹效果
+   ============================================ */
+.liquid-glass-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.5) 0%,
+    rgba(125, 211, 252, 0.3) 40%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 1;
+  animation: liquid-ripple 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes liquid-ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+  60% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   4. 主题变体 - 不同色调的液态玻璃
+   ============================================ */
+
+/* 蓝色主题 - 项目/工作台 */
+.liquid-glass-panel.theme-blue {
+  background: linear-gradient(
+    135deg,
+    rgba(186, 230, 253, 0.55) 0%,
+    rgba(125, 211, 252, 0.4) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(125, 211, 252, 0.35);
+  box-shadow:
+    0 8px 32px rgba(56, 189, 248, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(56, 189, 248, 0.1);
+}
+
+.liquid-glass-panel.theme-blue:hover {
+  box-shadow:
+    0 20px 60px rgba(56, 189, 248, 0.2),
+    0 8px 24px rgba(56, 189, 248, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(125, 211, 252, 0.6);
+}
+
+/* 紫色主题 - 功能导航 */
+.liquid-glass-panel.theme-purple {
+  background: linear-gradient(
+    135deg,
+    rgba(196, 181, 253, 0.5) 0%,
+    rgba(167, 139, 250, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(167, 139, 250, 0.3);
+  box-shadow:
+    0 8px 32px rgba(139, 92, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(139, 92, 246, 0.1);
+}
+
+.liquid-glass-panel.theme-purple:hover {
+  box-shadow:
+    0 20px 60px rgba(139, 92, 246, 0.2),
+    0 8px 24px rgba(139, 92, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(167, 139, 250, 0.55);
+}
+
+/* 青色主题 - 活动记录 */
+.liquid-glass-panel.theme-cyan {
+  background: linear-gradient(
+    135deg,
+    rgba(165, 243, 252, 0.5) 0%,
+    rgba(34, 211, 238, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow:
+    0 8px 32px rgba(34, 211, 238, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.liquid-glass-panel.theme-cyan:hover {
+  box-shadow:
+    0 20px 60px rgba(34, 211, 238, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(34, 211, 238, 0.55);
+}
+
+/* 绿色主题 - 数据统计 */
+.liquid-glass-panel.theme-green {
+  background: linear-gradient(
+    135deg,
+    rgba(187, 247, 208, 0.5) 0%,
+    rgba(74, 222, 128, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(74, 222, 128, 0.3);
+  box-shadow:
+    0 8px 32px rgba(34, 197, 94, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.liquid-glass-panel.theme-green:hover {
+  box-shadow:
+    0 20px 60px rgba(34, 197, 94, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(74, 222, 128, 0.55);
+}
+
+/* 暖色主题 - 快速入口 */
+.liquid-glass-panel.theme-warm {
+  background: linear-gradient(
+    135deg,
+    rgba(254, 215, 170, 0.5) 0%,
+    rgba(251, 146, 60, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border-color: rgba(251, 146, 60, 0.3);
+  box-shadow:
+    0 8px 32px rgba(249, 115, 22, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.liquid-glass-panel.theme-warm:hover {
+  box-shadow:
+    0 20px 60px rgba(249, 115, 22, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(251, 146, 60, 0.55);
+}
+
+/* ============================================
+   5. 玻璃按钮 - 用于面板内可点击元素
+   ============================================ */
+.liquid-glass-button {
+  position: relative;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  padding: 12px 20px;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.liquid-glass-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.liquid-glass-button:hover {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(125, 211, 252, 0.5);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 8px 20px rgba(56, 189, 248, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.liquid-glass-button:hover::before {
+  left: 100%;
+}
+
+.liquid-glass-button:active {
+  transform: translateY(0) scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* ============================================
+   6. 玻璃图标容器 - 卡片标题图标
+   ============================================ */
+.liquid-glass-icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+.liquid-glass-icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    transparent 100%
+  );
+  border-radius: 14px 14px 50% 50%;
+}
+
+.liquid-glass-icon .el-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 22px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.liquid-glass-panel:hover .liquid-glass-icon {
+  transform: rotate(-8deg) scale(1.1);
+  box-shadow:
+    0 8px 20px rgba(56, 189, 248, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.liquid-glass-panel:hover .liquid-glass-icon .el-icon {
+  transform: scale(1.15);
+}
+
+/* ============================================
+   7. 玻璃列表项 - 用于面板内列表
+   ============================================ */
+.liquid-glass-list-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.liquid-glass-list-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%);
+  border-radius: 0 3px 3px 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.liquid-glass-list-item:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(125, 211, 252, 0.4);
+  transform: translateX(6px);
+  box-shadow:
+    0 6px 18px rgba(56, 189, 248, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.liquid-glass-list-item:hover::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.liquid-glass-list-item:active {
+  transform: translateX(4px) scale(0.99);
+  transition: transform 0.1s ease;
+}
+
+/* ============================================
+   8. 玻璃徽章 / 标签
+   ============================================ */
+.liquid-glass-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 600;
+  color: #0c4a6e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.liquid-glass-badge:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+}
+
+/* ============================================
+   9. 浮动光晕 - 面板底部装饰
+   ============================================ */
+.liquid-glow {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 80px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(56, 189, 248, 0.2) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.liquid-glass-panel:hover .liquid-glow {
+  opacity: 1;
+}
+
+/* ============================================
+   10. 进场动画
+   ============================================ */
+@keyframes liquid-glass-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.liquid-glass-panel.animate-enter {
+  animation: liquid-glass-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.liquid-glass-panel.animate-enter-left {
+  animation: liquid-glass-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: left center;
+}
+
+.liquid-glass-panel.animate-enter-right {
+  animation: liquid-glass-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: right center;
+}
+
+/* 错落进场 */
+.liquid-glass-panel.delay-1 { animation-delay: 0.05s; }
+.liquid-glass-panel.delay-2 { animation-delay: 0.15s; }
+.liquid-glass-panel.delay-3 { animation-delay: 0.25s; }
+.liquid-glass-panel.delay-4 { animation-delay: 0.35s; }
+.liquid-glass-panel.delay-5 { animation-delay: 0.45s; }
+
+/* ============================================
+   11. 弹簧回弹 - 用于图标点击等
+   ============================================ */
+@keyframes spring-bounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.85); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.spring-bounce {
+  animation: spring-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================
+   12. 响应式调整
+   ============================================ */
+@media (max-width: 768px) {
+  .liquid-glass-panel {
+    border-radius: 18px;
+    backdrop-filter: blur(16px);
+  }
+
+  .liquid-glass-panel:hover {
+    transform: translateY(-3px) scale(1);
+  }
+}
+
+/* ============================================
+   13. 暗色模式适配（可选）
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  .liquid-glass-panel {
+    background: rgba(30, 41, 59, 0.55);
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #e2e8f0;
+  }
+}
+
+/* ============================================
+   14. 无障碍 - 减少动效
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass-panel,
+  .liquid-glass-button,
+  .liquid-glass-list-item,
+  .liquid-glass-icon {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .liquid-glass-panel:hover {
+    transform: none;
+  }
+}
