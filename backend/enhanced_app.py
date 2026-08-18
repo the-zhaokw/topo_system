@@ -51,6 +51,13 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-
 _db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance', 'topo_system.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'sqlite:///{_db_path}')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# SQLite 锁超时配置：等待锁最多 30 秒，避免 "database is locked" 错误
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'connect_args': {
+        'timeout': 30,
+        'check_same_thread': False,
+    },
+}
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-key-change-this')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
@@ -3907,6 +3914,11 @@ def init_db():
     """初始化数据库"""
     try:
         with app.app_context():
+            # 启用 WAL 模式，减少 SQLite 读写锁冲突
+            from sqlalchemy import text
+            with db.engine.connect() as conn:
+                conn.execute(text("PRAGMA journal_mode=WAL"))
+
             # 初始化模型类，确保只创建一次
             init_models()
             

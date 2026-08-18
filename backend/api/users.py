@@ -512,14 +512,14 @@ def update_user_activity(user_id):
     if current_user_id != user_id:
         return jsonify({'error': '只能更新自己的活动'}), 403
     
-    user = db.session.query(User).get(user_id)
-    if not user:
-        return jsonify({'error': '用户不存在'}), 404
-    
     try:
+        user = db.session.query(User).get(user_id)
+        if not user:
+            return jsonify({'error': '用户不存在'}), 404
+
         user.update_activity()
         db.session.commit()
-        
+
         return jsonify({
             'message': '活动更新成功',
             'status': user.get_online_status()
