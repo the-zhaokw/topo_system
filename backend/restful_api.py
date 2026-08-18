@@ -226,6 +226,10 @@ def get_personal_plan_bp():
     from api.personal_plan import personal_plan_bp
     return personal_plan_bp
 
+def get_rd_kanban_bp():
+    from api.rd_kanban import get_rd_kanban_bp as _get
+    return _get()
+
 def require_permission(permission):
     """权限装饰器"""
     def decorator(f):
