@@ -16,6 +16,7 @@ env/
 
 # Backend instance & runtime data
 backend/instance/
+instance/
 backend/uploads/
 backend/test_*.py
 
