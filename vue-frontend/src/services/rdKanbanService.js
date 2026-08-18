@@ -37,6 +37,8 @@ const rdKanbanService = {
     }),
   deleteAttachment: (attId) => api.delete(`/rd-kanban/attachments/${attId}`),
   attachmentDownloadUrl: (attId) => `/api/rd-kanban/attachments/${attId}/download`,
+  attachmentRawUrl: (attId) => `/api/rd-kanban/attachments/${attId}/raw`,
+  getAttachmentRaw: (attId) => api.get(`/rd-kanban/attachments/${attId}/raw`),
 
   // 统计与汇总
   stats: (projectId) => api.get(`/rd-kanban/${projectId}/stats`),

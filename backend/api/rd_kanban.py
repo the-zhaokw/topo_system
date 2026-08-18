@@ -898,6 +898,77 @@ def download_attachment(att_id):
     )
 
 
+# 纯文本附件预览用：返回原始文本内容（不走 attachment），限制最大 5MB
+_PREVIEW_TEXT_MAX_BYTES = 5 * 1024 * 1024
+_PREVIEW_TEXT_EXTENSIONS = {
+    '.txt', '.md', '.markdown', '.log',
+    '.json', '.csv', '.tsv',
+    '.xml', '.html', '.htm', '.css', '.js', '.ts',
+    '.yaml', '.yml', '.ini', '.conf', '.cfg', '.env',
+    '.sh', '.bat', '.ps1', '.sql', '.py', '.java',
+}
+
+
+@rd_kanban_bp.route('/attachments/<int:att_id>/raw', methods=['GET'])
+@jwt_required()
+def preview_attachment_raw(att_id):
+    """纯文本附件预览：返回文本内容 + 元信息（mime / 行数等）"""
+    _, _, Attachment = _get_models()
+    att = Attachment.query.get(att_id)
+    if not att:
+        return jsonify({'success': False, 'error': '附件不存在'}), 404
+    import enhanced_app
+    User = enhanced_app.User
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+    Item, _, _ = _get_models()
+    parent_item = Item.query.get(att.item_id)
+    if not parent_item:
+        return jsonify({'success': False, 'error': '所属卡片不存在'}), 404
+    err = _check_item_access(parent_item, current_user_id, current_user.role)
+    if err:
+        return err
+    if not os.path.exists(att.file_path):
+        return jsonify({'success': False, 'error': '文件不存在'}), 404
+    # 仅允许白名单后缀
+    _, ext = os.path.splitext(att.original_name or '')
+    ext = ext.lower()
+    if ext not in _PREVIEW_TEXT_EXTENSIONS:
+        return jsonify({'success': False, 'error': f'该类型文件不支持在线预览（{ext}）'}), 400
+    # 大小限制
+    size = os.path.getsize(att.file_path)
+    truncated = False
+    read_bytes = min(size, _PREVIEW_TEXT_MAX_BYTES)
+    try:
+        with open(att.file_path, 'rb') as f:
+            raw = f.read(read_bytes)
+        # 尝试 utf-8 解码，失败回退 gbk（常见中文编码），再失败用 replace
+        try:
+            text = raw.decode('utf-8')
+            encoding = 'utf-8'
+        except UnicodeDecodeError:
+            try:
+                text = raw.decode('gbk')
+                encoding = 'gbk'
+            except UnicodeDecodeError:
+                text = raw.decode('utf-8', errors='replace')
+                encoding = 'utf-8'
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'读取失败：{e}'}), 500
+    if size > _PREVIEW_TEXT_MAX_BYTES:
+        truncated = True
+        text += f'\n\n... (文件过大，仅显示前 {_PREVIEW_TEXT_MAX_BYTES // 1024 // 1024} MB，已截断)'
+    return jsonify({
+        'success': True,
+        'content': text,
+        'encoding': encoding,
+        'size': size,
+        'truncated': truncated,
+        'original_name': att.original_name,
+        'line_count': text.count('\n') + (0 if text.endswith('\n') else 1),
+    })
+
+
 @rd_kanban_bp.route('/attachments/<int:att_id>', methods=['DELETE'])
 @jwt_required()
 def delete_attachment(att_id):

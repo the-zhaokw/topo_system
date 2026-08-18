@@ -1,13 +1,15 @@
 <template>
-  <el-drawer
+  <el-dialog
     :model-value="visible"
     :title="null"
-    direction="rtl"
-    size="520px"
+    width="640px"
     :with-header="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="true"
     :destroy-on-close="false"
     :modal="true"
-    custom-class="rd-detail-drawer"
+    align-center
+    custom-class="rd-detail-dialog"
     @update:model-value="handleClose"
   >
     <div class="detail-container" v-loading="loading">
@@ -233,12 +235,22 @@
             <el-icon class="upload-icon"><Plus /></el-icon>
           </div>
           <div class="attachment-list" v-if="attachments.length">
-            <div v-for="att in attachments" :key="att.id" class="attachment-item">
-              <div class="att-icon" :style="{ background: iconColor(att.mime_type) }">
+            <div v-for="att in attachments" :key="att.id" class="attachment-item" :class="{ 'is-previewable': isPreviewable(att) }">
+              <div
+                class="att-icon"
+                :style="{ background: iconColor(att.mime_type) }"
+                @click="isPreviewable(att) && previewAttachment(att)"
+              >
                 <el-icon><Document /></el-icon>
               </div>
-              <div class="att-info">
-                <div class="att-name" :title="att.original_name">{{ att.original_name }}</div>
+              <div
+                class="att-info"
+                @click="isPreviewable(att) && previewAttachment(att)"
+              >
+                <div class="att-name" :title="att.original_name">
+                  {{ att.original_name }}
+                  <el-tag v-if="isPreviewable(att)" size="small" type="success" effect="plain" class="preview-tag">可预览</el-tag>
+                </div>
                 <div class="att-meta">
                   {{ formatSize(att.file_size) }} ·
                   <span v-if="att.uploader">{{ att.uploader.name }}</span>
@@ -247,6 +259,16 @@
                 </div>
               </div>
               <div class="att-actions">
+                <el-tooltip :content="isPreviewable(att) ? '在线预览' : '该格式不支持预览'" placement="top">
+                  <button
+                    class="att-action-btn"
+                    :class="{ disabled: !isPreviewable(att) }"
+                    :disabled="!isPreviewable(att)"
+                    @click="previewAttachment(att)"
+                  >
+                    <el-icon><View /></el-icon>
+                  </button>
+                </el-tooltip>
                 <el-tooltip content="下载" placement="top">
                   <button class="att-action-btn" @click="downloadAttachment(att)">
                     <el-icon><Download /></el-icon>
@@ -304,10 +326,21 @@
                 <el-icon><Sunny /></el-icon>
               </button>
             </div>
+            <!-- 回复提示条 -->
+            <div v-if="replyingTo" class="reply-banner">
+              <el-icon class="reply-banner-icon"><ChatDotRound /></el-icon>
+              <span class="reply-banner-text">
+                正在回复 <strong>@{{ replyingTo.name }}</strong>
+                <span class="reply-banner-content">：{{ replyingTo.content }}</span>
+              </span>
+              <button class="reply-banner-close" @click="cancelReplyComment" title="取消回复">
+                <el-icon><Close /></el-icon>
+              </button>
+            </div>
             <textarea
               v-model="newComment"
               class="editor-textarea"
-              :placeholder="mdMode ? '支持 Markdown 语法（**加粗** *斜体* [链接](url) - 列表）...' : '发表评论...'"
+              :placeholder="replyingTo ? `回复 @${replyingTo.name} ...` : (mdMode ? '支持 Markdown 语法（**加粗** *斜体* [链接](url) - 列表）...' : '发表评论...')"
               rows="4"
               maxlength="2000"
               @keydown.ctrl.enter.prevent="submitComment"
@@ -326,13 +359,25 @@
 
           <!-- 评论列表 -->
           <div class="comment-list" v-if="comments.length">
-            <div v-for="c in comments" :key="c.id" class="comment-item">
+            <div
+              v-for="c in commentTree"
+              :key="c.id"
+              class="comment-thread"
+            >
+            <div
+              class="comment-item"
+              :class="{
+                'is-self': isCommentMine(c),
+                'is-reply-target': replyingTo && replyingTo.id === c.id,
+              }"
+            >
               <el-avatar :size="28" :src="c.user?.avatar" class="comment-avatar">
                 {{ avatarText(c.user?.name) }}
               </el-avatar>
               <div class="comment-body">
                 <div class="comment-head">
                   <span class="comment-author">{{ c.user?.name || '未知用户' }}</span>
+                  <el-tag v-if="isCommentAuthorAdmin(c)" size="small" type="danger" effect="dark" class="admin-badge">管理员</el-tag>
                   <span class="comment-time">{{ formatTime(c.created_at) }}</span>
                 </div>
                 <div v-if="editingCommentId === c.id" class="comment-edit">
@@ -369,12 +414,102 @@
                     <el-icon><Sunny /></el-icon>
                   </button>
                 </div>
-                <!-- 操作 -->
-                <div class="comment-actions" v-if="canEdit(c) || canDelete(c)">
-                  <el-button v-if="canEdit(c)" text size="small" @click="startEditComment(c)">编辑</el-button>
-                  <el-button v-if="canDelete(c)" text size="small" type="danger" @click="deleteCommentItem(c)">删除</el-button>
+                <!-- 操作：回复（任何登录用户）/ 编辑 / 删除 -->
+                <div class="comment-actions always-show">
+                  <el-button text size="small" @click="startReplyComment(c)">回复</el-button>
+
+                  <el-tooltip
+                    v-if="!canEdit(c)"
+                    :content="noEditTip(c)"
+                    placement="top"
+                  >
+                    <span class="comment-action-wrap">
+                      <el-icon class="lock-icon"><Lock /></el-icon>
+                      <el-button text size="small" disabled>编辑</el-button>
+                    </span>
+                  </el-tooltip>
+                  <el-button v-else text size="small" @click="startEditComment(c)">编辑</el-button>
+
+                  <el-tooltip
+                    v-if="!canDelete(c)"
+                    :content="noDeleteTip(c)"
+                    placement="top"
+                  >
+                    <span class="comment-action-wrap">
+                      <el-icon class="lock-icon"><Lock /></el-icon>
+                      <el-button text size="small" type="danger" disabled>删除</el-button>
+                    </span>
+                  </el-tooltip>
+                  <el-button v-else text size="small" type="danger" @click="deleteCommentItem(c)">删除</el-button>
                 </div>
               </div>
+            </div>
+
+            <!-- 回复子列表（嵌套显示在原评论下） -->
+            <div v-if="c.replies && c.replies.length" class="comment-replies">
+              <div
+                v-for="r in c.replies"
+                :key="r.id"
+                class="comment-item comment-reply-item"
+                :class="{
+                  'is-self': isCommentMine(r),
+                  'is-reply-target': replyingTo && replyingTo.id === r.id,
+                }"
+              >
+                <el-avatar :size="22" :src="r.user?.avatar" class="comment-avatar">
+                  {{ avatarText(r.user?.name) }}
+                </el-avatar>
+                <div class="comment-body">
+                  <div class="comment-head">
+                    <span class="comment-author">{{ r.user?.name || '未知用户' }}</span>
+                    <el-tag v-if="isCommentAuthorAdmin(r)" size="small" type="danger" effect="dark" class="admin-badge">管理员</el-tag>
+                    <span class="reply-to-tag" v-if="r.parent_id === c.id">
+                      回复 <strong>@{{ c.user?.name || '未知用户' }}</strong>
+                    </span>
+                    <span class="comment-time">{{ formatTime(r.created_at) }}</span>
+                  </div>
+                  <div v-if="editingCommentId === r.id" class="comment-edit">
+                    <textarea
+                      v-model="editingCommentContent"
+                      class="editor-textarea"
+                      rows="2"
+                      maxlength="2000"
+                    />
+                    <div class="editor-actions">
+                      <el-button size="small" @click="editingCommentId = null">取消</el-button>
+                      <el-button class="btn-gradient" size="small" @click="saveEditComment(r)">保存</el-button>
+                    </div>
+                  </div>
+                  <div v-else class="comment-content" v-html="renderMarkdown(r.content)" />
+                  <!-- 回复的操作按钮 -->
+                  <div class="comment-actions always-show">
+                    <el-tooltip
+                      v-if="!canEdit(r)"
+                      :content="noEditTip(r)"
+                      placement="top"
+                    >
+                      <span class="comment-action-wrap">
+                        <el-icon class="lock-icon"><Lock /></el-icon>
+                        <el-button text size="small" disabled>编辑</el-button>
+                      </span>
+                    </el-tooltip>
+                    <el-button v-else text size="small" @click="startEditComment(r)">编辑</el-button>
+
+                    <el-tooltip
+                      v-if="!canDelete(r)"
+                      :content="noDeleteTip(r)"
+                      placement="top"
+                    >
+                      <span class="comment-action-wrap">
+                        <el-icon class="lock-icon"><Lock /></el-icon>
+                        <el-button text size="small" type="danger" disabled>删除</el-button>
+                      </span>
+                    </el-tooltip>
+                    <el-button v-else text size="small" type="danger" @click="deleteCommentItem(r)">删除</el-button>
+                  </div>
+                </div>
+              </div>
+            </div>
             </div>
           </div>
           <div v-else class="comment-empty">
@@ -403,7 +538,32 @@
         </div>
       </el-popover>
     </div>
-  </el-drawer>
+
+    <!-- 文本附件预览弹窗 -->
+    <el-dialog
+      v-model="previewVisible"
+      :title="`文本预览 - ${previewMeta.original_name || ''}`"
+      width="780px"
+      align-center
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      custom-class="rd-attachment-preview-dialog"
+      append-to-body
+    >
+      <div class="preview-meta" v-if="previewMeta.size">
+        <el-tag size="small" type="info">编码：{{ previewMeta.encoding }}</el-tag>
+        <el-tag size="small" type="info">大小：{{ formatSize(previewMeta.size) }}</el-tag>
+        <el-tag size="small" type="info">行数：{{ previewMeta.line_count }}</el-tag>
+        <el-tag v-if="previewMeta.truncated" size="small" type="warning" effect="dark">已截断</el-tag>
+      </div>
+      <pre v-if="previewLoading" v-loading="true" class="preview-loading">加载中...</pre>
+      <pre v-else class="preview-content">{{ previewContent }}</pre>
+      <template #footer>
+        <el-button @click="copyPreviewContent" :disabled="!previewContent">复制内容</el-button>
+        <el-button class="btn-gradient" @click="previewVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -412,7 +572,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Link, FullScreen, MoreFilled, Flag, User, EditPen, Delete, Close,
   Folder, Clock, ChatDotRound, Paperclip, Plus, Document, Download,
-  List, Sunny, CopyDocument, CaretBottom, Warning, UserFilled,
+  List, Sunny, CopyDocument, CaretBottom, Warning, UserFilled, Lock, View,
 } from '@element-plus/icons-vue'
 import rdKanbanService from '@/services/rdKanbanService'
 import { useUserStore } from '@/stores/user'
@@ -429,8 +589,18 @@ const props = defineProps({
 const emit = defineEmits(['update:visible', 'refresh', 'maximize', 'delete'])
 
 const userStore = useUserStore()
-const currentUserId = computed(() => userStore.user?.id || 0)
-const currentUserName = computed(() => userStore.user?.username || '')
+const currentUserId = computed(() => userStore.currentUser?.id || 0)
+const currentUserName = computed(() => userStore.currentUser?.username || '')
+// admin 判定：兼容 role 字段 / is_admin / is_super_admin / roles 数组等多种返回结构
+const isAdmin = computed(() => {
+  const u = userStore.currentUser
+  if (!u) return false
+  if (u.is_super_admin === true || u.isAdmin === true) return true
+  if (u.is_admin === true) return true
+  if (typeof u.role === 'string' && u.role.toLowerCase() === 'admin') return true
+  if (Array.isArray(u.roles) && u.roles.some((r) => String(r).toLowerCase() === 'admin')) return true
+  return false
+})
 
 const loading = ref(false)
 const submitting = ref(false)
@@ -468,6 +638,19 @@ const severityOptions = [
 const comments = ref([])
 const attachments = ref([])
 
+// 文本附件预览
+const PREVIEW_EXTENSIONS = [
+  'txt', 'md', 'markdown', 'log',
+  'json', 'csv', 'tsv',
+  'xml', 'html', 'htm', 'css', 'js', 'ts',
+  'yaml', 'yml', 'ini', 'conf', 'cfg', 'env',
+  'sh', 'bat', 'ps1', 'sql', 'py', 'java',
+]
+const previewVisible = ref(false)
+const previewLoading = ref(false)
+const previewContent = ref('')
+const previewMeta = ref({}) // { encoding, size, line_count, truncated, original_name }
+
 // 编辑标题
 const editingTitle = ref(false)
 const editingTitleValue = ref('')
@@ -480,6 +663,9 @@ const fileInputRef = ref(null)
 // 评论输入
 const newComment = ref('')
 const mdMode = ref(true)
+
+// 评论回复
+const replyingTo = ref(null) // { id, name, content } | null
 
 // 评论编辑
 const editingCommentId = ref(null)
@@ -585,6 +771,38 @@ watch(
     }
   },
   { immediate: false }
+)
+// 监听父组件传入的 comment_count：增长时（说明主页菜单/别处发了评论）增量拉新评论
+let lastCommentCount = 0
+watch(
+  () => [props.visible, props.item?.comment_count],
+  async ([vis, count]) => {
+    if (!vis) {
+      lastCommentCount = 0
+      return
+    }
+    if (typeof count !== 'number') return
+    if (lastCommentCount === 0) {
+      lastCommentCount = count
+      return
+    }
+    if (count > lastCommentCount) {
+      // 增量拉取最新评论
+      try {
+        const res = await rdKanbanService.listComments(props.itemId)
+        const list = res.comments || res || []
+        // 合并：避免重复（unshift 新评论到现有列表）
+        const existingIds = new Set(comments.value.map((c) => c.id))
+        list.forEach((c) => {
+          if (!existingIds.has(c.id)) comments.value.unshift(c)
+        })
+      } catch (e) {
+        console.error('[CardDetailDrawer] 增量拉取评论失败', e)
+      }
+    }
+    lastCommentCount = count
+  },
+  { immediate: true }
 )
 
 onMounted(() => {
@@ -858,6 +1076,62 @@ async function downloadAttachment(att) {
     ElMessage.error('下载失败')
   }
 }
+function isPreviewable(att) {
+  const name = (att?.original_name || '').toLowerCase()
+  const dot = name.lastIndexOf('.')
+  if (dot < 0) return false
+  const ext = name.slice(dot + 1)
+  return PREVIEW_EXTENSIONS.includes(ext)
+}
+async function previewAttachment(att) {
+  if (!isPreviewable(att)) {
+    ElMessage.warning('该文件类型不支持在线预览')
+    return
+  }
+  previewVisible.value = true
+  previewLoading.value = true
+  previewContent.value = ''
+  previewMeta.value = { original_name: att.original_name }
+  try {
+    const res = await rdKanbanService.getAttachmentRaw(att.id)
+    if (res?.success) {
+      previewContent.value = res.content || ''
+      previewMeta.value = {
+        encoding: res.encoding,
+        size: res.size,
+        line_count: res.line_count,
+        truncated: res.truncated,
+        original_name: res.original_name,
+      }
+    } else {
+      ElMessage.error(res?.error || '预览失败')
+      previewContent.value = '（加载失败）'
+    }
+  } catch (e) {
+    console.error('[previewAttachment] error', e)
+    const msg = e?.response?.data?.error || e?.message || '预览失败'
+    ElMessage.error(msg)
+    previewContent.value = '（加载失败）'
+  } finally {
+    previewLoading.value = false
+  }
+}
+async function copyPreviewContent() {
+  if (!previewContent.value) return
+  try {
+    await navigator.clipboard.writeText(previewContent.value)
+    ElMessage.success('已复制到剪贴板')
+  } catch (e) {
+    // 退化方案
+    const ta = document.createElement('textarea')
+    ta.value = previewContent.value
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand('copy')
+    document.body.removeChild(ta)
+    ElMessage.success('已复制到剪贴板')
+  }
+}
 async function deleteAttachment(att) {
   try {
     await ElMessageBox.confirm(`确定删除附件 ${att.original_name}？`, '提示', {
@@ -876,7 +1150,7 @@ async function deleteAttachment(att) {
 
 // ----- 评论 -----
 function insertMarkdown(before, after) {
-  const ta = document.querySelector('.rd-detail-drawer .editor-textarea')
+  const ta = document.querySelector('.rd-detail-dialog .editor-textarea')
   if (!ta) return
   const start = ta.selectionStart
   const end = ta.selectionEnd
@@ -898,14 +1172,19 @@ async function submitComment() {
   if (!content) return
   submitting.value = true
   try {
-    const res = await rdKanbanService.addComment(props.itemId, { content })
+    const payload = { content }
+    if (replyingTo.value) {
+      payload.parent_id = replyingTo.value.id
+    }
+    const res = await rdKanbanService.addComment(props.itemId, payload)
     comments.value.unshift(res.comment)
     newComment.value = ''
+    replyingTo.value = null
     // 同步更新 card.comment_count
     if (props.item) {
       props.item.comment_count = (props.item.comment_count || 0) + 1
     }
-    ElMessage.success('评论已发布')
+    ElMessage.success(replyingTo.value ? '回复已发布' : '评论已发布')
     emit('refresh')
   } catch (e) {
     ElMessage.error('发布失败')
@@ -913,12 +1192,77 @@ async function submitComment() {
     submitting.value = false
   }
 }
+function startReplyComment(c) {
+  replyingTo.value = { id: c.id, name: c.user?.name || '未知用户', content: c.content }
+  newComment.value = ''
+  // 滚动到评论输入框
+  nextTick(() => {
+    const editor = document.querySelector('.comment-editor .editor-textarea')
+    if (editor) editor.focus()
+  })
+}
+function cancelReplyComment() {
+  replyingTo.value = null
+}
+function isCommentMine(c) {
+  if (!c || !c.user) return false
+  const cid = c.user.id
+  const myId = currentUserId.value
+  if (cid == null || myId == null || myId === 0) return false
+  // 类型归一化：避免 "1" !== 1
+  return String(cid) === String(myId)
+}
+// 评论作者是否是管理员（用于显示徽章）
+function isCommentAuthorAdmin(c) {
+  // 后端 _serialize_comment 只返回了 user {id, name, username, avatar}，role 字段不会带过来
+  // 但 admnia 是当前已知的内置管理员账户，且 role === 'admin'
+  // 因此：通过 username 命中 "admin" / "admina" / "administrator" 这几个常见账号视为管理员
+  if (!c || !c.user) return false
+  const u = c.user
+  const username = (u.username || u.name || '').toLowerCase()
+  if (!username) return false
+  return ['admin', 'admina', 'administrator', 'superadmin', 'root'].includes(username)
+}
+// admin 拥有一切权限（编辑 / 删除任何评论），无需是作者本人
 function canEdit(c) {
-  return c.user?.id === currentUserId.value || userStore.user?.role === 'admin'
+  if (isAdmin.value) return true
+  return isCommentMine(c)
 }
 function canDelete(c) {
-  return c.user?.id === currentUserId.value || userStore.user?.role === 'admin'
+  if (isAdmin.value) return true
+  return isCommentMine(c)
 }
+// 无权限时的提示文案：当前用户是 admin 时显示 "管理员拥有一切权限" 之类的友好提示
+function noEditTip(c) {
+  if (isAdmin.value) return '管理员拥有编辑一切评论的权限' // 不会出现，仅防御
+  return isCommentMine(c) ? '你暂无编辑权限' : '仅评论作者或管理员可编辑'
+}
+function noDeleteTip(c) {
+  if (isAdmin.value) return '管理员拥有删除一切评论的权限'
+  return isCommentMine(c) ? '你暂无删除权限' : '仅评论作者或管理员可删除'
+}
+// 把扁平 comments[] 转成树：parent_id 为空的视为顶级；其它按 parent_id 挂到对应父评论的 replies
+const commentTree = computed(() => {
+  const list = Array.isArray(comments.value) ? comments.value : []
+  const byId = new Map()
+  const roots = []
+  list.forEach((c) => {
+    byId.set(c.id, { ...c, replies: [] })
+  })
+  list.forEach((c) => {
+    const node = byId.get(c.id)
+    if (c.parent_id && byId.has(c.parent_id)) {
+      byId.get(c.parent_id).replies.push(node)
+    } else {
+      // 找不到父评论的也按顶级展示（防御性）
+      roots.push(node)
+    }
+  })
+  // 顶级按 created_at 升序（旧的在前），回复也按升序
+  roots.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  roots.forEach((r) => r.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)))
+  return roots
+})
 function startEditComment(c) {
   editingCommentId.value = c.id
   editingCommentContent.value = c.content
@@ -1056,7 +1400,8 @@ function iconColor(mime) {
 .detail-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 0;
+  max-height: 92vh;
   background: linear-gradient(180deg, #fafbff 0%, #f5f7fa 100%);
 }
 
@@ -1460,11 +1805,32 @@ function iconColor(mime) {
 .comment-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 .comment-item {
   display: flex;
   gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-left: 3px solid #0ea5e9;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+.comment-item:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+.comment-item.is-self {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.04);
+}
+.comment-item.is-reply-target {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.04);
 }
 .comment-avatar {
   flex-shrink: 0;
@@ -1474,12 +1840,14 @@ function iconColor(mime) {
 .comment-body {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .comment-head {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-bottom: 4px;
 }
 .comment-author {
   font-size: 12px;
@@ -1492,10 +1860,11 @@ function iconColor(mime) {
 }
 .comment-content {
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #1e293b;
   word-break: break-word;
   white-space: pre-wrap;
+  padding: 2px 0;
 }
 .comment-content :deep(code) {
   background: rgba(15, 23, 42, 0.06);
@@ -1586,16 +1955,148 @@ function iconColor(mime) {
   margin-top: 4px;
   display: flex;
   gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  align-items: center;
+}
+.comment-item:hover .comment-actions,
+.comment-actions.always-show {
+  opacity: 1;
 }
 .comment-actions :deep(.el-button) {
   font-size: 11px;
   padding: 2px 6px;
+}
+.comment-actions :deep(.el-button.is-disabled) {
+  cursor: not-allowed;
+}
+.comment-action-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.lock-icon {
+  font-size: 11px;
+  color: #cbd5e1;
 }
 .comment-empty {
   text-align: center;
   color: #94a3b8;
   font-size: 12px;
   padding: 16px 0;
+}
+.reply-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin: 8px 0 4px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  border-left: 3px solid #0ea5e9;
+  border-radius: 6px;
+  color: #0f172a;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.reply-banner-icon {
+  color: #0ea5e9;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.reply-banner-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reply-banner-content {
+  color: #64748b;
+  font-weight: normal;
+}
+.reply-banner-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+.reply-banner-close:hover {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0ea5e9;
+}
+.comment-reply {
+  margin: 6px 0 0 38px;
+  padding: 6px 10px;
+  background: rgba(15, 23, 42, 0.04);
+  border-left: 2px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #475569;
+}
+.comment-reply-author {
+  font-weight: 600;
+  color: #0ea5e9;
+  margin-right: 6px;
+}
+
+/* 评论树形结构：thread 包裹一个顶级评论 + 其回复 */
+.comment-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.comment-replies {
+  margin-top: 2px;
+  margin-left: 38px;
+  padding-left: 8px;
+  border-left: 2px dashed rgba(14, 165, 233, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.comment-reply-item {
+  padding: 8px 10px !important;
+  border-left-width: 2px !important;
+  border-left-color: #94a3b8 !important;
+  background: rgba(241, 245, 249, 0.65) !important;
+  font-size: 12px;
+}
+.comment-reply-item:hover {
+  background: rgba(241, 245, 249, 0.95) !important;
+}
+.comment-reply-item .comment-content {
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.comment-reply-item .comment-avatar {
+  width: 22px !important;
+  height: 22px !important;
+}
+.reply-to-tag {
+  font-size: 11px;
+  color: #64748b;
+  margin-left: 4px;
+}
+.reply-to-tag strong {
+  color: #0ea5e9;
+  font-weight: 600;
+  margin: 0 2px;
+}
+.admin-badge {
+  height: 16px !important;
+  line-height: 14px !important;
+  padding: 0 5px !important;
+  font-size: 10px !important;
+  border-radius: 4px !important;
+  margin-left: 4px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 /* Emoji picker */
@@ -1627,18 +2128,63 @@ function iconColor(mime) {
 </style>
 
 <style>
-/* 抽屉全局样式 */
-.rd-detail-drawer {
-  border-top-left-radius: 14px !important;
-  border-bottom-left-radius: 14px !important;
+/* 居中弹窗全局样式：自适应内容高度，不强制填满屏幕 */
+.rd-detail-dialog {
+  border-radius: 14px !important;
   overflow: hidden;
-}
-.rd-detail-drawer .el-drawer__body {
   padding: 0;
-  height: 100%;
+  margin: 4vh auto !important;
+  min-height: 320px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+.rd-detail-dialog .el-dialog__header {
+  display: none;
+}
+.rd-detail-dialog .el-dialog__body {
+  padding: 0;
+  max-height: 92vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 文本附件预览弹窗 */
+.rd-attachment-preview-dialog {
+  border-radius: 12px;
   overflow: hidden;
 }
-.rd-detail-drawer .el-drawer__header {
-  display: none;
+.rd-attachment-preview-dialog .preview-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 4px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.rd-attachment-preview-dialog .preview-content {
+  margin: 0;
+  padding: 14px 16px;
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 60vh;
+  overflow: auto;
+}
+.rd-attachment-preview-dialog .preview-loading {
+  margin: 0;
+  padding: 60px 16px;
+  background: #1e293b;
+  color: #94a3b8;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
 }
 </style>

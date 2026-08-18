@@ -164,7 +164,11 @@
                   <!-- 卡片底部 -->
                   <div class="card-footer">
                     <div class="card-meta">
-                      <span class="meta-item" :title="`${item.comment_count || 0} 条评论`">
+                      <span
+                        class="meta-item meta-comments"
+                        :title="`${item.comment_count || 0} 条评论，点击查看`"
+                        @click.stop="openDetail(item)"
+                      >
                         <el-icon><ChatDotRound /></el-icon>
                         <span>{{ item.comment_count || 0 }}</span>
                       </span>
@@ -725,18 +729,32 @@ async function handleCardCommand(cmd, item) {
     }
   } else if (cmd === 'comment') {
     try {
-      const { value } = await ElMessageBox.prompt('添加评论（仅计数 +1）', '评论', {
-        inputPlaceholder: '评论内容...',
-        confirmButtonText: '提交',
-      })
+      const { value } = await ElMessageBox.prompt(
+        '发表评论（同步写入评论库，打开详情抽屉可见）',
+        '添加评论',
+        {
+          inputPlaceholder: '请输入评论内容...',
+          inputType: 'textarea',
+          confirmButtonText: '提交',
+          cancelButtonText: '取消',
+          inputValidator: (val) => {
+            if (!val || !val.trim()) return '评论内容不能为空'
+            if (val.length > 2000) return '评论内容最多 2000 字'
+            return true
+          },
+        }
+      )
       if (value && value.trim()) {
+        await rdKanbanService.addComment(item.id, { content: value.trim() })
         const newCount = (item.comment_count || 0) + 1
-        await rdKanbanService.update(item.id, { comment_count: newCount })
         item.comment_count = newCount
         ElMessage.success('评论已添加')
       }
     } catch (e) {
-      if (e !== 'cancel' && e?.message) console.error(e)
+      if (e === 'cancel') return
+      if (typeof e === 'string') return
+      const msg = e?.response?.data?.error || e?.message || '评论失败'
+      ElMessage.error(msg)
     }
   }
 }
@@ -1250,6 +1268,16 @@ async function onDetailDelete(item) {
 }
 .meta-item .el-icon {
   font-size: 12px;
+}
+.meta-comments {
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+.meta-comments:hover {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0ea5e9;
 }
 .meta-time {
   font-size: 10px;
