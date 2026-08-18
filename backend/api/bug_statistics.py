@@ -30,6 +30,33 @@ def get_require_permission():
     from enhanced_app import require_permission
     return require_permission
 
+
+def _enum_to_str(value):
+    """将可能为 Enum 或 str 的值规范化为小写字符串"""
+    if value is None:
+        return None
+    if hasattr(value, 'value'):
+        return value.value
+    return value
+
+
+def _status_to_str(status):
+    """将 Bug.status（可能为枚举或字符串）规范化为字符串"""
+    return _enum_to_str(status) or 'unknown'
+
+
+def _severity_to_str(severity):
+    return _enum_to_str(severity) or 'unknown'
+
+
+def _priority_to_str(priority):
+    return _enum_to_str(priority) or 'unknown'
+
+
+def _status_eq(status, enum_value):
+    """判断 Bug.status 是否等于指定枚举值（兼容字符串存储）"""
+    return _enum_to_str(status) == _enum_to_str(enum_value)
+
 bug_statistics_bp = Blueprint('bug_statistics', __name__, url_prefix='/bug-statistics')
 
 ROOT_CAUSE_CATEGORIES = [
@@ -81,7 +108,7 @@ def get_bug_dashboard():
     # 3.1.1 核心指标卡
     # 未解决Bug总数
     unresolved_bugs = Bug.query.filter(
-        Bug.status.notin_([BugStatus.CLOSED]),
+        Bug.status.notin_([BugStatus.CLOSED.value]),
         Bug.project_id.in_(project_ids)
     ).count()
     
@@ -95,7 +122,7 @@ def get_bug_dashboard():
     
     # 本日已关闭Bug数
     today_closed_bugs = Bug.query.filter(
-        Bug.status == BugStatus.CLOSED,
+        Bug.status == BugStatus.CLOSED.value,
         Bug.closed_at >= datetime.combine(today, datetime.min.time()),
         Bug.closed_at < datetime.combine(today + timedelta(days=1), datetime.min.time()),
         Bug.project_id.in_(project_ids)
@@ -104,13 +131,13 @@ def get_bug_dashboard():
     # Bug重新打开率（周期内）
     period_start = start_date
     reopened_bugs = Bug.query.filter(
-        Bug.status == BugStatus.REOPENED,
+        Bug.status == BugStatus.REOPENED.value,
         Bug.updated_at >= period_start,
         Bug.project_id.in_(project_ids)
     ).count()
     
     fixed_bugs_in_period = Bug.query.filter(
-        Bug.status.in_([BugStatus.RESOLVED, BugStatus.VERIFIED]),
+        Bug.status.in_([BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]),
         Bug.updated_at >= period_start,
         Bug.project_id.in_(project_ids)
     ).count()
@@ -132,7 +159,7 @@ def get_bug_dashboard():
         
         # 当日关闭Bug数
         closed_bugs = Bug.query.filter(
-            Bug.status == BugStatus.CLOSED,
+            Bug.status == BugStatus.CLOSED.value,
             Bug.closed_at >= datetime.combine(date, datetime.min.time()),
             Bug.closed_at < datetime.combine(date + timedelta(days=1), datetime.min.time()),
             Bug.project_id.in_(project_ids)
@@ -211,7 +238,7 @@ def get_project_bug_statistics(project_id):
     status_distribution = defaultdict(int)
     project_bugs = Bug.query.filter_by(project_id=project_id).all()
     for bug in project_bugs:
-        status_value = bug.status.value if bug.status else 'unknown'
+        status_value = _status_to_str(bug.status)
         status_distribution[status_value] += 1
     
     # 3.2.2 项目Bug趋势对比（单项目趋势）
@@ -228,7 +255,7 @@ def get_project_bug_statistics(project_id):
         
         closed_bugs = Bug.query.filter(
             Bug.project_id == project_id,
-            Bug.status == BugStatus.CLOSED,
+            Bug.status == BugStatus.CLOSED.value,
             Bug.closed_at >= datetime.combine(date, datetime.min.time()),
             Bug.closed_at < datetime.combine(date + timedelta(days=1), datetime.min.time())
         ).count()
@@ -244,7 +271,7 @@ def get_project_bug_statistics(project_id):
     today = datetime.utcnow()
 
     for bug in project_bugs:
-        if bug.status == BugStatus.CLOSED:
+        if _status_eq(bug.status, BugStatus.CLOSED):
             if bug.closed_at:
                 age_days = (bug.closed_at - bug.created_at).days
             else:
@@ -264,21 +291,19 @@ def get_project_bug_statistics(project_id):
     # 3.2.4 项目Bug严重程度分布
     severity_distribution = defaultdict(int)
     for bug in project_bugs:
-        severity_value = bug.severity.value if bug.severity else 'unknown'
-        severity_distribution[severity_value] += 1
+        severity_distribution[_severity_to_str(bug.severity)] += 1
 
     # 3.2.5 项目Bug优先级分布
     priority_distribution = defaultdict(int)
     for bug in project_bugs:
-        priority_value = bug.priority.value if bug.priority else 'unknown'
-        priority_distribution[priority_value] += 1
+        priority_distribution[_priority_to_str(bug.priority)] += 1
 
     # 3.2.6 项目Bug状态汇总（前端需要的格式）
     status_summary = {
         'total': len(project_bugs),
-        'open': sum(1 for b in project_bugs if b.status != BugStatus.CLOSED),
-        'in_progress': sum(1 for b in project_bugs if b.status == BugStatus.IN_PROGRESS),
-        'closed': sum(1 for b in project_bugs if b.status == BugStatus.CLOSED)
+        'open': sum(1 for b in project_bugs if not _status_eq(b.status, BugStatus.CLOSED)),
+        'in_progress': sum(1 for b in project_bugs if _status_eq(b.status, BugStatus.IN_PROGRESS)),
+        'closed': sum(1 for b in project_bugs if _status_eq(b.status, BugStatus.CLOSED))
     }
 
     return jsonify({
@@ -338,7 +363,7 @@ def get_developer_performance():
         # 已修复Bug总数（周期内）
         fixed_bugs = Bug.query.filter(
             Bug.assigned_to == developer.id,
-            Bug.status.in_([BugStatus.RESOLVED, BugStatus.VERIFIED, BugStatus.CLOSED]),
+            Bug.status.in_([BugStatus.RESOLVED.value, BugStatus.VERIFIED.value, BugStatus.CLOSED.value]),
             Bug.resolved_at >= start_date,
             Bug.project_id.in_(project_ids)
         ).count()
@@ -346,7 +371,7 @@ def get_developer_performance():
         # 平均修复时长（仅计算已关闭的Bug）
         closed_bugs = Bug.query.filter(
             Bug.assigned_to == developer.id,
-            Bug.status == BugStatus.CLOSED,
+            Bug.status == BugStatus.CLOSED.value,
             Bug.resolved_at >= start_date,
             Bug.project_id.in_(project_ids)
         ).all()
@@ -364,7 +389,7 @@ def get_developer_performance():
         # 重新打开Bug数
         reopened_bugs = Bug.query.filter(
             Bug.assigned_to == developer.id,
-            Bug.status == BugStatus.REOPENED,
+            Bug.status == BugStatus.REOPENED.value,
             Bug.updated_at >= start_date,
             Bug.project_id.in_(project_ids)
         ).count()
@@ -423,7 +448,7 @@ def get_tester_performance():
         # 已验证关闭的Bug数
         verified_bugs = Bug.query.filter(
             Bug.verifier_id == tester.id,
-            Bug.status == BugStatus.CLOSED,
+            Bug.status == BugStatus.CLOSED.value,
             Bug.closed_at >= start_date,
             Bug.project_id.in_(project_ids)
         ).count()
@@ -502,7 +527,7 @@ def get_reopen_analysis():
     
     # 重新打开Bug列表
     reopened_bugs = Bug.query.filter(
-        Bug.status == BugStatus.REOPENED,
+        Bug.status == BugStatus.REOPENED.value,
         Bug.updated_at >= start_date,
         Bug.project_id.in_(project_ids)
     ).all()
@@ -794,7 +819,7 @@ def get_bug_lifecycle_analysis():
         query = query.filter(Bug.module == module)
     
     # 只统计已关闭的Bug
-    closed_bugs = query.filter(Bug.status == BugStatus.CLOSED).all()
+    closed_bugs = query.filter(Bug.status == BugStatus.CLOSED.value).all()
     
     # 计算生命周期时长（从创建到关闭的天数）
     lifecycle_durations = []
@@ -956,7 +981,7 @@ def get_kpi_metrics():
     resolution_rate = round((resolved_bugs / total_bugs * 100) if total_bugs > 0 else 0, 1)
     
     avg_fix_time = 0
-    closed_bugs_for_time = [bug for bug in all_bugs if bug.status == BugStatus.CLOSED and bug.resolved_at and bug.created_at]
+    closed_bugs_for_time = [bug for bug in all_bugs if bug.status == BugStatus.CLOSED.value and bug.resolved_at and bug.created_at]
     
     if closed_bugs_for_time:
         total_time = 0
@@ -1203,11 +1228,11 @@ def get_distribution_analysis():
                 proj = Project.query.get(bug.project_id)
                 proj_name = proj.name if proj else '未知'
                 distribution[proj_name]['total'] += 1
-                if bug.status == BugStatus.NEW:
+                if bug.status == BugStatus.NEW.value:
                     distribution[proj_name]['new'] += 1
-                elif bug.status in [BugStatus.RESOLVED, BugStatus.VERIFIED]:
+                elif bug.status in [BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]:
                     distribution[proj_name]['resolved'] += 1
-                elif bug.status == BugStatus.CLOSED:
+                elif bug.status == BugStatus.CLOSED.value:
                     distribution[proj_name]['closed'] += 1
 
         elif dimension == 'severity':
@@ -1215,11 +1240,11 @@ def get_distribution_analysis():
             for bug in all_bugs:
                 severity = bug.severity.value if bug.severity else '未知'
                 distribution[severity]['total'] += 1
-                if bug.status == BugStatus.NEW:
+                if bug.status == BugStatus.NEW.value:
                     distribution[severity]['new'] += 1
-                elif bug.status in [BugStatus.RESOLVED, BugStatus.VERIFIED]:
+                elif bug.status in [BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]:
                     distribution[severity]['resolved'] += 1
-                elif bug.status == BugStatus.CLOSED:
+                elif bug.status == BugStatus.CLOSED.value:
                     distribution[severity]['closed'] += 1
 
         elif dimension == 'status':
@@ -1233,11 +1258,11 @@ def get_distribution_analysis():
             for bug in all_bugs:
                 priority = bug.priority.value if bug.priority else '未知'
                 distribution[priority]['total'] += 1
-                if bug.status == BugStatus.NEW:
+                if bug.status == BugStatus.NEW.value:
                     distribution[priority]['new'] += 1
-                elif bug.status in [BugStatus.RESOLVED, BugStatus.VERIFIED]:
+                elif bug.status in [BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]:
                     distribution[priority]['resolved'] += 1
-                elif bug.status == BugStatus.CLOSED:
+                elif bug.status == BugStatus.CLOSED.value:
                     distribution[priority]['closed'] += 1
 
         elif dimension == 'type':
@@ -1245,11 +1270,11 @@ def get_distribution_analysis():
             for bug in all_bugs:
                 bug_type = bug.bug_type or '未知'
                 distribution[bug_type]['total'] += 1
-                if bug.status == BugStatus.NEW:
+                if bug.status == BugStatus.NEW.value:
                     distribution[bug_type]['new'] += 1
-                elif bug.status in [BugStatus.RESOLVED, BugStatus.VERIFIED]:
+                elif bug.status in [BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]:
                     distribution[bug_type]['resolved'] += 1
-                elif bug.status == BugStatus.CLOSED:
+                elif bug.status == BugStatus.CLOSED.value:
                     distribution[bug_type]['closed'] += 1
 
         elif dimension == 'assignee':
@@ -1261,11 +1286,11 @@ def get_distribution_analysis():
                 else:
                     assignee_name = '未分配'
                 distribution[assignee_name]['total'] += 1
-                if bug.status == BugStatus.NEW:
+                if bug.status == BugStatus.NEW.value:
                     distribution[assignee_name]['new'] += 1
-                elif bug.status in [BugStatus.RESOLVED, BugStatus.VERIFIED]:
+                elif bug.status in [BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]:
                     distribution[assignee_name]['resolved'] += 1
-                elif bug.status == BugStatus.CLOSED:
+                elif bug.status == BugStatus.CLOSED.value:
                     distribution[assignee_name]['closed'] += 1
 
         else:
@@ -1397,11 +1422,11 @@ def get_person_workload():
         
         workload_data[assignee_name]['assigned'] += 1
         
-        if bug.status in [BugStatus.RESOLVED, BugStatus.VERIFIED]:
+        if bug.status in [BugStatus.RESOLVED.value, BugStatus.VERIFIED.value]:
             workload_data[assignee_name]['resolved'] += 1
-        elif bug.status == BugStatus.CLOSED:
+        elif bug.status == BugStatus.CLOSED.value:
             workload_data[assignee_name]['closed'] += 1
-        elif bug.status == BugStatus.IN_PROGRESS:
+        elif bug.status == BugStatus.IN_PROGRESS.value:
             workload_data[assignee_name]['in_progress'] += 1
     
     result = []
@@ -1446,7 +1471,7 @@ def get_survival_duration():
     
     resolved_bugs = Bug.query.filter(
         Bug.project_id.in_(project_id_list),
-        Bug.status.in_([BugStatus.RESOLVED, BugStatus.VERIFIED, BugStatus.CLOSED]),
+        Bug.status.in_([BugStatus.RESOLVED.value, BugStatus.VERIFIED.value, BugStatus.CLOSED.value]),
         Bug.resolved_at.isnot(None),
         Bug.created_at.isnot(None)
     ).all()
