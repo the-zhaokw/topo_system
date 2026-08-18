@@ -9,16 +9,7 @@
       <div class="header-content">
         <div class="header-title">
           <div class="title-icon-wrapper">
-            <svg class="title-svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-              <rect class="kanban-board" x="6" y="10" width="52" height="44" rx="4" />
-              <rect class="kanban-col" x="10" y="14" width="14" height="36" rx="2" />
-              <rect class="kanban-col" x="26" y="14" width="14" height="36" rx="2" />
-              <rect class="kanban-col" x="42" y="14" width="14" height="36" rx="2" />
-              <rect class="kanban-card card-1" x="11" y="17" width="12" height="6" rx="1" />
-              <rect class="kanban-card card-2" x="11" y="25" width="12" height="6" rx="1" />
-              <rect class="kanban-card card-3" x="27" y="17" width="12" height="6" rx="1" />
-              <rect class="kanban-card card-4" x="43" y="17" width="12" height="6" rx="1" />
-            </svg>
+            <el-icon class="title-icon"><Operation /></el-icon>
           </div>
           <div class="title-text">
             <h1>项目研发管理</h1>
@@ -40,9 +31,42 @@
               :value="p.id"
             />
           </el-select>
+          <el-select
+            v-model="filterAssignee"
+            placeholder="按指派人筛选"
+            class="filter-selector"
+            clearable
+            filterable
+            @change="loadData"
+          >
+            <el-option
+              v-for="u in userOptions"
+              :key="u.id"
+              :label="u.name"
+              :value="u.id"
+            />
+          </el-select>
+          <el-input
+            v-model="filterKeyword"
+            placeholder="搜索卡片..."
+            class="keyword-input"
+            clearable
+            @keyup.enter="loadData"
+            @clear="loadData"
+          >
+            <template #prefix><el-icon><Search /></el-icon></template>
+          </el-input>
           <el-button class="btn-gradient" @click="loadData" :loading="loading">
             <el-icon><Refresh /></el-icon>
             刷新
+          </el-button>
+          <el-button class="btn-outline" @click="openWeeklySummary">
+            <el-icon><Document /></el-icon>
+            周报汇总
+          </el-button>
+          <el-button class="btn-outline" @click="openStats">
+            <el-icon><DataAnalysis /></el-icon>
+            数据统计
           </el-button>
         </div>
       </div>
@@ -86,7 +110,15 @@
                   v-for="item in getItemsByColumn(col.key)"
                   :key="item.id"
                   class="kanban-card"
-                  :class="{ 'is-dragging': draggingId === item.id }"
+                  :class="{
+                    'is-dragging': draggingId === item.id,
+                    'is-overdue': isOverdue(item),
+                    'is-resolved': !!item.resolved_at,
+                    'severity-critical': item.severity === 'critical',
+                    'severity-high': item.severity === 'high',
+                    'severity-medium': item.severity === 'medium',
+                    'severity-low': item.severity === 'low',
+                  }"
                   draggable="true"
                   @click="openDetail(item)"
                   @dragstart="handleDragStart(item, $event)"
@@ -106,14 +138,27 @@
                     {{ statusLabel(item.status) }}
                   </div>
 
+                  <!-- 严重度徽章（客户问题） -->
+                  <div
+                    v-if="item.severity"
+                    class="severity-badge"
+                    :style="severityStyle(item.severity)"
+                  >
+                    {{ severityLabel(item.severity) }}
+                    <span v-if="isOverdue(item)" class="overdue-tag">逾期</span>
+                    <span v-else-if="item.resolved_at" class="resolved-tag">已解决</span>
+                  </div>
+
                   <!-- 标题 -->
                   <div class="card-title-wrap">
-                    <div
-                      class="card-title"
-                      :title="item.title"
-                    >
+                    <div class="card-title" :title="item.title">
                       {{ item.title }}
                     </div>
+                  </div>
+
+                  <!-- 标签 -->
+                  <div v-if="item.tags && item.tags.length" class="card-tags">
+                    <span v-for="t in item.tags.slice(0,3)" :key="t" class="tag-chip">#{{ t }}</span>
                   </div>
 
                   <!-- 卡片底部 -->
@@ -122,6 +167,10 @@
                       <span class="meta-item" :title="`${item.comment_count || 0} 条评论`">
                         <el-icon><ChatDotRound /></el-icon>
                         <span>{{ item.comment_count || 0 }}</span>
+                      </span>
+                      <span v-if="item.due_at && !item.resolved_at" class="meta-due" :class="{ 'is-overdue': isOverdue(item) }">
+                        <el-icon><AlarmClock /></el-icon>
+                        <span>{{ formatDue(item.due_at) }}</span>
                       </span>
                       <span class="meta-time" :title="item.updated_at">
                         {{ formatTime(item.updated_at) }}
@@ -153,6 +202,13 @@
                             <el-dropdown-item command="assignee">
                               <el-icon><User /></el-icon>指派负责人
                             </el-dropdown-item>
+                            <el-dropdown-item v-if="item.column === 'customer_issue' && !item.resolved_at" command="resolve">
+                              <el-icon style="color:#10b981"><Check /></el-icon>
+                              <span style="color:#10b981">标记已解决</span>
+                            </el-dropdown-item>
+                            <el-dropdown-item v-if="item.column === 'customer_issue' && item.resolved_at" command="reopen">
+                              <el-icon><RefreshLeft /></el-icon>重新打开
+                            </el-dropdown-item>
                             <el-dropdown-item command="comment" divided>
                               <el-icon><ChatDotRound /></el-icon>添加评论 ({{ item.comment_count || 0 }})
                             </el-dropdown-item>
@@ -166,14 +222,12 @@
                     </div>
                   </div>
 
-                  <!-- 拖拽手柄 -->
                   <div class="drag-handle" title="拖动换列">
                     <el-icon><Rank /></el-icon>
                   </div>
                 </div>
               </transition-group>
 
-              <!-- 新增占位按钮 -->
               <button class="add-card-btn" @click="openCreateDialog(col.key)">
                 <el-icon><Plus /></el-icon>
                 <span>添加卡片</span>
@@ -192,7 +246,7 @@
     <el-dialog
       v-model="createDialogVisible"
       :title="`新增卡片 - ${currentColumnName}`"
-      width="460px"
+      width="500px"
       :close-on-click-modal="false"
       custom-class="rd-kanban-dialog"
     >
@@ -222,6 +276,20 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item v-if="createForm.column === 'customer_issue'" label="严重度">
+          <el-select v-model="createForm.severity" placeholder="选择严重度" style="width: 100%">
+            <el-option
+              v-for="s in issueSeverity"
+              :key="s.value"
+              :label="s.label"
+              :value="s.value"
+            >
+              <span style="float: left">{{ s.label }}</span>
+              <span :style="{ float: 'right', width: '10px', height: '10px', borderRadius: '50%', background: s.color, marginTop: '7px' }"></span>
+            </el-option>
+          </el-select>
+          <div class="form-hint">系统将根据严重度自动计算 SLA 截止时间（致命 4h / 严重 24h / 一般 72h / 轻微 7d）</div>
+        </el-form-item>
         <el-form-item label="负责人">
           <el-select
             v-model="createForm.assignee_id"
@@ -237,6 +305,12 @@
               :value="u.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="标签">
+          <el-input
+            v-model="createForm.tagsInput"
+            placeholder="多个标签用英文逗号分隔"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -271,6 +345,106 @@
         <el-button type="primary" class="btn-gradient" @click="submitStatus">保存</el-button>
       </template>
     </el-dialog>
+
+    <!-- 指派负责人对话框 -->
+    <el-dialog
+      v-model="assigneeDialogVisible"
+      title="指派负责人"
+      width="420px"
+      custom-class="rd-kanban-dialog"
+    >
+      <el-select
+        v-model="pendingAssigneeId"
+        placeholder="选择负责人"
+        filterable
+        clearable
+        style="width: 100%"
+      >
+        <el-option
+          v-for="u in userOptions"
+          :key="u.id"
+          :label="u.name"
+          :value="u.id"
+        />
+      </el-select>
+      <template #footer>
+        <el-button @click="assigneeDialogVisible = false">取消</el-button>
+        <el-button type="primary" class="btn-gradient" @click="submitAssignee">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 周报汇总对话框 -->
+    <el-dialog
+      v-model="weeklyDialogVisible"
+      :title="`周报汇总 - ${currentProject?.name || ''}`"
+      width="720px"
+      custom-class="rd-kanban-dialog"
+    >
+      <div class="weekly-toolbar">
+        <el-radio-group v-model="weeklyDays" @change="loadWeeklySummary" size="small">
+          <el-radio-button :value="7">近 7 天</el-radio-button>
+          <el-radio-button :value="14">近 14 天</el-radio-button>
+          <el-radio-button :value="30">近 30 天</el-radio-button>
+        </el-radio-group>
+        <el-button size="small" @click="copyWeeklyMarkdown" :disabled="!weeklyMarkdown">
+          <el-icon><CopyDocument /></el-icon>复制 Markdown
+        </el-button>
+      </div>
+      <pre class="weekly-md" v-if="weeklyMarkdown">{{ weeklyMarkdown }}</pre>
+      <el-empty v-else description="暂无周报数据" />
+    </el-dialog>
+
+    <!-- 数据统计对话框 -->
+    <el-dialog
+      v-model="statsDialogVisible"
+      :title="`项目数据统计 - ${currentProject?.name || ''}`"
+      width="640px"
+      custom-class="rd-kanban-dialog"
+    >
+      <div v-if="stats" class="stats-body">
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-label">总卡片</div>
+            <div class="stat-value">{{ stats.total }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">客户问题 - 未解决</div>
+            <div class="stat-value" style="color:#f59e0b">{{ stats.open_issues.total }}</div>
+          </div>
+          <div class="stat-card" :class="{ 'is-warn': stats.open_issues.overdue.length }">
+            <div class="stat-label">客户问题 - 逾期</div>
+            <div class="stat-value" style="color:#ef4444">{{ stats.open_issues.overdue.length }}</div>
+          </div>
+        </div>
+
+        <h4 class="stats-section-title">各列分布</h4>
+        <div class="stats-columns">
+          <div v-for="c in columns" :key="c.key" class="stats-col-row">
+            <span class="col-name" :style="{ color: c.color }">● {{ c.name }}</span>
+            <el-progress :percentage="stats.total ? Math.round((stats.by_column[c.key] || 0) / stats.total * 100) : 0" :stroke-width="10" :show-text="false" :color="c.color" />
+            <span class="col-count">{{ stats.by_column[c.key] || 0 }}</span>
+          </div>
+        </div>
+
+        <h4 class="stats-section-title">按指派人</h4>
+        <div v-if="stats.by_assignee.length" class="stats-assignee">
+          <div v-for="a in stats.by_assignee" :key="a.id" class="assignee-row">
+            <span class="assignee-name">{{ a.name }}</span>
+            <el-progress :percentage="stats.total ? Math.round(a.count / stats.total * 100) : 0" :stroke-width="8" :format="() => `${a.count} 张`" />
+          </div>
+        </div>
+        <el-empty v-else description="尚无指派" :image-size="60" />
+
+        <h4 v-if="stats.open_issues.overdue.length" class="stats-section-title" style="color:#ef4444">逾期客户问题</h4>
+        <div v-if="stats.open_issues.overdue.length" class="stats-overdue">
+          <div v-for="o in stats.open_issues.overdue" :key="o.id" class="overdue-row">
+            <span class="overdue-title">{{ o.title }}</span>
+            <span class="overdue-meta">{{ o.severity }} · 逾期 {{ o.overdue_hours }}h</span>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
     <!-- 卡片详情抽屉 -->
     <CardDetailDrawer
       v-if="detailItem"
@@ -278,6 +452,8 @@
       :item-id="detailItem.id"
       :item="detailItem"
       :columns="columns"
+      :status-options="statusOptions"
+      :user-options="userOptions"
       @refresh="onDetailRefresh"
       @delete="onDetailDelete"
     />
@@ -287,7 +463,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, ChatDotRound, MoreFilled, Flag, User, Delete, Rank } from '@element-plus/icons-vue'
+import { Plus, Refresh, ChatDotRound, MoreFilled, Flag, User, Delete, Rank, Check, RefreshLeft, Search, Document, DataAnalysis, CopyDocument, AlarmClock, Operation } from '@element-plus/icons-vue'
 import rdKanbanService from '@/services/rdKanbanService'
 import { apiService } from '@/services/api'
 import CardDetailDrawer from './rd-kanban/CardDetailDrawer.vue'
@@ -297,12 +473,16 @@ const submitting = ref(false)
 
 const columns = ref([])
 const statusOptions = ref([])
+const issueSeverity = ref([])
 const allItems = ref([])
 const projectOptions = ref([])
 const userOptions = ref([])
 
 const currentProjectId = ref(null)
 const currentProject = ref(null)
+const columnCounts = ref({})
+const filterAssignee = ref(null)
+const filterKeyword = ref('')
 
 const createDialogVisible = ref(false)
 const createForm = reactive({
@@ -310,17 +490,30 @@ const createForm = reactive({
   column: null,
   status: null,
   assignee_id: null,
+  severity: null,
+  tagsInput: '',
 })
-
 const editingItem = ref(null)
 
 const dragOverColumn = ref(null)
 const draggingId = ref(null)
 let draggedItem = null
 
-// 详情抽屉
 const detailVisible = ref(false)
 const detailItem = ref(null)
+
+const statusDialogVisible = ref(false)
+const pendingStatus = ref(null)
+
+const assigneeDialogVisible = ref(false)
+const pendingAssigneeId = ref(null)
+
+const weeklyDialogVisible = ref(false)
+const weeklyMarkdown = ref('')
+const weeklyDays = ref(7)
+
+const statsDialogVisible = ref(false)
+const stats = ref(null)
 
 const currentColumnName = computed(() => {
   const col = columns.value.find((c) => c.key === createForm.column)
@@ -337,12 +530,38 @@ function statusLabel(value) {
   const opt = statusOptions.value.find((s) => s.value === value)
   return opt ? opt.label : value
 }
-
+function severityLabel(value) {
+  const opt = issueSeverity.value.find((s) => s.value === value)
+  return opt ? opt.label : value
+}
+function severityStyle(value) {
+  const opt = issueSeverity.value.find((s) => s.value === value)
+  const color = opt ? opt.color : '#94a3b8'
+  return {
+    background: color + '22',
+    color,
+    borderColor: color + '55',
+  }
+}
+function isOverdue(item) {
+  if (!item.due_at || item.resolved_at) return false
+  return new Date(item.due_at) < new Date()
+}
+function formatDue(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const now = new Date()
+  const diff = (d - now) / 1000
+  if (diff < 0) return '已逾期'
+  if (diff < 3600) return `${Math.floor(diff / 60)} 分后`
+  if (diff < 86400) return `${Math.floor(diff / 3600)} 时后`
+  if (diff < 604800) return `${Math.floor(diff / 86400)} 天后`
+  return d.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })
+}
 function avatarText(name) {
   if (!name) return '?'
   return name.slice(-2)
 }
-
 function formatTime(iso) {
   if (!iso) return ''
   try {
@@ -375,30 +594,32 @@ async function loadProjects() {
     console.error('加载项目列表失败', e)
   }
 }
-
 async function loadUsers() {
   try {
     const res = await apiService.users.getList()
     const list = res.users || res.data || res.items || res || []
     userOptions.value = list.map((u) => ({
       id: u.id,
-      name:
-        (u.first_name || '') + (u.last_name || '') || u.username || u.name || `#${u.id}`,
+      name: (u.first_name || '') + (u.last_name || '') || u.username || u.name || `#${u.id}`,
       username: u.username,
     }))
   } catch (e) {
     console.error('加载用户列表失败', e)
   }
 }
-
 async function loadData() {
   if (!currentProjectId.value) return
   loading.value = true
   try {
-    const res = await rdKanbanService.list(currentProjectId.value)
+    const params = {}
+    if (filterAssignee.value) params.assignee_id = filterAssignee.value
+    if (filterKeyword.value.trim()) params.keyword = filterKeyword.value.trim()
+    const res = await rdKanbanService.list(currentProjectId.value, params)
     columns.value = res.columns || []
     statusOptions.value = res.status_options || []
+    issueSeverity.value = res.issue_severity || []
     allItems.value = res.items || []
+    columnCounts.value = res.column_counts || {}
     currentProject.value = res.project || null
   } catch (e) {
     console.error('加载看板数据失败', e)
@@ -407,7 +628,6 @@ async function loadData() {
     loading.value = false
   }
 }
-
 function handleProjectChange() {
   loadData()
 }
@@ -418,13 +638,14 @@ function openCreateDialog(columnKey) {
   createForm.title = ''
   createForm.status = null
   createForm.assignee_id = null
+  createForm.severity = columnKey === 'customer_issue' ? 'medium' : null
+  createForm.tagsInput = ''
   createDialogVisible.value = true
   nextTick(() => {
     const input = document.querySelector('.rd-kanban-dialog .el-input__inner')
     if (input) input.focus()
   })
 }
-
 async function submitCreate() {
   if (!createForm.title || !createForm.title.trim()) {
     ElMessage.warning('请输入标题')
@@ -438,6 +659,9 @@ async function submitCreate() {
   try {
     const status = createForm.status
     const statusOpt = statusOptions.value.find((s) => s.value === status)
+    const tags = createForm.tagsInput
+      ? createForm.tagsInput.split(',').map((s) => s.trim()).filter(Boolean)
+      : []
     await rdKanbanService.create({
       project_id: currentProjectId.value,
       column: createForm.column,
@@ -445,6 +669,8 @@ async function submitCreate() {
       status: status || null,
       status_color: statusOpt ? statusOpt.color : null,
       assignee_id: createForm.assignee_id || null,
+      severity: createForm.severity || null,
+      tags,
     })
     ElMessage.success('已新增卡片')
     createDialogVisible.value = false
@@ -478,25 +704,24 @@ async function handleCardCommand(cmd, item) {
     pendingStatus.value = item.status || null
     statusDialogVisible.value = true
   } else if (cmd === 'assignee') {
-    // 简单实现：弹窗让用户选择
+    editingItem.value = item
+    pendingAssigneeId.value = item.assignee?.id || null
+    assigneeDialogVisible.value = true
+  } else if (cmd === 'resolve') {
     try {
-      const { value } = await ElMessageBox.prompt(
-        '请输入负责人用户 ID（留空清除）',
-        '指派负责人',
-        {
-          inputValue: item.assignee?.id ? String(item.assignee.id) : '',
-          inputPattern: /^$|^\d+$/,
-          inputErrorMessage: '请输入数字用户 ID',
-        }
-      )
-      const newId = value ? Number(value) : null
-      await rdKanbanService.update(item.id, { assignee_id: newId })
-      ElMessage.success('已更新负责人')
+      await rdKanbanService.resolveIssue(item.id)
+      ElMessage.success('已标记为已解决')
       await loadData()
     } catch (e) {
-      if (e !== 'cancel' && e?.message) {
-        console.error(e)
-      }
+      ElMessage.error('操作失败')
+    }
+  } else if (cmd === 'reopen') {
+    try {
+      await rdKanbanService.reopenIssue(item.id)
+      ElMessage.success('已重新打开')
+      await loadData()
+    } catch (e) {
+      ElMessage.error('操作失败')
     }
   } else if (cmd === 'comment') {
     try {
@@ -515,7 +740,6 @@ async function handleCardCommand(cmd, item) {
     }
   }
 }
-
 async function submitStatus() {
   if (!editingItem.value) return
   const status = pendingStatus.value
@@ -532,6 +756,17 @@ async function submitStatus() {
     ElMessage.error('更新失败')
   }
 }
+async function submitAssignee() {
+  if (!editingItem.value) return
+  try {
+    await rdKanbanService.update(editingItem.value.id, { assignee_id: pendingAssigneeId.value || null })
+    ElMessage.success('已更新负责人')
+    assigneeDialogVisible.value = false
+    await loadData()
+  } catch (e) {
+    ElMessage.error('更新失败')
+  }
+}
 
 // ----- 拖拽换列 -----
 function handleDragStart(item, event) {
@@ -542,25 +777,21 @@ function handleDragStart(item, event) {
     event.dataTransfer.setData('text/plain', String(item.id))
   }
 }
-
 function handleDragEnd() {
   draggingId.value = null
   draggedItem = null
   dragOverColumn.value = null
 }
-
 function handleDragOver(columnKey, event) {
   event.preventDefault()
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
   dragOverColumn.value = columnKey
 }
-
 function handleDragLeave(columnKey) {
   if (dragOverColumn.value === columnKey) {
     dragOverColumn.value = null
   }
 }
-
 async function handleDrop(targetColumn, event) {
   event.preventDefault()
   dragOverColumn.value = null
@@ -571,7 +802,6 @@ async function handleDrop(targetColumn, event) {
   if (item.column === targetColumn) return
   const oldColumn = item.column
   item.column = targetColumn
-  // 计算新列 sort_order
   const targetItems = getItemsByColumn(targetColumn)
   const maxOrder = targetItems.reduce((m, it) => Math.max(m, it.sort_order || 0), 0)
   item.sort_order = maxOrder + 10
@@ -581,9 +811,50 @@ async function handleDrop(targetColumn, event) {
     ])
     ElMessage.success(`已移至「${columns.value.find((c) => c.key === targetColumn)?.name}」`)
   } catch (e) {
-    // 回滚
     item.column = oldColumn
     ElMessage.error('移动失败')
+  }
+}
+
+// ----- 周报汇总 -----
+async function openWeeklySummary() {
+  if (!currentProjectId.value) {
+    ElMessage.warning('请先选择项目')
+    return
+  }
+  weeklyDialogVisible.value = true
+  await loadWeeklySummary()
+}
+async function loadWeeklySummary() {
+  try {
+    const r = await rdKanbanService.weeklySummary(currentProjectId.value, weeklyDays.value)
+    weeklyMarkdown.value = r.markdown || ''
+  } catch (e) {
+    ElMessage.error('周报加载失败')
+  }
+}
+async function copyWeeklyMarkdown() {
+  if (!weeklyMarkdown.value) return
+  try {
+    await navigator.clipboard.writeText(weeklyMarkdown.value)
+    ElMessage.success('已复制 Markdown')
+  } catch {
+    ElMessage.warning('复制失败')
+  }
+}
+
+// ----- 数据统计 -----
+async function openStats() {
+  if (!currentProjectId.value) {
+    ElMessage.warning('请先选择项目')
+    return
+  }
+  statsDialogVisible.value = true
+  try {
+    const r = await rdKanbanService.stats(currentProjectId.value)
+    stats.value = r
+  } catch (e) {
+    ElMessage.error('统计加载失败')
   }
 }
 
@@ -595,17 +866,14 @@ onMounted(async () => {
 
 // ----- 详情抽屉 -----
 function openDetail(item) {
-  // 不在拖拽中才打开（避免拖完误触发）
   if (draggingId.value) return
   detailItem.value = item
   detailVisible.value = true
 }
 function onDetailRefresh() {
-  // 局部刷新：从后端重新拉取项目数据以同步评论数等
   loadData()
 }
 async function onDetailDelete(item) {
-  // 由抽屉触发的删除：直接同步移除
   if (!item) return
   allItems.value = allItems.value.filter((it) => it.id !== item.id)
   ElMessage.success('已删除卡片')
@@ -691,6 +959,10 @@ async function onDetailDelete(item) {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+}
+.title-icon {
+  color: #ffffff;
+  font-size: 26px;
 }
 .title-svg-icon {
   width: 30px;
@@ -903,6 +1175,7 @@ async function onDetailDelete(item) {
 .kanban-card:active {
   cursor: grabbing;
 }
+/* 卡片状态徽章：与其他页面的 el-tag / status-pill 风格保持一致（浅色背景 + 边框 + 主色文字） */
 .card-status-badge {
   display: inline-flex;
   align-items: center;
@@ -1107,6 +1380,233 @@ async function onDetailDelete(item) {
     width: 100%;
     justify-content: space-between;
   }
+}
+
+/* ---------- 新增：筛选、按钮、严重度、统计等样式 ---------- */
+.filter-selector {
+  width: 160px;
+}
+.keyword-input {
+  width: 180px;
+}
+.btn-outline {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+  border-radius: 8px !important;
+  font-weight: 500;
+}
+.btn-outline:hover {
+  background: rgba(14, 165, 233, 0.08) !important;
+  border-color: #0ea5e9 !important;
+  color: #0ea5e9 !important;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.overdue-tag,
+.resolved-tag {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 6px;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.6);
+}
+.kanban-card.is-overdue {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: linear-gradient(180deg, #fff 0%, #fef2f2 100%);
+}
+.kanban-card.is-resolved {
+  opacity: 0.65;
+}
+.kanban-card.severity-critical {
+  border-left: 3px solid #dc2626;
+}
+.kanban-card.severity-high {
+  border-left: 3px solid #ef4444;
+}
+.kanban-card.severity-medium {
+  border-left: 3px solid #f59e0b;
+}
+.kanban-card.severity-low {
+  border-left: 3px solid #10b981;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+.tag-chip {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: rgba(14, 165, 233, 0.08);
+  color: #0284c7;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.meta-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #94a3b8;
+}
+.meta-due.is-overdue {
+  color: #ef4444;
+  font-weight: 600;
+}
+.meta-due .el-icon {
+  font-size: 12px;
+}
+
+/* 周报汇总 */
+.weekly-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.weekly-md {
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  padding: 14px 16px;
+  max-height: 480px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #0f172a;
+}
+
+/* 数据统计 */
+.stats-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.stat-card {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.06) 0%, rgba(99, 102, 241, 0.06) 100%);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.stat-card.is-warn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.stat-label {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0ea5e9;
+}
+.stats-section-title {
+  margin: 4px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.stats-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stats-col-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stats-col-row .col-name {
+  width: 160px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.stats-col-row .el-progress {
+  flex: 1;
+}
+.stats-col-row .col-count {
+  font-size: 12px;
+  color: #475569;
+  min-width: 32px;
+  text-align: right;
+  font-weight: 600;
+}
+.stats-assignee {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.assignee-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.assignee-name {
+  width: 100px;
+  font-size: 12px;
+  color: #0f172a;
+  font-weight: 500;
+}
+.assignee-row .el-progress {
+  flex: 1;
+}
+.stats-overdue {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.overdue-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.overdue-title {
+  color: #0f172a;
+  font-weight: 500;
+}
+.overdue-meta {
+  color: #ef4444;
+  font-weight: 600;
 }
 </style>
 

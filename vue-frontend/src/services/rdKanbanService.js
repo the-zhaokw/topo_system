@@ -5,7 +5,7 @@ import api from './api.js'
  */
 const rdKanbanService = {
   /** 获取某项目所有 Kanban 卡片及列定义 */
-  list: (projectId) => api.get(`/rd-kanban/${projectId}`),
+  list: (projectId, params = {}) => api.get(`/rd-kanban/${projectId}`, { params }),
 
   /** 新建卡片 */
   create: (payload) => api.post('/rd-kanban', payload),
@@ -37,6 +37,15 @@ const rdKanbanService = {
     }),
   deleteAttachment: (attId) => api.delete(`/rd-kanban/attachments/${attId}`),
   attachmentDownloadUrl: (attId) => `/api/rd-kanban/attachments/${attId}/download`,
+
+  // 统计与汇总
+  stats: (projectId) => api.get(`/rd-kanban/${projectId}/stats`),
+  weeklySummary: (projectId, days = 7) => api.get(`/rd-kanban/${projectId}/weekly-summary`, { params: { days } }),
+  issueStats: (projectId) => api.get(`/rd-kanban/${projectId}/issue-stats`),
+
+  // 客户问题
+  resolveIssue: (itemId) => api.post(`/rd-kanban/${itemId}/resolve`),
+  reopenIssue: (itemId) => api.post(`/rd-kanban/${itemId}/reopen`),
 }
 
 export default rdKanbanService

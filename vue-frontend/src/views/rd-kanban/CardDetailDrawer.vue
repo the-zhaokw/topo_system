@@ -77,18 +77,125 @@
         </div>
       </div>
 
-      <!-- 元信息条 -->
+      <!-- 元信息条：列 + 指派 + 状态 + 严重度(SLA) + 更新时间 -->
       <div class="meta-strip" v-if="item">
-        <div class="meta-pill">
-          <el-icon><Folder /></el-icon>
-          <span>{{ columnName || '—' }}</span>
-        </div>
-        <div class="meta-pill" v-if="item.assignee">
-          <el-avatar :size="18" :src="item.assignee.avatar">
-            {{ avatarText(item.assignee.name) }}
-          </el-avatar>
-          <span>{{ item.assignee.name }}</span>
-        </div>
+        <!-- 所在列（点击可移列） -->
+        <el-dropdown
+          trigger="click"
+          @command="handleMoveToColumn"
+          popper-class="rd-column-dropdown"
+        >
+          <div class="meta-pill column-pill" :style="{ background: columnColorBg, color: columnColorFg }">
+            <el-icon><Folder /></el-icon>
+            <span>{{ columnName || '—' }}</span>
+            <el-icon class="caret"><CaretBottom /></el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="c in moveableColumns"
+                :key="c.key"
+                :command="c.key"
+                :disabled="c.key === item.column"
+              >
+                <span class="col-dot" :style="{ background: c.color }"></span>
+                {{ c.name }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
+        <!-- 指派人 -->
+        <el-dropdown
+          trigger="click"
+          @command="handleAssigneeChange"
+          popper-class="rd-assignee-dropdown"
+        >
+          <div class="meta-pill assignee-pill">
+            <el-avatar :size="18" :src="item.assignee?.avatar">
+              {{ avatarText(item.assignee?.name) }}
+            </el-avatar>
+            <span>{{ item.assignee?.name || '未指派' }}</span>
+            <el-icon class="caret"><CaretBottom /></el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="__unassign__">
+                <el-icon><UserFilled /></el-icon>
+                <span>取消指派</span>
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-for="u in userOptions"
+                :key="u.id"
+                :command="String(u.id)"
+                :disabled="u.id === item.assignee?.id"
+              >
+                <el-avatar :size="18" :src="u.avatar">
+                  {{ avatarText(u.name) }}
+                </el-avatar>
+                <span>{{ u.name }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
+        <!-- 状态徽章（点击可改） -->
+        <el-dropdown
+          trigger="click"
+          @command="handleStatusChange"
+          popper-class="rd-status-dropdown"
+        >
+          <div class="meta-pill status-pill" v-if="item.status" :style="statusStyle">
+            <span class="status-dot" :style="{ background: item.status_color || '#94a3b8' }"></span>
+            <span>{{ statusLabel }}</span>
+            <el-icon class="caret"><CaretBottom /></el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="s in statusOptions"
+                :key="s.value"
+                :command="s.value"
+                :disabled="s.value === item.status"
+              >
+                <span class="col-dot" :style="{ background: s.color }"></span>
+                {{ s.label }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
+        <!-- 客户问题严重度（SLA 倒计时） -->
+        <el-dropdown
+          v-if="item.column === 'customer_issue'"
+          trigger="click"
+          @command="handleSeverityChange"
+          popper-class="rd-severity-dropdown"
+        >
+          <div
+            class="meta-pill severity-pill"
+            :style="severityStyle"
+          >
+            <el-icon><Warning /></el-icon>
+            <span>{{ severityLabel || '设置严重度' }}</span>
+            <span class="sla-text" v-if="slaText">· {{ slaText }}</span>
+            <el-icon class="caret"><CaretBottom /></el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="s in severityOptions"
+                :key="s.value"
+                :command="s.value"
+                :disabled="s.value === item.severity"
+              >
+                <span class="col-dot" :style="{ background: s.color }"></span>
+                {{ s.label }}（SLA {{ s.sla }}h）
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
         <div class="meta-pill" v-if="item.updated_at">
           <el-icon><Clock /></el-icon>
           <span>更新于 {{ formatTime(item.updated_at) }}</span>
@@ -305,16 +412,19 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Link, FullScreen, MoreFilled, Flag, User, EditPen, Delete, Close,
   Folder, Clock, ChatDotRound, Paperclip, Plus, Document, Download,
-  List, Sunny, CopyDocument,
+  List, Sunny, CopyDocument, CaretBottom, Warning, UserFilled,
 } from '@element-plus/icons-vue'
 import rdKanbanService from '@/services/rdKanbanService'
 import { useUserStore } from '@/stores/user'
+import api from '@/services/api'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
   itemId: { type: [Number, String], default: null },
   item: { type: Object, default: null },
   columns: { type: Array, default: () => [] },
+  userOptions: { type: Array, default: () => [] },
+  statusOptions: { type: Array, default: () => [] },
 })
 const emit = defineEmits(['update:visible', 'refresh', 'maximize', 'delete'])
 
@@ -324,6 +434,35 @@ const currentUserName = computed(() => userStore.user?.username || '')
 
 const loading = ref(false)
 const submitting = ref(false)
+
+// 用户列表（用于指派下拉）
+const userOptions = ref([])
+
+// 状态选项（与后端 STATUS_OPTIONS 保持一致；色值与其他页面状态色板统一）
+const DEFAULT_STATUS_OPTIONS = [
+  { value: 'completed',         label: '完成',         color: '#10b981' },
+  { value: 'in_progress',       label: '正在备战中...', color: '#f59e0b' },
+  { value: 'priority',          label: '优先',         color: '#ec4899' },
+  { value: 'paused',            label: '暂停',         color: '#94a3b8' },
+  { value: 'pending_discuss',   label: '待讨论',       color: '#ef4444' },
+  { value: 'not_supported',     label: '不支持',       color: '#6b7280' },
+  { value: 'test_completed',    label: '测试完成',     color: '#14b8a6' },
+  { value: 'partially_support', label: '部分支持',     color: '#8b5cf6' },
+]
+const statusOptions = computed(() => {
+  if (Array.isArray(props.statusOptions) && props.statusOptions.length) {
+    return props.statusOptions
+  }
+  return DEFAULT_STATUS_OPTIONS
+})
+
+// 客户问题严重度
+const severityOptions = [
+  { value: 'critical', label: '致命', color: '#dc2626', sla: 4 },
+  { value: 'high', label: '严重', color: '#ef4444', sla: 24 },
+  { value: 'medium', label: '一般', color: '#f59e0b', sla: 72 },
+  { value: 'low', label: '轻微', color: '#10b981', sla: 168 },
+]
 
 // 详情
 const comments = ref([])
@@ -357,6 +496,17 @@ const columnName = computed(() => {
   return c ? c.name : props.item.column
 })
 
+const currentColumnColor = computed(() => {
+  if (!props.item) return '#94a3b8'
+  const c = props.columns.find((x) => x.key === props.item.column)
+  return c?.color || '#94a3b8'
+})
+
+const columnColorBg = computed(() => currentColumnColor.value + '1A')
+const columnColorFg = computed(() => currentColumnColor.value)
+
+const moveableColumns = computed(() => props.columns || [])
+
 const statusStyle = computed(() => {
   if (!props.item?.status) return {}
   return {
@@ -368,14 +518,64 @@ const statusStyle = computed(() => {
 
 const statusLabel = computed(() => {
   if (!props.item?.status) return ''
-  return props.item.status
+  const s = statusOptions.value.find((x) => x.value === props.item.status)
+  return s ? s.label : props.item.status
+})
+
+const severityStyle = computed(() => {
+  const sev = props.item?.severity
+  if (!sev) return {}
+  const s = severityOptions.find((x) => x.value === sev)
+  if (!s) return {}
+  return {
+    background: s.color + '1A',
+    color: s.color,
+    borderColor: s.color + '55',
+  }
+})
+
+const severityLabel = computed(() => {
+  const sev = props.item?.severity
+  if (!sev) return ''
+  const s = severityOptions.find((x) => x.value === sev)
+  return s ? s.label : sev
+})
+
+const slaText = computed(() => {
+  if (props.item?.column !== 'customer_issue') return ''
+  if (!props.item?.severity) return ''
+  if (props.item?.resolved_at) return '已解决'
+  // 优先用后端计算的 due_at，否则用 created_at + SLA 估算
+  let target = null
+  if (props.item.due_at) {
+    target = new Date(props.item.due_at).getTime()
+  } else if (props.item.created_at) {
+    const sla = severityOptions.find((x) => x.value === props.item.severity)?.sla
+    if (sla) {
+      target = new Date(props.item.created_at).getTime() + sla * 3600 * 1000
+    }
+  }
+  if (!target) return ''
+  const remain = (target - Date.now()) / 1000 / 3600
+  if (remain <= 0) {
+    const over = Math.ceil(-remain)
+    if (over >= 24) return `已超时 ${Math.floor(over / 24)}d ${over % 24}h`
+    return `已超时 ${over}h`
+  }
+  if (remain >= 24) {
+    return `剩余 ${Math.floor(remain / 24)}d ${Math.floor(remain % 24)}h`
+  }
+  if (remain >= 1) {
+    return `剩余 ${Math.floor(remain)}h ${Math.floor((remain % 1) * 60)}m`
+  }
+  return `剩余 ${Math.floor(remain * 60)}m`
 })
 
 watch(
   () => [props.visible, props.itemId],
   async ([vis, id]) => {
     if (vis && id) {
-      await loadDetail()
+      await Promise.all([loadDetail(), loadUsers()])
     } else {
       // 关闭时清空
       comments.value = []
@@ -390,6 +590,7 @@ watch(
 onMounted(() => {
   if (props.visible && props.itemId) {
     loadDetail()
+    loadUsers()
   }
 })
 
@@ -405,6 +606,32 @@ async function loadDetail() {
     ElMessage.error('加载详情失败')
   } finally {
     loading.value = false
+  }
+}
+
+let userOptionsLoaded = false
+async function loadUsers() {
+  // 1) 优先用 props 传入的（避免重复请求）
+  if (Array.isArray(props.userOptions) && props.userOptions.length) {
+    userOptions.value = props.userOptions
+    userOptionsLoaded = true
+    return
+  }
+  if (userOptionsLoaded && userOptions.value.length) return
+  try {
+    const res = await api.users.getList({ page_size: 200 })
+    const list = Array.isArray(res) ? res : (res.items || res.users || res.data || [])
+    userOptions.value = (list || []).map((u) => ({
+      id: u.id,
+      name: (u.first_name || u.last_name)
+        ? `${u.first_name || ''}${u.last_name || ''}`.trim()
+        : (u.username || u.name || `用户#${u.id}`),
+      username: u.username,
+      avatar: u.avatar,
+    }))
+    userOptionsLoaded = true
+  } catch (e) {
+    console.warn('加载用户列表失败', e)
   }
 }
 
@@ -455,8 +682,123 @@ function onHeaderCommand(cmd) {
   } else if (cmd === 'delete') {
     emit('delete', props.item)
     handleClose(false)
-  } else if (cmd === 'status' || cmd === 'assignee') {
-    ElMessage.info('请在卡片右键菜单中操作（' + (cmd === 'status' ? '状态' : '指派') + '）')
+  } else if (cmd === 'status') {
+    cycleStatus()
+  } else if (cmd === 'assignee') {
+    cycleAssignee()
+  }
+}
+
+// 状态快速切换（当用户从更多菜单点"设置状态"时）
+function cycleStatus() {
+  if (!props.item) return
+  const cur = props.item.status
+  const idx = statusOptions.value.findIndex((s) => s.value === cur)
+  const next = statusOptions.value[(idx + 1) % statusOptions.value.length]
+  handleStatusChange(next.value)
+}
+
+function cycleAssignee() {
+  if (!props.item || !userOptions.value.length) {
+    ElMessage.warning('暂无可指派用户')
+    return
+  }
+  const cur = props.item.assignee?.id
+  const idx = userOptions.value.findIndex((u) => u.id === cur)
+  const next = userOptions.value[(idx + 1) % userOptions.value.length]
+  handleAssigneeChange(String(next.id))
+}
+
+// ----- 移至其他列 -----
+async function handleMoveToColumn(colKey) {
+  if (!props.item || colKey === props.item.column) return
+  const target = props.columns.find((c) => c.key === colKey)
+  if (!target) return
+  try {
+    await rdKanbanService.sort([{ id: props.itemId, column: colKey, sort_order: 0 }])
+    if (props.item) props.item.column = colKey
+    ElMessage.success(`已移至「${target.name}」`)
+    emit('refresh')
+  } catch (e) {
+    console.error(e)
+    ElMessage.error('移动失败')
+  }
+}
+
+// ----- 设置状态 -----
+async function handleStatusChange(statusValue) {
+  if (!props.item) return
+  if (statusValue === props.item.status) return
+  const s = statusOptions.value.find((x) => x.value === statusValue)
+  try {
+    await rdKanbanService.update(props.itemId, {
+      status: statusValue,
+      status_color: s?.color || '#94a3b8',
+    })
+    props.item.status = statusValue
+    props.item.status_color = s?.color || '#94a3b8'
+    ElMessage.success(`已设为：${s?.label || statusValue}`)
+    emit('refresh')
+  } catch (e) {
+    console.error(e)
+    ElMessage.error('状态更新失败')
+  }
+}
+
+// ----- 指派 / 取消指派 -----
+async function handleAssigneeChange(cmd) {
+  if (!props.item) return
+  // 取消指派
+  if (cmd === '__unassign__') {
+    try {
+      await rdKanbanService.update(props.itemId, { assignee_id: null })
+      props.item.assignee = null
+      ElMessage.success('已取消指派')
+      emit('refresh')
+    } catch (e) {
+      ElMessage.error('操作失败')
+    }
+    return
+  }
+  const userId = Number(cmd)
+  if (!userId) return
+  const u = userOptions.value.find((x) => x.id === userId)
+  if (!u) return
+  try {
+    await rdKanbanService.update(props.itemId, { assignee_id: userId })
+    props.item.assignee = {
+      id: u.id,
+      name: u.name,
+      username: u.username,
+      avatar: u.avatar,
+    }
+    ElMessage.success(`已指派给：${u.name}`)
+    emit('refresh')
+  } catch (e) {
+    console.error(e)
+    ElMessage.error('指派失败')
+  }
+}
+
+// ----- 客户问题严重度 -----
+async function handleSeverityChange(sev) {
+  if (!props.item) return
+  if (sev === props.item.severity) return
+  const s = severityOptions.find((x) => x.value === sev)
+  try {
+    // 后端会在 severity 改变时按 SLA 重新计算 due_at
+    const res = await rdKanbanService.update(props.itemId, { severity: sev })
+    if (res && res.item) {
+      props.item.severity = res.item.severity
+      props.item.due_at = res.item.due_at
+    } else {
+      props.item.severity = sev
+    }
+    ElMessage.success(`已设为：${s?.label || sev}`)
+    emit('refresh')
+  } catch (e) {
+    console.error(e)
+    ElMessage.error('严重度更新失败')
   }
 }
 
@@ -831,9 +1173,42 @@ function iconColor(mime) {
   border-radius: 12px;
   font-size: 11px;
   color: #475569;
+  transition: all 0.15s ease;
 }
 .meta-pill .el-icon {
   font-size: 12px;
+}
+.meta-pill .caret {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+.meta-pill.column-pill,
+.meta-pill.assignee-pill,
+.meta-pill.status-pill,
+.meta-pill.severity-pill {
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+}
+.meta-pill.column-pill:hover,
+.meta-pill.assignee-pill:hover,
+.meta-pill.status-pill:hover,
+.meta-pill.severity-pill:hover {
+  filter: brightness(0.97);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+.col-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.sla-text {
+  font-weight: 500;
+  opacity: 0.85;
 }
 
 /* Body */

@@ -3261,7 +3261,7 @@ def register_api_blueprints():
         get_test_management_bp, get_audit_bp, get_search_bp, get_performance_bp,
         get_health_bp, get_docs_bp, get_export_bp, get_todos_bp, get_project_logs_bp,
         get_knowledge_bp, get_data_import_export_bp, get_monitoring_bp, get_risks_bp,
-        get_personal_plan_bp
+        get_personal_plan_bp, get_rd_kanban_bp
     )
     
     # 注册所有子蓝图到 api_bp，跳过有循环导入问题的蓝图
@@ -3298,6 +3298,7 @@ def register_api_blueprints():
         (get_monitoring_bp, None),
         (get_risks_bp, None),
         (get_personal_plan_bp, None),
+        (get_rd_kanban_bp, None),
     ]
     
     for get_bp_func, url_prefix in blueprints_to_register:

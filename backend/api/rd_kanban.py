@@ -1,17 +1,18 @@
 """
 项目研发管理 - Kanban 看板 API
 每个项目一张看板，7 列布局：
-  - recent_req_1      近期需求列表
-  - recent_req_2      近期需求列表（备选/补充）
-  - in_progress       正在开发列表
-  - completed         完成列表
-  - pending_test      待测试列表
-  - weekly_report     周报列表
-  - customer_issue    客户问题
-每张卡片可编辑、可拖拽换列、可删除、可评论计数。
+  - recent_req_pending  近期需求 - 待评估
+  - recent_req_approved 近期需求 - 已确认待排期
+  - in_progress         正在开发
+  - completed           已完成
+  - pending_test        待测试
+  - weekly_report       周报
+  - customer_issue      客户问题
+每张卡片可编辑、可拖拽换列、可删除、可评论、可传附件、可反应。
+周报列卡片支持自动汇总为 Markdown；客户问题列支持严重度/SLA。
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from flask import Blueprint, request, jsonify, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -21,24 +22,73 @@ rd_kanban_bp = Blueprint('rd_kanban', __name__, url_prefix='/rd-kanban')
 
 # 列定义（顺序与前端一致）
 COLUMNS = [
-    {'key': 'recent_req_1', 'name': '近期需求列表', 'color': '#0ea5e9'},
-    {'key': 'recent_req_2', 'name': '近期需求列表', 'color': '#0ea5e9'},
-    {'key': 'in_progress', 'name': '正在开发列表', 'color': '#f59e0b'},
-    {'key': 'completed', 'name': '完成列表', 'color': '#10b981'},
-    {'key': 'pending_test', 'name': '待测试列表', 'color': '#8b5cf6'},
-    {'key': 'weekly_report', 'name': '周报列表', 'color': '#ec4899'},
+    {'key': 'recent_req_pending', 'name': '近期需求 - 待评估', 'color': '#0ea5e9'},
+    {'key': 'recent_req_approved', 'name': '近期需求 - 已确认', 'color': '#0284c7'},
+    {'key': 'in_progress', 'name': '正在开发', 'color': '#f59e0b'},
+    {'key': 'completed', 'name': '已完成', 'color': '#10b981'},
+    {'key': 'pending_test', 'name': '待测试', 'color': '#8b5cf6'},
+    {'key': 'weekly_report', 'name': '周报', 'color': '#ec4899'},
     {'key': 'customer_issue', 'name': '客户问题', 'color': '#ef4444'},
 ]
 COLUMN_KEYS = [c['key'] for c in COLUMNS]
 COLUMN_NAME_MAP = {c['key']: c['name'] for c in COLUMNS}
 
-# 状态徽章选项
+# 状态徽章选项（与前端展示的 8 种状态徽章一致；色值与其他页面的状态色板保持一致）
 STATUS_OPTIONS = [
-    {'value': 'in_progress', 'label': '正在备战中...', 'color': '#f59e0b'},
-    {'value': 'paused', 'label': '暂停', 'color': '#94a3b8'},
-    {'value': 'completed', 'label': '完成', 'color': '#10b981'},
-    {'value': 'review', 'label': '评审中', 'color': '#3b82f6'},
+    {'value': 'completed',         'label': '完成',         'color': '#10b981'},  # 绿 - 与 ProjectList status-green、Bug resolved 同色
+    {'value': 'in_progress',       'label': '正在备战中...', 'color': '#f59e0b'},  # 黄 - 与 in_progress / pending_test 同色
+    {'value': 'priority',          'label': '优先',         'color': '#ec4899'},  # 粉红 - 与 weekly_report 列同色
+    {'value': 'paused',            'label': '暂停',         'color': '#94a3b8'},  # 灰 - 与 paused 既有色一致
+    {'value': 'pending_discuss',   'label': '待讨论',       'color': '#ef4444'},  # 红 - 与 customer_issue 列同色
+    {'value': 'not_supported',     'label': '不支持',       'color': '#6b7280'},  # 深灰
+    {'value': 'test_completed',    'label': '测试完成',     'color': '#14b8a6'},  # 青绿
+    {'value': 'partially_support', 'label': '部分支持',     'color': '#8b5cf6'},  # 紫 - 与 pending_test 列同色
 ]
+
+# 客户问题严重度
+ISSUE_SEVERITY = [
+    {'value': 'critical', 'label': '致命', 'color': '#dc2626'},
+    {'value': 'high', 'label': '严重', 'color': '#ef4444'},
+    {'value': 'medium', 'label': '一般', 'color': '#f59e0b'},
+    {'value': 'low', 'label': '轻微', 'color': '#10b981'},
+]
+ISSUE_SLA_HOURS = {'critical': 4, 'high': 24, 'medium': 72, 'low': 168}
+
+# 老列名 -> 新列名 的兼容映射（数据迁移用）
+LEGACY_COLUMN_MAP = {
+    'recent_req_1': 'recent_req_pending',
+    'recent_req_2': 'recent_req_approved',
+    'requirement': 'recent_req_pending',
+    'pending': 'recent_req_pending',
+    'in_development': 'in_progress',
+    'developing': 'in_progress',
+    'test': 'pending_test',
+    'testing': 'pending_test',
+    'done': 'completed',
+    'report': 'weekly_report',
+    'issue': 'customer_issue',
+}
+
+
+def _migrate_legacy_columns():
+    """把老列名迁移到新列名（一次性）"""
+    db = get_db()
+    model = _get_model()
+    if model is None:
+        return
+    try:
+        updated = 0
+        for legacy, new in LEGACY_COLUMN_MAP.items():
+            rows = model.query.filter(model.column == legacy).all()
+            for r in rows:
+                r.column = new
+                updated += 1
+        if updated:
+            db.session.commit()
+            print(f"[rd_kanban] 已迁移 {updated} 条历史列名到新列名")
+    except Exception as e:
+        db.session.rollback()
+        print(f"[rd_kanban] 迁移历史列名失败: {e}")
 
 
 def get_db():
@@ -80,6 +130,13 @@ def _serialize_item(item, user_dict=None):
                 }
         except Exception:
             pass
+    import json as _json
+    tags = []
+    if item.tags:
+        try:
+            tags = _json.loads(item.tags) or []
+        except Exception:
+            tags = []
     return {
         'id': item.id,
         'project_id': item.project_id,
@@ -93,6 +150,11 @@ def _serialize_item(item, user_dict=None):
         'created_at': item.created_at.isoformat() if item.created_at else None,
         'updated_at': item.updated_at.isoformat() if item.updated_at else None,
         'created_by': item.created_by,
+        'severity': item.severity,
+        'due_at': item.due_at.isoformat() if item.due_at else None,
+        'resolved_at': item.resolved_at.isoformat() if item.resolved_at else None,
+        'is_pinned': bool(item.is_pinned),
+        'tags': tags,
     }
 
 
@@ -113,7 +175,13 @@ def _check_project_access(project_id, user_id, user_role):
 @rd_kanban_bp.route('/<int:project_id>', methods=['GET'])
 @jwt_required()
 def list_items(project_id):
-    """获取某项目所有 Kanban 卡片"""
+    """获取某项目所有 Kanban 卡片
+
+    支持 query 参数：
+      - column: 按列过滤
+      - assignee_id: 按指派人过滤
+      - keyword: 按标题模糊搜索
+    """
     db = get_db()
     _, User, Project, ProjectMember = get_models()
     current_user_id = int(get_jwt_identity())
@@ -125,14 +193,28 @@ def list_items(project_id):
     if err:
         return err
 
-    # 动态创建表（如果不存在）
-    try:
-        db.create_all()
-    except Exception:
-        pass
+    # 确保表存在（首次访问时建立 schema）
+    _get_models()
+
+    # 迁移老列名（recent_req_1/2 等）
+    _migrate_legacy_columns()
 
     model = _get_model()
-    items = model.query.filter_by(project_id=project_id).order_by(model.column, model.sort_order, model.id).all()
+    q = model.query.filter_by(project_id=project_id)
+    column_filter = (request.args.get('column') or '').strip()
+    if column_filter and column_filter in COLUMN_KEYS:
+        q = q.filter(model.column == column_filter)
+    assignee_filter = request.args.get('assignee_id')
+    if assignee_filter:
+        try:
+            q = q.filter(model.assignee_id == int(assignee_filter))
+        except (TypeError, ValueError):
+            pass
+    keyword = (request.args.get('keyword') or '').strip()
+    if keyword:
+        like = f'%{keyword}%'
+        q = q.filter(model.title.like(like))
+    items = q.order_by(model.column, model.sort_order, model.id).all()
 
     # 批量加载用户
     user_ids = {it.assignee_id for it in items if it.assignee_id}
@@ -140,10 +222,18 @@ def list_items(project_id):
     users = User.query.filter(User.id.in_(user_ids)).all() if user_ids else []
     user_dict = {u.id: u for u in users}
 
+    # 计算各列数量
+    column_counts = {c['key']: 0 for c in COLUMNS}
+    for it in items:
+        if it.column in column_counts:
+            column_counts[it.column] += 1
+
     return jsonify({
         'success': True,
         'columns': COLUMNS,
         'status_options': STATUS_OPTIONS,
+        'issue_severity': ISSUE_SEVERITY,
+        'column_counts': column_counts,
         'items': [_serialize_item(it, user_dict) for it in items],
         'project': {'id': project.id, 'name': project.name, 'code': project.code}
     })
@@ -177,6 +267,12 @@ def create_item():
     max_order = db.session.query(model.sort_order).filter_by(project_id=project_id, column=column).order_by(model.sort_order.desc()).first()
     next_order = (max_order[0] + 10) if max_order and max_order[0] is not None else 0
 
+    # 客户问题自动计算 due_at
+    severity = data.get('severity') or None
+    due_at = None
+    if column == 'customer_issue' and severity in ISSUE_SLA_HOURS:
+        due_at = datetime.utcnow() + timedelta(hours=ISSUE_SLA_HOURS[severity])
+
     item = model(
         project_id=project_id,
         column=column,
@@ -189,6 +285,11 @@ def create_item():
         updated_at=datetime.utcnow(),
         created_by=current_user_id,
         comment_count=0,
+        severity=severity,
+        due_at=due_at,
+        resolved_at=None,
+        is_pinned=1 if data.get('is_pinned') else 0,
+        tags=_json_dumps_safe(data.get('tags')),
     )
     db.session.add(item)
     db.session.commit()
@@ -241,6 +342,21 @@ def update_item(item_id):
             item.comment_count = max(0, int(data.get('comment_count') or 0))
         except (TypeError, ValueError):
             pass
+    if 'severity' in data:
+        new_sev = data.get('severity') or None
+        old_sev = item.severity
+        item.severity = new_sev
+        # 客户问题：只要严重度改变，就按新的 SLA 重新计算 due_at
+        if item.column == 'customer_issue' and new_sev in ISSUE_SLA_HOURS and new_sev != old_sev:
+            item.due_at = datetime.utcnow() + timedelta(hours=ISSUE_SLA_HOURS[new_sev])
+    if 'due_at' in data:
+        item.due_at = _parse_iso(data.get('due_at'))
+    if 'resolved_at' in data:
+        item.resolved_at = _parse_iso(data.get('resolved_at'))
+    if 'is_pinned' in data:
+        item.is_pinned = 1 if data.get('is_pinned') else 0
+    if 'tags' in data:
+        item.tags = _json_dumps_safe(data.get('tags'))
 
     item.updated_at = datetime.utcnow()
     db.session.commit()
@@ -343,6 +459,14 @@ def _get_models():
             created_by = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
             created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
             updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+            # 客户问题专用
+            severity = Column(String(20), nullable=True)
+            due_at = Column(DateTime, nullable=True)
+            resolved_at = Column(DateTime, nullable=True)
+            # 周报专用
+            is_pinned = Column(Integer, default=0, nullable=False)
+            # 通用
+            tags = Column(Text, nullable=True)  # JSON 数组字符串
 
             def __repr__(self):
                 return f'<RDKanbanItem {self.id} {self.column} {self.title[:20]}>'
@@ -402,6 +526,32 @@ def _get_model():
 
 def get_rd_kanban_bp():
     return rd_kanban_bp
+
+
+def _json_dumps_safe(value):
+    """将 tags 等字段安全序列化为 JSON 字符串"""
+    import json as _json
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value
+    try:
+        return _json.dumps(value, ensure_ascii=False)
+    except Exception:
+        return None
+
+
+def _parse_iso(value):
+    """解析 ISO 时间字符串为 datetime，无法解析则返回 None"""
+    if not value:
+        return None
+    if isinstance(value, datetime):
+        return value
+    try:
+        s = value.replace('Z', '+00:00')
+        return datetime.fromisoformat(s).replace(tzinfo=None)
+    except Exception:
+        return None
 
 
 # ============================================================
@@ -813,3 +963,282 @@ def get_card_detail(item_id):
         'comments': [_serialize_comment(c, user_dict) for c in comments],
         'attachments': [_serialize_attachment(a, user_dict) for a in atts],
     })
+
+
+# ============================================================
+# 统计 / 周报汇总 / 客户问题跟踪
+# ============================================================
+
+@rd_kanban_bp.route('/<int:project_id>/stats', methods=['GET'])
+@jwt_required()
+def get_project_stats(project_id):
+    """项目 Kanban 整体统计：每列数量、按指派人分组、按状态分组、逾期客户问题"""
+    db = get_db()
+    _, User, _, _ = get_models()
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+    if not current_user:
+        return jsonify({'success': False, 'error': '用户不存在'}), 401
+
+    project, err = _check_project_access(project_id, current_user_id, current_user.role)
+    if err:
+        return err
+
+    Item, _, _ = _get_models()
+    items = Item.query.filter_by(project_id=project_id).all()
+
+    # 各列数量
+    by_column = {c['key']: 0 for c in COLUMNS}
+    for it in items:
+        if it.column in by_column:
+            by_column[it.column] += 1
+
+    # 按指派人
+    by_assignee = {}
+    for it in items:
+        if it.assignee_id:
+            by_assignee[it.assignee_id] = by_assignee.get(it.assignee_id, 0) + 1
+
+    # 按状态
+    by_status = {}
+    for it in items:
+        if it.status:
+            by_status[it.status] = by_status.get(it.status, 0) + 1
+
+    # 逾期客户问题
+    now = datetime.utcnow()
+    overdue_issues = []
+    open_issues_by_severity = {s['value']: 0 for s in ISSUE_SEVERITY}
+    for it in items:
+        if it.column == 'customer_issue' and not it.resolved_at:
+            if it.severity in open_issues_by_severity:
+                open_issues_by_severity[it.severity] += 1
+            if it.due_at and it.due_at < now:
+                overdue_issues.append({
+                    'id': it.id,
+                    'title': it.title,
+                    'severity': it.severity,
+                    'due_at': it.due_at.isoformat(),
+                    'overdue_hours': int((now - it.due_at).total_seconds() // 3600),
+                })
+
+    # 解析指派人
+    assignee_ids = list(by_assignee.keys())
+    users = User.query.filter(User.id.in_(assignee_ids)).all() if assignee_ids else []
+    assignee_list = [
+        {
+            'id': u.id,
+            'name': (u.first_name or '') + (u.last_name or '') or u.username,
+            'count': by_assignee.get(u.id, 0),
+        }
+        for u in users
+    ]
+    assignee_list.sort(key=lambda x: -x['count'])
+
+    return jsonify({
+        'success': True,
+        'project_id': project_id,
+        'total': len(items),
+        'by_column': by_column,
+        'by_status': by_status,
+        'by_assignee': assignee_list,
+        'open_issues': {
+            'total': sum(open_issues_by_severity.values()),
+            'by_severity': open_issues_by_severity,
+            'overdue': overdue_issues,
+        },
+    })
+
+
+@rd_kanban_bp.route('/<int:project_id>/weekly-summary', methods=['GET'])
+@jwt_required()
+def get_weekly_summary(project_id):
+    """自动汇总周报列卡片为 Markdown
+
+    可选 query: days（默认 7）
+    将周报列标题按时间排序后拼接成 Markdown 文档。
+    """
+    db = get_db()
+    _, User, _, _ = get_models()
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+    if not current_user:
+        return jsonify({'success': False, 'error': '用户不存在'}), 401
+
+    project, err = _check_project_access(project_id, current_user_id, current_user.role)
+    if err:
+        return err
+
+    try:
+        days = int(request.args.get('days', 7))
+    except (TypeError, ValueError):
+        days = 7
+    days = max(1, min(days, 90))
+
+    Item, _, _ = _get_models()
+    since = datetime.utcnow() - timedelta(days=days)
+    reports = Item.query.filter(
+        Item.project_id == project_id,
+        Item.column == 'weekly_report',
+        Item.created_at >= since,
+    ).order_by(Item.is_pinned.desc(), Item.created_at.desc()).all()
+
+    # 解析指派人
+    user_ids = {it.assignee_id for it in reports if it.assignee_id}
+    user_ids.add(current_user_id)
+    users = User.query.filter(User.id.in_(user_ids)).all() if user_ids else []
+    user_dict = {u.id: u for u in users}
+
+    # 生成 Markdown
+    lines = [f'# {project.name} - 近 {days} 天周报汇总', '']
+    lines.append(f'> 生成时间: {datetime.utcnow().strftime("%Y-%m-%d %H:%M")} UTC')
+    lines.append(f'> 条目数: {len(reports)}')
+    lines.append('')
+    if not reports:
+        lines.append('_本周暂无周报。_')
+    else:
+        for r in reports:
+            pin = '📌 ' if r.is_pinned else ''
+            assignee_name = ''
+            if r.assignee_id and r.assignee_id in user_dict:
+                u = user_dict[r.assignee_id]
+                assignee_name = (u.first_name or '') + (u.last_name or '') or u.username
+            date_str = r.created_at.strftime('%Y-%m-%d') if r.created_at else ''
+            lines.append(f'## {pin}{date_str} - {assignee_name or "未指派"}')
+            lines.append('')
+            lines.append(r.title)
+            lines.append('')
+            if r.status:
+                status_label = next((s['label'] for s in STATUS_OPTIONS if s['value'] == r.status), r.status)
+                lines.append(f'**状态**: {status_label}')
+            if r.tags:
+                import json as _json
+                try:
+                    tags = _json.loads(r.tags) or []
+                    if tags:
+                        lines.append('**标签**: ' + ' '.join([f'`{t}`' for t in tags]))
+                except Exception:
+                    pass
+            lines.append('')
+
+    markdown = '\n'.join(lines)
+    return jsonify({
+        'success': True,
+        'project_id': project_id,
+        'days': days,
+        'count': len(reports),
+        'markdown': markdown,
+        'items': [_serialize_item(r, user_dict) for r in reports],
+    })
+
+
+@rd_kanban_bp.route('/<int:project_id>/issue-stats', methods=['GET'])
+@jwt_required()
+def get_issue_stats(project_id):
+    """客户问题 SLA 概览：按严重度、解决率、平均解决时长"""
+    db = get_db()
+    _, User, _, _ = get_models()
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+    if not current_user:
+        return jsonify({'success': False, 'error': '用户不存在'}), 401
+
+    project, err = _check_project_access(project_id, current_user_id, current_user.role)
+    if err:
+        return err
+
+    Item, _, _ = _get_models()
+    issues = Item.query.filter_by(project_id=project_id, column='customer_issue').all()
+
+    now = datetime.utcnow()
+    by_severity = {s['value']: {'open': 0, 'resolved': 0, 'overdue': 0, 'sla_hours': ISSUE_SLA_HOURS[s['value']]} for s in ISSUE_SEVERITY}
+    total_resolved_hours = 0.0
+    resolved_count = 0
+    in_24h_resolved = 0  # 24 小时内解决数
+    for it in issues:
+        sev = it.severity if it.severity in by_severity else None
+        if not sev:
+            continue
+        if it.resolved_at:
+            by_severity[sev]['resolved'] += 1
+            hours = (it.resolved_at - it.created_at).total_seconds() / 3600
+            total_resolved_hours += hours
+            resolved_count += 1
+            if hours <= 24:
+                in_24h_resolved += 1
+        else:
+            by_severity[sev]['open'] += 1
+            if it.due_at and it.due_at < now:
+                by_severity[sev]['overdue'] += 1
+
+    avg_resolve_hours = round(total_resolved_hours / resolved_count, 2) if resolved_count else 0
+    total = len(issues)
+    return jsonify({
+        'success': True,
+        'project_id': project_id,
+        'total': total,
+        'open': sum(s['open'] for s in by_severity.values()),
+        'resolved': sum(s['resolved'] for s in by_severity.values()),
+        'overdue': sum(s['overdue'] for s in by_severity.values()),
+        'avg_resolve_hours': avg_resolve_hours,
+        'in_24h_resolved': in_24h_resolved,
+        'by_severity': by_severity,
+    })
+
+
+@rd_kanban_bp.route('/<int:item_id>/resolve', methods=['POST'])
+@jwt_required()
+def resolve_issue(item_id):
+    """标记客户问题为已解决：记录 resolved_at，若在 SLA 内则视为及时"""
+    Item, _, _ = _get_models()
+    item = Item.query.get(item_id)
+    if not item:
+        return jsonify({'success': False, 'error': '卡片不存在'}), 404
+    if item.column != 'customer_issue':
+        return jsonify({'success': False, 'error': '仅客户问题卡片可标记解决'}), 400
+
+    import enhanced_app
+    User = enhanced_app.User
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+    err = _check_item_access(item, current_user_id, current_user.role)
+    if err:
+        return err
+
+    if not item.resolved_at:
+        item.resolved_at = datetime.utcnow()
+        item.updated_at = item.resolved_at
+        db = get_db()
+        db.session.commit()
+    return jsonify({
+        'success': True,
+        'item': _serialize_item(item),
+        'within_sla': bool(item.due_at and item.resolved_at <= item.due_at),
+    })
+
+
+@rd_kanban_bp.route('/<int:item_id>/reopen', methods=['POST'])
+@jwt_required()
+def reopen_issue(item_id):
+    """重新打开已解决的客户问题：清空 resolved_at"""
+    Item, _, _ = _get_models()
+    item = Item.query.get(item_id)
+    if not item:
+        return jsonify({'success': False, 'error': '卡片不存在'}), 404
+    if item.column != 'customer_issue':
+        return jsonify({'success': False, 'error': '仅客户问题卡片可重开'}), 400
+
+    import enhanced_app
+    User = enhanced_app.User
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+    err = _check_item_access(item, current_user_id, current_user.role)
+    if err:
+        return err
+
+    item.resolved_at = None
+    item.updated_at = datetime.utcnow()
+    db = get_db()
+    db.session.commit()
+    return jsonify({'success': True, 'item': _serialize_item(item)})
+
