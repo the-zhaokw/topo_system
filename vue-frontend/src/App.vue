@@ -63,6 +63,10 @@
             <el-icon><PieChart /></el-icon>
             <span>自定义报表</span>
           </el-menu-item>
+          <el-menu-item index="/projects/rd-management">
+            <el-icon><Grid /></el-icon>
+            <span>项目研发管理</span>
+          </el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu v-if="currentUser && hasModule('module:bug')" index="bugs">
@@ -341,7 +345,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useUserStatusStore } from '@/stores/userStatus'
 import { systemTimeService } from '@/services/systemTimeService'
-import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, ArrowDown, DocumentAdd, Checked, Box, Collection, Goods, OfficeBuilding, TrendCharts, PieChart, Loading, Ticket, Link, FolderAdd, Bell, Check, Warning, Setting, DocumentChecked, Reading, Monitor, Fold, SwitchButton, Lock } from '@element-plus/icons-vue'
+import { House, Folder, Document, User, Clock, List, Calendar, DataAnalysis, ArrowDown, DocumentAdd, Checked, Box, Collection, CollectionTag, Goods, OfficeBuilding, TrendCharts, PieChart, Loading, Ticket, Link, Fold, Grid, EditPen, Bell, Setting, SwitchButton, FullScreen, Sunrise, Moon, Star, ChatLineRound, Histogram, Cellphone, Position, Connection, Filter, Sort, Warning, QuestionFilled, Back, Refresh, Plus, Check, MapLocation, Monitor, Reading, Lock } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import { ElMessage } from 'element-plus'
 import MobileMenu from '@/components/mobile/MobileMenu.vue'

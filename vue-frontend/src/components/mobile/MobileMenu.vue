@@ -37,6 +37,9 @@
           <el-menu-item index="/projects/custom-report">
             <span>自定义报表</span>
           </el-menu-item>
+          <el-menu-item index="/projects/rd-management">
+            <span>项目研发管理</span>
+          </el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu v-if="currentUser && hasModule('module:bug')" index="bugs">

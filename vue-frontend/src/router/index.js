@@ -339,6 +339,12 @@ const routes = [
         name: 'ProjectCustomReport',
         component: CustomReport,
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'rd-management',
+        name: 'ProjectRDManagement',
+        component: () => import('@/views/ProjectRDManagement.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   },
