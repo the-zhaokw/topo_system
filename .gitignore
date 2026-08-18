@@ -15,10 +15,10 @@ env/
 .pytest_cache/
 
 # Backend instance & runtime data
-backend/instance/
-instance/
+# backend/instance/ 已被有意追踪（主数据库 topo_system.db）
 backend/uploads/
 backend/test_*.py
+/instance/
 
 # Backend logs
 backend/logs/
