@@ -786,6 +786,68 @@ def create_overtime_application():
         traceback.print_exc()
         return jsonify({'error': '提交加班申请失败'}), 500
 
+# 审批/拒绝请假申请
+@attendance_bp.route('/leave-applications/<int:application_id>/approve', methods=['POST'])
+@jwt_required()
+@require_permission('attendance:leave_approve')
+def approve_leave_application(application_id):
+    """审批/拒绝请假申请（action=approve|reject）"""
+    db = get_db()
+    logger = get_logger()
+    create_audit_log = get_create_audit_log()
+    User, _, LeaveApplication, _, _, _, _, _, _, ApprovalStatus, _ = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+        if not current_user:
+            return jsonify({'error': '用户不存在'}), 404
+
+        application = LeaveApplication.query.get(application_id)
+        if not application:
+            return jsonify({'error': '请假申请不存在'}), 404
+
+        if application.status != ApprovalStatus.PENDING.value:
+            return jsonify({'error': f'当前状态为 {application.status}，不可重复审批'}), 400
+
+        data = request.get_json(silent=True) or {}
+        action = (data.get('action') or 'approve').lower()
+        comment = data.get('comment') or data.get('rejection_reason') or ''
+
+        if action == 'reject':
+            if not comment:
+                return jsonify({'error': '拒绝时必须填写审批意见'}), 400
+            application.status = ApprovalStatus.REJECTED.value
+        else:
+            application.status = ApprovalStatus.APPROVED.value
+        application.approval_comment = comment
+        application.approver_id = current_user_id
+        application.approved_at = datetime.utcnow()
+        db.session.commit()
+
+        try:
+            create_audit_log(
+                user_id=current_user_id,
+                action='approve' if action != 'reject' else 'reject',
+                resource_type='leave_application',
+                resource_id=application.id,
+                details=f"{'审批通过' if action != 'reject' else '拒绝'}请假申请 #{application.id}",
+                request=request
+            )
+        except Exception:
+            pass
+
+        return jsonify({
+            'message': '审批通过' if action != 'reject' else '已拒绝',
+            'application': application.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error approving leave application: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '审批操作失败'}), 500
+
 # 审批/拒绝加班申请
 @attendance_bp.route('/overtime-applications/<int:application_id>/approve', methods=['POST'])
 @jwt_required()
