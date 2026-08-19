@@ -21,13 +21,14 @@
             v-model="currentProjectId"
             placeholder="选择项目"
             class="project-selector"
+            popper-class="project-selector-popper"
             @change="handleProjectChange"
             filterable
           >
             <el-option
               v-for="p in projectOptions"
               :key="p.id"
-              :label="`${p.code ? '[' + p.code + '] ' : ''}${p.name}`"
+              :label="p.name"
               :value="p.id"
             />
           </el-select>
@@ -380,22 +381,47 @@
     <!-- 周报汇总对话框 -->
     <el-dialog
       v-model="weeklyDialogVisible"
-      :title="`周报汇总 - ${currentProject?.name || ''}`"
-      width="720px"
-      custom-class="rd-kanban-dialog"
+      :title="`周报汇总`"
+      width="780px"
+      top="5vh"
+      custom-class="weekly-summary-dialog"
     >
       <div class="weekly-toolbar">
-        <el-radio-group v-model="weeklyDays" @change="loadWeeklySummary" size="small">
-          <el-radio-button :value="7">近 7 天</el-radio-button>
-          <el-radio-button :value="14">近 14 天</el-radio-button>
-          <el-radio-button :value="30">近 30 天</el-radio-button>
-        </el-radio-group>
-        <el-button size="small" @click="copyWeeklyMarkdown" :disabled="!weeklyMarkdown">
+        <div class="weekly-toolbar-left">
+          <el-date-picker
+            v-model="weeklyDateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            size="default"
+            style="width: 280px"
+            @change="loadWeeklySummary"
+          />
+          <el-button size="default" @click="selectThisWeek" class="btn-outline">本周</el-button>
+          <el-button size="default" @click="selectLastWeek" class="btn-outline">上周</el-button>
+          <el-button size="default" @click="loadWeeklySummary" :loading="weeklyLoading" class="btn-outline">查询</el-button>
+        </div>
+        <el-button size="default" @click="copyWeeklyMarkdown" :disabled="!weeklyMarkdown">
           <el-icon><CopyDocument /></el-icon>复制 Markdown
         </el-button>
       </div>
-      <pre class="weekly-md" v-if="weeklyMarkdown">{{ weeklyMarkdown }}</pre>
-      <el-empty v-else description="暂无周报数据" />
+      <div class="weekly-summary-info" v-if="weeklyRangeLabel">
+        <span class="weekly-range-label">{{ weeklyRangeLabel }}</span>
+        <el-tag size="small" type="info" effect="plain">共 {{ weeklyItems.length }} 篇</el-tag>
+      </div>
+      <div class="weekly-card-list" v-loading="weeklyLoading">
+        <div v-if="weeklyItems.length === 0 && !weeklyLoading" class="weekly-empty">
+          <el-empty description="该时间段暂无周报" />
+        </div>
+        <WeeklyReportCard
+          v-for="item in weeklyItems"
+          :key="item.id"
+          :item="item"
+        />
+      </div>
     </el-dialog>
 
     <!-- 数据统计对话框 -->
@@ -471,6 +497,7 @@ import { Plus, Refresh, ChatDotRound, MoreFilled, Flag, User, Delete, Rank, Chec
 import rdKanbanService from '@/services/rdKanbanService'
 import { apiService } from '@/services/api'
 import CardDetailDrawer from './rd-kanban/CardDetailDrawer.vue'
+import WeeklyReportCard from './rd-kanban/WeeklyReportCard.vue'
 
 const loading = ref(false)
 const submitting = ref(false)
@@ -514,7 +541,10 @@ const pendingAssigneeId = ref(null)
 
 const weeklyDialogVisible = ref(false)
 const weeklyMarkdown = ref('')
-const weeklyDays = ref(7)
+const weeklyDateRange = ref([])
+const weeklyItems = ref([])
+const weeklyRangeLabel = ref('')
+const weeklyLoading = ref(false)
 
 const statsDialogVisible = ref(false)
 const stats = ref(null)
@@ -835,21 +865,67 @@ async function handleDrop(targetColumn, event) {
 }
 
 // ----- 周报汇总 -----
+function getLastWeekRange() {
+  const today = new Date()
+  const dayOfWeek = today.getDay() || 7
+  const thisMonday = new Date(today)
+  thisMonday.setDate(today.getDate() - dayOfWeek + 1)
+  const lastMonday = new Date(thisMonday)
+  lastMonday.setDate(thisMonday.getDate() - 7)
+  const lastSunday = new Date(thisMonday)
+  lastSunday.setDate(thisMonday.getDate() - 1)
+  const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return [fmt(lastMonday), fmt(lastSunday)]
+}
+function getThisWeekRange() {
+  const today = new Date()
+  const dayOfWeek = today.getDay() || 7
+  const thisMonday = new Date(today)
+  thisMonday.setDate(today.getDate() - dayOfWeek + 1)
+  const thisSunday = new Date(thisMonday)
+  thisSunday.setDate(thisMonday.getDate() + 6)
+  const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return [fmt(thisMonday), fmt(thisSunday)]
+}
 async function openWeeklySummary() {
   if (!currentProjectId.value) {
     ElMessage.warning('请先选择项目')
     return
   }
+  if (!weeklyDateRange.value || weeklyDateRange.value.length !== 2) {
+    weeklyDateRange.value = getLastWeekRange()
+  }
   weeklyDialogVisible.value = true
   await loadWeeklySummary()
 }
 async function loadWeeklySummary() {
+  if (!weeklyDateRange.value || weeklyDateRange.value.length !== 2) {
+    ElMessage.warning('请选择日期范围')
+    return
+  }
+  weeklyLoading.value = true
   try {
-    const r = await rdKanbanService.weeklySummary(currentProjectId.value, weeklyDays.value)
+    const [start, end] = weeklyDateRange.value
+    const r = await rdKanbanService.weeklySummary(currentProjectId.value, {
+      start_date: start,
+      end_date: end,
+    })
     weeklyMarkdown.value = r.markdown || ''
+    weeklyItems.value = r.items || []
+    weeklyRangeLabel.value = r.range_label || `${start} ~ ${end}`
   } catch (e) {
     ElMessage.error('周报加载失败')
+  } finally {
+    weeklyLoading.value = false
   }
+}
+function selectLastWeek() {
+  weeklyDateRange.value = getLastWeekRange()
+  loadWeeklySummary()
+}
+function selectThisWeek() {
+  weeklyDateRange.value = getThisWeekRange()
+  loadWeeklySummary()
 }
 async function copyWeeklyMarkdown() {
   if (!weeklyMarkdown.value) return
@@ -1510,26 +1586,51 @@ async function onDetailDelete(item) {
   font-size: 12px;
 }
 
+/* 周报汇总对话框 - body 可滚动 */
+:deep(.weekly-summary-dialog) .el-dialog__body {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+:deep(.weekly-summary-dialog) .el-dialog__header {
+  padding-bottom: 12px;
+}
+
 /* 周报汇总 */
 .weekly-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
-.weekly-md {
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+.weekly-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.weekly-summary-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px 14px;
+  background: rgba(59, 130, 246, 0.06);
   border-radius: 8px;
-  padding: 14px 16px;
-  max-height: 480px;
-  overflow-y: auto;
-  font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 12px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #0f172a;
+}
+.weekly-range-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e40af;
+}
+.weekly-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.weekly-empty {
+  padding: 20px 0;
 }
 
 /* 数据统计 */
@@ -1663,5 +1764,29 @@ async function onDetailDelete(item) {
 .rd-kanban-dialog .el-dialog__footer {
   padding: 12px 22px 18px;
   border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+/* 项目选择器下拉弹窗 — 浅色主题，覆盖 Login.vue 中的黑色全局样式 */
+.project-selector-popper.el-popper {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+}
+.project-selector-popper .el-select-dropdown__item {
+  color: #1e293b !important;
+}
+.project-selector-popper .el-select-dropdown__item.hover,
+.project-selector-popper .el-select-dropdown__item:hover {
+  background: rgba(56, 189, 248, 0.1) !important;
+  color: #0ea5e9 !important;
+}
+.project-selector-popper .el-select-dropdown__item.selected {
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #0284c7 !important;
+  font-weight: 600;
+}
+.project-selector-popper .el-popper__arrow::before {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(226, 232, 240, 0.8) !important;
 }
 </style>

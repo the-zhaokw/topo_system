@@ -387,6 +387,7 @@ export const apiService = {
 
     getReviews: (params = {}) => api.get('/todos/reviews', { params }),
     getContracts: (params = {}) => api.get('/todos/contracts', { params }),
+    getRdKanban: (params = {}) => api.get('/todos/rd-kanban', { params }),
     getMyTodos: () => api.get('/todos/all'),
     getLeaveApprovals: (params = {}) => api.get('/attendance/leave-applications', { params }),
     getOvertimeApprovals: (params = {}) => api.get('/attendance/overtime-applications', { params }),

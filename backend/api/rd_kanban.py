@@ -1126,8 +1126,9 @@ def get_project_stats(project_id):
 def get_weekly_summary(project_id):
     """自动汇总周报列卡片为 Markdown
 
-    可选 query: days（默认 7）
-    将周报列标题按时间排序后拼接成 Markdown 文档。
+    可选 query:
+      - start_date / end_date (YYYY-MM-DD) 日期范围筛选，优先使用
+      - days（默认 7）当未提供日期范围时使用
     """
     db = get_db()
     _, User, _, _ = get_models()
@@ -1140,19 +1141,37 @@ def get_weekly_summary(project_id):
     if err:
         return err
 
-    try:
-        days = int(request.args.get('days', 7))
-    except (TypeError, ValueError):
-        days = 7
-    days = max(1, min(days, 90))
+    start_date_str = request.args.get('start_date', '').strip()
+    end_date_str = request.args.get('end_date', '').strip()
 
     Item, _, _ = _get_models()
-    since = datetime.utcnow() - timedelta(days=days)
-    reports = Item.query.filter(
-        Item.project_id == project_id,
-        Item.column == 'weekly_report',
-        Item.created_at >= since,
-    ).order_by(Item.is_pinned.desc(), Item.created_at.desc()).all()
+
+    if start_date_str and end_date_str:
+        try:
+            start_dt = datetime.strptime(start_date_str, '%Y-%m-%d')
+            end_dt = datetime.strptime(end_date_str, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+        except ValueError:
+            return jsonify({'success': False, 'error': '日期格式无效，需 YYYY-MM-DD'}), 400
+        reports = Item.query.filter(
+            Item.project_id == project_id,
+            Item.column == 'weekly_report',
+            Item.created_at >= start_dt,
+            Item.created_at <= end_dt,
+        ).order_by(Item.is_pinned.desc(), Item.created_at.desc()).all()
+        range_label = f'{start_date_str} ~ {end_date_str}'
+    else:
+        try:
+            days = int(request.args.get('days', 7))
+        except (TypeError, ValueError):
+            days = 7
+        days = max(1, min(days, 90))
+        since = datetime.utcnow() - timedelta(days=days)
+        reports = Item.query.filter(
+            Item.project_id == project_id,
+            Item.column == 'weekly_report',
+            Item.created_at >= since,
+        ).order_by(Item.is_pinned.desc(), Item.created_at.desc()).all()
+        range_label = f'近 {days} 天'
 
     # 解析指派人
     user_ids = {it.assignee_id for it in reports if it.assignee_id}
@@ -1161,12 +1180,12 @@ def get_weekly_summary(project_id):
     user_dict = {u.id: u for u in users}
 
     # 生成 Markdown
-    lines = [f'# {project.name} - 近 {days} 天周报汇总', '']
+    lines = [f'# {project.name} - 周报汇总（{range_label}）', '']
     lines.append(f'> 生成时间: {datetime.utcnow().strftime("%Y-%m-%d %H:%M")} UTC')
     lines.append(f'> 条目数: {len(reports)}')
     lines.append('')
     if not reports:
-        lines.append('_本周暂无周报。_')
+        lines.append('_该时间段暂无周报。_')
     else:
         for r in reports:
             pin = '📌 ' if r.is_pinned else ''
@@ -1196,7 +1215,7 @@ def get_weekly_summary(project_id):
     return jsonify({
         'success': True,
         'project_id': project_id,
-        'days': days,
+        'range_label': range_label,
         'count': len(reports),
         'markdown': markdown,
         'items': [_serialize_item(r, user_dict) for r in reports],

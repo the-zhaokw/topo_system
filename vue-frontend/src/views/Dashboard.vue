@@ -678,7 +678,8 @@ const fetchTodoCount = async () => {
     todoCount.value = (summary.approvals?.total || 0) +
       (summary.bugs?.total || 0) +
       (summary.reviews?.total || 0) +
-      (summary.contracts?.total || 0)
+      (summary.contracts?.total || 0) +
+      (summary.rd_kanban?.total || 0)
   } catch (error) {
     console.error('获取待办数量失败:', error)
     todoCount.value = 0

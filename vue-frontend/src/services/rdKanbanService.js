@@ -42,7 +42,16 @@ const rdKanbanService = {
 
   // 统计与汇总
   stats: (projectId) => api.get(`/rd-kanban/${projectId}/stats`),
-  weeklySummary: (projectId, days = 7) => api.get(`/rd-kanban/${projectId}/weekly-summary`, { params: { days } }),
+  weeklySummary: (projectId, params = {}) => {
+    const query = {}
+    if (params.start_date && params.end_date) {
+      query.start_date = params.start_date
+      query.end_date = params.end_date
+    } else {
+      query.days = params.days || 7
+    }
+    return api.get(`/rd-kanban/${projectId}/weekly-summary`, { params: query })
+  },
   issueStats: (projectId) => api.get(`/rd-kanban/${projectId}/issue-stats`),
 
   // 客户问题

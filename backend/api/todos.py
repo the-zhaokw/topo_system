@@ -5,6 +5,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+import json
 import logging
 
 todos_bp = Blueprint('todos', __name__, url_prefix='/todos')
@@ -19,6 +20,9 @@ def get_models():
         RequirementDocument, RequirementItem,
         TestCase, TestSuite
     )
+    from api.rd_kanban import _get_models as _init_rd_models
+    _init_rd_models()
+    from api.rd_kanban import RDKanbanItem
     return {
         'db': db,
         'User': User,
@@ -36,7 +40,8 @@ def get_models():
         'RequirementDocument': RequirementDocument,
         'RequirementItem': RequirementItem,
         'TestCase': TestCase,
-        'TestSuite': TestSuite
+        'TestSuite': TestSuite,
+        'RDKanbanItem': RDKanbanItem
     }
 
 @todos_bp.route('/summary', methods=['GET'])
@@ -70,6 +75,10 @@ def get_todo_summary():
                 'delivery_pending': 0,
                 'risk_pending': 0,
                 'payment_pending': 0,
+                'total': 0
+            },
+            'rd_kanban': {
+                'in_progress': 0,
                 'total': 0
             },
             'total': 0
@@ -165,12 +174,21 @@ def get_todo_summary():
         summary['contracts']['payment_pending'] = payment_pending
         
         summary['contracts']['total'] = delivery_pending + risk_pending + payment_pending
-        
+
+        # 正在开发的看板卡片（指派给当前用户的）
+        rd_kanban_count = models['RDKanbanItem'].query.filter(
+            models['RDKanbanItem'].column == 'in_progress',
+            models['RDKanbanItem'].assignee_id == current_user_id
+        ).count()
+        summary['rd_kanban']['in_progress'] = rd_kanban_count
+        summary['rd_kanban']['total'] = rd_kanban_count
+
         summary['total'] = (
             summary['approvals']['total'] +
             summary['bugs']['total'] +
             summary['reviews']['total'] +
-            summary['contracts']['total']
+            summary['contracts']['total'] +
+            summary['rd_kanban']['total']
         )
         
         return jsonify({
@@ -568,6 +586,60 @@ def get_contract_todos():
         logger.error(f"获取合同待办失败: {str(e)}")
         return jsonify({'success': False, 'message': f'获取合同待办失败: {str(e)}'}), 500
 
+@todos_bp.route('/rd-kanban', methods=['GET'])
+@jwt_required()
+def get_rd_kanban_todos():
+    """获取正在开发的看板卡片待办"""
+    models = get_models()
+    db = models['db']
+    current_user_id = get_jwt_identity()
+
+    try:
+        current_user = db.session.get(models['User'], current_user_id)
+        if not current_user:
+            return jsonify({'success': False, 'message': '用户不存在'}), 404
+
+        rd_items = models['RDKanbanItem'].query.filter(
+            models['RDKanbanItem'].column == 'in_progress',
+            models['RDKanbanItem'].assignee_id == current_user_id
+        ).order_by(models['RDKanbanItem'].sort_order.asc()).all()
+
+        rd_todos = []
+        for item in rd_items:
+            project = db.session.get(models['Project'], item.project_id)
+            assignee = db.session.get(models['User'], item.assignee_id) if item.assignee_id else None
+            rd_todos.append({
+                'id': item.id,
+                'category': 'rd_kanban',
+                'type': 'in_progress',
+                'type_name': '正在开发',
+                'title': item.title,
+                'project_id': item.project_id,
+                'project_name': project.name if project else '未知项目',
+                'status': item.status or 'in_progress',
+                'status_color': item.status_color,
+                'comment_count': item.comment_count,
+                'assignee_name': assignee.username if assignee else None,
+                'assignee_avatar': assignee.avatar if assignee else None,
+                'created_at': item.created_at.isoformat() if item.created_at else None,
+                'updated_at': item.updated_at.isoformat() if item.updated_at else None,
+                'due_at': item.due_at.isoformat() if item.due_at else None,
+                'tags': json.loads(item.tags) if item.tags else [],
+                'link': f'/projects/rd-management?project={item.project_id}'
+            })
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'rd_kanban': rd_todos,
+                'total': len(rd_todos)
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"获取看板待办失败: {str(e)}")
+        return jsonify({'success': False, 'message': f'获取看板待办失败: {str(e)}'}), 500
+
 @todos_bp.route('/all', methods=['GET'])
 @jwt_required()
 def get_all_todos():
@@ -799,7 +871,29 @@ def get_all_todos():
                 'created_at': payment.planned_date.isoformat() if payment.planned_date else None,
                 'link': f'/contracts/{payment.contract_id}'
             })
-        
+
+        # 正在开发的看板卡片（指派给当前用户的）
+        rd_items = models['RDKanbanItem'].query.filter(
+            models['RDKanbanItem'].column == 'in_progress',
+            models['RDKanbanItem'].assignee_id == current_user_id
+        ).order_by(models['RDKanbanItem'].sort_order.asc()).all()
+
+        for item in rd_items:
+            project = db.session.get(models['Project'], item.project_id)
+            all_todos.append({
+                'id': f'rd_kanban_{item.id}',
+                'category': 'rd_kanban',
+                'type': 'in_progress',
+                'type_name': '正在开发',
+                'title': item.title,
+                'project_id': item.project_id,
+                'project_name': project.name if project else '未知项目',
+                'status': item.status or 'in_progress',
+                'priority': 'medium',
+                'created_at': item.created_at.isoformat() if item.created_at else None,
+                'link': f'/projects/rd-management?project={item.project_id}'
+            })
+
         priority_order = {'urgent': 0, 'high': 1, 'medium': 2, 'low': 3}
         all_todos.sort(key=lambda x: (
             priority_order.get(x.get('priority', 'medium'), 2),

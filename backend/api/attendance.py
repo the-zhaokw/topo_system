@@ -591,7 +591,7 @@ def create_leave_application():
             reason=reason,
             status=ApprovalStatus.PENDING.value,
             approver_id=approver_id,
-            attachment=attachment
+            attachment_path=attachment
         )
 
         db.session.add(application)

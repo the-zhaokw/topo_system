@@ -36,6 +36,7 @@
             <el-option label="Bug相关" value="bug" />
             <el-option label="评审类" value="review" />
             <el-option label="合同相关" value="contract" />
+            <el-option label="研发看板" value="rd_kanban" />
           </el-select>
           <el-select v-model="filterPriority" placeholder="筛选优先级" clearable class="filter-select-priority">
             <el-option label="全部" value="" />
@@ -423,6 +424,64 @@
       </el-card>
     </div>
 
+    <!-- 研发看板 - 正在开发 -->
+    <div class="content-section animate-fade-in-up delay-300" v-if="rdKanbanTodos.length > 0">
+      <el-card class="glass-card" shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <el-icon><Cpu /></el-icon>
+              <h3>正在开发</h3>
+              <span class="section-badge badge-rd-kanban">{{ rdKanbanTodos.length }}</span>
+            </div>
+          </div>
+        </template>
+
+        <el-table :data="rdKanbanTodos" v-loading="loading" stripe class="custom-table">
+          <el-table-column prop="title" label="任务标题" min-width="250">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="viewDetail(row)" class="title-link">
+                {{ row.title }}
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="project_name" label="所属项目" width="150" align="center">
+            <template #default="{ row }">
+              <el-tag size="small" effect="plain" type="info">{{ row.project_name || '-' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="120" align="center">
+            <template #default="{ row }">
+              <el-tag
+                size="small"
+                effect="light"
+                :style="row.status_color ? { backgroundColor: row.status_color + '20', borderColor: row.status_color, color: row.status_color } : {}"
+              >
+                {{ row.status === 'in_progress' ? '进行中' : (row.status || '进行中') }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="comment_count" label="评论" width="70" align="center">
+            <template #default="{ row }">
+              <el-badge :value="row.comment_count || 0" :max="99" type="info">
+                <el-icon style="font-size: 16px; color: #94a3b8"><ChatLineRound /></el-icon>
+              </el-badge>
+            </template>
+          </el-table-column>
+          <el-table-column prop="updated_at" label="更新时间" width="160" align="center">
+            <template #default="{ row }">
+              <div class="timestamp">{{ formatDateTime(row.updated_at) }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" size="small" @click="viewDetail(row)" class="action-btn">查看</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
+
     <el-dialog v-model="approvalDialogVisible" :title="isApprovalMode ? '审批申请' : '申请详情'" width="600px" class="approval-dialog">
       <el-descriptions :column="2" border v-if="currentApproval">
         <el-descriptions-item label="申请 ID" :span="2">
@@ -476,9 +535,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { 
-  ArrowLeft, Refresh, Bell, Stamp, List, Document, Warning, 
-  WarningFilled, CircleClose, FolderOpened, Check, Close
+import {
+  ArrowLeft, Refresh, Bell, Stamp, List, Document, Warning,
+  WarningFilled, CircleClose, FolderOpened, Check, Close, Cpu, ChatLineRound
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
@@ -491,12 +550,14 @@ const bugTodos = ref([])
 
 const reviewTodos = ref([])
 const contractTodos = ref([])
+const rdKanbanTodos = ref([])
 const summary = ref({
   total: 0,
   approvals: { total: 0 },
   bugs: { total: 0 },
   reviews: { total: 0 },
-  contracts: { total: 0 }
+  contracts: { total: 0 },
+  rd_kanban: { total: 0 }
 })
 
 const searchKeyword = ref('')
@@ -554,7 +615,8 @@ const fetchSummary = async () => {
       approvals: { total: 0 },
       bugs: { total: 0 },
       reviews: { total: 0 },
-      contracts: { total: 0 }
+      contracts: { total: 0 },
+      rd_kanban: { total: 0 }
     }
   } catch (error) {
     console.error('获取待办统计失败:', error)
@@ -618,6 +680,16 @@ const fetchContractTodos = async () => {
   }
 }
 
+const fetchRdKanbanTodos = async () => {
+  try {
+    const response = await apiService.todos.getRdKanban()
+    rdKanbanTodos.value = response?.rd_kanban || []
+  } catch (error) {
+    console.error('获取看板待办失败:', error)
+    rdKanbanTodos.value = []
+  }
+}
+
 const refreshAll = async () => {
   loading.value = true
   try {
@@ -627,7 +699,8 @@ const refreshAll = async () => {
       fetchApprovalTodos(),
       fetchBugTodos(),
       fetchReviewTodos(),
-      fetchContractTodos()
+      fetchContractTodos(),
+      fetchRdKanbanTodos()
     ])
     ElMessage.success('刷新成功')
   } finally {
@@ -698,6 +771,11 @@ const viewDetail = (row) => {
     case 'risk':
     case 'payment':
       router.push(`/contracts/${row.contract_id || row.id}`)
+      break
+    case 'in_progress':
+      if (row.link) {
+        router.push(row.link)
+      }
       break
     default:
       if (row.link) {
@@ -790,6 +868,8 @@ const getActionText = (row) => {
 
     case 'review':
       return '评审'
+    case 'rd_kanban':
+      return '查看'
     default:
       return '处理'
   }
@@ -821,7 +901,8 @@ const getCategoryTagType = (category) => {
     bug: 'danger',
     task: 'primary',
     review: 'success',
-    contract: 'info'
+    contract: 'info',
+    rd_kanban: 'warning'
   }
   return map[category] || 'info'
 }
@@ -990,6 +1071,7 @@ onMounted(() => {
   fetchBugTodos()
   fetchReviewTodos()
   fetchContractTodos()
+  fetchRdKanbanTodos()
 })
 </script>
 
@@ -1395,6 +1477,11 @@ onMounted(() => {
 .badge-contract {
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
   color: #0ea5e9;
+}
+
+.badge-rd-kanban {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+  color: #ea580c;
 }
 
 /* 自定义表格 */
