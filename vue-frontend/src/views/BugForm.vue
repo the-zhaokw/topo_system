@@ -129,7 +129,6 @@
                 <el-option label="必然复现" value="always" />
                 <el-option label="经常复现" value="often" />
                 <el-option label="偶尔复现" value="occasionally" />
-                <el-option label="很难复现" value="rarely" />
                 <el-option label="无法复现" value="never" />
               </el-select>
             </el-form-item>

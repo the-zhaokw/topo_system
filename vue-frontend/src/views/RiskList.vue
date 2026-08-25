@@ -568,7 +568,8 @@ const saveRisk = async () => {
     fetchStatistics()
   } catch (error) {
     console.error('保存失败:', error)
-    ElMessage.error('保存失败')
+    const msg = error.response?.data?.error || '保存失败'
+    ElMessage.error(msg)
   } finally {
     saving.value = false
   }

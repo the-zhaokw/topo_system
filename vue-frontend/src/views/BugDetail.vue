@@ -169,7 +169,7 @@
               <el-descriptions-item label="更新时间">{{ formatDate(bug.updated_at) }}</el-descriptions-item>
               <el-descriptions-item label="归属版本">{{ bug.version || '-' }}</el-descriptions-item>
               <el-descriptions-item label="问题类型">{{ bug.issue_type || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="重现频率">{{ bug.reproduce_frequency || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="重现频率">{{ formatFrequency(bug.reproduce_frequency) }}</el-descriptions-item>
               <el-descriptions-item label="发现构建">{{ bug.found_build || '-' }}</el-descriptions-item>
               <el-descriptions-item label="测试版本">{{ bug.test_version || '-' }}</el-descriptions-item>
               <el-descriptions-item label="模块">{{ bug.module || '-' }}</el-descriptions-item>
@@ -302,7 +302,8 @@
             </template>
             
             <div class="description-content">
-              <pre>{{ bug.description }}</pre>
+              <div v-if="bug.description" class="rich-text-content" v-html="bug.description"></div>
+              <span v-else class="text-muted">无</span>
             </div>
           </el-card>
           
@@ -318,7 +319,7 @@
             </template>
             
             <div class="steps-content">
-              <pre>{{ bug.steps_to_reproduce }}</pre>
+              <div class="rich-text-content" v-html="bug.steps_to_reproduce"></div>
             </div>
           </el-card>
           
@@ -336,7 +337,8 @@
                 </template>
                 
                 <div class="result-content">
-                  <pre>{{ bug.expected_result || '无' }}</pre>
+                  <div v-if="bug.expected_result" class="rich-text-content" v-html="bug.expected_result"></div>
+                  <span v-else class="text-muted">无</span>
                 </div>
               </el-card>
             </el-col>
@@ -353,7 +355,8 @@
                 </template>
                 
                 <div class="result-content">
-                  <pre>{{ bug.actual_result || '无' }}</pre>
+                  <div v-if="bug.actual_result" class="rich-text-content" v-html="bug.actual_result"></div>
+                  <span v-else class="text-muted">无</span>
                 </div>
               </el-card>
             </el-col>
@@ -559,6 +562,7 @@ import { useBugStore } from '@/stores/bug'
 import { useUserStore } from '@/stores/user'
 import { systemTimeService } from '@/services/systemTimeService'
 import { apiService, api as axios } from '@/services/api'
+import { formatFrequency } from '@/utils/bugUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -2182,13 +2186,67 @@ onMounted(async () => {
   padding: 20px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 12px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.7;
-  white-space: pre-wrap;
   word-wrap: break-word;
   color: #334155;
   border: 1px solid rgba(226, 232, 240, 0.6);
+}
+.rich-text-content {
+  word-break: break-word;
+}
+.rich-text-content :deep(p) {
+  margin: 4px 0;
+}
+.rich-text-content :deep(div) {
+  margin: 2px 0;
+}
+.rich-text-content :deep(img) {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 6px 0;
+}
+.rich-text-content :deep(pre) {
+  background: rgba(15, 23, 42, 0.06);
+  padding: 8px 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin: 6px 0;
+}
+.rich-text-content :deep(code) {
+  background: rgba(15, 23, 42, 0.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+.rich-text-content :deep(ul),
+.rich-text-content :deep(ol) {
+  margin: 4px 0;
+  padding-left: 24px;
+}
+.rich-text-content :deep(a) {
+  color: #0ea5e9;
+  text-decoration: none;
+}
+.rich-text-content :deep(a:hover) {
+  text-decoration: underline;
+}
+.rich-text-content :deep(table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 6px 0;
+}
+.rich-text-content :deep(th),
+.rich-text-content :deep(td) {
+  border: 1px solid #e2e8f0;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.text-muted {
+  color: #94a3b8;
+  font-size: 14px;
 }
 
 /* 标签卡片 */

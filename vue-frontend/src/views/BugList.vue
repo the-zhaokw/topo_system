@@ -417,7 +417,7 @@
         
         <el-table-column prop="reproduce_frequency" label="重现频率" width="100">
           <template #default="{ row }">
-            <span class="frequency-text">{{ row.reproduce_frequency || '-' }}</span>
+            <span class="frequency-text">{{ formatFrequency(row.reproduce_frequency) }}</span>
           </template>
         </el-table-column>
         
@@ -537,6 +537,7 @@ import { h } from 'vue'
 import { useBugStore } from '@/stores/bug'
 import { useUserStore } from '@/stores/user'
 import { apiService, api as axios } from '@/services/api'
+import { formatFrequency } from '@/utils/bugUtils'
 
 // 自定义 Bug 图标组件
 const BugIcon = {
