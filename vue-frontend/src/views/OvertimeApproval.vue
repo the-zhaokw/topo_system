@@ -982,12 +982,8 @@ const handleImport = async () => {
 }
 
 .action-btn {
-  opacity: 0;
-  transition: all 0.3s;
-}
-
-.custom-table :deep(.el-table__row:hover) .action-btn {
   opacity: 1;
+  transition: all 0.3s;
 }
 
 .approve-btn:hover {

@@ -623,14 +623,14 @@ const fetchApprovalHistory = async () => {
 // 请假类型标签
 const getLeaveTypeTag = (type) => {
   const tags = {
-    annual: 'success',
-    sick: 'warning',
-    personal: 'info',
-    compensatory: 'primary',
-    marriage: 'danger',
-    maternity: 'danger',
-    paternity: 'primary',
-    bereavement: 'info',
+    annual_leave: 'success',
+    sick_leave: 'warning',
+    personal_leave: 'info',
+    other: 'primary',
+    marriage_leave: 'danger',
+    maternity_leave: 'danger',
+    paternity_leave: 'primary',
+    bereavement_leave: 'info',
     overtime: 'warning'
   }
   return tags[type] || ''
@@ -638,14 +638,14 @@ const getLeaveTypeTag = (type) => {
 
 const getLeaveTypeText = (type) => {
   const texts = {
-    annual: '年假',
-    sick: '病假',
-    personal: '事假',
-    compensatory: '调休假',
-    marriage: '婚假',
-    maternity: '产假',
-    paternity: '陪产假',
-    bereavement: '丧假',
+    annual_leave: '年假',
+    sick_leave: '病假',
+    personal_leave: '事假',
+    other: '调休假',
+    marriage_leave: '婚假',
+    maternity_leave: '产假',
+    paternity_leave: '陪产假',
+    bereavement_leave: '丧假',
     overtime: '加班'
   }
   return texts[type] || type

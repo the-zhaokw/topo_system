@@ -107,14 +107,14 @@
         <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
           <el-form-item label="请假类型" prop="leave_type">
             <el-select v-model="form.leave_type" placeholder="请选择请假类型" class="form-select">
-              <el-option label="年假" value="annual" />
-              <el-option label="病假" value="sick" />
-              <el-option label="事假" value="personal" />
-              <el-option label="调休假" value="compensatory" />
-              <el-option label="婚假" value="marriage" />
-              <el-option label="产假" value="maternity" />
-              <el-option label="陪产假" value="paternity" />
-              <el-option label="丧假" value="bereavement" />
+              <el-option label="年假" value="annual_leave" />
+              <el-option label="病假" value="sick_leave" />
+              <el-option label="事假" value="personal_leave" />
+              <el-option label="调休假" value="other" />
+              <el-option label="婚假" value="marriage_leave" />
+              <el-option label="产假" value="maternity_leave" />
+              <el-option label="陪产假" value="paternity_leave" />
+              <el-option label="丧假" value="bereavement_leave" />
             </el-select>
           </el-form-item>
 
@@ -388,14 +388,14 @@
       <el-form :model="editForm" :rules="editRules" ref="editFormRef" label-width="100px">
         <el-form-item label="请假类型" prop="leave_type">
           <el-select v-model="editForm.leave_type" placeholder="请选择请假类型" class="form-select">
-            <el-option label="年假" value="annual" />
-            <el-option label="病假" value="sick" />
-            <el-option label="事假" value="personal" />
-            <el-option label="调休假" value="compensatory" />
-            <el-option label="婚假" value="marriage" />
-            <el-option label="产假" value="maternity" />
-            <el-option label="陪产假" value="paternity" />
-            <el-option label="丧假" value="bereavement" />
+            <el-option label="年假" value="annual_leave" />
+            <el-option label="病假" value="sick_leave" />
+            <el-option label="事假" value="personal_leave" />
+            <el-option label="调休假" value="other" />
+            <el-option label="婚假" value="marriage_leave" />
+            <el-option label="产假" value="maternity_leave" />
+            <el-option label="陪产假" value="paternity_leave" />
+            <el-option label="丧假" value="bereavement_leave" />
           </el-select>
         </el-form-item>
 
@@ -810,28 +810,28 @@ const fetchMyApplications = async () => {
 // 请假类型标签
 const getLeaveTypeTag = (type) => {
   const tags = {
-    annual: 'success',
-    sick: 'warning',
-    personal: 'info',
-    compensatory: 'primary',
-    marriage: 'danger',
-    maternity: 'danger',
-    paternity: 'primary',
-    bereavement: 'info'
+    annual_leave: 'success',
+    sick_leave: 'warning',
+    personal_leave: 'info',
+    other: 'primary',
+    marriage_leave: 'danger',
+    maternity_leave: 'danger',
+    paternity_leave: 'primary',
+    bereavement_leave: 'info'
   }
   return tags[type] || ''
 }
 
 const getLeaveTypeText = (type) => {
   const texts = {
-    annual: '年假',
-    sick: '病假',
-    personal: '事假',
-    compensatory: '调休假',
-    marriage: '婚假',
-    maternity: '产假',
-    paternity: '陪产假',
-    bereavement: '丧假'
+    annual_leave: '年假',
+    sick_leave: '病假',
+    personal_leave: '事假',
+    other: '调休假',
+    marriage_leave: '婚假',
+    maternity_leave: '产假',
+    paternity_leave: '陪产假',
+    bereavement_leave: '丧假'
   }
   return texts[type] || type
 }

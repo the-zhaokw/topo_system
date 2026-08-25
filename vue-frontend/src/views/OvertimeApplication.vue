@@ -199,7 +199,13 @@
             <span class="total-count">共 {{ myApplications.length }} 条记录</span>
           </div>
         </template>
-        <el-table :data="myApplications" stripe class="custom-table">
+        <el-table
+          :data="myApplications"
+          stripe
+          class="custom-table"
+          @row-click="handleRowClick"
+          :row-class-name="() => 'clickable-row'"
+        >
           <el-table-column prop="date" label="加班日期" width="120" align="center">
             <template #default="{ row }">
               <span class="date-badge">{{ row.date }}</span>
@@ -246,9 +252,100 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="80" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" link @click.stop="handleViewDetail(row)">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </div>
+
+    <!-- 详情弹窗 -->
+    <el-dialog
+      v-model="detailDialogVisible"
+      title="加班申请详情"
+      width="560px"
+      class="detail-dialog"
+      :close-on-click-modal="false"
+    >
+      <div v-if="currentDetail" class="detail-content">
+        <div class="detail-header">
+          <div class="detail-status">
+            <el-tag :type="getStatusType(currentDetail.status)" size="large" effect="light">
+              {{ getStatusText(currentDetail.status) }}
+            </el-tag>
+          </div>
+          <div class="detail-hours">
+            <span class="hours-label">加班时长</span>
+            <span class="hours-value">{{ currentDetail.total_hours }}h</span>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Calendar /></el-icon>
+              加班日期
+            </span>
+            <span class="detail-value">{{ currentDetail.date }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Timer /></el-icon>
+              加班时间
+            </span>
+            <span class="detail-value">{{ currentDetail.start_time }} → {{ currentDetail.end_time }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><User /></el-icon>
+              审批人
+            </span>
+            <span class="detail-value">{{ currentDetail.approver_name || '-' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Clock /></el-icon>
+              申请时间
+            </span>
+            <span class="detail-value">{{ formatDate(currentDetail.created_at) }}</span>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <div class="detail-reason">
+          <div class="detail-label reason-label">
+            <el-icon><Document /></el-icon>
+            加班事由
+          </div>
+          <div class="reason-content">{{ currentDetail.reason }}</div>
+        </div>
+
+        <!-- 审批意见（如果有） -->
+        <div v-if="currentDetail.approval_comment" class="detail-approval">
+          <el-divider />
+          <div class="detail-label approval-label">
+            <el-icon><ChatDotRound /></el-icon>
+            审批意见
+          </div>
+          <div class="approval-content">{{ currentDetail.approval_comment }}</div>
+          <div v-if="currentDetail.approved_at" class="approval-time">
+            审批时间：{{ formatDate(currentDetail.approved_at) }}
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="detailDialogVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -256,7 +353,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft, Timer, Document, Clock, CircleCheck, CircleClose, Calendar, Edit, Check, Refresh, List, User } from '@element-plus/icons-vue'
+import { ArrowLeft, Timer, Document, Clock, CircleCheck, CircleClose, Calendar, Edit, Check, Refresh, List, User, View, ChatDotRound } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
 const router = useRouter()
@@ -264,6 +361,8 @@ const formRef = ref(null)
 const submitting = ref(false)
 const myApplications = ref([])
 const approverList = ref([])
+const detailDialogVisible = ref(false)
+const currentDetail = ref(null)
 
 const form = reactive({
   date: '',
@@ -410,6 +509,15 @@ const fetchApproverList = async () => {
   } catch (error) {
     console.error('获取审批人列表失败', error)
   }
+}
+
+const handleRowClick = (row) => {
+  handleViewDetail(row)
+}
+
+const handleViewDetail = (row) => {
+  currentDetail.value = row
+  detailDialogVisible.value = true
 }
 
 onMounted(() => {
@@ -881,6 +989,152 @@ onMounted(() => {
   color: #64748b;
 }
 
+/* 可点击行样式 */
+.custom-table :deep(.clickable-row) {
+  cursor: pointer;
+}
+
+.custom-table :deep(.clickable-row:hover) {
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+
+/* 详情弹窗样式 */
+.detail-dialog :deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  margin-right: 0;
+  padding: 20px 24px;
+}
+
+.detail-dialog :deep(.el-dialog__title) {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.detail-dialog :deep(.el-dialog__headerbtn .el-dialog__close) {
+  color: white;
+  font-size: 20px;
+}
+
+.detail-dialog :deep(.el-dialog__body) {
+  padding: 24px;
+}
+
+.detail-content {
+  font-size: 14px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.detail-status :deep(.el-tag) {
+  font-size: 14px;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.detail-hours {
+  text-align: right;
+}
+
+.hours-label {
+  display: block;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.hours-value {
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin: 8px 0;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.detail-label .el-icon {
+  color: #0ea5e9;
+  font-size: 16px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 600;
+  padding-left: 22px;
+}
+
+.detail-reason {
+  margin: 8px 0;
+}
+
+.reason-label {
+  margin-bottom: 10px;
+}
+
+.reason-content {
+  background: rgba(241, 245, 249, 0.8);
+  padding: 16px;
+  border-radius: 12px;
+  color: #334155;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.detail-approval {
+  margin: 8px 0;
+}
+
+.approval-label {
+  margin-bottom: 10px;
+}
+
+.approval-content {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  padding: 16px;
+  border-radius: 12px;
+  color: #166534;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.approval-time {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #64748b;
+  text-align: right;
+}
+
 /* 动画 */
 @keyframes fadeInDown {
   from {
@@ -1080,6 +1334,28 @@ onMounted(() => {
 
   .text-center {
     padding: 4px 0;
+  }
+
+  .detail-dialog :deep(.el-dialog) {
+    width: 92% !important;
+    margin: 5vh auto !important;
+  }
+
+  .detail-dialog :deep(.el-dialog__body) {
+    padding: 16px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-value {
+    padding-left: 22px;
+  }
+
+  .hours-value {
+    font-size: 20px;
   }
 }
 </style>

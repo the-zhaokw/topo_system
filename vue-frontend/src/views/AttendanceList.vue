@@ -166,9 +166,21 @@
               <span class="date-text">{{ row.date }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="shift.name" label="班次" width="90" align="center">
+          <el-table-column prop="shift.name" label="班次" min-width="140" align="center">
             <template #default="{ row }">
-              <el-tag size="small" effect="light" class="shift-tag">{{ row.shift?.name || '-' }}</el-tag>
+              <div class="shift-cell">
+                <el-tag size="small" effect="light" :type="getShiftTagType(row.shift)" class="shift-tag">
+                  {{ row.shift?.name || '正常班' }}
+                </el-tag>
+                <div class="shift-time" v-if="row.shift?.start_time && row.shift?.end_time">
+                  <el-icon><Timer /></el-icon>
+                  {{ row.shift.start_time }} - {{ row.shift.end_time }}
+                </div>
+                <div class="shift-time shift-time-link" v-else-if="row.user_shift_id" @click="goToShiftManagement(row)">
+                  <el-icon><Promotion /></el-icon>
+                  关联排班 #{{ row.user_shift_id }}
+                </div>
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="上班打卡" min-width="140">
@@ -218,14 +230,19 @@
               <span v-else class="text-muted">-</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center" fixed="right" v-if="hasManagePermission">
+          <el-table-column label="操作" width="200" align="center" fixed="right">
             <template #default="{ row }">
-              <el-button type="primary" link size="small" @click="handleEdit(row)" class="action-btn">
-                <el-icon><Edit /></el-icon> 编辑
+              <el-button type="info" link size="small" @click="handleViewDetail(row)" class="action-btn">
+                <el-icon><View /></el-icon> 查看
               </el-button>
-              <el-button type="danger" link size="small" @click="handleDelete(row)" class="action-btn">
-                <el-icon><Delete /></el-icon> 删除
-              </el-button>
+              <template v-if="hasManagePermission">
+                <el-button type="primary" link size="small" @click="handleEdit(row)" class="action-btn">
+                  <el-icon><Edit /></el-icon> 编辑
+                </el-button>
+                <el-button type="danger" link size="small" @click="handleDelete(row)" class="action-btn">
+                  <el-icon><Delete /></el-icon> 删除
+                </el-button>
+              </template>
             </template>
           </el-table-column>
         </el-table>
@@ -276,23 +293,193 @@
         </div>
       </div>
     </el-dialog>
+
+    <!-- 考勤记录详情对话框 -->
+    <el-dialog v-model="detailDialogVisible" title="考勤记录详情" width="600px" class="detail-dialog-wrapper">
+      <div v-loading="detailLoading" class="detail-content">
+        <template v-if="detailRecord">
+          <!-- 基本信息 -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <el-icon><Document /></el-icon> 基本信息
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">记录ID</span>
+                <span class="detail-value">{{ detailRecord.id }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">员工</span>
+                <span class="detail-value">{{ detailRecord.user?.username || '未知' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">日期</span>
+                <span class="detail-value">{{ detailRecord.date || '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">班次</span>
+                <span class="detail-value">
+                  <el-tag size="small" :type="getShiftTagType(detailRecord.shift)" effect="light" class="shift-tag">
+                    {{ detailRecord.shift?.name || '正常班' }}
+                  </el-tag>
+                  <span v-if="detailRecord.shift?.start_time && detailRecord.shift?.end_time" class="detail-shift-time">
+                    <el-icon><Timer /></el-icon>
+                    {{ detailRecord.shift.start_time }} - {{ detailRecord.shift.end_time }}
+                  </span>
+                  <el-button
+                    v-if="detailRecord.user_shift_id"
+                    link
+                    type="primary"
+                    size="small"
+                    class="detail-shift-link"
+                    @click="goToShiftManagement(detailRecord)"
+                  >
+                    <el-icon><Promotion /></el-icon>
+                    查看排班 #{{ detailRecord.user_shift_id }}
+                  </el-button>
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">状态</span>
+                <span class="detail-value">
+                  <el-tag size="small" :type="getStatusTagType(detailRecord.status)">
+                    {{ formatStatus(detailRecord.status) }}
+                  </el-tag>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 上班打卡 -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <el-icon><Sunrise /></el-icon> 上班打卡
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">打卡时间</span>
+                <span class="detail-value" :class="{ 'text-missing': !detailRecord.clock_in_time }">
+                  {{ detailRecord.clock_in_time || '未打卡' }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">IP地址</span>
+                <span class="detail-value">{{ detailRecord.clock_in_ip || '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">打卡位置</span>
+                <span class="detail-value">{{ detailRecord.clock_in_location || '-' }}</span>
+              </div>
+              <div class="detail-item" v-if="detailRecord.late_minutes > 0">
+                <span class="detail-label">迟到</span>
+                <span class="detail-value text-warning">{{ detailRecord.late_minutes }} 分钟</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 下班打卡 -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <el-icon><Sunset /></el-icon> 下班打卡
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">打卡时间</span>
+                <span class="detail-value" :class="{ 'text-missing': !detailRecord.clock_out_time }">
+                  {{ detailRecord.clock_out_time || '未打卡' }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">IP地址</span>
+                <span class="detail-value">{{ detailRecord.clock_out_ip || '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">打卡位置</span>
+                <span class="detail-value">{{ detailRecord.clock_out_location || '-' }}</span>
+              </div>
+              <div class="detail-item" v-if="detailRecord.early_leave_minutes > 0">
+                <span class="detail-label">早退</span>
+                <span class="detail-value text-warning">{{ detailRecord.early_leave_minutes }} 分钟</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 工时统计 -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <el-icon><Clock /></el-icon> 工时统计
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">工作时长</span>
+                <span class="detail-value">{{ detailRecord.work_hours != null ? Number(detailRecord.work_hours).toFixed(2) + ' 小时' : '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">加班时长</span>
+                <span class="detail-value">{{ detailRecord.overtime_hours ? Number(detailRecord.overtime_hours).toFixed(2) + ' 小时' : '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">迟到分钟</span>
+                <span class="detail-value">{{ detailRecord.late_minutes || 0 }} 分钟</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">早退分钟</span>
+                <span class="detail-value">{{ detailRecord.early_leave_minutes || 0 }} 分钟</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 备注 -->
+          <div class="detail-section" v-if="detailRecord.note">
+            <div class="detail-section-title">
+              <el-icon><Edit /></el-icon> 备注
+            </div>
+            <div class="detail-note">{{ detailRecord.note }}</div>
+          </div>
+
+          <!-- 系统信息 -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <el-icon><CircleCheck /></el-icon> 系统信息
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">创建时间</span>
+                <span class="detail-value">{{ detailRecord.created_at || '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">更新时间</span>
+                <span class="detail-value">{{ detailRecord.updated_at || '-' }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Clock, Download, Timer, Filter, Search, Refresh, Document, Edit, Delete, Warning, CircleClose, QuestionFilled, Calendar, CircleCheck, Sunrise, Sunset } from '@element-plus/icons-vue'
+import { Clock, Download, Timer, Filter, Search, Refresh, Document, Edit, Delete, Warning, CircleClose, QuestionFilled, Calendar, CircleCheck, Sunrise, Sunset, View, Promotion } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
 const userStore = useUserStore()
+const router = useRouter()
 const loading = ref(false)
 const attendanceRecords = ref([])
 const users = ref([])
 const todayRecord = ref(null)
 const punchDialogVisible = ref(false)
 const currentTime = ref('')
+
+// 详情对话框
+const detailDialogVisible = ref(false)
+const detailLoading = ref(false)
+const detailRecord = ref(null)
 
 // 月度统计数据
 const monthlyStats = ref({
@@ -530,6 +717,75 @@ const handleCurrentChange = (page) => {
 const handleEdit = (record) => {
   // 跳转到编辑页面
   window.location.href = `/attendance/${record.id}`
+}
+
+// 查看详情
+const handleViewDetail = async (record) => {
+  detailDialogVisible.value = true
+  detailLoading.value = true
+  detailRecord.value = null
+  try {
+    const data = await apiService.attendance.getRecordById(record.id)
+    detailRecord.value = data
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || error.response?.data?.message || '获取详情失败')
+    detailDialogVisible.value = false
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+const formatStatus = (status) => {
+  const statusMap = {
+    'present': '正常',
+    'late': '迟到',
+    'early_leave': '早退',
+    'missing': '缺卡',
+    'leave': '请假',
+    'overtime': '加班',
+    'normal': '正常',
+    'absent': '缺勤'
+  }
+  return statusMap[status] || status || '-'
+}
+
+const getStatusTagType = (status) => {
+  const typeMap = {
+    'present': 'success',
+    'late': 'warning',
+    'early_leave': 'danger',
+    'missing': 'info',
+    'leave': 'info',
+    'overtime': 'warning',
+    'normal': 'success',
+    'absent': 'danger'
+  }
+  return typeMap[status] || 'info'
+}
+
+// 班次标签类型：根据 shift_type 着色
+const getShiftTagType = (shift) => {
+  if (!shift) return 'info'
+  const st = (shift.shift_type || '').toLowerCase()
+  if (st.includes('night') || st.includes('晚') || st.includes('夜')) return 'warning'
+  if (st.includes('morning') || st.includes('早')) return 'success'
+  if (st.includes('evening') || st.includes('晚') || st.includes('中班')) return 'primary'
+  return 'primary'
+}
+
+// 跳转到排班管理页面并预选员工 + 日期
+const goToShiftManagement = (row) => {
+  if (!row?.user?.id || !row?.date) {
+    ElMessage.warning('缺少员工或日期信息')
+    return
+  }
+  router.push({
+    path: '/attendance/shifts',
+    query: {
+      user_id: row.user.id,
+      date: row.date
+    }
+  })
 }
 
 const handleDelete = async (record) => {
@@ -1002,6 +1258,62 @@ onMounted(() => {
   border-radius: 6px;
 }
 
+.shift-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.shift-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  color: #64748b;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.shift-time .el-icon {
+  color: #0ea5e9;
+  font-size: 12px;
+}
+
+.shift-time-link {
+  cursor: pointer;
+  color: #0ea5e9;
+  text-decoration: none;
+  transition: all 0.2s;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.shift-time-link:hover {
+  background: rgba(56, 189, 248, 0.1);
+  color: #0284c7;
+  text-decoration: underline;
+}
+
+.detail-shift-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  font-size: 13px;
+  color: #475569;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.detail-shift-time .el-icon {
+  color: #0ea5e9;
+}
+
+.detail-shift-link {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
 .clock-info {
   line-height: 1.5;
 }
@@ -1190,6 +1502,96 @@ onMounted(() => {
 
 .record-value.text-success {
   color: #10b981;
+}
+
+/* 详情对话框 */
+.detail-dialog-wrapper :deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  padding: 20px;
+  margin-right: 0;
+}
+
+.detail-dialog-wrapper :deep(.el-dialog__title) {
+  color: white;
+  font-weight: 600;
+}
+
+.detail-dialog-wrapper :deep(.el-dialog__headerbtn .el-dialog__close) {
+  color: white;
+}
+
+.detail-content {
+  padding: 4px 0;
+}
+
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.15);
+}
+
+.detail-section-title .el-icon {
+  color: #0ea5e9;
+  font-size: 18px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.detail-value.text-missing {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.detail-value.text-warning {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.detail-note {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
 /* 动画 */

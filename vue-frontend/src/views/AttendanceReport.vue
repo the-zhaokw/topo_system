@@ -138,10 +138,8 @@
             />
           </el-form-item>
           <el-form-item label="部门" v-if="hasManagePermission">
-            <el-select v-model="filterForm.department" placeholder="选择部门" clearable class="filter-select">
-              <el-option label="技术部" value="tech" />
-              <el-option label="产品部" value="product" />
-              <el-option label="市场部" value="marketing" />
+            <el-select v-model="filterForm.department" placeholder="选择部门" clearable filterable class="filter-select">
+              <el-option v-for="dept in departmentOptions" :key="dept" :label="dept" :value="dept" />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -291,28 +289,26 @@
               <el-icon><TrendCharts /></el-icon>
               考勤趋势分析
             </span>
+            <el-radio-group v-model="chartMetric" size="small" @change="updateChart">
+              <el-radio-button value="attendance">出勤人数</el-radio-button>
+              <el-radio-button value="exception">异常统计</el-radio-button>
+              <el-radio-button value="overtime">加班时长</el-radio-button>
+            </el-radio-group>
           </div>
         </template>
-        <div class="chart-container">
-          <div class="chart-placeholder">
-            <div class="chart-icon">
-              <el-icon><DataAnalysis /></el-icon>
-            </div>
-            <p class="chart-text">图表展示区域</p>
-            <p class="chart-subtext">考勤数据可视化分析即将上线</p>
-          </div>
-        </div>
+        <div ref="trendChartRef" class="chart-container" v-loading="loading"></div>
       </el-card>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import { Download, Calendar, User, CircleCheck, AlarmClock, Timer, Warning, Moon, Filter, Search, Document, TrendCharts, DataAnalysis } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import * as echarts from 'echarts'
 
 const userStore = useUserStore()
 const loading = ref(false)
@@ -320,6 +316,17 @@ const activeTab = ref('detail')
 const detailData = ref([])
 const exceptionData = ref([])
 const overtimeData = ref([])
+
+// 部门列表
+const departmentOptions = ref([])
+const fetchDepartments = async () => {
+  try {
+    const res = await apiService.users.getDepartments()
+    departmentOptions.value = res.departments || []
+  } catch (e) {
+    console.error('获取部门列表失败:', e)
+  }
+}
 
 // 权限检查
 const hasManagePermission = computed(() => {
@@ -358,7 +365,175 @@ const pagination = ref({
   total: 0
 })
 
-// 计算日期选择器类型
+// 考勤趋势图表
+const trendChartRef = ref(null)
+let trendChartInstance = null
+const chartMetric = ref('attendance')
+
+// 按日期聚合考勤数据
+function aggregateByDate(records) {
+  const map = new Map()
+  for (const r of records) {
+    const date = r.date || (r.created_at ? r.created_at.slice(0, 10) : null)
+    if (!date) continue
+    if (!map.has(date)) {
+      map.set(date, { date, attendance: 0, late: 0, earlyLeave: 0, missing: 0, overtime: 0 })
+    }
+    const entry = map.get(date)
+    // 出勤人数
+    if (r.clock_in_time || r.clock_out_time) entry.attendance++
+    // 迟到
+    if (r.clock_in_status === 'late') entry.late++
+    // 早退
+    if (r.clock_out_status === 'early_leave') entry.earlyLeave++
+    // 缺卡
+    if (!r.clock_in_time && !r.clock_out_time) entry.missing++
+    // 加班时长
+    if (r.overtime_hours > 0) entry.overtime += parseFloat(r.overtime_hours) || 0
+  }
+  return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date))
+}
+
+function buildChartOption() {
+  const data = aggregateByDate(detailData.value)
+  const dates = data.map(d => d.date)
+  let series = []
+  let yAxisName = ''
+  let yAxisFormatter = '{value}'
+
+  if (chartMetric.value === 'attendance') {
+    yAxisName = '人数'
+    series = [
+      {
+        name: '出勤人数',
+        type: 'bar',
+        data: data.map(d => d.attendance),
+        barWidth: '40%',
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#3b82f6' },
+            { offset: 1, color: '#93c5fd' },
+          ]),
+          borderRadius: [4, 4, 0, 0],
+        },
+      },
+    ]
+  } else if (chartMetric.value === 'exception') {
+    yAxisName = '次数'
+    series = [
+      {
+        name: '迟到',
+        type: 'bar',
+        stack: 'exception',
+        data: data.map(d => d.late),
+        itemStyle: { color: '#f59e0b', borderRadius: [0, 0, 0, 0] },
+      },
+      {
+        name: '早退',
+        type: 'bar',
+        stack: 'exception',
+        data: data.map(d => d.earlyLeave),
+        itemStyle: { color: '#ef4444', borderRadius: [0, 0, 0, 0] },
+      },
+      {
+        name: '缺卡',
+        type: 'bar',
+        stack: 'exception',
+        data: data.map(d => d.missing),
+        itemStyle: { color: '#8b5cf6', borderRadius: [4, 4, 0, 0] },
+      },
+    ]
+  } else if (chartMetric.value === 'overtime') {
+    yAxisName = '小时'
+    series = [
+      {
+        name: '加班时长',
+        type: 'line',
+        data: data.map(d => Number(d.overtime.toFixed(1))),
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: { width: 3, color: '#8b5cf6' },
+        itemStyle: { color: '#8b5cf6' },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(139, 92, 246, 0.25)' },
+            { offset: 1, color: 'rgba(139, 92, 246, 0.02)' },
+          ]),
+        },
+      },
+    ]
+  }
+
+  return {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#e2e8f0',
+      textStyle: { color: '#0f172a', fontSize: 12 },
+    },
+    legend: {
+      show: series.length > 1,
+      top: 0,
+      right: 0,
+      textStyle: { fontSize: 12, color: '#64748b' },
+    },
+    grid: { top: series.length > 1 ? 36 : 20, right: 20, bottom: 30, left: 50 },
+    xAxis: {
+      type: 'category',
+      data: dates,
+      axisLine: { lineStyle: { color: '#cbd5e1' } },
+      axisLabel: { color: '#64748b', fontSize: 11 },
+    },
+    yAxis: {
+      type: 'value',
+      name: yAxisName,
+      nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+      axisLabel: { color: '#64748b', fontSize: 11, formatter: yAxisFormatter },
+      splitLine: { lineStyle: { color: '#f1f5f9' } },
+    },
+    series,
+  }
+}
+
+function updateChart() {
+  if (!trendChartInstance) return
+  if (detailData.value.length === 0) {
+    trendChartInstance.setOption({
+      title: {
+        text: '暂无考勤数据',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#94a3b8', fontSize: 14, fontWeight: 'normal' },
+      },
+      xAxis: { show: false },
+      yAxis: { show: false },
+      series: [],
+    }, true)
+    return
+  }
+  trendChartInstance.setOption(buildChartOption(), true)
+}
+
+function initChart() {
+  if (!trendChartRef.value) return
+  trendChartInstance = echarts.init(trendChartRef.value)
+  updateChart()
+}
+
+function resizeChart() {
+  trendChartInstance?.resize()
+}
+
+watch(detailData, () => {
+  nextTick(() => updateChart())
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeChart)
+  trendChartInstance?.dispose()
+  trendChartInstance = null
+})
 const getDatePickerType = computed(() => {
   const types = {
     daily: 'date',
@@ -535,7 +710,12 @@ const handleExportReport = async () => {
 }
 
 onMounted(() => {
+  fetchDepartments()
   fetchReportData()
+  nextTick(() => {
+    initChart()
+    window.addEventListener('resize', resizeChart)
+  })
 })
 </script>
 
@@ -1058,46 +1238,17 @@ onMounted(() => {
   border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
 
+.chart-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .chart-container {
-  height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.chart-placeholder {
-  text-align: center;
-  padding: 40px;
-}
-
-.chart-icon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  border-radius: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  box-shadow: 0 8px 32px rgba(56, 189, 248, 0.2);
-}
-
-.chart-icon .el-icon {
-  font-size: 40px;
-  color: #7dd3fc;
-}
-
-.chart-text {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 8px 0;
-}
-
-.chart-subtext {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0;
+  height: 380px;
+  width: 100%;
 }
 
 /* 动画 */
@@ -1245,17 +1396,7 @@ onMounted(() => {
   }
 
   .chart-container {
-    height: 280px;
-  }
-
-  .chart-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 18px;
-  }
-
-  .chart-icon .el-icon {
-    font-size: 30px;
+    height: 260px;
   }
 }
 

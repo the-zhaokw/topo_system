@@ -92,7 +92,14 @@
           </div>
         </template>
 
-        <el-table :data="shifts" v-loading="loading" stripe class="custom-table" style="width: 100%">
+        <el-table
+          :data="shifts"
+          v-loading="loading"
+          stripe
+          class="custom-table clickable-table"
+          style="width: 100%"
+          @row-click="(row) => handleViewShift(row)"
+        >
           <el-table-column prop="id" label="ID" width="70" align="center">
             <template #default="{ row }">
               <span class="id-badge">{{ row.id }}</span>
@@ -129,6 +136,23 @@
               <el-tag size="small" effect="light" type="warning">{{ row.overtime_threshold }}分钟</el-tag>
             </template>
           </el-table-column>
+          <el-table-column label="执行星期" width="160" align="center">
+            <template #default="{ row }">
+              <div class="days-of-week-display" v-if="row.days_of_week">
+                <el-tag
+                  v-for="day in formatDaysOfWeek(row.days_of_week)"
+                  :key="day.num"
+                  size="small"
+                  effect="light"
+                  :type="day.today ? 'primary' : 'info'"
+                  class="day-tag"
+                >
+                  {{ day.label }}
+                </el-tag>
+              </div>
+              <span v-else class="text-muted">每天</span>
+            </template>
+          </el-table-column>
           <el-table-column label="状态" width="90" align="center">
             <template #default="{ row }">
               <el-tag :type="row.is_active ? 'success' : 'info'" size="small" effect="light" class="status-tag">
@@ -136,13 +160,21 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="160" align="center" fixed="right">
+          <el-table-column label="操作" width="240" align="center" fixed="right">
             <template #default="{ row }">
-              <el-button size="small" @click="handleEditShift(row)" class="btn-edit">
+              <el-button size="small" type="primary" @click.stop="handleViewShift(row)" class="btn-view">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
+              <el-button size="small" type="success" @click.stop="handleApplyShift(row)" class="btn-apply">
+                <el-icon><Promotion /></el-icon>
+                应用
+              </el-button>
+              <el-button size="small" @click.stop="handleEditShift(row)" class="btn-edit">
                 <el-icon><Edit /></el-icon>
                 编辑
               </el-button>
-              <el-button size="small" type="danger" @click="handleDeleteShift(row)" class="btn-delete">
+              <el-button size="small" type="danger" @click.stop="handleDeleteShift(row)" class="btn-delete">
                 <el-icon><Delete /></el-icon>
                 删除
               </el-button>
@@ -179,11 +211,22 @@
           </div>
         </template>
 
-        <el-table :data="userSchedules" v-loading="scheduleLoading" stripe class="custom-table" style="width: 100%">
-          <el-table-column prop="user.username" label="员工" min-width="120">
+        <el-table
+          :data="userSchedules"
+          v-loading="scheduleLoading"
+          stripe
+          class="custom-table clickable-table"
+          style="width: 100%"
+          @row-click="(row) => handleViewUserSchedule(row)"
+        >
+          <el-table-column prop="user.username" label="员工" min-width="140">
             <template #default="{ row }">
               <div class="user-info">
-                <div class="user-name">{{ row.user?.username || '未知用户' }}</div>
+                <el-avatar :size="28" class="user-avatar">{{ getUserInitial(row.user) }}</el-avatar>
+                <div class="user-info-text">
+                  <div class="user-name">{{ getUserLabel(row.user) }}</div>
+                  <div class="user-dept" v-if="row.user?.department">{{ row.user.department }}</div>
+                </div>
               </div>
             </template>
           </el-table-column>
@@ -208,13 +251,17 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="160" align="center" fixed="right">
+          <el-table-column label="操作" width="200" align="center" fixed="right">
             <template #default="{ row }">
-              <el-button size="small" @click="handleEditUserSchedule(row)" class="btn-edit">
+              <el-button size="small" type="primary" @click.stop="handleViewUserSchedule(row)" class="btn-view">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
+              <el-button size="small" @click.stop="handleEditUserSchedule(row)" class="btn-edit">
                 <el-icon><Edit /></el-icon>
                 调整
               </el-button>
-              <el-button size="small" type="danger" @click="handleDeleteUserSchedule(row)" class="btn-delete">
+              <el-button size="small" type="danger" @click.stop="handleDeleteUserSchedule(row)" class="btn-delete">
                 <el-icon><Delete /></el-icon>
                 删除
               </el-button>
@@ -242,6 +289,12 @@
         <el-form-item label="加班起算点" prop="overtime_threshold">
           <el-input-number v-model="shiftForm.overtime_threshold" :min="0" :max="480" />
           <span style="margin-left: 10px; color: #909399;">分钟</span>
+        </el-form-item>
+        <el-form-item label="执行星期" prop="days_of_week">
+          <el-checkbox-group v-model="shiftForm.days_of_week">
+            <el-checkbox v-for="day in weekDays" :key="day.value" :label="day.value">{{ day.label }}</el-checkbox>
+          </el-checkbox-group>
+          <div class="form-tip">不选则每天执行</div>
         </el-form-item>
         <el-form-item label="状态" prop="is_active">
           <el-switch v-model="shiftForm.is_active" active-text="启用" inactive-text="停用" />
@@ -299,13 +352,321 @@
         <el-button type="primary" @click="handleBatchSave" class="btn-gradient">保存</el-button>
       </template>
     </el-dialog>
+
+    <!-- 班次应用对话框（按班次为多用户排班） -->
+    <el-dialog
+      v-model="applyDialogVisible"
+      title="班次应用"
+      width="640px"
+      class="custom-dialog apply-dialog"
+      :close-on-click-modal="false"
+    >
+      <div v-if="applyShift" class="apply-summary">
+        <div class="apply-shift-card">
+          <div class="apply-shift-icon">
+            <el-icon><Timer /></el-icon>
+          </div>
+          <div class="apply-shift-info">
+            <div class="apply-shift-name">{{ applyShift.name }}</div>
+            <div class="apply-shift-time">
+              <el-icon><Clock /></el-icon>
+              {{ applyShift.start_time }} → {{ applyShift.end_time }}
+            </div>
+          </div>
+          <el-tag v-if="applyShift.is_active" type="success" size="small" effect="light">启用中</el-tag>
+        </div>
+      </div>
+
+      <el-form :model="applyForm" :rules="applyRules" ref="applyFormRef" label-width="100px" class="apply-form">
+        <el-form-item label="选择用户" prop="user_ids">
+          <el-select
+            v-model="applyForm.user_ids"
+            multiple
+            filterable
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="请选择要应用此班次的用户（可多选）"
+            style="width: 100%"
+            class="user-multi-select"
+            :max-collapse-tags="3"
+            :loading="usersLoading"
+          >
+            <template #prefix>
+              <el-icon><User /></el-icon>
+            </template>
+            <el-option
+              v-for="user in users"
+              :key="user.id"
+              :label="getUserLabel(user)"
+              :value="user.id"
+            >
+              <div class="user-option">
+                <el-avatar :size="26" class="user-avatar">{{ getUserInitial(user) }}</el-avatar>
+                <div class="user-option-info">
+                  <div class="user-option-name">{{ getUserLabel(user) }}</div>
+                  <div class="user-option-meta" v-if="user.position || user.department">
+                    {{ user.position || '' }}{{ user.department ? ' · ' + user.department : '' }}
+                  </div>
+                </div>
+              </div>
+            </el-option>
+          </el-select>
+          <div class="form-tip">
+            <el-button type="primary" link size="small" @click="selectAllUsers">全选</el-button>
+            <el-button type="primary" link size="small" @click="clearAllUsers">清空</el-button>
+            <el-button type="primary" link size="small" @click="invertSelectUsers">反选</el-button>
+            <span class="selected-count" v-if="applyForm.user_ids.length > 0">
+              已选择 {{ applyForm.user_ids.length }} 人
+            </span>
+          </div>
+        </el-form-item>
+
+        <el-form-item label="日期范围" prop="date_range">
+          <el-date-picker
+            v-model="applyForm.date_range"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="YYYY-MM-DD"
+            style="width: 100%"
+            :shortcuts="dateShortcuts"
+          />
+        </el-form-item>
+
+        <el-form-item label="工作日设置" prop="is_working_day">
+          <el-radio-group v-model="applyForm.is_working_day">
+            <el-radio :label="true">
+              <span class="radio-label">
+                <el-icon><Sunny /></el-icon>
+                工作日
+              </span>
+            </el-radio>
+            <el-radio :label="false">
+              <span class="radio-label">
+                <el-icon><Moon /></el-icon>
+                休息日
+              </span>
+            </el-radio>
+          </el-radio-group>
+          <div class="form-tip-inline">
+            仅作记录标识，实际生效由班次自身的"执行星期"决定
+          </div>
+        </el-form-item>
+
+        <el-form-item v-if="applyPreviewCount > 0" class="preview-item">
+          <div class="apply-preview">
+            <el-icon class="preview-icon"><InfoFilled /></el-icon>
+            <span>
+              预计将创建 <strong>{{ applyPreviewCount }}</strong> 条排班记录
+              （{{ applyForm.user_ids.length }} 人 × {{ applyForm.date_range?.length === 2 ? getDaysBetween(applyForm.date_range[0], applyForm.date_range[1]) + 1 : 0 }} 天）
+            </span>
+          </div>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="applyDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleApplySave" :loading="applySaving" class="btn-gradient">
+          <el-icon><Check /></el-icon>
+          确认应用
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 班次详情弹窗 -->
+    <el-dialog v-model="shiftDetailVisible" title="班次详情" width="560px" class="custom-dialog detail-dialog">
+      <div v-if="currentShiftDetail" class="detail-content">
+        <div class="detail-header">
+          <div class="detail-icon">
+            <el-icon><Timer /></el-icon>
+          </div>
+          <div class="detail-title">
+            <h2>{{ currentShiftDetail.name }}</h2>
+            <el-tag :type="currentShiftDetail.is_active ? 'success' : 'info'" size="small" effect="light">
+              {{ currentShiftDetail.is_active ? '启用中' : '已停用' }}
+            </el-tag>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Clock /></el-icon>
+              班次ID
+            </span>
+            <span class="detail-value">#{{ currentShiftDetail.id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Timer /></el-icon>
+              工作时段
+            </span>
+            <span class="detail-value time-range">
+              <span class="time-start">{{ currentShiftDetail.start_time }}</span>
+              <span class="time-separator">→</span>
+              <span class="time-end">{{ currentShiftDetail.end_time }}</span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Aim /></el-icon>
+              弹性范围
+            </span>
+            <span class="detail-value">{{ currentShiftDetail.flexible_range }} 分钟</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Warning /></el-icon>
+              加班起算
+            </span>
+            <span class="detail-value">{{ currentShiftDetail.overtime_threshold }} 分钟</span>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <div class="detail-section">
+          <div class="detail-label section-label">
+            <el-icon><Calendar /></el-icon>
+            执行星期
+          </div>
+          <div class="days-display" v-if="currentShiftDetail.days_of_week">
+            <el-tag
+              v-for="day in formatDaysOfWeek(currentShiftDetail.days_of_week)"
+              :key="day.num"
+              :type="day.today ? 'primary' : 'info'"
+              effect="light"
+              class="day-tag-large"
+            >
+              {{ day.label }}
+            </el-tag>
+          </div>
+          <div v-else class="text-muted-empty">每天执行</div>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="shiftDetailVisible = false">关闭</el-button>
+        <el-button type="primary" @click="handleEditFromDetail" class="btn-gradient">编辑此班次</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 用户排班详情弹窗 -->
+    <el-dialog v-model="userScheduleDetailVisible" title="排班安排详情" width="560px" class="custom-dialog detail-dialog">
+      <div v-if="currentUserScheduleDetail" class="detail-content">
+        <div class="detail-header">
+          <div class="detail-icon user-detail-icon">
+            {{ getUserInitial(currentUserScheduleDetail.user) }}
+          </div>
+          <div class="detail-title">
+            <h2>{{ getUserLabel(currentUserScheduleDetail.user) }}</h2>
+            <el-tag :type="currentUserScheduleDetail.is_working_day ? 'success' : 'info'" size="small" effect="light">
+              {{ currentUserScheduleDetail.is_working_day ? '工作日' : '休息日' }}
+            </el-tag>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Postcard /></el-icon>
+              排班ID
+            </span>
+            <span class="detail-value">#{{ currentUserScheduleDetail.id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Calendar /></el-icon>
+              排班日期
+            </span>
+            <span class="detail-value" :class="{ 'today-value': isToday(currentUserScheduleDetail.date) }">
+              {{ currentUserScheduleDetail.date }}
+              <el-tag v-if="isToday(currentUserScheduleDetail.date)" type="success" size="small" effect="light">今天</el-tag>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><User /></el-icon>
+              员工姓名
+            </span>
+            <span class="detail-value">{{ getUserLabel(currentUserScheduleDetail.user) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><OfficeBuilding /></el-icon>
+              所属部门
+            </span>
+            <span class="detail-value">{{ currentUserScheduleDetail.user?.department || '-' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">
+              <el-icon><Timer /></el-icon>
+              所属班次
+            </span>
+            <span class="detail-value">
+              <el-tag type="primary" size="small" effect="light">
+                {{ currentUserScheduleDetail.shift?.name || '未分配' }}
+              </el-tag>
+            </span>
+          </div>
+          <div class="detail-item" v-if="currentUserScheduleDetail.effective_date">
+            <span class="detail-label">
+              <el-icon><Calendar /></el-icon>
+              生效日期
+            </span>
+            <span class="detail-value">{{ currentUserScheduleDetail.effective_date }}</span>
+          </div>
+          <div class="detail-item" v-if="currentUserScheduleDetail.expire_date">
+            <span class="detail-label">
+              <el-icon><Calendar /></el-icon>
+              失效日期
+            </span>
+            <span class="detail-value">{{ currentUserScheduleDetail.expire_date }}</span>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <div v-if="currentUserScheduleDetail.shift" class="detail-section">
+          <div class="detail-label section-label">
+            <el-icon><Clock /></el-icon>
+            班次时段
+          </div>
+          <div class="shift-time-display">
+            <div class="time-block">
+              <div class="time-block-label">上班</div>
+              <div class="time-block-value">{{ currentUserScheduleDetail.shift.start_time }}</div>
+            </div>
+            <div class="time-arrow">→</div>
+            <div class="time-block">
+              <div class="time-block-label">下班</div>
+              <div class="time-block-value">{{ currentUserScheduleDetail.shift.end_time }}</div>
+            </div>
+          </div>
+          <div class="shift-meta" v-if="currentUserScheduleDetail.shift.flexible_range !== undefined">
+            <span>弹性范围：{{ currentUserScheduleDetail.shift.flexible_range }} 分钟</span>
+            <span v-if="currentUserScheduleDetail.shift.overtime_threshold !== undefined">加班起算：{{ currentUserScheduleDetail.shift.overtime_threshold }} 分钟</span>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="userScheduleDetailVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, User, Calendar, Clock, List, CircleCheck, CircleClose, UserFilled, Timer, Edit, Delete } from '@element-plus/icons-vue'
+import { Plus, User, Calendar, Clock, List, CircleCheck, CircleClose, UserFilled, Timer, Edit, Delete, View, Aim, Warning, Postcard, Promotion, Sunny, Moon, Check, InfoFilled, OfficeBuilding } from '@element-plus/icons-vue'
+
+const route = useRoute()
 
 const loading = ref(false)
 const scheduleLoading = ref(false)
@@ -344,6 +705,107 @@ const formatDate = (dateStr) => {
   return `${month}-${day}`
 }
 
+// 班次详情
+const shiftDetailVisible = ref(false)
+const currentShiftDetail = ref(null)
+
+// 用户排班详情
+const userScheduleDetailVisible = ref(false)
+const currentUserScheduleDetail = ref(null)
+
+// 班次应用
+const applyDialogVisible = ref(false)
+const applyShift = ref(null)
+const applyFormRef = ref()
+const applySaving = ref(false)
+const usersLoading = ref(false)
+const applyForm = ref({
+  user_ids: [],
+  date_range: [],
+  is_working_day: true
+})
+const applyRules = {
+  user_ids: [{ required: true, type: 'array', min: 1, message: '请至少选择一个用户', trigger: 'change' }],
+  date_range: [{ required: true, type: 'array', min: 2, message: '请选择日期范围', trigger: 'change' }]
+}
+
+// 日期范围快捷选项
+const dateShortcuts = [
+  { text: '本周', value: () => {
+    const end = new Date()
+    const start = new Date()
+    start.setDate(end.getDate() - end.getDay() + 1)
+    return [start, end]
+  }},
+  { text: '本月', value: () => {
+    const end = new Date()
+    const start = new Date(end.getFullYear(), end.getMonth(), 1)
+    return [start, end]
+  }},
+  { text: '下月', value: () => {
+    const start = new Date()
+    const end = new Date(start.getFullYear(), start.getMonth() + 1, 0)
+    return [start, end]
+  }},
+  { text: '未来30天', value: () => {
+    const start = new Date()
+    const end = new Date()
+    end.setDate(start.getDate() + 30)
+    return [start, end]
+  }}
+]
+
+// 预计创建记录数
+const applyPreviewCount = computed(() => {
+  if (!applyForm.value.user_ids.length || !applyForm.value.date_range || applyForm.value.date_range.length !== 2) {
+    return 0
+  }
+  const days = getDaysBetween(applyForm.value.date_range[0], applyForm.value.date_range[1]) + 1
+  return applyForm.value.user_ids.length * days
+})
+
+// 计算两个日期相差天数
+const getDaysBetween = (startStr, endStr) => {
+  if (!startStr || !endStr) return 0
+  const start = new Date(startStr)
+  const end = new Date(endStr)
+  return Math.floor((end - start) / (1000 * 60 * 60 * 24))
+}
+
+// 全选/清空/反选
+const selectAllUsers = () => {
+  applyForm.value.user_ids = users.value.map(u => u.id)
+}
+
+const clearAllUsers = () => {
+  applyForm.value.user_ids = []
+}
+
+const invertSelectUsers = () => {
+  const allIds = users.value.map(u => u.id)
+  const currentSet = new Set(applyForm.value.user_ids)
+  applyForm.value.user_ids = allIds.filter(id => !currentSet.has(id))
+}
+
+// 获取用户展示名（姓名优先，其次用户名）
+const getUserLabel = (user) => {
+  if (!user) return '未知'
+  const fullName = `${user.first_name || ''}${user.last_name || ''}`.trim()
+  if (fullName) {
+    return user.username ? `${fullName} (${user.username})` : fullName
+  }
+  return user.username || '未知'
+}
+
+// 获取用户头像首字符
+const getUserInitial = (user) => {
+  if (!user) return 'U'
+  const fullName = `${user.first_name || ''}${user.last_name || ''}`.trim()
+  if (fullName) return fullName.charAt(0).toUpperCase()
+  if (user.username) return user.username.charAt(0).toUpperCase()
+  return 'U'
+}
+
 // 班次对话框
 const shiftDialogVisible = ref(false)
 const shiftDialogTitle = ref('新增班次')
@@ -354,6 +816,7 @@ const shiftForm = ref({
   end_time: '18:00',
   flexible_range: 30,
   overtime_threshold: 60,
+  days_of_week: [],
   is_active: true
 })
 
@@ -361,6 +824,31 @@ const shiftRules = {
   name: [{ required: true, message: '请输入班次名称', trigger: 'blur' }],
   start_time: [{ required: true, message: '请选择上班时间', trigger: 'change' }],
   end_time: [{ required: true, message: '请选择下班时间', trigger: 'change' }]
+}
+
+// 星期选项 (ISO: 1=周一, 7=周日)
+const weekDays = [
+  { label: '周一', value: 1 },
+  { label: '周二', value: 2 },
+  { label: '周三', value: 3 },
+  { label: '周四', value: 4 },
+  { label: '周五', value: 5 },
+  { label: '周六', value: 6 },
+  { label: '周日', value: 7 }
+]
+
+const dayLabels = { 1: '周一', 2: '周二', 3: '周三', 4: '周四', 5: '周五', 6: '周六', 7: '周日' }
+
+// 格式化星期显示（用于列表展示）
+const formatDaysOfWeek = (daysStr) => {
+  if (!daysStr) return []
+  const today = new Date().getDay() || 7  // JS: 0=周日, 转为ISO: 7=周日
+  const nums = String(daysStr).split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d))
+  return nums.map(num => ({
+    num,
+    label: dayLabels[num] || '?',
+    today: num === today
+  }))
 }
 
 // 批量排班对话框
@@ -406,19 +894,38 @@ const fetchShifts = async () => {
 // 获取用户列表
 const fetchUsers = async () => {
   try {
+    usersLoading.value = true
     const token = localStorage.getItem('token')
-    const response = await fetch('/api/users', {
+    // 取较大的 per_page 以便一次拿到全部用户，per_page=500 应足够覆盖
+    const response = await fetch('/api/users?per_page=500', {
       headers: {
         'Authorization': token ? `Bearer ${token}` : ''
       }
     })
     const data = await response.json()
-    
+
     if (response.ok) {
-      users.value = data
+      // 后端返回 {users: [...], total, page, ...}，取 users 数组
+      users.value = Array.isArray(data) ? data : (data.users || [])
+      // 若超过 500 仍可能有遗漏，按需再次拉取
+      if (!Array.isArray(data) && data.total && data.total > 500) {
+        const moreResponse = await fetch(`/api/users?per_page=${data.total}`, {
+          headers: {
+            'Authorization': token ? `Bearer ${token}` : ''
+          }
+        })
+        const moreData = await moreResponse.json()
+        if (moreResponse.ok) {
+          users.value = Array.isArray(moreData) ? moreData : (moreData.users || [])
+        }
+      }
+    } else {
+      console.error('获取用户列表失败:', data.error || data.message)
     }
   } catch (error) {
     console.error('获取用户列表失败:', error)
+  } finally {
+    usersLoading.value = false
   }
 }
 
@@ -447,6 +954,80 @@ const fetchUserSchedules = async () => {
 }
 
 // 班次操作
+const handleViewShift = (shift) => {
+  currentShiftDetail.value = shift
+  shiftDetailVisible.value = true
+}
+
+const handleEditFromDetail = () => {
+  if (!currentShiftDetail.value) return
+  shiftDetailVisible.value = false
+  handleEditShift(currentShiftDetail.value)
+}
+
+const handleViewUserSchedule = (schedule) => {
+  currentUserScheduleDetail.value = schedule
+  userScheduleDetailVisible.value = true
+}
+
+// 打开班次应用对话框
+const handleApplyShift = async (shift) => {
+  applyShift.value = shift
+  applyForm.value = {
+    user_ids: [],
+    date_range: [],
+    is_working_day: true
+  }
+  applyDialogVisible.value = true
+  // 确保用户列表已加载
+  if (users.value.length === 0) {
+    await fetchUsers()
+  }
+}
+
+// 提交班次应用
+const handleApplySave = async () => {
+  if (!applyFormRef.value) return
+
+  await applyFormRef.value.validate(async (valid) => {
+    if (!valid) return
+
+    try {
+      applySaving.value = true
+      const token = localStorage.getItem('token')
+      const [startDate, endDate] = applyForm.value.date_range
+
+      const response = await fetch('/api/attendance/user-shifts/batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({
+          user_ids: applyForm.value.user_ids,
+          shift_id: applyShift.value.id,
+          date_range: [startDate, endDate],
+          is_working_day: applyForm.value.is_working_day
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        ElMessage.success(data.message || `成功创建 ${data.count || applyPreviewCount.value} 条排班记录`)
+        applyDialogVisible.value = false
+        fetchUserSchedules()
+      } else {
+        ElMessage.error(data.message || data.error || '应用失败')
+      }
+    } catch (error) {
+      ElMessage.error('网络错误：' + (error.message || ''))
+    } finally {
+      applySaving.value = false
+    }
+  })
+}
+
 const handleCreateShift = () => {
   shiftDialogTitle.value = '新增班次'
   shiftForm.value = {
@@ -455,6 +1036,7 @@ const handleCreateShift = () => {
     end_time: '18:00',
     flexible_range: 30,
     overtime_threshold: 60,
+    days_of_week: [],
     is_active: true
   }
   shiftDialogVisible.value = true
@@ -462,7 +1044,11 @@ const handleCreateShift = () => {
 
 const handleEditShift = (shift) => {
   shiftDialogTitle.value = '编辑班次'
-  shiftForm.value = { ...shift }
+  // 将后端返回的逗号分隔字符串转为数组
+  const daysOfWeek = shift.days_of_week
+    ? String(shift.days_of_week).split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d))
+    : []
+  shiftForm.value = { ...shift, days_of_week: daysOfWeek }
   shiftDialogVisible.value = true
 }
 
@@ -611,6 +1197,11 @@ const handleDeleteUserSchedule = async (schedule) => {
 onMounted(() => {
   fetchShifts()
   fetchUsers()
+  // 从 URL query 中预填日期（从考勤记录跳转过来），便于直接定位到当日排班
+  const { date } = route.query
+  if (date) {
+    scheduleDate.value = String(date)
+  }
   fetchUserSchedules()
 })
 </script>
@@ -988,6 +1579,386 @@ onMounted(() => {
   transition: all 0.3s;
 }
 
+/* 可点击行样式 */
+.clickable-table :deep(.el-table__row) {
+  cursor: pointer;
+}
+
+.clickable-table :deep(.el-table__row:hover) > td {
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+
+/* 详情弹窗样式 */
+.detail-dialog :deep(.el-dialog__body) {
+  padding: 24px;
+}
+
+.detail-content {
+  font-size: 14px;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.detail-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #7dd3fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.4);
+}
+
+.user-detail-icon {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #0ea5e9;
+  font-weight: 800;
+}
+
+.detail-title {
+  flex: 1;
+}
+
+.detail-title h2 {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 10px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.detail-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.detail-label .el-icon {
+  color: #0ea5e9;
+  font-size: 16px;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-value .time-start,
+.detail-value .time-end {
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.detail-value .time-separator {
+  color: #94a3b8;
+  margin: 0 2px;
+}
+
+.detail-section {
+  margin: 8px 0;
+}
+
+.days-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.day-tag-large {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.text-muted-empty {
+  color: #94a3b8;
+  font-size: 14px;
+  padding: 12px;
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.today-value {
+  color: #059669;
+  font-weight: 700;
+}
+
+.shift-time-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.time-block {
+  text-align: center;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  min-width: 80px;
+}
+
+.time-block-label {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.time-block-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0ea5e9;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.time-arrow {
+  font-size: 24px;
+  color: #0ea5e9;
+  font-weight: 700;
+}
+
+.shift-meta {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 16px;
+  background: rgba(241, 245, 249, 0.8);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.btn-view {
+  transition: all 0.3s;
+}
+
+.btn-view:hover {
+  transform: translateY(-2px);
+}
+
+.btn-apply {
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
+  color: white;
+}
+
+.btn-apply:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.5);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
+  color: white;
+}
+
+/* 班次应用对话框样式 */
+.apply-dialog :deep(.el-dialog__body) {
+  padding: 20px 24px;
+}
+
+.apply-summary {
+  margin-bottom: 20px;
+}
+
+.apply-shift-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.apply-shift-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 12px -2px rgba(56, 189, 248, 0.4);
+}
+
+.apply-shift-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.apply-shift-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.apply-shift-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #475569;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-weight: 500;
+}
+
+.apply-shift-time .el-icon {
+  font-size: 14px;
+  color: #0ea5e9;
+}
+
+.apply-form {
+  margin-top: 8px;
+}
+
+.user-multi-select :deep(.el-select__wrapper) {
+  padding-left: 8px;
+}
+
+.user-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 0;
+}
+
+.user-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.user-avatar {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.user-option-name {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.user-option-meta {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+.form-tip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.selected-count {
+  margin-left: auto;
+  color: #0ea5e9;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.form-tip-inline {
+  margin-left: 12px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.radio-label .el-icon {
+  color: #0ea5e9;
+}
+
+.preview-item :deep(.el-form-item__content) {
+  align-items: flex-start;
+}
+
+.apply-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 10px;
+  color: #92400e;
+  font-size: 14px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.apply-preview strong {
+  color: #d97706;
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 4px;
+}
+
+.preview-icon {
+  font-size: 18px;
+  color: #d97706;
+}
+
 .id-badge {
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 12px;
@@ -1029,13 +2000,28 @@ onMounted(() => {
 }
 
 .user-info {
-  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.3;
+}
+
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .user-name {
   font-weight: 600;
   color: #1e293b;
   font-size: 14px;
+}
+
+.user-dept {
+  font-size: 12px;
+  color: #94a3b8;
 }
 
 .date-display {
@@ -1095,6 +2081,23 @@ onMounted(() => {
 
 .time-picker-input {
   width: 100%;
+}
+
+.form-tip {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.days-of-week-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.day-tag {
+  border-radius: 4px;
 }
 
 /* 动画 */
@@ -1251,6 +2254,86 @@ onMounted(() => {
   .el-dialog {
     width: 95% !important;
     margin: 10px auto !important;
+  }
+
+  .detail-dialog :deep(.el-dialog__body) {
+    padding: 16px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .detail-title h2 {
+    font-size: 18px;
+  }
+
+  .shift-time-display {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .time-block {
+    padding: 8px 14px;
+    min-width: 70px;
+  }
+
+  .time-block-value {
+    font-size: 18px;
+  }
+
+  .time-arrow {
+    font-size: 18px;
+  }
+
+  .shift-meta {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .apply-dialog :deep(.el-dialog) {
+    width: 95% !important;
+    margin: 5vh auto !important;
+  }
+
+  .apply-dialog :deep(.el-dialog__body) {
+    padding: 16px;
+  }
+
+  .apply-shift-card {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .apply-shift-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .apply-shift-name {
+    font-size: 14px;
+  }
+
+  .apply-shift-time {
+    font-size: 12px;
+  }
+
+  .apply-preview {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .apply-preview strong {
+    font-size: 16px;
   }
 }
 
