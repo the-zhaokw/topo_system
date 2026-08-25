@@ -1062,61 +1062,84 @@ def update_bug_status(bug_id):
 @log_business_operation()
 def transition_bug_status(bug_id):
     """缺陷状态转换"""
-    User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
-    
-    db = get_db()
-    create_audit_log = get_create_audit_log()
-    
-    current_user_id = get_jwt_identity()
-    data = request.get_json()
-    
-    if not data:
-        return jsonify({'success': False, 'message': '请求数据不能为空', 'data': None}), 400
-    
-    new_status = data.get('status')
-    if not new_status:
-        return jsonify({'success': False, 'message': '目标状态不能为空', 'data': None}), 400
-    
-    bug = Bug.query.get(bug_id)
-    if not bug:
-        return jsonify({'success': False, 'message': '缺陷不存在', 'data': None}), 404
-    
-    current_user = User.query.get(current_user_id)
-    if current_user.role != 'admin':
-        member = ProjectMember.query.filter_by(
-            project_id=bug.project_id,
-            user_id=current_user_id
-        ).first()
-        if not member:
-            is_resolver = int(bug.resolved_by) == int(current_user_id) if bug.resolved_by else False
-            is_reporter = int(bug.reported_by) == int(current_user_id) if bug.reported_by else False
-            if not is_resolver and not is_reporter:
-                return jsonify({'success': False, 'message': '无权操作此缺陷', 'data': None}), 403
-    
-    old_status = str(bug.status) if bug.status else ''
-    new_status_lower = new_status.lower()
-    
-    valid_statuses = [status.value for status in BugStatus]
-    if new_status_lower not in valid_statuses:
-        return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
-    
-    bug.status = new_status_lower
-    bug.updated_at = datetime.utcnow()
-    
-    if new_status_lower == 'resolved':
-        bug.resolved_at = datetime.utcnow()
-        bug.resolved_by = int(current_user_id)
-        if data.get('resolution'):
-            bug.resolution = data['resolution']
-        if not bug.verifier_id:
-            bug.verifier_id = bug.reported_by
-    elif new_status_lower == 'closed':
-        bug.closed_at = datetime.utcnow()
-    elif new_status_lower == 'reopened':
-        bug.reopened_count = (bug.reopened_count or 0) + 1
-    
     try:
-        db.session.commit()
+        User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
+        
+        db = get_db()
+        create_audit_log = get_create_audit_log()
+        
+        current_user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': '请求数据不能为空', 'data': None}), 400
+        
+        new_status = data.get('status')
+        if not new_status:
+            return jsonify({'success': False, 'message': '目标状态不能为空', 'data': None}), 400
+        
+        try:
+            bug = Bug.query.get(bug_id)
+        except Exception as query_error:
+            return jsonify({'success': False, 'message': f'查询缺陷信息失败: {str(query_error)}', 'data': None}), 500
+        if not bug:
+            return jsonify({'success': False, 'message': '缺陷不存在', 'data': None}), 404
+        
+        try:
+            current_user = User.query.get(current_user_id)
+        except Exception as query_error:
+            return jsonify({'success': False, 'message': f'查询用户信息失败: {str(query_error)}', 'data': None}), 500
+        if not current_user:
+            return jsonify({'success': False, 'message': '当前用户不存在', 'data': None}), 401
+        if current_user.role != 'admin':
+            member = ProjectMember.query.filter_by(
+                project_id=bug.project_id,
+                user_id=current_user_id
+            ).first()
+            if not member:
+                is_resolver = bool(bug.resolved_by) and int(bug.resolved_by) == int(current_user_id)
+                is_reporter = bool(bug.reported_by) and int(bug.reported_by) == int(current_user_id)
+                if not is_resolver and not is_reporter:
+                    return jsonify({'success': False, 'message': '无权操作此缺陷', 'data': None}), 403
+        
+        old_status = str(bug.status) if bug.status else ''
+        new_status_lower = new_status.lower()
+        
+        valid_statuses = [status.value for status in BugStatus]
+        if new_status_lower not in valid_statuses:
+            return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
+        
+        bug.status = new_status_lower
+        bug.updated_at = datetime.utcnow()
+        
+        if new_status_lower == 'resolved':
+            bug.resolved_at = datetime.utcnow()
+            try:
+                bug.resolved_by = int(current_user_id) if current_user_id is not None else None
+            except (TypeError, ValueError):
+                bug.resolved_by = None
+            if data.get('resolution'):
+                bug.resolution = data['resolution']
+            if not bug.verifier_id:
+                bug.verifier_id = bug.reported_by
+        elif new_status_lower == 'closed':
+            bug.closed_at = datetime.utcnow()
+        elif new_status_lower == 'reopened':
+            bug.reopened_count = (bug.reopened_count or 0) + 1
+
+        try:
+            db.session.commit()
+        except Exception as commit_error:
+            db.session.rollback()
+            logger.error(f"状态变更commit失败: {commit_error}", exc_info=True)
+            import traceback as _tb
+            logger.error(_tb.format_exc())
+            return jsonify({
+                'success': False,
+                'message': f'状态变更保存失败: {str(commit_error)}',
+                'data': None,
+                'traceback': _tb.format_exc()
+            }), 500
         
         # 如果状态变为resolved，发送邮件通知报告人
         if new_status_lower == 'resolved' and old_status != 'resolved':
@@ -1189,7 +1212,7 @@ def transition_bug_status(bug_id):
         activity = Activity(
             action='update_bug',
             description=f'Bug状态变更: {old_status} -> {new_status_lower}',
-            performed_by=int(current_user_id),
+            performed_by=int(current_user_id) if current_user_id is not None else None,
             target_type='bug',
             target_id=bug_id,
             field_changes=field_changes_json
@@ -1215,7 +1238,10 @@ def transition_bug_status(bug_id):
         }), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'message': f'状态转换失败: {str(e)}', 'data': None}), 500
+        logger.error(f"状态转换失败: {str(e)}", exc_info=True)
+        import traceback as _tb
+        logger.error(_tb.format_exc())
+        return jsonify({'success': False, 'message': f'状态转换失败: {str(e)}', 'data': None, 'traceback': _tb.format_exc()}), 500
 
 # 分配缺陷
 @bugs_bp.route('/<int:bug_id>/assign', methods=['PUT'])
