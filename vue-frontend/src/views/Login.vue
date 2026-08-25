@@ -1415,35 +1415,37 @@ body .register-dialog .full-width {
   width: 100%;
 }
 
-/* 下拉菜单样式 */
+/* 下拉菜单样式 - 浅色主题，避免遮盖业务界面的用户候选列表 */
 body .el-select-dropdown {
-  background: rgba(10, 10, 15, 0.98) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
-  border-radius: 4px !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12) !important;
 }
 
 body .el-select-dropdown__item {
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: #1e293b !important;
   transition: all 0.2s !important;
 }
 
 body .el-select-dropdown__item.hover,
 body .el-select-dropdown__item:hover {
-  background: rgba(56, 189, 248, 0.2) !important;
-  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+  color: #0284c7 !important;
 }
 
 body .el-select-dropdown__item.selected {
-  background: rgba(56, 189, 248, 0.3) !important;
-  color: #00ffff !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #0284c7 !important;
   font-weight: 600;
 }
 
-/* 遮罩层 */
-body .el-overlay {
-  background: rgba(10, 10, 15, 0.8) !important;
+/* 遮罩层 - 仅作用于登录/注册弹窗（仅当页面上存在登录/注册 dialog 时） */
+body:has(.register-dialog) .el-overlay,
+body:has(.login-dialog) .el-overlay {
+  background: rgba(10, 10, 15, 0.5) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
 }
