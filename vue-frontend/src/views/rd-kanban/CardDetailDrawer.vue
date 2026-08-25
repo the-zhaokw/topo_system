@@ -241,7 +241,7 @@
                 :style="{ background: iconColor(att.mime_type) }"
                 @click="isPreviewable(att) && previewAttachment(att)"
               >
-                <el-icon><Document /></el-icon>
+                <el-icon><Picture v-if="isImageFile(att)" /><Document v-else /></el-icon>
               </div>
               <div
                 class="att-info"
@@ -539,27 +539,56 @@
       </el-popover>
     </div>
 
-    <!-- 文本附件预览弹窗 -->
+    <!-- 附件预览弹窗（文本/图片） -->
     <el-dialog
       v-model="previewVisible"
-      :title="`文本预览 - ${previewMeta.original_name || ''}`"
-      width="780px"
+      :title="`${previewType === 'image' ? '图片预览' : '文本预览'} - ${previewMeta.original_name || ''}`"
+      :width="previewType === 'image' ? '80%' : '780px'"
       align-center
       :close-on-click-modal="true"
       :close-on-press-escape="true"
       custom-class="rd-attachment-preview-dialog"
       append-to-body
+      @close="onPreviewClose"
     >
-      <div class="preview-meta" v-if="previewMeta.size">
-        <el-tag size="small" type="info">编码：{{ previewMeta.encoding }}</el-tag>
-        <el-tag size="small" type="info">大小：{{ formatSize(previewMeta.size) }}</el-tag>
-        <el-tag size="small" type="info">行数：{{ previewMeta.line_count }}</el-tag>
-        <el-tag v-if="previewMeta.truncated" size="small" type="warning" effect="dark">已截断</el-tag>
+      <!-- 图片预览 -->
+      <div v-if="previewType === 'image'" class="image-preview-wrapper">
+        <div v-if="previewLoading" v-loading="true" class="preview-loading">加载中...</div>
+        <el-image
+          v-else-if="previewImageUrl"
+          :src="previewImageUrl"
+          :preview-src-list="[previewImageUrl]"
+          fit="contain"
+          class="preview-image"
+          hide-on-click-modal
+        >
+          <template #error>
+            <div class="image-preview-error">
+              <el-icon :size="48"><Picture /></el-icon>
+              <p>图片加载失败</p>
+            </div>
+          </template>
+          <template #placeholder>
+            <div class="image-preview-placeholder">加载中...</div>
+          </template>
+        </el-image>
+        <div class="preview-meta" v-if="previewMeta.size && !previewLoading">
+          <el-tag size="small" type="info">大小：{{ formatSize(previewMeta.size) }}</el-tag>
+        </div>
       </div>
-      <pre v-if="previewLoading" v-loading="true" class="preview-loading">加载中...</pre>
-      <pre v-else class="preview-content">{{ previewContent }}</pre>
+      <!-- 文本预览 -->
+      <template v-else>
+        <div class="preview-meta" v-if="previewMeta.size">
+          <el-tag size="small" type="info">编码：{{ previewMeta.encoding }}</el-tag>
+          <el-tag size="small" type="info">大小：{{ formatSize(previewMeta.size) }}</el-tag>
+          <el-tag size="small" type="info">行数：{{ previewMeta.line_count }}</el-tag>
+          <el-tag v-if="previewMeta.truncated" size="small" type="warning" effect="dark">已截断</el-tag>
+        </div>
+        <pre v-if="previewLoading" v-loading="true" class="preview-loading">加载中...</pre>
+        <pre v-else class="preview-content">{{ previewContent }}</pre>
+      </template>
       <template #footer>
-        <el-button @click="copyPreviewContent" :disabled="!previewContent">复制内容</el-button>
+        <el-button v-if="previewType === 'text'" @click="copyPreviewContent" :disabled="!previewContent">复制内容</el-button>
         <el-button class="btn-gradient" @click="previewVisible = false">关闭</el-button>
       </template>
     </el-dialog>
@@ -646,10 +675,16 @@ const PREVIEW_EXTENSIONS = [
   'yaml', 'yml', 'ini', 'conf', 'cfg', 'env',
   'sh', 'bat', 'ps1', 'sql', 'py', 'java',
 ]
+// 图片附件预览
+const IMAGE_EXTENSIONS = [
+  'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'ico',
+]
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const previewContent = ref('')
 const previewMeta = ref({}) // { encoding, size, line_count, truncated, original_name }
+const previewType = ref('text') // 'text' 或 'image'
+const previewImageUrl = ref('') // 图片预览的 blob URL
 
 // 编辑标题
 const editingTitle = ref(false)
@@ -1076,44 +1111,95 @@ async function downloadAttachment(att) {
     ElMessage.error('下载失败')
   }
 }
-function isPreviewable(att) {
+function getFileExt(att) {
   const name = (att?.original_name || '').toLowerCase()
   const dot = name.lastIndexOf('.')
-  if (dot < 0) return false
-  const ext = name.slice(dot + 1)
-  return PREVIEW_EXTENSIONS.includes(ext)
+  if (dot < 0) return ''
+  return name.slice(dot + 1)
+}
+function isImageFile(att) {
+  return IMAGE_EXTENSIONS.includes(getFileExt(att))
+}
+function isPreviewable(att) {
+  const ext = getFileExt(att)
+  return PREVIEW_EXTENSIONS.includes(ext) || IMAGE_EXTENSIONS.includes(ext)
+}
+// 关闭预览弹窗时释放 blob URL
+function onPreviewClose() {
+  if (previewImageUrl.value) {
+    URL.revokeObjectURL(previewImageUrl.value)
+    previewImageUrl.value = ''
+  }
+  previewType.value = 'text'
+  previewContent.value = ''
+  previewMeta.value = {}
 }
 async function previewAttachment(att) {
   if (!isPreviewable(att)) {
     ElMessage.warning('该文件类型不支持在线预览')
     return
   }
+  // 释放上一次的 blob URL
+  if (previewImageUrl.value) {
+    URL.revokeObjectURL(previewImageUrl.value)
+    previewImageUrl.value = ''
+  }
   previewVisible.value = true
   previewLoading.value = true
   previewContent.value = ''
   previewMeta.value = { original_name: att.original_name }
-  try {
-    const res = await rdKanbanService.getAttachmentRaw(att.id)
-    if (res?.success) {
-      previewContent.value = res.content || ''
-      previewMeta.value = {
-        encoding: res.encoding,
-        size: res.size,
-        line_count: res.line_count,
-        truncated: res.truncated,
-        original_name: res.original_name,
+  if (isImageFile(att)) {
+    // 图片预览：下载 blob 并创建 objectURL
+    previewType.value = 'image'
+    try {
+      const token = localStorage.getItem('token')
+      const resp = await fetch(rdKanbanService.attachmentDownloadUrl(att.id), {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!resp.ok) {
+        ElMessage.error('图片加载失败')
+        previewLoading.value = false
+        return
       }
-    } else {
-      ElMessage.error(res?.error || '预览失败')
-      previewContent.value = '（加载失败）'
+      const blob = await resp.blob()
+      previewImageUrl.value = URL.createObjectURL(blob)
+      previewMeta.value = {
+        original_name: att.original_name,
+        size: att.file_size,
+      }
+    } catch (e) {
+      console.error('[previewAttachment] image error', e)
+      const msg = e?.response?.data?.error || e?.message || '图片加载失败'
+      ElMessage.error(msg)
+    } finally {
+      previewLoading.value = false
     }
-  } catch (e) {
-    console.error('[previewAttachment] error', e)
-    const msg = e?.response?.data?.error || e?.message || '预览失败'
-    ElMessage.error(msg)
-    previewContent.value = '（加载失败）'
-  } finally {
-    previewLoading.value = false
+  } else {
+    // 文本预览：保持原有逻辑
+    previewType.value = 'text'
+    try {
+      const res = await rdKanbanService.getAttachmentRaw(att.id)
+      if (res?.success) {
+        previewContent.value = res.content || ''
+        previewMeta.value = {
+          encoding: res.encoding,
+          size: res.size,
+          line_count: res.line_count,
+          truncated: res.truncated,
+          original_name: res.original_name,
+        }
+      } else {
+        ElMessage.error(res?.error || '预览失败')
+        previewContent.value = '（加载失败）'
+      }
+    } catch (e) {
+      console.error('[previewAttachment] error', e)
+      const msg = e?.response?.data?.error || e?.message || '预览失败'
+      ElMessage.error(msg)
+      previewContent.value = '（加载失败）'
+    } finally {
+      previewLoading.value = false
+    }
   }
 }
 async function copyPreviewContent() {
@@ -1560,10 +1646,10 @@ function iconColor(mime) {
 .detail-body {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 18px 24px;
+  padding: 6px 18px 12px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 .detail-body::-webkit-scrollbar {
   width: 6px;
@@ -2154,6 +2240,7 @@ function iconColor(mime) {
 .rd-attachment-preview-dialog {
   border-radius: 12px;
   overflow: hidden;
+  max-width: 900px;
 }
 .rd-attachment-preview-dialog .preview-meta {
   display: flex;
@@ -2185,6 +2272,42 @@ function iconColor(mime) {
   color: #94a3b8;
   border-radius: 8px;
   text-align: center;
+  font-size: 14px;
+}
+/* 图片预览弹窗 */
+.rd-attachment-preview-dialog .image-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.rd-attachment-preview-dialog .preview-image {
+  width: 100%;
+  max-height: 70vh;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+.rd-attachment-preview-dialog .preview-image .el-image__inner {
+  max-height: 70vh;
+  object-fit: contain;
+}
+.rd-attachment-preview-dialog .image-preview-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 240px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+.rd-attachment-preview-dialog .image-preview-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  color: #94a3b8;
   font-size: 14px;
 }
 </style>

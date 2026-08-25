@@ -979,14 +979,13 @@ onUnmounted(() => {
   font-size: 18px;
   width: 20px;
   margin-right: 10px;
-  transition: all 0.3s;
+  transition: color 0.3s;
   color: #0369a1 !important;
 }
 
 .sidebar-menu .el-menu-item:hover .el-icon,
 .sidebar-menu .el-sub-menu__title:hover .el-icon {
   color: #0c4a6e !important;
-  transform: scale(1.1);
 }
 
 .header {
