@@ -937,10 +937,11 @@ class ShiftSchedule(db.Model):
     flexible_range = Column(Integer, default=30)  # 弹性范围（分钟）
     overtime_threshold = Column(Integer, default=60)  # 加班起算点（分钟）
     is_active = Column(Boolean, default=True)  # 是否启用
+    days_of_week = Column(String(20), default='')  # 逗号分隔的星期几，如 "1,2,4"
     description = Column(Text)  # 班次描述
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -951,6 +952,7 @@ class ShiftSchedule(db.Model):
             'flexible_range': self.flexible_range,
             'overtime_threshold': self.overtime_threshold,
             'is_active': self.is_active,
+            'days_of_week': self.days_of_week or '',
             'description': self.description,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
@@ -1502,7 +1504,7 @@ class Risk(db.Model):
 
     related_risk_id = Column(Integer, ForeignKey('risks.id'))  # 相关风险ID
     related_bug_id = Column(Integer, ForeignKey('bugs.id'))  # 相关缺陷ID
-    related_task_id = Column(Integer, ForeignKey('tasks.id'))  # 相关任务ID
+    related_task_id = Column(Integer)  # 相关任务ID（Task模型不存在，移除ForeignKey约束）
 
     created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)

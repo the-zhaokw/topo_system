@@ -1238,7 +1238,7 @@ def get_distribution_analysis():
         elif dimension == 'severity':
             distribution = defaultdict(lambda: {'total': 0, 'new': 0, 'resolved': 0, 'closed': 0})
             for bug in all_bugs:
-                severity = bug.severity.value if bug.severity else '未知'
+                severity = str(bug.severity) if bug.severity else '未知'
                 distribution[severity]['total'] += 1
                 if bug.status == BugStatus.NEW.value:
                     distribution[severity]['new'] += 1
@@ -1250,13 +1250,13 @@ def get_distribution_analysis():
         elif dimension == 'status':
             distribution = defaultdict(int)
             for bug in all_bugs:
-                status = bug.status.value if bug.status else '未知'
+                status = str(bug.status) if bug.status else '未知'
                 distribution[status] += 1
 
         elif dimension == 'priority':
             distribution = defaultdict(lambda: {'total': 0, 'new': 0, 'resolved': 0, 'closed': 0})
             for bug in all_bugs:
-                priority = bug.priority.value if bug.priority else '未知'
+                priority = str(bug.priority) if bug.priority else '未知'
                 distribution[priority]['total'] += 1
                 if bug.status == BugStatus.NEW.value:
                     distribution[priority]['new'] += 1
