@@ -43,8 +43,9 @@ class ShiftSchedule(BaseModel):
     flexible_range = Column(Integer, default=30)
     overtime_threshold = Column(Integer, default=60)
     is_active = Column(Boolean, default=True)
+    days_of_week = Column(String(20), default='')  # 逗号分隔的星期几，如 "1,2,4" 表示周一、周二、周四
     description = Column(Text)
-    
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -55,6 +56,7 @@ class ShiftSchedule(BaseModel):
             'flexible_range': self.flexible_range,
             'overtime_threshold': self.overtime_threshold,
             'is_active': self.is_active,
+            'days_of_week': self.days_of_week or '',
             'description': self.description,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
@@ -91,7 +93,7 @@ class AttendanceRecord(BaseModel):
     """考勤记录模型"""
     __tablename__ = 'attendance_records'
     __table_args__ = {'extend_existing': True}
-    
+
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     record_date = Column(DateTime, nullable=False)
     status = Column(String(20), default="present", nullable=False)
@@ -106,10 +108,14 @@ class AttendanceRecord(BaseModel):
     late_minutes = Column(Integer, default=0)
     early_leave_minutes = Column(Integer, default=0)
     note = Column(Text)
-    
+    # 班次关联：打卡时记录用户被分配的班次，便于后续报表/详情关联
+    user_shift_id = Column(Integer, ForeignKey('user_shifts.id'))
+    shift_id = Column(Integer, ForeignKey('shift_schedules.id'))
+
     # 关系
     user = relationship("User")
-    
+    shift = relationship("ShiftSchedule")
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -127,6 +133,9 @@ class AttendanceRecord(BaseModel):
             'late_minutes': self.late_minutes,
             'early_leave_minutes': self.early_leave_minutes,
             'note': self.note,
+            'user_shift_id': self.user_shift_id,
+            'shift_id': self.shift_id,
+            'shift': self.shift.to_dict() if self.shift else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }

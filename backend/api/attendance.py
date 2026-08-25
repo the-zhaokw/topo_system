@@ -186,6 +186,57 @@ def get_attendance_records():
         result = []
         for record in records:
             user = record.user
+            # 关联班次：优先使用记录自身存储的 user_shift_id / shift_id，
+            # 否则按 user_id + record_date 反查当天的 user_shift
+            shift_data = None
+            effective_user_shift = None
+            try:
+                if getattr(record, 'user_shift_id', None):
+                    effective_user_shift = UserShift.query.get(record.user_shift_id)
+                if not effective_user_shift and getattr(record, 'shift_id', None):
+                    # 仅按 shift_id 查不到 user_shift，按 shift_id 构造一个简易关联
+                    shift_obj = ShiftSchedule.query.get(record.shift_id)
+                    if shift_obj:
+                        shift_data = {
+                            'id': shift_obj.id,
+                            'name': shift_obj.name,
+                            'start_time': shift_obj.start_time,
+                            'end_time': shift_obj.end_time,
+                            'flexible_range': shift_obj.flexible_range,
+                            'overtime_threshold': shift_obj.overtime_threshold,
+                            'shift_type': shift_obj.shift_type
+                        }
+
+                if not effective_user_shift and record.user_id and record.record_date:
+                    rec_date = record.record_date.date() if hasattr(record.record_date, 'date') else record.record_date
+                    effective_user_shift = UserShift.query.filter(
+                        UserShift.user_id == record.user_id,
+                        UserShift.effective_date <= rec_date,
+                        db.or_(
+                            UserShift.expire_date == None,
+                            UserShift.expire_date >= rec_date
+                        )
+                    ).order_by(UserShift.effective_date.desc()).first()
+
+                if effective_user_shift and not shift_data:
+                    shift_obj = effective_user_shift.shift
+                    if shift_obj:
+                        shift_data = {
+                            'id': shift_obj.id,
+                            'name': shift_obj.name,
+                            'start_time': shift_obj.start_time,
+                            'end_time': shift_obj.end_time,
+                            'flexible_range': shift_obj.flexible_range,
+                            'overtime_threshold': shift_obj.overtime_threshold,
+                            'shift_type': shift_obj.shift_type
+                        }
+            except Exception as shift_query_error:
+                logger.warning(f"查询班次信息失败: {shift_query_error}")
+
+            if not shift_data:
+                # 没有排班数据时回退到默认值，保持前端展示不空白
+                shift_data = {'id': None, 'name': '正常班', 'start_time': None, 'end_time': None}
+
             record_data = {
                 'id': record.id,
                 'user': {
@@ -194,7 +245,8 @@ def get_attendance_records():
                     'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知'
                 } if user else {'id': None, 'username': '未知', 'name': '未知'},
                 'date': record.record_date.strftime('%Y-%m-%d') if record.record_date else None,
-                'shift': {'name': '正常班'},
+                'shift': shift_data,
+                'user_shift_id': effective_user_shift.id if effective_user_shift else getattr(record, 'user_shift_id', None),
                 'clock_in_time': record.clock_in_time.strftime('%H:%M:%S') if record.clock_in_time else None,
                 'clock_in_ip': record.clock_in_ip,
                 'clock_out_time': record.clock_out_time.strftime('%H:%M:%S') if record.clock_out_time else None,
@@ -219,6 +271,61 @@ def get_attendance_records():
         import traceback
         traceback.print_exc()
         return jsonify({'error': '获取考勤记录失败'}), 500
+
+# 获取单条考勤记录详情
+@attendance_bp.route('/records/<int:record_id>', methods=['GET'])
+@jwt_required()
+@require_permission('attendance:view')
+def get_attendance_record_detail(record_id):
+    """获取单条考勤记录详情"""
+    db = get_db()
+    logger = get_logger()
+    User, AttendanceRecord, LeaveApplication, OvertimeApplication, AttendanceException, WorkCalendar, ShiftSchedule, UserShift, AttendanceStatus, ApprovalStatus, Activity = get_models()
+
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(int(current_user_id))
+
+        record = AttendanceRecord.query.get(record_id)
+        if not record:
+            return jsonify({'error': '考勤记录不存在'}), 404
+
+        # 非管理员只能查看自己的记录
+        if current_user.role != 'admin' and record.user_id != int(current_user_id):
+            return jsonify({'error': '无权查看此记录'}), 403
+
+        user = record.user
+        record_data = {
+            'id': record.id,
+            'user': {
+                'id': user.id if user else None,
+                'username': user.username if user else '未知',
+                'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知'
+            } if user else {'id': None, 'username': '未知', 'name': '未知'},
+            'date': record.record_date.strftime('%Y-%m-%d') if record.record_date else None,
+            'shift': {'name': '正常班'},
+            'clock_in_time': record.clock_in_time.strftime('%Y-%m-%d %H:%M:%S') if record.clock_in_time else None,
+            'clock_in_ip': record.clock_in_ip,
+            'clock_in_location': record.clock_in_location,
+            'clock_out_time': record.clock_out_time.strftime('%Y-%m-%d %H:%M:%S') if record.clock_out_time else None,
+            'clock_out_ip': record.clock_out_ip,
+            'clock_out_location': record.clock_out_location,
+            'work_hours': record.work_hours,
+            'overtime_hours': record.overtime_hours,
+            'late_minutes': record.late_minutes,
+            'early_leave_minutes': record.early_leave_minutes,
+            'status': record.status,
+            'note': record.note,
+            'created_at': record.created_at.strftime('%Y-%m-%d %H:%M:%S') if record.created_at else None,
+            'updated_at': record.updated_at.strftime('%Y-%m-%d %H:%M:%S') if record.updated_at else None
+        }
+
+        return jsonify(record_data)
+    except Exception as e:
+        logger.error(f"Error getting attendance record detail: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': '获取考勤记录详情失败'}), 500
 
 # 打卡
 @attendance_bp.route('/clock-in', methods=['POST'])
@@ -253,13 +360,17 @@ def clock_in():
         today = datetime.utcnow().date()
         user_shift = UserShift.query.filter(
             UserShift.user_id == current_user_id,
-            UserShift.effective_date <= today
+            UserShift.effective_date <= today,
+            db.or_(
+                UserShift.expire_date == None,
+                UserShift.expire_date >= today
+            )
         ).order_by(UserShift.effective_date.desc()).first()
-        
+
         shift = None
         if user_shift:
             shift = ShiftSchedule.query.get(user_shift.shift_id)
-        
+
         late_minutes = 0
         if shift:
             shift_start = datetime.strptime(shift.start_time, '%H:%M').time()
@@ -268,7 +379,7 @@ def clock_in():
                 shift_start_dt = datetime.combine(today, shift_start)
                 actual_dt = datetime.combine(today, actual_time)
                 late_minutes = int((actual_dt - shift_start_dt).total_seconds() / 60)
-        
+
         if existing_record:
             existing_record.clock_in_time = datetime.utcnow()
             existing_record.clock_in_ip = client_ip
@@ -663,24 +774,48 @@ def get_overtime_applications():
         for app in applications:
             applicant = app.user
             approver = app.approver
+            # 计算加班时长（小时）
+            total_hours = 0
+            try:
+                if app.start_time and app.end_time:
+                    sh, sm = map(int, app.start_time.split(':'))
+                    eh, em = map(int, app.end_time.split(':'))
+                    total_hours = round((eh * 60 + em - sh * 60 - sm) / 60, 1)
+            except Exception:
+                total_hours = 0
+            # 申请人名称
+            user_real_name = ''
+            user_name = ''
+            if applicant:
+                user_real_name = f"{applicant.first_name or ''} {applicant.last_name or ''}".strip()
+                user_name = applicant.username
+            # 审批人名称
+            approver_name = ''
+            if approver:
+                approver_name = f"{approver.first_name or ''} {approver.last_name or ''}".strip() or approver.username
             app_data = {
                 'id': app.id,
                 'user_id': app.user_id,
+                'user_real_name': user_real_name or user_name,
+                'user_name': user_name,
                 'applicant': {
                     'id': applicant.id if applicant else None,
                     'username': applicant.username if applicant else '未知',
-                    'name': f"{applicant.first_name or ''} {applicant.last_name or ''}".strip() or applicant.username if applicant else '未知'
+                    'name': user_real_name or (applicant.username if applicant else '未知')
                 } if applicant else None,
-                'overtime_date': app.date.strftime('%Y-%m-%d') if app.date and hasattr(app.date, 'strftime') else (app.date if app.date else None),
+                'date': app.date.strftime('%Y-%m-%d') if app.date and hasattr(app.date, 'strftime') else (str(app.date) if app.date else None),
+                'overtime_date': app.date.strftime('%Y-%m-%d') if app.date and hasattr(app.date, 'strftime') else (str(app.date) if app.date else None),
                 'start_time': app.start_time,
                 'end_time': app.end_time,
+                'total_hours': total_hours,
                 'reason': app.reason,
-                'status': app.status,
+                'status': app.status.value if hasattr(app.status, 'value') else str(app.status),
                 'approver_id': app.approver_id,
+                'approver_name': approver_name or None,
                 'approver': {
                     'id': approver.id if approver else None,
                     'username': approver.username if approver else None,
-                    'name': f"{approver.first_name or ''} {approver.last_name or ''}".strip() or approver.username if approver else None
+                    'name': approver_name or None
                 } if approver else None,
                 'approved_at': app.approved_at.isoformat() if app.approved_at else None,
                 'rejection_reason': app.rejection_reason,
@@ -974,6 +1109,7 @@ def create_shift():
             flexible_range=int(data.get('flexible_range') or 30),
             overtime_threshold=int(data.get('overtime_threshold') or 60),
             is_active=bool(data.get('is_active', True)),
+            days_of_week=','.join(str(d) for d in data.get('days_of_week', [])) if isinstance(data.get('days_of_week'), list) else (data.get('days_of_week') or ''),
             description=data.get('description')
         )
         db.session.add(shift)
@@ -1041,6 +1177,12 @@ def update_shift(shift_id):
             shift.overtime_threshold = int(data.get('overtime_threshold'))
         if 'is_active' in data:
             shift.is_active = bool(data.get('is_active'))
+        if 'days_of_week' in data:
+            dow = data.get('days_of_week')
+            if isinstance(dow, list):
+                shift.days_of_week = ','.join(str(d) for d in dow)
+            else:
+                shift.days_of_week = dow or ''
         if 'description' in data:
             shift.description = data.get('description')
 
@@ -1134,13 +1276,30 @@ def get_user_shifts():
         for us in user_shifts:
             user = us.user
             shift = us.shift
+            # 部门信息
+            department = None
+            if user:
+                try:
+                    department = user.department
+                except Exception:
+                    department = None
+            # 真实姓名
+            full_name = ''
+            if user:
+                full_name = f"{getattr(user, 'first_name', '') or ''} {getattr(user, 'last_name', '') or ''}".strip()
+            display_name = full_name or (user.username if user else '未知')
+
             result.append({
                 'id': us.id,
                 'user_id': us.user_id,
                 'user': {
                     'id': user.id if user else None,
                     'username': user.username if user else '未知',
-                    'name': f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username if user else '未知'
+                    'name': display_name,
+                    'first_name': getattr(user, 'first_name', None) if user else None,
+                    'last_name': getattr(user, 'last_name', None) if user else None,
+                    'department': department,
+                    'position': getattr(user, 'position', None) if user else None
                 } if user else None,
                 'shift_id': us.shift_id,
                 'shift': {
@@ -1148,12 +1307,14 @@ def get_user_shifts():
                     'name': shift.name if shift else '未知',
                     'start_time': shift.start_time if shift else None,
                     'end_time': shift.end_time if shift else None,
+                    'flexible_range': shift.flexible_range if shift else None,
+                    'overtime_threshold': shift.overtime_threshold if shift else None,
                     'shift_type': shift.shift_type if shift else None
                 } if shift else None,
                 'effective_date': us.effective_date.strftime('%Y-%m-%d') if us.effective_date else None,
                 'expire_date': us.expire_date.strftime('%Y-%m-%d') if us.expire_date else None
             })
-        
+
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error getting user shifts: {str(e)}")
@@ -1318,7 +1479,7 @@ def get_exceptions():
         
         # 按部门筛选
         if department and current_user.role == 'admin':
-            query = query.join(User).filter(User.department == department)
+            query = query.join(User, AttendanceException.user_id == User.id).filter(User.department == department)
         
         # 按状态筛选
         if status:
@@ -1460,7 +1621,7 @@ def get_statistics():
         )
         
         if department and current_user.role == 'admin':
-            overtime_query = overtime_query.join(User).filter(User.department == department)
+            overtime_query = overtime_query.join(User, OvertimeApplication.user_id == User.id).filter(User.department == department)
         if current_user.role != 'admin':
             overtime_query = overtime_query.filter_by(user_id=current_user_id)
         
