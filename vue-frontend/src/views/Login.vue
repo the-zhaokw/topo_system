@@ -345,9 +345,10 @@ const initMatrixEffect = () => {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   
-  const chars = 'TOPO01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
+  // 背景字符雨：0 和 1 交替（随机出现）
+  const chars = '01'
   const charArray = chars.split('')
-  const fontSize = 14
+  const fontSize = 16
   const columns = canvas.width / fontSize
   const drops = []
   
@@ -355,24 +356,33 @@ const initMatrixEffect = () => {
     drops[i] = Math.random() * canvas.height
   }
   
+  // 每 N 帧才下落一格，避免重影同时控制速度
+  const moveInterval = 3
+  let frameCount = 0
+
   const draw = () => {
-    ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    
-    ctx.fillStyle = '#38bdf8'
-    ctx.font = fontSize + 'px monospace'
-    
-    for (let i = 0; i < drops.length; i++) {
-      const text = charArray[Math.floor(Math.random() * charArray.length)]
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize)
-      
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0
+    frameCount++
+
+    // 只在需要移动时才重绘，其余帧保持上一帧，避免同一格叠加
+    if (frameCount % moveInterval === 0) {
+      ctx.fillStyle = 'rgba(13, 17, 23, 0.35)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      ctx.fillStyle = '#7dd3fc'
+      ctx.font = fontSize + 'px monospace'
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = charArray[Math.floor(Math.random() * charArray.length)]
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize)
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0
+        }
+
+        drops[i] += 1
       }
-      
-      drops[i]++
     }
-    
+
     matrixAnimationId = requestAnimationFrame(draw)
   }
   
@@ -591,7 +601,7 @@ onUnmounted(() => {
 .matrix-rain {
   position: absolute;
   inset: 0;
-  opacity: 0.15;
+  opacity: 0.18;
   pointer-events: none;
 }
 
