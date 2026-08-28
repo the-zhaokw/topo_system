@@ -153,6 +153,7 @@ import { ElMessage } from 'element-plus'
 import { ArrowLeft, Download } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import * as echarts from 'echarts'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 const route = useRoute()
@@ -362,7 +363,7 @@ const handleExport = async (format) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 

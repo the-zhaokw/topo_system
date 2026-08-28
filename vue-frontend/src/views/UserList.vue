@@ -840,6 +840,7 @@ import {
 } from '@element-plus/icons-vue'
 import { apiService as api } from '@/services/api'
 import { useUserStore } from '@/stores/user'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -1500,7 +1501,7 @@ const resetUserForm = () => {
 
 // 格式化日期
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString('zh-CN')
+  return parseUTCDate(dateString).toLocaleString('zh-CN')
 }
 
 // 导出用户数据

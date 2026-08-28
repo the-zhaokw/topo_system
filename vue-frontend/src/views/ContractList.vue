@@ -388,6 +388,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { Document, Plus, Filter, Search, Refresh, List, View, Edit, Delete, DocumentChecked, CircleCheck, SuccessFilled, Money } from '@element-plus/icons-vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 
@@ -525,13 +526,13 @@ const formatAmount = (amount, currency) => {
 
 const formatDate = (date) => {
   if (!date) return '-'
-  return new Date(date).toLocaleDateString('zh-CN')
+  return parseUTCDate(date).toLocaleDateString('zh-CN')
 }
 
 const getDaysRemaining = (date) => {
   if (!date) return ''
   const today = new Date()
-  const expDate = new Date(date)
+  const expDate = parseUTCDate(date)
   const diffTime = expDate - today
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   if (diffDays < 0) return '已过期'

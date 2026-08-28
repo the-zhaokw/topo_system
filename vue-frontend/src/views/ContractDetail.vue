@@ -367,6 +367,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -530,7 +531,7 @@ const formatAmount = (amount, currency) => {
 
 const formatDate = (date) => {
   if (!date) return '-'
-  return new Date(date).toLocaleDateString('zh-CN')
+  return parseUTCDate(date).toLocaleDateString('zh-CN')
 }
 
 const fetchContract = async () => {

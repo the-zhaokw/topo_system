@@ -351,6 +351,7 @@ import { ElMessage } from 'element-plus'
 import MobileMenu from '@/components/mobile/MobileMenu.vue'
 import MobileTabBar from '@/components/mobile/MobileTabBar.vue'
 import { useResponsive } from '@/composables/useResponsive'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const { isMobile, isMobileRef, isMenuOpen, isMenuOpenRef, toggleMenu, closeMenu } = useResponsive()
 
@@ -637,7 +638,7 @@ const formatNotificationTime = (timeString) => {
   if (!timeString) return ''
 
   const now = systemTimeService.getServerTime()
-  const notificationTime = new Date(timeString)
+  const notificationTime = parseUTCDate(timeString)
   const diffMinutes = Math.floor((now - notificationTime) / (1000 * 60))
 
   if (diffMinutes < 1) return '刚刚'

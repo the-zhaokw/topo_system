@@ -195,6 +195,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
 import { Lock, User, Folder, Timer, InfoFilled, Download, Share, Document, Calendar, Star, Collection, Key, Right, View, Back } from '@element-plus/icons-vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -302,7 +303,7 @@ const downloadArticle = async () => {
 // 格式化日期
 const formatDate = (date) => {
   if (!date) return ''
-  return new Date(date).toLocaleString('zh-CN')
+  return parseUTCDate(date).toLocaleString('zh-CN')
 }
 
 onMounted(() => {

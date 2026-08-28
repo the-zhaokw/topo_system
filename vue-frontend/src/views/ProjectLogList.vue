@@ -334,6 +334,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Search, Filter } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import { useUserStore } from '@/stores/user'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 const route = useRoute()
@@ -474,7 +475,7 @@ const calculateDateRange = (workType) => {
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
+  const date = parseUTCDate(dateString)
   return date.toLocaleDateString('zh-CN')
 }
 

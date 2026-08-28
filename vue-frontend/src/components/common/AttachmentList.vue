@@ -81,6 +81,7 @@ import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Upload, Download, Delete, Document, Loading } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const props = defineProps({
   attachments: {
@@ -227,7 +228,7 @@ const formatFileSize = (bytes) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

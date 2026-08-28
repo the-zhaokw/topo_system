@@ -302,6 +302,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { apiService as api } from '@/services/api'
 import { useUserStore } from '@/stores/user'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -515,7 +516,7 @@ const getStatusHint = (userSetStatus) => {
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('zh-CN')
+  return parseUTCDate(dateString).toLocaleString('zh-CN')
 }
 
 const viewAllActivities = () => {

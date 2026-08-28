@@ -239,6 +239,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Ticket, Collection, Check, Box, Delete, Filter, Search, Refresh, List, Edit } from '@element-plus/icons-vue'
 import materialsService from '@/services/materials'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 // 数据响应式变量
 const loading = ref(false)
@@ -329,7 +330,7 @@ const getStatusTagType = (status) => {
 // 日期格式化
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
+  const date = parseUTCDate(dateString)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

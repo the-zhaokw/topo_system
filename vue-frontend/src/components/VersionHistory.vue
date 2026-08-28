@@ -100,6 +100,7 @@
 import { ref, computed, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { marked } from 'marked'
+import { formatDate } from '@/utils/dateUtils'
 
 const props = defineProps({
   articleId: {
@@ -232,12 +233,6 @@ const compareVersion = async (version) => {
   } catch (error) {
     ElMessage.error('对比失败')
   }
-}
-
-// 格式化日期
-const formatDate = (date) => {
-  if (!date) return ''
-  return new Date(date).toLocaleString('zh-CN')
 }
 
 onUnmounted(() => {

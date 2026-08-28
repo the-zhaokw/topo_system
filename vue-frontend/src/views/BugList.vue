@@ -538,6 +538,7 @@ import { useBugStore } from '@/stores/bug'
 import { useUserStore } from '@/stores/user'
 import { apiService, api as axios } from '@/services/api'
 import { formatFrequency } from '@/utils/bugUtils'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 // 自定义 Bug 图标组件
 const BugIcon = {
@@ -1193,7 +1194,7 @@ const getPriorityText = (priority) => {
 
 // 格式化日期
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString('zh-CN')
+  return parseUTCDate(dateString).toLocaleString('zh-CN')
 }
 
 // 处理标签字符串转换为数组

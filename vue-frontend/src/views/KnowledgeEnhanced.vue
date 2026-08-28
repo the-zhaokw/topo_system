@@ -398,6 +398,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import BlockEditor from '@/components/BlockEditor.vue'
 import { marked } from 'marked'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 
@@ -488,7 +489,7 @@ const renderedContent = computed(() => {
 // 格式化日期
 const formatDate = (date) => {
   if (!date) return ''
-  const d = new Date(date)
+  const d = parseUTCDate(date)
   return d.toLocaleDateString('zh-CN')
 }
 

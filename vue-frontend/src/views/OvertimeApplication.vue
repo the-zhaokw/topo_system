@@ -355,6 +355,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, Timer, Document, Clock, CircleCheck, CircleClose, Calendar, Edit, Check, Refresh, List, User, View, ChatDotRound } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 const formRef = ref(null)
@@ -443,7 +444,7 @@ const getStatusText = (status) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN')
 }
 

@@ -296,6 +296,7 @@ import { ElMessage } from 'element-plus'
 import materialsService from '@/services/materials'
 import { format } from 'date-fns'
 import {
+import { parseUTCDate } from '@/utils/dateUtils'
   Location, Plus, Filter, Search, Refresh, List, Edit, Delete,
   Grid, Box, Check, TrendCharts, OfficeBuilding, MapLocation,
   FirstAidKit
@@ -366,7 +367,7 @@ const occupancyRate = computed(() => {
 // 格式化日期
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  return format(new Date(dateString), 'yyyy-MM-dd HH:mm')
+  return format(parseUTCDate(dateString), 'yyyy-MM-dd HH:mm')
 }
 
 // 加载仓库列表

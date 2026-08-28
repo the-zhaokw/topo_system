@@ -411,6 +411,7 @@ import { apiService } from '@/services/api'
 import { systemTimeService } from '@/services/systemTimeService'
 import UserSelector from '@/components/common/UserSelector.vue'
 import { 
+import { parseUTCDate } from '@/utils/dateUtils'
   Setting, Refresh, DocumentCopy, Tools, Check, Clock, Upload, 
   FolderOpened, Message, Promotion, Lock, DataAnalysis, Grid,
   CircleCheck, CircleClose, Warning, Document, Download, Delete
@@ -521,7 +522,7 @@ const formatSize = (bytes) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN')
 }
 

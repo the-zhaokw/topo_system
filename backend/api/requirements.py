@@ -13,11 +13,16 @@ import io
 
 from services.email_service import email_service
 
+# 延迟导入：此模块通过 restful_api.get_requirements_bp() 在 app 初始化后才加载，
+# 此时 enhanced_app 已完全定义，可直接导入模型，不会循环导入
+from enhanced_app import (
+    db, RequirementDocument, RequirementItem, RequirementComment,
+    RequirementLink, RequirementVersion, User,
+)
+
 requirements_bp = Blueprint('requirements', __name__, url_prefix='/')
 
-# 延迟导入数据库模型以避免循环导入
 def get_db_and_models():
-    from enhanced_app import db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User
     return db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User
 
 

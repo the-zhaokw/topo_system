@@ -10,7 +10,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 from sqlalchemy import or_, func, desc
 from sqlalchemy.orm import joinedload, subqueryload
-from enhanced_app import db, KnowledgeCategory, KnowledgeArticle, KnowledgeAttachment, KnowledgeComment, KnowledgeFavorite, KnowledgeReadRecord, User
+from enhanced_app import db, KnowledgeCategory, KnowledgeArticle, KnowledgeAttachment, KnowledgeComment, KnowledgeFavorite, KnowledgeReadRecord, KnowledgeShare, KnowledgeVersion, KnowledgeLink, article_tags, User
 import os
 import uuid
 import logging
@@ -35,7 +35,13 @@ def check_admin():
         current_user_id = get_jwt_identity()
         from enhanced_app import User
         user = User.query.get(current_user_id)
-        if user and user.role == 'admin':
+        if not user:
+            return False
+        # 与全项目保持一致：系统管理员或拥有 admin/manager 职位的用户视为管理员
+        if user.is_super_admin:
+            return True
+        position_info = user.get_position_info()
+        if position_info and (position_info.is_admin or position_info.is_manager):
             return True
         return False
     except Exception:
@@ -1384,6 +1390,18 @@ def delete_article(art_id):
             return jsonify({'success': False, 'error': '无权限删除此文章'}), 403
 
         old_category_id = article.category_id
+
+        # 清理所有关联记录（外键约束要求先删除子记录）
+        KnowledgeFavorite.query.filter_by(article_id=art_id).delete()
+        KnowledgeReadRecord.query.filter_by(article_id=art_id).delete()
+        KnowledgeShare.query.filter_by(article_id=art_id).delete()
+        KnowledgeVersion.query.filter_by(article_id=art_id).delete()
+        KnowledgeLink.query.filter(
+            or_(KnowledgeLink.from_article_id == art_id, KnowledgeLink.to_article_id == art_id)
+        ).delete()
+        db.session.execute(
+            article_tags.delete().where(article_tags.c.article_id == art_id)
+        )
 
         attachments = KnowledgeAttachment.query.filter_by(article_id=art_id).all()
         for att in attachments:

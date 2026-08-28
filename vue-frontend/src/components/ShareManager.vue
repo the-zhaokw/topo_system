@@ -127,6 +127,7 @@
 <script setup>
 import { ref, reactive, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const props = defineProps({
   articleId: {
@@ -321,7 +322,7 @@ const disabledDate = (date) => {
 // 格式化日期
 const formatDate = (date) => {
   if (!date) return ''
-  return new Date(date).toLocaleString('zh-CN')
+  return parseUTCDate(date).toLocaleString('zh-CN')
 }
 
 // 组件卸载时标记为未挂载

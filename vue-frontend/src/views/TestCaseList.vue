@@ -448,6 +448,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, ArrowLeft, Delete, Download, Upload, UploadFilled, Top, Bottom, CopyDocument, Link, Document } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import UserSelector from '@/components/common/UserSelector.vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 const route = useRoute()
@@ -982,7 +983,7 @@ const handleUnlinkRequirement = async (linkId) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 

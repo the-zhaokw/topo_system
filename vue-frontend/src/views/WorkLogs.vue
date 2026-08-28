@@ -211,6 +211,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, Plus } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 
@@ -436,13 +437,13 @@ const resetForm = () => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
 }
 
 const formatDateTime = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

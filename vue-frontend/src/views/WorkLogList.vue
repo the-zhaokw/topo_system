@@ -542,7 +542,7 @@ const calculateDateRange = (workType) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   if (isNaN(date.getTime())) return '-'
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')

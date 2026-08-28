@@ -298,6 +298,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Download, Upload, Timer, Document, Calendar, Bell, Clock, Filter, List, Check, Close, View } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const loading = ref(false)
 const applicationList = ref([])
@@ -363,7 +364,7 @@ const getStatusText = (status) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN')
 }
 

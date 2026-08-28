@@ -329,6 +329,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import materialsService from '@/services/materials'
 import { saveAs } from 'file-saver'
 import { Document, Box, Money, Download, Upload, DataAnalysis, List, Warning, Search, Refresh } from '@element-plus/icons-vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 // 当前激活的标签页
 const activeTab = ref('summary')
@@ -416,7 +417,7 @@ const getAlertLevelTag = (level) => {
 // 日期格式化
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
+  const date = parseUTCDate(dateString)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

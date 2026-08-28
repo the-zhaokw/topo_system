@@ -416,6 +416,7 @@ import {
 } from '@element-plus/icons-vue'
 import ArticleForm from '@/components/knowledge/ArticleForm.vue'
 import LiquidGlassCard from '@/components/common/LiquidGlassCard.vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 // API 基础 URL：路径已带 /api 前缀，dev 模式留空走 Vite 代理，生产环境补全后端地址
 const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
@@ -753,14 +754,14 @@ const formatNumber = (num) => {
 // 格式化日期
 const formatDate = (date) => {
   if (!date) return ''
-  return new Date(date).toLocaleDateString('zh-CN')
+  return parseUTCDate(date).toLocaleDateString('zh-CN')
 }
 
 // 格式化相对时间
 const formatRelativeTime = (date) => {
   if (!date) return ''
   const now = new Date()
-  const past = new Date(date)
+  const past = parseUTCDate(date)
   const diff = (now - past) / 1000
 
   if (diff < 60) return '刚刚'

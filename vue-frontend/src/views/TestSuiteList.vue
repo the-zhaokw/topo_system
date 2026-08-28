@@ -360,6 +360,7 @@ import {
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import UserSelector from '@/components/common/UserSelector.vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 const route = useRoute()
@@ -691,7 +692,7 @@ const handleSaveSuite = async () => {
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
-  const date = new Date(dateString)
+  const date = parseUTCDate(dateString)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

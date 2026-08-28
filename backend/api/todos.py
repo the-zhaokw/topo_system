@@ -740,31 +740,35 @@ def get_all_todos():
                 'low': 'low'
             }
             bug_priority = _get_enum_value(bug.priority)
+            reporter = db.session.get(models['User'], bug.reported_by)
             all_todos.append({
                 'id': f'bug_resolve_{bug.id}',
                 'category': 'bug',
                 'type': 'to_resolve',
                 'type_name': '待解决Bug',
                 'title': bug.title,
+                'creator_name': reporter.username if reporter else '未知',
                 'status': _get_enum_value(bug.status),
                 'priority': priority_map.get(bug_priority, 'medium'),
                 'created_at': bug.created_at.isoformat() if bug.created_at else None,
                 'link': f'/bugs/{bug.id}'
             })
-        
+
         to_verify_statuses = [models['BugStatus'].RESOLVED.value, models['BugStatus'].FIXED.value]
         to_verify = models['Bug'].query.filter(
             models['Bug'].verifier_id == current_user_id,
             models['Bug'].status.in_(to_verify_statuses)
         ).all()
-        
+
         for bug in to_verify:
+            reporter = db.session.get(models['User'], bug.reported_by)
             all_todos.append({
                 'id': f'bug_verify_{bug.id}',
                 'category': 'bug',
                 'type': 'to_verify',
                 'type_name': '待验证Bug',
                 'title': bug.title,
+                'creator_name': reporter.username if reporter else '未知',
                 'status': _get_enum_value(bug.status),
                 'priority': 'medium',
                 'created_at': bug.resolved_at.isoformat() if bug.resolved_at else None,
@@ -778,6 +782,7 @@ def get_all_todos():
 
         for req in pending_requirements:
             doc = db.session.get(models['RequirementDocument'], req.doc_id)
+            creator = db.session.get(models['User'], req.created_by)
             all_todos.append({
                 'id': req.id,
                 'doc_id': req.doc_id,
@@ -786,24 +791,27 @@ def get_all_todos():
                 'type': 'requirement',
                 'type_name': '需求评审',
                 'title': req.title,
+                'creator_name': creator.username if creator else '未知',
                 'status': req.status,
                 'priority': 'medium',
                 'created_at': req.created_at.isoformat() if req.created_at else None,
                 'link': f'/requirements/{req.id}'
             })
-        
+
         pending_test_cases = models['TestCase'].query.filter(
             models['TestCase'].status == 'pending_review',
             models['TestCase'].reviewer_id == current_user_id
         ).all()
-        
+
         for tc in pending_test_cases:
+            creator = db.session.get(models['User'], tc.created_by)
             all_todos.append({
                 'id': f'testcase_{tc.id}',
                 'category': 'review',
                 'type': 'test_case',
                 'type_name': '测试用例评审',
                 'title': tc.title,
+                'creator_name': creator.username if creator else '未知',
                 'status': tc.status,
                 'priority': 'medium',
                 'created_at': tc.created_at.isoformat() if tc.created_at else None,

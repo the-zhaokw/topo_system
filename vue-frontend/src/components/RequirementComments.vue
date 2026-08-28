@@ -46,6 +46,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import api from '@/services/api'
+import { formatDate } from '@/utils/dateUtils'
 
 const props = defineProps({
   targetType: {
@@ -127,11 +128,6 @@ const canDelete = (comment) => {
   const user = userStore.currentUser
   if (!user) return false
   return comment.created_by === user.id || user.role === 'admin' || user.role === 'manager' || user.role === 'project_manager'
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('zh-CN')
 }
 
 onMounted(() => {

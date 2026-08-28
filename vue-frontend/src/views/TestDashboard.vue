@@ -259,6 +259,7 @@ import { ElMessage } from 'element-plus'
 import { Refresh, Folder, Document, VideoPlay, DataLine, PieChart, Histogram, List, Bell, EditPen, View, Collection, DataAnalysis } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import * as echarts from 'echarts'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 const route = useRoute()
@@ -460,7 +461,7 @@ const getProgressColor = (value) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 

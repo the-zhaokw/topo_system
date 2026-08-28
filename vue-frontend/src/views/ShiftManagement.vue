@@ -665,6 +665,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, User, Calendar, Clock, List, CircleCheck, CircleClose, UserFilled, Timer, Edit, Delete, View, Aim, Warning, Postcard, Promotion, Sunny, Moon, Check, InfoFilled, OfficeBuilding } from '@element-plus/icons-vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
 
@@ -699,7 +700,7 @@ const isToday = (dateStr) => {
 // 格式化日期显示
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   const month = (date.getMonth() + 1).toString().padStart(2, '0')
   const day = date.getDate().toString().padStart(2, '0')
   return `${month}-${day}`

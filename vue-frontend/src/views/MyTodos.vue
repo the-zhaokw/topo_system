@@ -540,6 +540,7 @@ import {
   WarningFilled, CircleClose, FolderOpened, Check, Close, Cpu, ChatLineRound
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
 
@@ -885,13 +886,13 @@ const getRowClassName = ({ row }) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleDateString('zh-CN')
 }
 
 const formatDateTime = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN')
 }
 

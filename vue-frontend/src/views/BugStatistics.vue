@@ -577,6 +577,7 @@ import {
 import * as echarts from 'echarts'
 import bugStatisticsService from '@/services/bugStatisticsService'
 import { systemTimeService } from '@/services/systemTimeService'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 export default {
   name: 'BugStatistics',
@@ -1499,7 +1500,7 @@ export default {
 
     const formatDate = (dateStr) => {
       if (!dateStr) return '-'
-      const date = new Date(dateStr)
+      const date = parseUTCDate(dateStr)
       return date.toLocaleString('zh-CN', {
         year: 'numeric',
         month: '2-digit',

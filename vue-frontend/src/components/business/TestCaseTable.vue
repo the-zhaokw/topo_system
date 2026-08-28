@@ -147,6 +147,7 @@
 import { ref, computed, watch } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import TestCaseResultBadge from '@/components/common/TestCaseResultBadge.vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const props = defineProps({
   cases: {
@@ -297,7 +298,7 @@ const clearSelection = () => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

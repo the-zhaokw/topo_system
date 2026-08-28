@@ -154,6 +154,7 @@ import { marked } from 'marked'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
+import { parseUTCDate } from '@/utils/dateUtils'
   Folder, Clock, Edit, Share, Star, StarFilled,
   View, ChatDotRound, Paperclip, Download
 } from '@element-plus/icons-vue'
@@ -366,14 +367,14 @@ const formatFileSize = (size) => {
 // 格式化日期
 const formatDate = (date) => {
   if (!date) return ''
-  return new Date(date).toLocaleString('zh-CN')
+  return parseUTCDate(date).toLocaleString('zh-CN')
 }
 
 // 格式化相对时间
 const formatRelativeTime = (date) => {
   if (!date) return ''
   const now = new Date()
-  const past = new Date(date)
+  const past = parseUTCDate(date)
   const diff = (now - past) / 1000
 
   if (diff < 60) return '刚刚'

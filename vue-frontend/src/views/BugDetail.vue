@@ -563,6 +563,7 @@ import { useUserStore } from '@/stores/user'
 import { systemTimeService } from '@/services/systemTimeService'
 import { apiService, api as axios } from '@/services/api'
 import { formatFrequency } from '@/utils/bugUtils'
+import { formatDate, parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -1486,15 +1487,11 @@ const getPriorityText = (priority) => {
   return textMap[priority] || priority
 }
 
-// 格式化日期
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString('zh-CN')
-}
-
 // 格式化活动记录的日期（更友好的显示）
 const formatActivityDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
+  const date = parseUTCDate(dateString)
+  if (!date) return ''
   const now = systemTimeService.getServerTime()
   const diffMs = now - date
   const diffMinutes = Math.floor(diffMs / (1000 * 60))
@@ -1517,7 +1514,8 @@ const formatActivityDate = (dateString) => {
 // 格式化完整日期（用于 title 提示）
 const formatFullDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
+  const date = parseUTCDate(dateString)
+  if (!date) return ''
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

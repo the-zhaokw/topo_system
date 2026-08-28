@@ -324,6 +324,7 @@ import {
   Warning
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const searchQuery = ref('')
 const statusFilter = ref('')
@@ -529,7 +530,7 @@ const isOverdue = (task) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
 }
 

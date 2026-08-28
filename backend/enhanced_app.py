@@ -71,7 +71,10 @@ app.json.ensure_ascii = False
 class CustomJSONProvider(app.json_provider_class):
     def default(self, obj):
         if isinstance(obj, datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
+            if obj.tzinfo is None:
+                # naive datetime 视为 UTC，加 Z 后缀让前端正确解析
+                return obj.isoformat() + 'Z'
+            return obj.isoformat()
         return super().default(obj)
 
 app.json_provider_class = CustomJSONProvider

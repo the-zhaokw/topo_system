@@ -81,6 +81,7 @@ import {
   Loading
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const props = defineProps({
   caseId: {
@@ -165,7 +166,7 @@ const tooltipContent = computed(() => {
 
 const formatRelativeTime = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   const now = new Date()
   const diff = now - date
   const seconds = Math.floor(diff / 1000)
@@ -181,7 +182,7 @@ const formatRelativeTime = (dateStr) => {
 
 const formatDateTime = (dateStr) => {
   if (!dateStr) return '-'
-  const date = new Date(dateStr)
+  const date = parseUTCDate(dateStr)
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

@@ -194,6 +194,7 @@ import { Plus, Document, User, Files, Clock, DataAnalysis } from '@element-plus/
 import { useUserStore } from '@/stores/user'
 import api from '@/services/api'
 import UserSelector from '@/components/common/UserSelector.vue'
+import { parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -409,7 +410,7 @@ const getStatusText = (status) => {
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('zh-CN')
+  return parseUTCDate(dateString).toLocaleString('zh-CN')
 }
 
 onMounted(() => {
