@@ -31,6 +31,10 @@ def get_create_audit_log():
     from enhanced_app import create_audit_log
     return create_audit_log
 
+def get_create_notification():
+    from enhanced_app import create_notification
+    return create_notification
+
 def require_permission(perm_code):
     """考勤子路由权限校验装饰器
 
@@ -720,6 +724,19 @@ def create_leave_application():
         except Exception:
             pass
 
+        # 通知审批人有新的请假申请待审批
+        if approver_id:
+            try:
+                create_notification = get_create_notification()
+                create_notification(
+                    user_id=approver_id,
+                    notification_type='approval_request',
+                    title=f'{current_user.username} 提交了请假申请，待您审批',
+                    content=f'请假类型: {leave_type}，{start_date_str} 至 {end_date_str}，共 {days} 天。原因: {reason}'
+                )
+            except Exception:
+                pass
+
         return jsonify({
             'message': '请假申请提交成功',
             'application': application.to_dict()
@@ -910,6 +927,19 @@ def create_overtime_application():
         except Exception:
             pass
 
+        # 通知审批人有新的加班申请待审批
+        if approver_id:
+            try:
+                create_notification = get_create_notification()
+                create_notification(
+                    user_id=approver_id,
+                    notification_type='approval_request',
+                    title=f'{current_user.username} 提交了加班申请，待您审批',
+                    content=f'加班日期: {date_str}，{start_time}-{end_time}。原因: {reason}'
+                )
+            except Exception:
+                pass
+
         return jsonify({
             'message': '加班申请提交成功',
             'application': application.to_dict()
@@ -971,6 +1001,20 @@ def approve_leave_application(application_id):
             )
         except Exception:
             pass
+
+        # 通知申请人审批结果
+        if application.user_id and application.user_id != current_user_id:
+            try:
+                create_notification = get_create_notification()
+                result_text = '已通过' if action != 'reject' else '被拒绝'
+                create_notification(
+                    user_id=application.user_id,
+                    notification_type='approval_result',
+                    title=f'您的请假申请{result_text}',
+                    content=f'请假类型: {application.leave_type}，审批意见: {comment or "无"}'
+                )
+            except Exception:
+                pass
 
         return jsonify({
             'message': '审批通过' if action != 'reject' else '已拒绝',
@@ -1036,6 +1080,21 @@ def approve_overtime_application(application_id):
             )
         except Exception:
             pass
+
+        # 通知申请人审批结果
+        if application.user_id and application.user_id != current_user_id:
+            try:
+                create_notification = get_create_notification()
+                result_text = '已通过' if action != 'reject' else '被拒绝'
+                ot_date = application.date.strftime('%Y-%m-%d') if application.date else '未知'
+                create_notification(
+                    user_id=application.user_id,
+                    notification_type='approval_result',
+                    title=f'您的加班申请{result_text}',
+                    content=f'加班日期: {ot_date}，审批意见: {comment or "无"}'
+                )
+            except Exception:
+                pass
 
         return jsonify({
             'message': '审批通过' if action != 'reject' else '已拒绝',

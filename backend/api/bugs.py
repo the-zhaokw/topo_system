@@ -488,6 +488,15 @@ def create_bug():
                 def send_resolver_email_async():
                     try:
                         resolver_user = User.query.get(resolved_by)
+                        if resolver_user:
+                            create_notification = get_create_notification()
+                            create_notification(
+                                user_id=resolved_by,
+                                notification_type='bug_assigned',
+                                title=f'新缺陷指派给您解决: {bug.title}',
+                                content=f'缺陷 #{bug.id} "{bug.title}" 已指派给您解决，请及时处理。',
+                                related_bug_id=bug.id
+                            )
                         if resolver_user and resolver_user.email:
                             from enhanced_app import send_email_notification as send_email
                             email_subject = f"[TOPO系统] 新缺陷指派给您解决: {bug.title}"
