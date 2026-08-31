@@ -90,8 +90,17 @@ export const useUserStore = defineStore('user', {
           if (response.user) {
             this.currentUser = response.user
             localStorage.setItem('user', JSON.stringify(response.user))
-          } else {
-            await this.fetchCurrentUser()
+          }
+          // 始终调用 fetchCurrentUser 获取完整用户信息（包含 custom_permissions）
+          // 失败时保留 login 返回的用户信息，不触发登出
+          try {
+            const fullUser = await apiService.auth.getCurrentUser()
+            if (fullUser) {
+              this.currentUser = fullUser
+              localStorage.setItem('user', JSON.stringify(fullUser))
+            }
+          } catch (fetchErr) {
+            console.warn('获取完整用户信息失败，使用登录返回数据:', fetchErr)
           }
           return { success: true, message: '登录成功' }
         }
