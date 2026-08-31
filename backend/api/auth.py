@@ -586,3 +586,20 @@ def update_profile():
             db.session.rollback()
             logger.error(f"更新个人资料时发生异常: {str(e)}", exc_info=True)
             return jsonify({'error': f'更新失败: {str(e)}'}), 500
+
+# 用户登出
+@auth_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    User, UserRole = get_models()
+    db = get_db()
+    current_user_id = get_jwt_identity()
+
+    from enhanced_app import app
+    with app.app_context():
+        user = User.query.get(current_user_id)
+        if user:
+            user.status = 'offline'
+            db.session.commit()
+
+    return jsonify({'success': True, 'message': '登出成功'}), 200

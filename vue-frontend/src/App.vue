@@ -546,9 +546,9 @@ const handleProfile = () => {
   router.push('/profile')
 }
 
-const handleLogout = () => {
+const handleLogout = async () => {
   // 处理退出登录
-  userStore.logout()
+  await userStore.logout()
   // 跳转到登录页面
   router.push('/login')
 }

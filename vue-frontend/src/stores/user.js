@@ -158,7 +158,12 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    logout() {
+    async logout() {
+      try {
+        await apiService.auth.logout()
+      } catch (e) {
+        // 忽略后端错误，继续清除本地状态
+      }
       this.token = ''
       this.currentUser = null
       localStorage.removeItem('token')

@@ -260,6 +260,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/user'
 import {
   House, List, TrendCharts, DataAnalysis, Setting, Plus, DArrowLeft, DArrowRight,
   Search, Bell, Edit, Document, User, SwitchButton, Calendar
@@ -271,6 +272,7 @@ const { isMobile } = useResponsive()
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const isCollapsed = ref(false)
 const activeMenu = ref('dashboard')
@@ -466,8 +468,8 @@ const removeTag = (tagName) => {
   myTags.value = myTags.value.filter(t => t.name !== tagName)
 }
 
-const handleLogout = () => {
-  localStorage.removeItem('token')
+const handleLogout = async () => {
+  await userStore.logout()
   router.push('/login')
 }
 

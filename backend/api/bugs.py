@@ -1005,6 +1005,7 @@ def update_bug(bug_id):
 @require_bug_permission('bug:update_status')
 def update_bug_status(bug_id):
     """更新缺陷状态"""
+    logger = logging.getLogger(__name__)
     User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
     
     db = get_db()
@@ -1042,11 +1043,19 @@ def update_bug_status(bug_id):
     bug.status = new_status_value.lower()
     bug.updated_at = now_china()
     
-    if new_status_value == 'resolved' and not bug.resolved_at:
+    if new_status_value == 'resolved':
         bug.resolved_at = now_china()
         bug.resolved_by = int(current_user_id)
-    elif new_status_value == 'closed' and not bug.closed_at:
+    elif new_status_value == 'closed':
         bug.closed_at = now_china()
+    elif new_status_value == 'reopened':
+        bug.reopened_count = (bug.reopened_count or 0) + 1
+        # 重打开时清理上一生命周期的解决/关闭/验证数据
+        bug.resolved_at = None
+        bug.resolved_by = None
+        bug.closed_at = None
+        bug.verified_at = None
+        bug.verified_by = None
     
     try:
         db.session.commit()
@@ -1136,6 +1145,7 @@ def update_bug_status(bug_id):
 @log_business_operation()
 def transition_bug_status(bug_id):
     """缺陷状态转换"""
+    logger = logging.getLogger(__name__)
     try:
         User, Project, ProjectMember, BugStatus, Severity, Priority, Bug, Comment, Attachment, Activity, send_mention_notifications = get_models()
         
@@ -1200,6 +1210,12 @@ def transition_bug_status(bug_id):
             bug.closed_at = now_china()
         elif new_status_lower == 'reopened':
             bug.reopened_count = (bug.reopened_count or 0) + 1
+            # 重打开时清理上一生命周期的解决/关闭/验证数据，确保时间线完整记录新的生命周期
+            bug.resolved_at = None
+            bug.resolved_by = None
+            bug.closed_at = None
+            bug.verified_at = None
+            bug.verified_by = None
 
         try:
             db.session.commit()
@@ -1272,6 +1288,39 @@ def transition_bug_status(bug_id):
             'old_value': old_status,
             'new_value': new_status_lower
         }]
+        
+        # 记录解决信息到 field_changes，确保状态时间线能完整显示历史解决信息
+        if new_status_lower == 'resolved':
+            if data.get('resolution'):
+                field_changes.append({
+                    'field': 'resolution',
+                    'field_label': '解决方案',
+                    'old_value': '',
+                    'new_value': data['resolution']
+                })
+            if data.get('resolution_version'):
+                field_changes.append({
+                    'field': 'resolution_version',
+                    'field_label': '解决版本',
+                    'old_value': '',
+                    'new_value': data['resolution_version']
+                })
+            field_changes.append({
+                'field': 'resolved_by',
+                'field_label': '解决者',
+                'old_value': '',
+                'new_value': current_user.username if current_user else ''
+            })
+        
+        # 记录重新打开原因到 field_changes
+        if new_status_lower == 'reopened' and data.get('reopen_reason'):
+            field_changes.append({
+                'field': 'reopen_reason',
+                'field_label': '重开原因',
+                'old_value': '',
+                'new_value': data['reopen_reason']
+            })
+        
         field_changes_json = json.dumps(field_changes, ensure_ascii=False)
 
         activity = Activity(

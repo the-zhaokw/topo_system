@@ -107,6 +107,14 @@
               placeholder="请输入修复说明（必填）"
             />
           </el-form-item>
+          <el-form-item label="重开原因" v-if="needReopenReason">
+            <el-input
+              v-model="transitionForm.reopen_reason"
+              type="textarea"
+              :rows="4"
+              placeholder="请输入重新打开的原因"
+            />
+          </el-form-item>
         </el-form>
         <template #footer>
           <el-button @click="showTransitionDialog = false" class="btn-secondary">取消</el-button>
@@ -220,16 +228,26 @@
                 :key="item.id"
                 :timestamp="formatDate(item.timestamp)"
                 placement="top"
-                :type="item.type === 'creation' ? 'primary' : item.type === 'resolved' ? 'success' : item.type === 'reopened' ? 'danger' : 'warning'"
+                :type="getTimelineType(item.type)"
               >
                 <div class="timeline-item-content">
                   <h4>{{ item.title }}</h4>
                   <p>{{ item.description }}</p>
+                  <div v-if="item.resolutionInfo" class="timeline-resolution">
+                    <pre class="resolution-text">{{ item.resolutionInfo }}</pre>
+                  </div>
+                  <div v-if="item.reopenInfo" class="timeline-reopen">
+                    <pre class="reopen-text">{{ item.reopenInfo }}</pre>
+                  </div>
                   <div class="timeline-tags">
+                    <el-tag v-if="item.type === 'creation'" size="small" type="primary" effect="light">新建</el-tag>
                     <el-tag v-if="item.type === 'resolved'" size="small" type="success" effect="light">已解决</el-tag>
                     <el-tag v-if="item.type === 'reopened'" size="small" type="danger" effect="light">重新打开</el-tag>
                     <el-tag v-if="item.type === 'closed'" size="small" type="info" effect="light">已关闭</el-tag>
                     <el-tag v-if="item.type === 'in_progress'" size="small" type="warning" effect="light">处理中</el-tag>
+                    <el-tag v-if="item.type === 'verified'" size="small" type="success" effect="plain">已验证</el-tag>
+                    <el-tag v-if="item.type === 'assigned'" size="small" type="primary" effect="plain">已分配</el-tag>
+                    <el-tag v-if="item.type === 'fixed'" size="small" type="success" effect="plain">已修复</el-tag>
                   </div>
                 </div>
               </el-timeline-item>
@@ -650,6 +668,20 @@ const fieldChangeActivities = computed(() => {
 const statusTimeline = computed(() => {
   const timeline = []
 
+  // 完整的状态标题映射
+  const statusTitles = {
+    'new': '新建',
+    'assigned': '已分配',
+    'in_progress': '处理中',
+    'fixed': '已修复',
+    'resolved': '已解决',
+    'verified': '已验证',
+    'closed': '已关闭',
+    'reopened': '重新打开',
+    'rejected': '已拒绝',
+    'open': '待处理'
+  }
+
   // 1. 添加创建记录
   timeline.push({
     id: 'creation',
@@ -685,15 +717,7 @@ const statusTimeline = computed(() => {
         const statusChange = fieldChanges.find(c => c.field === 'status')
         const oldStatus = statusChange.old_value
         const newStatus = statusChange.new_value
-        const statusTitles = {
-          'new': '新建',
-          'in_progress': '开始处理',
-          'resolved': '已解决',
-          'verified': '已验证',
-          'closed': '已关闭',
-          'reopened': '重新打开'
-        }
-        timeline.push({
+        const item = {
           id: activity.id,
           timestamp: activity.created_at,
           title: statusTitles[newStatus] || newStatus,
@@ -701,12 +725,38 @@ const statusTimeline = computed(() => {
           type: newStatus,
           oldStatus,
           newStatus
-        })
+        }
+        // 已解决状态时，附加解决者提交的解决方案信息（使用活动记录中的历史数据）
+        if (newStatus === 'resolved') {
+          const resolutionChange = fieldChanges.find(c => c.field === 'resolution')
+          const resolvedByChange = fieldChanges.find(c => c.field === 'resolved_by')
+          const resolutionVersionChange = fieldChanges.find(c => c.field === 'resolution_version')
+          const resolutionText = resolutionChange?.new_value || bug.value?.resolution || ''
+          const resolverName = resolvedByChange?.new_value || activity.user_name || bug.value?.resolver_name || ''
+          const parts = []
+          if (resolverName) parts.push(`解决者: ${resolverName}`)
+          // 使用活动时间作为解决时间，确保每次解决都显示正确的历史时间
+          if (activity.created_at) parts.push(`解决时间: ${formatDate(activity.created_at)}`)
+          if (resolutionVersionChange?.new_value) parts.push(`解决版本: ${resolutionVersionChange.new_value}`)
+          if (resolutionText) parts.push(`解决方案: ${resolutionText}`)
+          if (parts.length > 0) item.resolutionInfo = parts.join('\n')
+        }
+        // 重新打开状态时，附加重开原因
+        if (newStatus === 'reopened') {
+          const reopenReasonChange = fieldChanges.find(c => c.field === 'reopen_reason')
+          const reopenReason = reopenReasonChange?.new_value || ''
+          const parts = []
+          if (activity.user_name) parts.push(`操作人: ${activity.user_name}`)
+          if (bug.value?.reopened_count) parts.push(`重开次数: 第 ${bug.value.reopened_count} 次`)
+          if (reopenReason) parts.push(`重开原因: ${reopenReason}`)
+          if (parts.length > 0) item.reopenInfo = parts.join('\n')
+        }
+        timeline.push(item)
       }
     }
   })
 
-  // 3. 如果当前状态是reopened且没有在activities中找到，添加重新打开记录
+  // 3. 如果当前状态是reopened且没有在activities中找到，添加重新打开记录（兼容旧数据）
   if (bug.value?.status === 'reopened') {
     const hasReopenedInTimeline = timeline.some(item => item.newStatus === 'reopened')
     if (!hasReopenedInTimeline) {
@@ -735,11 +785,16 @@ const showTransitionDialog = ref(false)
 const transitionLoading = ref(false)
 const transitionForm = ref({
   newStatus: '',
-  resolution: ''
+  resolution: '',
+  reopen_reason: ''
 })
 const needResolution = computed(() => {
   if (!bug.value?.id) return false
   return bug.value.status === 'in_progress' && transitionForm.value.newStatus === 'resolved'
+})
+const needReopenReason = computed(() => {
+  if (!bug.value?.id) return false
+  return transitionForm.value.newStatus === 'reopened'
 })
 
 const bugId = computed(() => route.params.id)
@@ -840,7 +895,6 @@ const availableTransitions = computed(() => {
   if (isSuperAdmin || isManager) {
     if (status === 'resolved') {
       transitions.push({ to: 'closed', label: '关闭', type: 'success' })
-      transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
     }
     if (status === 'closed') {
       transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
@@ -851,7 +905,6 @@ const availableTransitions = computed(() => {
   if (isTester) {
     if (status === 'resolved') {
       transitions.push({ to: 'closed', label: '关闭', type: 'success' })
-      transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
     }
     if (status === 'closed') {
       transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
@@ -928,8 +981,7 @@ const workflowSuggestions = computed(() => {
         title: '验证修复',
         description: `请验证 Bug 修复是否有效，如有效请关闭此 Bug。${bug.resolver_name ? `此 Bug 由 ${bug.resolver_name} 解决。` : ''}${bug.resolved_at ? `解决时间：${formatDate(bug.resolved_at)}。` : ''}${bug.resolution ? `解决方案：${bug.resolution.substring(0, 100)}${bug.resolution.length > 100 ? '...' : ''}` : ''}`,
         actions: [
-          { to: 'closed', label: '关闭', btnType: 'success' },
-          { to: 'reopened', label: '重新打开', btnType: 'warning' }
+          { to: 'closed', label: '关闭', btnType: 'success' }
         ]
       })
     }
@@ -1065,6 +1117,7 @@ const addComment = async () => {
 const handleStatusTransition = (transition) => {
   transitionForm.value.newStatus = transition.to
   transitionForm.value.resolution = ''
+  transitionForm.value.reopen_reason = ''
   showTransitionDialog.value = true
 }
 
@@ -1077,10 +1130,16 @@ const confirmTransition = async () => {
   
   transitionLoading.value = true
   try {
-    const response = await apiService.bugs.transitionBug(bugId.value, {
-      status: transitionForm.value.newStatus,
-      resolution: transitionForm.value.resolution
-    })
+    const requestData = {
+      status: transitionForm.value.newStatus
+    }
+    if (transitionForm.value.resolution) {
+      requestData.resolution = transitionForm.value.resolution
+    }
+    if (transitionForm.value.reopen_reason) {
+      requestData.reopen_reason = transitionForm.value.reopen_reason
+    }
+    const response = await apiService.bugs.transitionBug(bugId.value, requestData)
     
     ElMessage.success(response.message || '状态变更成功')
     showTransitionDialog.value = false
@@ -1431,6 +1490,24 @@ const getStatusText = (status) => {
     'reopened': '重新打开'
   }
   return textMap[status] || status
+}
+
+// 时间线节点类型映射
+const getTimelineType = (type) => {
+  const typeMap = {
+    'creation': 'primary',
+    'new': 'primary',
+    'assigned': 'primary',
+    'in_progress': 'warning',
+    'fixed': 'success',
+    'resolved': 'success',
+    'verified': 'success',
+    'closed': 'info',
+    'reopened': 'danger',
+    'rejected': 'danger',
+    'open': 'warning'
+  }
+  return typeMap[type] || 'warning'
 }
 
 // 严重程度类型映射
@@ -2024,6 +2101,42 @@ onMounted(async () => {
   color: #64748b;
   font-size: 13px;
   line-height: 1.5;
+}
+
+.timeline-resolution {
+  margin: 0 0 12px 0;
+  padding: 10px 12px;
+  background: rgba(34, 197, 94, 0.08);
+  border-left: 3px solid #22c55e;
+  border-radius: 6px;
+}
+
+.resolution-text {
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  color: #475569;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
+}
+
+.timeline-reopen {
+  margin: 0 0 12px 0;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border-left: 3px solid #ef4444;
+  border-radius: 6px;
+}
+
+.reopen-text {
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  color: #475569;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
 }
 
 .timeline-tags {
