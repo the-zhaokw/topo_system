@@ -206,7 +206,17 @@ def import_data():
         
         import_tasks[task_id]['status'] = 'completed'
         import_tasks[task_id]['result'] = import_result
-        
+
+        from enhanced_app import create_audit_log
+        create_audit_log(
+            user_id=current_user_id,
+            action='import',
+            resource_type='data',
+            resource_id=None,
+            details=f'导入数据: 模板={template_id}, 结果={import_result}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '导入完成',
@@ -459,7 +469,18 @@ def export_data():
         
         export_tasks[task_id]['status'] = 'completed'
         export_tasks[task_id]['result'] = result
-        
+
+        current_user_id = get_jwt_identity()
+        from enhanced_app import create_audit_log
+        create_audit_log(
+            user_id=current_user_id,
+            action='export',
+            resource_type='data',
+            resource_id=None,
+            details=f'导出数据: 类型={export_type}, 格式={format_type}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '导出完成',

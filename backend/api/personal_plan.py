@@ -11,6 +11,11 @@ import re
 personal_plan_bp = Blueprint('personal_plan', __name__, url_prefix='/personal-plan')
 logger = logging.getLogger(__name__)
 
+def get_audit_logger():
+    """延迟获取审计日志函数，避免循环导入"""
+    from enhanced_app import create_audit_log
+    return create_audit_log
+
 def get_models():
     """延迟获取模型，避免循环导入"""
     from enhanced_app import (
@@ -129,6 +134,9 @@ def create_task():
         db.session.add(task)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_task', resource_id=task.id, details=f'创建任务: {task.title}', request=request)
+
         return jsonify({
             'success': True,
             'data': task.to_dict(),
@@ -218,6 +226,9 @@ def update_task(task_id):
 
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=task_id, details=f'更新任务: {task.title}', request=request)
+
         return jsonify({
             'success': True,
             'data': task.to_dict(),
@@ -250,6 +261,9 @@ def delete_task(task_id):
 
         db.session.delete(task)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='delete', resource_type='personal_task', resource_id=task_id, details=f'删除任务: {task.title}', request=request)
 
         return jsonify({
             'success': True,
@@ -392,6 +406,9 @@ def start_task():
 
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=task_id, details=f'开始任务: {task.title}', request=request)
+
         return jsonify({
             'success': True,
             'data': task.to_dict(),
@@ -443,6 +460,9 @@ def complete_task():
             db.session.add(record)
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=task_id, details=f'完成任务: {task.title}', request=request)
 
         return jsonify({
             'success': True,
@@ -587,6 +607,9 @@ def create_time_block():
         db.session.add(task)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_task', resource_id=task.id, details=f'创建时间块', request=request)
+
         return jsonify({
             'success': True,
             'data': task.to_dict(),
@@ -624,6 +647,9 @@ def start_focus():
 
         db.session.add(session)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_task', resource_id=session.id, details=f'开始专注会话', request=request)
 
         return jsonify({
             'success': True,
@@ -673,6 +699,9 @@ def end_focus():
                     task.actual_minutes = (task.actual_minutes or 0) + session.actual_duration
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=session_id, details=f'结束专注会话', request=request)
 
         return jsonify({
             'success': True,
@@ -794,6 +823,9 @@ def check_in_habit():
 
         db.session.add(record)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_task', resource_id=None, details=f'习惯打卡', request=request)
 
         return jsonify({
             'success': True,
@@ -990,6 +1022,9 @@ def update_settings():
             settings.tag_colors = json.dumps(data['tag_colors'])
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=None, details=f'更新个人设置', request=request)
 
         return jsonify({
             'success': True,
@@ -1239,6 +1274,9 @@ def create_subtask(task_id):
         # 更新父任务的进度
         update_parent_progress(parent_task)
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_task', resource_id=subtask.id, details=f'创建子任务: {subtask.title}', request=request)
+
         return jsonify({
             'success': True,
             'data': subtask.to_dict(),
@@ -1349,6 +1387,9 @@ def batch_update_tasks():
 
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=None, details=f'批量更新任务: {updated_count}个', request=request)
+
         return jsonify({
             'success': True,
             'message': f'已成功更新 {updated_count} 个任务',
@@ -1398,6 +1439,9 @@ def toggle_task_complete(task_id):
                 update_parent_progress(parent_task)
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=task_id, details=f'切换任务完成状态: {task.title}', request=request)
 
         return jsonify({
             'success': True,
@@ -1453,6 +1497,9 @@ def update_task_progress(task_id):
                 update_parent_progress(parent_task)
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_task', resource_id=task_id, details=f'更新任务进度: {progress}%', request=request)
 
         return jsonify({
             'success': True,
@@ -1527,6 +1574,9 @@ def create_template():
         db.session.add(template)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_template', resource_id=template.id, details=f'创建模板: {template.name}', request=request)
+
         return jsonify({
             'success': True,
             'data': template.to_dict(),
@@ -1578,6 +1628,9 @@ def update_template(template_id):
 
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_template', resource_id=template_id, details=f'更新模板: {template.name}', request=request)
+
         return jsonify({
             'success': True,
             'data': template.to_dict(),
@@ -1611,6 +1664,9 @@ def delete_template(template_id):
 
         db.session.delete(template)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='delete', resource_type='personal_template', resource_id=template_id, details=f'删除模板: {template.name}', request=request)
 
         return jsonify({
             'success': True,
@@ -1664,6 +1720,9 @@ def apply_template(template_id):
             created_tasks.append(task)
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_task', resource_id=None, details=f'应用模板创建任务', request=request)
 
         return jsonify({
             'success': True,
@@ -1790,6 +1849,9 @@ def generate_review():
         db.session.add(review)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='personal_review', resource_id=review.id, details=f'生成复盘', request=request)
+
         return jsonify({
             'success': True,
             'data': review.to_dict(),
@@ -1829,6 +1891,9 @@ def update_review(review_id):
                 setattr(review, field, data[field])
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='update', resource_type='personal_review', resource_id=review_id, details=f'更新复盘', request=request)
 
         return jsonify({
             'success': True,

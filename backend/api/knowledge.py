@@ -29,6 +29,12 @@ logger = logging.getLogger(__name__)
 knowledge_bp = Blueprint('knowledge', __name__, url_prefix='/knowledge')
 
 
+def get_audit_logger():
+    """延迟获取审计日志函数"""
+    from enhanced_app import create_audit_log
+    return create_audit_log
+
+
 def check_admin():
     """检查是否为管理员"""
     try:
@@ -227,6 +233,9 @@ def create_category():
         db.session.add(category)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='knowledge_category', resource_id=category.id, details=f'创建分类: {category.name}', request=request)
+
         return jsonify({
             'success': True,
             'message': '分类创建成功',
@@ -315,6 +324,9 @@ def update_category(cat_id):
         db.session.commit()
         update_category_article_count(category.id)
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_category', resource_id=cat_id, details=f'更新分类: {category.name}', request=request)
+
         return jsonify({
             'success': True,
             'message': '分类更新成功'
@@ -339,6 +351,9 @@ def archive_category(cat_id):
 
         category.is_archived = 1 if not category.is_archived else 0
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_category', resource_id=cat_id, details=f'归档分类: {category.name}', request=request)
 
         return jsonify({
             'success': True,
@@ -384,6 +399,9 @@ def delete_category(cat_id):
 
         db.session.delete(category)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='delete', resource_type='knowledge_category', resource_id=cat_id, details=f'删除分类: {category.name}', request=request)
 
         if category.parent_id:
             update_category_article_count(category.parent_id)
@@ -668,6 +686,9 @@ def create_article():
         db.session.add(article)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='knowledge_article', resource_id=article.id, details=f'创建文章: {article.title}', request=request)
+
         if article.status == 'published' and article.category_id:
             update_category_article_count(article.category_id)
 
@@ -796,9 +817,12 @@ def create_article_comment(art_id):
         )
         db.session.add(comment)
         db.session.commit()
-        
+
         # Refresh to get the user relationship
         db.session.refresh(comment)
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='knowledge_comment', resource_id=comment.id, details=f'发表评论于文章ID: {art_id}', request=request)
 
         return jsonify({
             'success': True,
@@ -845,6 +869,9 @@ def delete_article_comment(art_id, comment_id):
             db.session.delete(comment)
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='delete', resource_type='knowledge_comment', resource_id=comment_id, details=f'删除评论于文章ID: {art_id}', request=request)
 
         return jsonify({
             'success': True,
@@ -1101,6 +1128,9 @@ def upload_attachment(art_id):
         db.session.add(attachment)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='create', resource_type='knowledge_article', resource_id=art_id, details=f'上传附件: {attachment.filename}', request=request)
+
         return jsonify({
             'success': True,
             'message': '文件上传成功',
@@ -1162,6 +1192,9 @@ def delete_attachment(art_id, att_id):
 
         db.session.delete(attachment)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='delete', resource_type='knowledge_article', resource_id=art_id, details=f'删除附件: {attachment.filename}', request=request)
 
         return jsonify({
             'success': True,
@@ -1293,6 +1326,9 @@ def update_article(art_id):
         db.session.commit()
         logger.info(f"update_article: after commit - author_id={article.author_id}, author_name={article.author_name}")
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_article', resource_id=art_id, details=f'更新文章: {article.title}', request=request)
+
         if old_category_id:
             update_category_article_count(old_category_id)
         if new_category_id and new_category_id != old_category_id:
@@ -1332,6 +1368,9 @@ def update_article_status(art_id):
         article.status = new_status
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_article', resource_id=art_id, details=f'更新文章状态: {old_status} -> {new_status}', request=request)
+
         if article.category_id:
             if old_status != new_status:
                 update_category_article_count(article.category_id)
@@ -1363,6 +1402,9 @@ def toggle_article_pin(art_id):
         
         article.is_pinned = 1 if is_pinned else 0
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_article', resource_id=art_id, details=f'文章置顶: {article.title}, is_pinned={is_pinned}', request=request)
 
         return jsonify({
             'success': True,
@@ -1419,6 +1461,9 @@ def delete_article(art_id):
         db.session.delete(article)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='delete', resource_type='knowledge_article', resource_id=art_id, details=f'删除文章: {article.title}', request=request)
+
         if old_category_id:
             update_category_article_count(old_category_id)
 
@@ -1465,6 +1510,9 @@ def batch_move_articles():
 
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_article', resource_id=None, details=f'批量移动{len(article_ids)}篇文章至分类ID: {target_category_id}', request=request)
+
         for cat_id in affected_categories:
             if cat_id:
                 update_category_article_count(cat_id)
@@ -1504,6 +1552,9 @@ def batch_update_status():
                 article.status = new_status
 
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_article', resource_id=None, details=f'批量更新{len(article_ids)}篇文章状态为: {new_status}', request=request)
 
         for cat_id in affected_categories:
             if cat_id:
@@ -1558,6 +1609,9 @@ def batch_delete_articles():
 
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='delete', resource_type='knowledge_article', resource_id=None, details=f'批量删除{deleted_count}篇文章', request=request)
+
         for cat_id in affected_categories:
             if cat_id:
                 update_category_article_count(cat_id)
@@ -1583,6 +1637,9 @@ def like_article(art_id):
 
         article.like_count = (article.like_count or 0) + 1
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=get_jwt_identity(), action='update', resource_type='knowledge_article', resource_id=art_id, details=f'点赞文章: {article.title}', request=request)
 
         return jsonify({
             'success': True,
@@ -1621,6 +1678,9 @@ def favorite_article(art_id):
         db.session.add(favorite)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='knowledge_article', resource_id=art_id, details=f'收藏文章: {article.title}', request=request)
+
         return jsonify({
             'success': True,
             'message': '收藏成功',
@@ -1653,6 +1713,9 @@ def unfavorite_article(art_id):
         
         db.session.delete(favorite)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='delete', resource_type='knowledge_article', resource_id=art_id, details=f'取消收藏文章: {article.title}', request=request)
 
         return jsonify({
             'success': True,
@@ -1897,6 +1960,9 @@ def create_article_share(art_id):
         db.session.add(share)
         db.session.commit()
 
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='create', resource_type='knowledge_article', resource_id=art_id, details=f'创建文章分享链接: {article.title}', request=request)
+
         return jsonify({
             'success': True,
             'message': '分享链接创建成功',
@@ -2019,6 +2085,9 @@ def delete_article_share(share_id):
 
         db.session.delete(share)
         db.session.commit()
+
+        audit_log = get_audit_logger()
+        audit_log(user_id=current_user_id, action='delete', resource_type='knowledge_article', resource_id=share.article_id, details=f'删除文章分享链接: share_id={share_id}', request=request)
 
         return jsonify({
             'success': True,

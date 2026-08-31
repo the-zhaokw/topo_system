@@ -17,13 +17,13 @@ from services.email_service import email_service
 # 此时 enhanced_app 已完全定义，可直接导入模型，不会循环导入
 from enhanced_app import (
     db, RequirementDocument, RequirementItem, RequirementComment,
-    RequirementLink, RequirementVersion, User,
+    RequirementLink, RequirementVersion, User, create_audit_log,
 )
 
 requirements_bp = Blueprint('requirements', __name__, url_prefix='/')
 
 def get_db_and_models():
-    return db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User
+    return db, RequirementDocument, RequirementItem, RequirementComment, RequirementLink, RequirementVersion, User, create_audit_log
 
 
 def get_current_user_id():
@@ -128,7 +128,16 @@ def create_requirement_document(project_id):
         )
         db.session.add(version)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='create',
+            resource_type='requirement_document',
+            resource_id=document.id,
+            details=f'创建需求文档: {document.name}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求文档创建成功',
@@ -190,7 +199,16 @@ def update_requirement_document(doc_id):
         
         document.updated_at = datetime.utcnow()
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='update',
+            resource_type='requirement_document',
+            resource_id=doc_id,
+            details=f'更新需求文档: {document.name}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求文档更新成功',
@@ -216,7 +234,16 @@ def delete_requirement_document(doc_id):
         
         db.session.delete(document)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='delete',
+            resource_type='requirement_document',
+            resource_id=doc_id,
+            details=f'删除需求文档: {document.name}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求文档删除成功'
@@ -247,7 +274,16 @@ def change_document_status(doc_id):
         document.status = new_status
         document.updated_at = datetime.utcnow()
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='update',
+            resource_type='requirement_document',
+            resource_id=doc_id,
+            details=f'变更文档状态为: {new_status}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': f'文档状态已更新为 {new_status}',
@@ -334,7 +370,16 @@ def create_requirement_item(doc_id):
         
         db.session.add(item)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='create',
+            resource_type='requirement_item',
+            resource_id=item.id,
+            details=f'创建需求条目: {item.identifier} - {item.title}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求条目创建成功',
@@ -407,7 +452,16 @@ def update_requirement_item(item_id):
         
         item.updated_at = datetime.utcnow()
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='update',
+            resource_type='requirement_item',
+            resource_id=item_id,
+            details=f'更新需求条目: {item.identifier}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求条目更新成功',
@@ -434,7 +488,16 @@ def delete_requirement_item(item_id):
         
         db.session.delete(item)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='delete',
+            resource_type='requirement_item',
+            resource_id=item_id,
+            details=f'删除需求条目: {item.identifier}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求条目删除成功'
@@ -466,7 +529,16 @@ def change_item_status(item_id):
         item.status = new_status
         item.updated_at = datetime.utcnow()
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='update',
+            resource_type='requirement_item',
+            resource_id=item_id,
+            details=f'变更需求条目状态为: {new_status}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': f'需求状态已更新为 {new_status}',
@@ -569,7 +641,16 @@ def create_comment():
         
         db.session.add(comment)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='create',
+            resource_type='requirement_comment',
+            resource_id=comment.id,
+            details=f'创建评论: {target_type}(ID:{target_id})',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '评论创建成功',
@@ -595,7 +676,16 @@ def delete_comment(comment_id):
         
         db.session.delete(comment)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='delete',
+            resource_type='requirement_comment',
+            resource_id=comment_id,
+            details='删除评论',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '评论删除成功'
@@ -662,7 +752,16 @@ def create_requirement_link():
         
         db.session.add(link)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='create',
+            resource_type='requirement_link',
+            resource_id=link.id,
+            details=f'创建关联关系: 需求条目{requirement_id} -> {target_type}(ID:{target_id})',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '关联关系创建成功',
@@ -689,7 +788,16 @@ def delete_requirement_link(link_id):
         
         db.session.delete(link)
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='delete',
+            resource_type='requirement_link',
+            resource_id=link_id,
+            details='删除关联关系',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '关联关系删除成功'
@@ -769,7 +877,16 @@ def create_document_version(doc_id):
         document.updated_at = datetime.utcnow()
         
         db.session.commit()
-        
+
+        create_audit_log(
+            user_id=user_id,
+            action='create',
+            resource_type='requirement_version',
+            resource_id=version.id,
+            details=f'创建文档版本: v{new_version}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': f'版本 {new_version} 创建成功',
@@ -1036,6 +1153,15 @@ def copy_requirement_item(item_id):
         db.session.add(new_item)
         db.session.commit()
 
+        create_audit_log(
+            user_id=user_id,
+            action='create',
+            resource_type='requirement_item',
+            resource_id=new_item.id,
+            details=f'复制需求条目: {new_item.identifier} - {new_item.title}',
+            request=request
+        )
+
         return jsonify({
             'success': True,
             'message': '需求条目复制成功',
@@ -1076,6 +1202,15 @@ def move_requirement_item(item_id):
         item.updated_at = datetime.utcnow()
 
         db.session.commit()
+
+        create_audit_log(
+            user_id=user_id,
+            action='update',
+            resource_type='requirement_item',
+            resource_id=item_id,
+            details=f'移动需求条目到文档ID: {target_doc_id}',
+            request=request
+        )
 
         return jsonify({
             'success': True,
@@ -1350,6 +1485,15 @@ def rollback_to_version(doc_id, version_num):
         document.version = document.version + 1
 
         db.session.commit()
+
+        create_audit_log(
+            user_id=user_id,
+            action='update',
+            resource_type='requirement_document',
+            resource_id=doc_id,
+            details=f'回滚文档到版本 {version_num}',
+            request=request
+        )
 
         return jsonify({
             'success': True,
