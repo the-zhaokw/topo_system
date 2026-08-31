@@ -183,16 +183,44 @@ def register():
             )
             
             db.session.commit()
-            
+
+            # 注册成功后直接创建访问令牌，实现自动登录
+            access_token = create_access_token(identity=new_user.id)
+
+            # 获取职位信息
+            try:
+                position_info = new_user.get_position_info()
+                is_admin = new_user.is_super_admin or (position_info and (position_info.is_admin or position_info.is_manager))
+            except Exception as pos_err:
+                logger.warning(f"获取职位信息失败: {pos_err}")
+                is_admin = new_user.is_super_admin
+
             return jsonify({
                 'success': True,
                 'message': '注册成功',
                 'data': {
+                    'access_token': access_token,
                     'user': {
                         'id': new_user.id,
                         'username': new_user.username,
                         'email': new_user.email,
-                        'role': new_user.role.value if hasattr(new_user.role, 'value') else str(new_user.role)
+                        'role': new_user.role.value if hasattr(new_user.role, 'value') else str(new_user.role),
+                        'department': new_user.department,
+                        'position': new_user.position,
+                        'is_super_admin': new_user.is_super_admin,
+                        'is_admin': is_admin,
+                        'phone': new_user.phone,
+                        'first_name': new_user.first_name,
+                        'last_name': new_user.last_name,
+                        'employee_id': new_user.employee_id,
+                        'company_phone': new_user.company_phone,
+                        'mobile_phone': new_user.mobile_phone,
+                        'birthday': new_user.birthday.isoformat() if new_user.birthday else None,
+                        'gender': new_user.gender,
+                        'work_language': new_user.work_language,
+                        'avatar': new_user.avatar,
+                        'status': new_user.status or 'online',
+                        'created_at': new_user.created_at.isoformat() if new_user.created_at else None,
                     }
                 }
             }), 201

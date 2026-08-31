@@ -107,13 +107,19 @@ export const useUserStore = defineStore('user', {
       this.userLoading = true
       try {
         const response = await apiService.auth.register(userData)
-        if (response && response.token) {
-          this.token = response.token
-          localStorage.setItem('token', response.token)
-          await this.fetchCurrentUser()
+        const token = response?.access_token || response?.token
+        if (response && token) {
+          this.token = token
+          localStorage.setItem('token', token)
+          if (response.user) {
+            this.currentUser = response.user
+            localStorage.setItem('user', JSON.stringify(response.user))
+          } else {
+            await this.fetchCurrentUser()
+          }
           return { success: true, message: '注册成功' }
         }
-        return { success: false, message: '注册失败' }
+        return { success: false, message: response?.message || '注册失败' }
       } catch (error) {
         return { success: false, message: error.response?.data?.error || '注册失败' }
       } finally {
