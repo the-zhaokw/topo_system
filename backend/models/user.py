@@ -171,14 +171,14 @@ class User(BaseModel):
         if self.status == 'offline':
             return 'offline'
         if self.last_activity:
-            five_minutes_ago = now_china() - timedelta(minutes=5)
+            five_minutes_ago = now_china().replace(tzinfo=None) - timedelta(minutes=5)
             if self.last_activity >= five_minutes_ago:
                 return self.status or 'online'
         return 'offline'
     
     def update_activity(self):
         """更新用户最后活动时间"""
-        self.last_activity = now_china()
+        self.last_activity = now_china().replace(tzinfo=None)
 
     # ==================== 大功能模块（侧边栏一级菜单）可见性 ====================
     def get_accessible_modules(self):

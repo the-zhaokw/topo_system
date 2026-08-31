@@ -284,9 +284,9 @@ def login():
 
             # 更新用户的last_login时间和状态为在线
             try:
-                user.last_login = now_china()
+                user.last_login = now_china().replace(tzinfo=None)
                 user.status = 'online'
-                user.last_activity = now_china()
+                user.last_activity = now_china().replace(tzinfo=None)
             except Exception as field_err:
                 logger.warning(f"更新用户状态字段失败（忽略继续）: {field_err}")
 

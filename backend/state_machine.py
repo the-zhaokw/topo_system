@@ -482,13 +482,14 @@ class BugWorkflowManager:
         current_status = SMBugStatus(bug['status'] if isinstance(bug, dict) else bug.status)
         
         # Check for overdue bugs
+        now_naive = now_china().replace(tzinfo=None)
         if hasattr(bug, 'due_date') and bug.due_date:
-            if now_china() > bug.due_date:
+            if now_naive > bug.due_date:
                 warnings.append("Bug 已逾期")
-        
+
         # Check for bugs stuck in same status too long
         if hasattr(bug, 'status_changed_at') and bug.status_changed_at:
-            days_in_status = (now_china() - bug.status_changed_at).days
+            days_in_status = (now_naive - bug.status_changed_at).days
             if days_in_status > 7 and current_status in [SMBugStatus.ASSIGNED, SMBugStatus.IN_PROGRESS]:
                 warnings.append(f"Bug 在 {current_status.value} 状态已超过 {days_in_status} 天")
         
