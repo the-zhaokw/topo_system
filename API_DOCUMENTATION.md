@@ -1169,11 +1169,132 @@ Authorization: Bearer <your_jwt_token>
 
 - 通知列表、未读/已读、全部已读
 
+## 活动记录 API
+
+> 路径前缀为 `/api/activities`。记录系统中所有用户操作（项目、Bug、需求、考勤、知识库、个人任务等模块的增删改查）。
+
+### 获取活动记录列表
+
+**Endpoint**: `GET /api/activities/`
+
+**查询参数**:
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `page` | int | 页码，默认1 |
+| `per_page` | int | 每页条数，默认20 |
+| `resource_type` | string | 资源类型筛选（project, bug, user, requirement_document, personal_task, knowledge_article, attendance, leave_application, risk 等） |
+| `action` | string | 操作类型筛选（create, update, delete, assign, approve, clock_in, export 等，支持模糊匹配） |
+| `user_name` | string | 用户名筛选 |
+| `start_date` | string | 起始日期（ISO格式） |
+| `end_date` | string | 结束日期（ISO格式） |
+
+**响应示例**:
+```json
+{
+    "activities": [
+        {
+            "id": 1,
+            "action": "create_bug",
+            "description": "创建缺陷: 登录页面样式异常",
+            "target_type": "bug",
+            "target_id": 42,
+            "resource_name": "登录页面样式异常",
+            "performed_by": 1,
+            "user_name": "admin",
+            "user_role": "admin",
+            "created_at": "2026-08-31T10:30:00",
+            "field_changes": [
+                {"field": "status", "old_value": "new", "new_value": "assigned"}
+            ]
+        }
+    ],
+    "total": 212,
+    "page": 1,
+    "pages": 11,
+    "per_page": 20
+}
+```
+
+### 获取活动记录统计
+
+**Endpoint**: `GET /api/activities/statistics`
+
+**响应示例**:
+```json
+{
+    "total": 320,
+    "create_count": 85,
+    "update_count": 142,
+    "delete_count": 28,
+    "today_count": 15
+}
+```
+
+### 获取最近活动记录
+
+**Endpoint**: `GET /api/activities/recent`
+
+返回最近7天内的50条活动记录。
+
+### 获取特定资源的活动记录
+
+**Endpoint**: `GET /api/activities/{resource_type}/{resource_id}`
+
+### 获取单个活动记录详情
+
+**Endpoint**: `GET /api/activities/{activity_id}`
+
+### 创建活动记录
+
+**Endpoint**: `POST /api/activities/`
+
+### 删除活动记录
+
+**Endpoint**: `DELETE /api/activities/{activity_id}`
+
+> 仅管理员可删除活动记录。
+
+### 已记录的用户操作
+
+系统在以下模块的所有增删改操作中自动记录活动日志：
+
+| 模块 | 资源类型 | 记录的操作 |
+|------|----------|-----------|
+| 项目管理 | project, project_member | 创建、更新、删除、成员管理 |
+| Bug跟踪 | bug | 创建、更新、状态变更、分配、附件上传/删除 |
+| 用户管理 | user | 创建、更新、角色/部门变更 |
+| 需求管理 | requirement_document, requirement_item, requirement_comment, requirement_link, requirement_version | 创建、更新、删除、状态变更、复制、移动、回滚 |
+| 测试管理 | test_suite, test_case, test_execution, test_result | 创建、更新、删除、执行 |
+| 考勤管理 | attendance, leave_application, overtime_application, shift_schedule, user_shift | 打卡、请假/加班申请、审批、班次管理 |
+| 风险管理 | risk | 创建、更新、删除 |
+| 知识库 | knowledge_article, knowledge_category, knowledge_comment | 创建、更新、删除、点赞、收藏、分享 |
+| 个人计划 | personal_task, personal_template, personal_review | 任务/模板/复盘的增删改查、专注会话、习惯打卡 |
+| 工作日志 | work_log | 创建、更新、删除 |
+| 项目日志 | project_log | 创建、更新 |
+| 数据导入导出 | data | 导入、导出 |
+| 认证 | user | 注册、登录 |
+
 ## 审计日志 API
 
-> 实际路径前缀为 `/api/audit`、`/api/activities`。
+> 路径前缀为 `/api/audit`。审计日志包含IP地址和User-Agent信息，用于安全审计。
 
-- 审计日志列表、活动记录
+### 获取审计日志列表
+
+**Endpoint**: `GET /api/audit/logs`
+
+> 管理员可查看所有日志，普通用户仅查看自己的日志。
+
+### 获取审计日志统计
+
+**Endpoint**: `GET /api/audit/statistics`
+
+返回操作分布、资源分布、活跃用户、每日趋势等统计信息。
+
+### 导出审计日志
+
+**Endpoint**: `POST /api/audit/export`
+
+支持 JSON、CSV、Excel 格式导出。
 
 ## 系统监控 API
 

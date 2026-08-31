@@ -147,11 +147,14 @@
 - 健康检查接口（`/api/health`、`/health`）
 
 #### 15. 审计日志
-- 操作审计记录
+- 操作审计记录（自动记录所有模块的用户操作）
 - 登录日志追踪
 - 业务操作日志（业务/审计/错误/性能/请求日志分类存储）
 - 日志查询和导出
-- 活动记录追踪
+- 活动记录追踪（全量统计：总记录数、创建/更新/删除操作数、今日记录数）
+- 活动记录筛选（按资源类型、操作类型、用户名、日期范围筛选）
+- 支持20+种资源类型（项目、Bug、需求、考勤、知识库、个人任务等）
+- 审计日志含IP地址和User-Agent信息
 - 日志轮转与归档
 
 #### 16. 个人工作台
@@ -576,9 +579,17 @@ VITE_UPLOAD_MAX_SIZE=16             # 上传文件最大大小（MB）
 - `GET /api/performance` - 性能指标
 - `GET /api/health` - 健康检查
 
-#### 18. 审计日志 API
-- `GET /api/audit` - 获取审计日志
-- `GET /api/activities` - 获取活动记录
+#### 18. 活动记录与审计日志 API
+- `GET  /api/activities` - 获取活动记录列表（支持分页、资源类型/操作类型/用户/日期筛选）
+- `GET  /api/activities/statistics` - 获取活动记录统计（总记录数、创建/更新/删除/今日记录数）
+- `GET  /api/activities/recent` - 获取最近7天活动记录
+- `GET  /api/activities/{resource_type}/{resource_id}` - 获取特定资源的活动记录
+- `GET  /api/activities/{id}` - 获取单个活动记录详情
+- `POST /api/activities` - 创建活动记录
+- `DELETE /api/activities/{id}` - 删除活动记录（仅管理员）
+- `GET  /api/audit/logs` - 获取审计日志（管理员查看全部，普通用户查看自己）
+- `GET  /api/audit/statistics` - 获取审计日志统计
+- `POST /api/audit/export` - 导出审计日志（JSON/CSV/Excel）
 
 #### 19. 搜索 API
 - `GET /api/search` - 全局搜索
@@ -677,11 +688,11 @@ VITE_UPLOAD_MAX_SIZE=16             # 上传文件最大大小（MB）
 - **test_case_requirement_links**: 用例-需求关联
 
 #### 11. 系统管理表
-- **audit_logs**: 审计日志
+- **activities**: 活动记录（操作类型、描述、执行人、目标类型、目标ID、字段变更详情）
+- **audit_logs**: 审计日志（含IP地址、User-Agent、操作详情）
 - **system_settings / system_config.json**: 系统配置
 - **backup_records**: 备份记录
 - **notifications**: 通知
-- **activities**: 活动记录
 
 #### 12. 知识库表
 - **knowledge_categories**: 分类（多级、归档）
@@ -808,6 +819,14 @@ topo_system/
 ```
 
 ## 更新日志
+
+### v1.7.0 (2026-08)
+- **活动记录全面升级**：修复 `create_audit_log()` 函数，使其真正写入数据库（Activity表 + AuditLog表）
+- 新增活动记录统计接口 `GET /api/activities/statistics`（全量统计，非当前页计算）
+- 为需求管理（16个操作）、个人计划（20个操作）、知识库（21个操作）、数据导入导出（2个操作）模块补充活动记录
+- 活动记录现覆盖所有主要模块：项目管理、Bug跟踪、用户管理、需求管理、测试管理、考勤管理、风险管理、知识库、个人计划、工作日志、项目日志、数据导入导出、认证
+- 活动记录筛选支持20+种资源类型和12种操作类型（含模糊匹配）
+- 前端活动记录页面：统计卡片改用后端全量统计、新增资源类型/操作类型显示映射、修复变更详情字段显示
 
 ### v1.6.0 (2026-06)
 - 新增**模块权限控制**功能：用户级别可独立配置可访问的大功能模块（项目、Bug、考勤等），支持权限模板

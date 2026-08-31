@@ -334,7 +334,6 @@ def get_attendance_record_detail(record_id):
 # 打卡
 @attendance_bp.route('/clock-in', methods=['POST'])
 @jwt_required()
-@require_permission('attendance:clock_in')
 def clock_in():
     """上班打卡"""
     db = get_db()
@@ -426,7 +425,6 @@ def clock_in():
 # 下班打卡
 @attendance_bp.route('/clock-out', methods=['POST'])
 @jwt_required()
-@require_permission('attendance:clock_out')
 def clock_out():
     """下班打卡"""
     db = get_db()

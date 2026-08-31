@@ -205,47 +205,47 @@ CREATE INDEX idx_comments_created_at ON comments(created_at);
 ```sql
 CREATE TABLE activities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    bug_id INTEGER,
-    task_id INTEGER,
-    project_id INTEGER,
-    user_id INTEGER NOT NULL,
-    action VARCHAR(50) NOT NULL,  -- 操作类型
-    old_value TEXT,  -- 旧值
-    new_value TEXT,  -- 新值
+    action VARCHAR(50) NOT NULL,           -- 操作类型（create, update, delete, assign, approve 等）
+    description TEXT NOT NULL,             -- 活动描述
+    performed_by INTEGER NOT NULL,         -- 执行人ID（关联 users.id）
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (bug_id) REFERENCES bugs(id) ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    target_type VARCHAR(50) NOT NULL,     -- 目标对象类型（bug, project, user, requirement_document 等）
+    target_id INTEGER NOT NULL,            -- 目标对象ID
+    field_changes TEXT,                     -- 字段变更详情（JSON格式存储）
+    FOREIGN KEY (performed_by) REFERENCES users(id)
 );
 
-CREATE INDEX idx_activities_bug_id ON activities(bug_id);
-CREATE INDEX idx_activities_task_id ON activities(task_id);
-CREATE INDEX idx_activities_project_id ON activities(project_id);
-CREATE INDEX idx_activities_user_id ON activities(user_id);
+CREATE INDEX idx_activities_action ON activities(action);
+CREATE INDEX idx_activities_target_type ON activities(target_type);
+CREATE INDEX idx_activities_performed_by ON activities(performed_by);
 CREATE INDEX idx_activities_created_at ON activities(created_at);
 ```
+
+> 活动记录覆盖系统所有模块的用户操作，包括：项目管理、Bug跟踪、用户管理、需求管理、测试管理、考勤管理、风险管理、知识库、个人计划、工作日志、项目日志、数据导入导出、认证等。
 
 ### 2.9 审计日志表（audit_logs）
 
 ```sql
 CREATE TABLE audit_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    action VARCHAR(50) NOT NULL,  -- 操作类型
-    resource_type VARCHAR(50) NOT NULL,  -- 资源类型
-    resource_id INTEGER,
-    details TEXT NOT NULL,  -- 详细操作信息
-    ip_address VARCHAR(45),  -- IP地址
-    user_agent TEXT,  -- 用户代理
+    user_id INTEGER,                       -- 操作用户ID（关联 users.id）
+    action VARCHAR(50) NOT NULL,           -- 操作类型
+    resource_type VARCHAR(50) NOT NULL,    -- 资源类型
+    resource_id INTEGER,                   -- 资源ID
+    details TEXT,                          -- 详细操作信息
+    ip_address VARCHAR(50),                -- IP地址
+    user_agent TEXT,                       -- 用户代理
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
+CREATE INDEX idx_audit_logs_action ON audit_logs(action);
 CREATE INDEX idx_audit_logs_resource_type ON audit_logs(resource_type);
 CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
 ```
+
+> 审计日志与活动日志同时写入：用户操作时，Activity表记录活动内容（前端展示用），AuditLog表记录IP地址和User-Agent（安全审计用）。
 
 ### 2.10 通知表（notifications）
 
@@ -309,10 +309,8 @@ users 1:n bugs (reporter, assignee, resolver, verifier)
 users 1:n tasks (owner, assignee)
 bugs 1:n comments
 tasks 1:n comments
-bugs 1:n activities
-tasks 1:n activities
-projects 1:n activities
-users 1:n activities
+bugs 1:n activities (通过 target_type + target_id 多态关联)
+users 1:n activities (performed_by)
 users 1:n audit_logs
 users 1:n notifications
 bugs 1:n notifications
