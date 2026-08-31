@@ -388,6 +388,14 @@ def create_bug():
             return jsonify({'success': False, 'message': '指定的验证者用户不存在', 'data': None}), 404
         verifier_id = data['verifier_id']
 
+    # 验证解决者是否存在
+    resolved_by = None
+    if 'resolved_by' in data and data['resolved_by']:
+        resolver = User.query.get(data['resolved_by'])
+        if not resolver:
+            return jsonify({'success': False, 'message': '指定的解决者用户不存在', 'data': None}), 404
+        resolved_by = data['resolved_by']
+
     # 处理截止日期
     deadline = None
     if 'deadline' in data and data['deadline']:
@@ -409,6 +417,7 @@ def create_bug():
             project_id=data['project_id'],
             reported_by=int(current_user_id),
             assigned_to=assigned_to,
+            resolved_by=resolved_by,
             verifier_id=verifier_id,
             version=data.get('version'),
             tags=parse_tags(data.get('tags')),
@@ -430,16 +439,17 @@ def create_bug():
         db.session.add(bug)
         db.session.commit()
         
-        # 记录审计日志
-        create_audit_log(
-            user_id=current_user_id,
+        # 记录活动记录
+        activity = Activity(
             action='create_bug',
-            resource_type='bug',
-            resource_id=bug.id,
-            details=f'创建缺陷: {bug.title}',
-            request=request
+            description=f'创建缺陷: {bug.title}',
+            performed_by=int(current_user_id),
+            target_type='bug',
+            target_id=bug.id
         )
-        
+        db.session.add(activity)
+        db.session.commit()
+
         # 如果分配了用户，发送通知（异步发送，不阻塞请求）
         if assigned_to:
             try:
@@ -470,7 +480,78 @@ def create_bug():
             except Exception as e:
                 logger = logging.getLogger(__name__)
                 logger.error(f"启动通知线程失败: {str(e)}")
-        
+
+        # 如果指定了解决者，发送邮件通知解决者（异步发送，不阻塞请求）
+        if resolved_by:
+            try:
+                import threading
+                def send_resolver_email_async():
+                    try:
+                        resolver_user = User.query.get(resolved_by)
+                        if resolver_user and resolver_user.email:
+                            from enhanced_app import send_email_notification as send_email
+                            email_subject = f"[TOPO系统] 新缺陷指派给您解决: {bug.title}"
+                            email_body = f"""亲爱的 {resolver_user.username}，
+
+缺陷 #{bug.id} "{bug.title}" 已指派给您解决，请及时处理。
+
+项目: {project.name if project else "未知"}
+优先级: {bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}
+严重程度: {bug.severity.value if hasattr(bug.severity, "value") else str(bug.severity)}
+报告人: {current_user.username}
+
+请登录TOPO系统查看详情。
+
+此邮件由TOPO系统自动发送。
+"""
+                            html_body = f"""
+<html>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #2563eb;">新缺陷指派通知</h2>
+        <p>亲爱的 <strong>{resolver_user.username}</strong>，</p>
+        <p>缺陷 <strong>#{bug.id} {bug.title}</strong> 已指派给您解决，请及时处理。</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>项目</strong></td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{project.name if project else "未知"}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>优先级</strong></td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>严重程度</strong></td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{bug.severity.value if hasattr(bug.severity, "value") else str(bug.severity)}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>报告人</strong></td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{current_user.username}</td>
+            </tr>
+        </table>
+        <p>请登录TOPO系统查看详情。</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #666;">
+            此邮件由TOPO系统自动发送。<br>
+            请勿回复此邮件。
+        </p>
+    </div>
+</body>
+</html>
+"""
+                            send_email(resolver_user.email, email_subject, email_body, html_body)
+                            logger.info(f"创建bug #{bug.id} 时发送邮件通知给解决者: {resolver_user.email}")
+                    except Exception as e:
+                        logger = logging.getLogger(__name__)
+                        logger.error(f"创建bug时发送解决者邮件通知失败: {str(e)}")
+
+                resolver_email_thread = threading.Thread(target=send_resolver_email_async)
+                resolver_email_thread.daemon = True
+                resolver_email_thread.start()
+            except Exception as e:
+                logger = logging.getLogger(__name__)
+                logger.error(f"启动解决者邮件通知线程失败: {str(e)}")
+
         return jsonify({
             'success': True,
             'message': '缺陷创建成功',
@@ -637,7 +718,8 @@ def update_bug(bug_id):
             project_id=bug.project_id,
             user_id=current_user_id
         ).first()
-        if not member:
+        is_reporter = bool(bug.reported_by) and int(bug.reported_by) == int(current_user_id)
+        if not member and not is_reporter:
             return jsonify({'success': False, 'message': '无权更新此缺陷', 'data': None}), 403
     
     updateable_fields = [
@@ -894,16 +976,7 @@ def update_bug(bug_id):
             )
             db.session.add(activity)
             db.session.commit()
-        
-        create_audit_log(
-            user_id=current_user_id,
-            action='update_bug',
-            resource_type='bug',
-            resource_id=bug_id,
-            details=f'更新缺陷: {bug.title}',
-            request=request
-        )
-        
+
         return jsonify({
             'success': True,
             'message': '缺陷更新成功',
@@ -1017,15 +1090,6 @@ def update_bug_status(bug_id):
                     logger.info(f"Bug #{bug.id} 已解决，邮件通知已发送给报告人: {reporter.email}")
             except Exception as e:
                 logger.error(f"发送Bug解决邮件通知失败: {str(e)}")
-        
-        create_audit_log(
-            user_id=current_user_id,
-            action='bug_status_update',
-            resource_type='bug',
-            resource_id=bug_id,
-            details=f'更新缺陷状态: {old_status} -> {new_status_value}',
-            request=request
-        )
 
         import json
         field_changes = [{
@@ -1190,15 +1254,6 @@ def transition_bug_status(bug_id):
                     logger.info(f"Bug #{bug.id} 已解决，邮件通知已发送给报告人: {reporter.email}")
             except Exception as e:
                 logger.error(f"发送Bug解决邮件通知失败: {str(e)}")
-        
-        create_audit_log(
-            user_id=current_user_id,
-            action='bug_status_transition',
-            resource_type='bug',
-            resource_id=bug_id,
-            details=f'Bug状态变更: {old_status} -> {new_status_lower}',
-            request=request
-        )
 
         import json
         field_changes = [{
@@ -1294,15 +1349,6 @@ def assign_bug(bug_id):
     
     try:
         db.session.commit()
-        
-        create_audit_log(
-            user_id=current_user_id,
-            action='assign_bug',
-            resource_type='bug',
-            resource_id=bug_id,
-            details=f'分配缺陷: {bug.title}, 从用户 {old_assignee_name} 分配给用户 {new_assignee_name}',
-            request=request
-        )
 
         import json
         field_changes = [{
@@ -1323,7 +1369,21 @@ def assign_bug(bug_id):
         )
         db.session.add(activity)
         db.session.commit()
-        
+
+        # 通知被分配人有新的缺陷待处理
+        if assignee_id:
+            try:
+                create_notification = get_create_notification()
+                create_notification(
+                    user_id=assignee_id,
+                    notification_type='bug_assigned',
+                    title=f'缺陷已分配给您: {bug.title}',
+                    content=f'缺陷 #{bug_id} "{bug.title}" 已分配给您，请及时处理。',
+                    related_bug_id=bug_id
+                )
+            except Exception:
+                pass
+
         return jsonify({
             'success': True,
             'message': '分配成功',

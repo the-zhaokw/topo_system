@@ -475,7 +475,7 @@
                 link 
                 size="small" 
                 @click="handleQuickStatusChange(row, 'resolved')"
-                v-if="row.status !== 'resolved' && row.status !== 'closed' && row.status !== 'verified'"
+                v-if="canResolveBug(row) && row.status !== 'resolved' && row.status !== 'closed' && row.status !== 'verified'"
                 class="action-btn"
               >
                 <el-icon><Check /></el-icon>标记解决
@@ -784,6 +784,17 @@ const isTester = () => {
 const isDeveloperOrManager = () => {
   const position = getCurrentUserPosition()
   return position === '软件工程师' || position?.includes('经理') || position === '项目经理'
+}
+
+// 检查当前用户是否有权限标记解决（仅项目经理、超级管理员、解决者）
+const canResolveBug = (bug) => {
+  const user = userStore.currentUser
+  if (!user) return false
+  if (user.is_super_admin || user.is_admin) return true
+  const position = user.position
+  if (position === '管理员' || position?.includes('经理') || position === '项目经理') return true
+  if (bug.resolved_by && user.id && Number(bug.resolved_by) === Number(user.id)) return true
+  return false
 }
 
 // 获取缺陷统计信息

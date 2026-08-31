@@ -174,7 +174,53 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
+
+        <!-- 关联测试用例和相关Bug -->
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="关联测试用例" prop="test_case_ids">
+              <el-select
+                v-model="form.test_case_ids"
+                multiple
+                filterable
+                clearable
+                collapse-tags
+                collapse-tags-tooltip
+                placeholder="请选择关联的测试用例"
+                style="width: 100%"
+                :disabled="!form.project_id"
+              >
+                <el-option
+                  v-for="tc in projectTestCases"
+                  :key="tc.id"
+                  :label="`${tc.identifier} - ${tc.title}`"
+                  :value="tc.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="相关Bug" prop="related_bug_id">
+              <el-select
+                v-model="form.related_bug_id"
+                filterable
+                clearable
+                placeholder="请选择相关Bug"
+                style="width: 100%"
+                :disabled="!form.project_id"
+              >
+                <el-option
+                  v-for="b in projectBugs"
+                  :key="b.id"
+                  :label="`#${b.id} ${b.title}`"
+                  :value="b.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <!-- 分配和解决信息 -->
         <el-row :gutter="20">
           <el-col :span="6">
@@ -430,7 +476,11 @@ const form = reactive({
   resolve_build: '',
   resolver_id: '',
   verifier_id: '',
-  due_date: ''
+  due_date: '',
+  // 关联测试用例（多选，提交时转为逗号分隔字符串存入test_case_id）
+  test_case_ids: [],
+  // 相关Bug（单选，存入related_bug_id）
+  related_bug_id: ''
 })
 
 const projects = ref([])
@@ -438,6 +488,8 @@ const users = ref([])
 const projectMembers = ref([])
 const projectVersions = ref([])
 const projectModules = ref([])
+const projectTestCases = ref([])
+const projectBugs = ref([])
 const availableTags = ref(['前端', '后端', '数据库', 'UI', '功能', '性能', '安全'])
 const fileList = ref([])
 const existingAttachments = ref([])
@@ -450,8 +502,7 @@ const rules = {
     { min: 3, max: 200, message: '标题长度在 3 到 200 个字符', trigger: 'blur' }
   ],
   description: [
-    { required: true, message: '请输入Bug描述', trigger: 'blur' },
-    { min: 10, message: '描述长度至少 10 个字符', trigger: 'blur' }
+    { required: true, message: '请输入Bug描述', trigger: 'blur' }
   ],
   status: [
     { required: true, message: '请选择状态', trigger: 'change' }
@@ -519,9 +570,31 @@ const fetchBugDetail = async () => {
       }
     })
 
+    // 处理解决者字段：后端返回 resolved_by，前端表单使用 resolver_id
+    if (bug.resolved_by !== undefined && bug.resolved_by !== null) {
+      form.resolver_id = bug.resolved_by
+    }
+
     // 处理后端返回的deadline字段，映射到前端的due_date
     if (bug.deadline) {
       form.due_date = bug.deadline
+    }
+
+    // 处理关联测试用例：后端 test_case_id 为逗号分隔字符串，前端用数组多选
+    if (bug.test_case_id) {
+      form.test_case_ids = String(bug.test_case_id)
+        .split(',')
+        .map(id => id.trim())
+        .filter(id => id)
+        .map(id => {
+          const num = parseInt(id)
+          return isNaN(num) ? id : num
+        })
+    }
+
+    // 处理相关Bug
+    if (bug.related_bug_id !== undefined && bug.related_bug_id !== null) {
+      form.related_bug_id = bug.related_bug_id
     }
 
     // 处理issue_type字段（后端返回的是issue_type）
@@ -576,6 +649,12 @@ const fetchBugDetail = async () => {
       } catch (e) {
         console.error('获取项目版本失败:', e)
       }
+
+      // 获取项目测试用例和相关Bug列表
+      await Promise.all([
+        fetchProjectTestCases(bug.project_id),
+        fetchProjectBugs(bug.project_id)
+      ])
     }
 
   } catch (error) {
@@ -729,6 +808,63 @@ const fetchProjectMembers = async (projectId) => {
   }
 }
 
+// 获取项目测试用例列表
+const fetchProjectTestCases = async (projectId) => {
+  if (!projectId) {
+    projectTestCases.value = []
+    return
+  }
+  try {
+    const suites = await apiService.tests.getSuites(projectId, { include_cases: 'true' })
+    // 递归收集所有套件（含子套件）的测试用例
+    const cases = []
+    const collectCases = (suiteList) => {
+      if (!Array.isArray(suiteList)) return
+      for (const suite of suiteList) {
+        if (suite.cases && Array.isArray(suite.cases)) {
+          for (const c of suite.cases) {
+            cases.push({
+              id: c.id,
+              identifier: c.identifier,
+              title: c.title,
+              suite_name: c.suite_name || suite.name
+            })
+          }
+        }
+        if (suite.children && Array.isArray(suite.children)) {
+          collectCases(suite.children)
+        }
+      }
+    }
+    collectCases(suites)
+    projectTestCases.value = cases
+  } catch (error) {
+    console.error('获取项目测试用例失败:', error)
+    projectTestCases.value = []
+  }
+}
+
+// 获取项目Bug列表（用于相关Bug选择）
+const fetchProjectBugs = async (projectId) => {
+  if (!projectId) {
+    projectBugs.value = []
+    return
+  }
+  try {
+    const response = await api.get('/bugs', { params: { project_id: projectId, per_page: 500 } })
+    let bugs = response.bugs || []
+    // 排除当前编辑的Bug，避免自引用
+    if (bugId.value) {
+      const currentId = parseInt(bugId.value)
+      bugs = bugs.filter(b => b.id !== currentId)
+    }
+    projectBugs.value = bugs
+  } catch (error) {
+    console.error('获取项目Bug列表失败:', error)
+    projectBugs.value = []
+  }
+}
+
 // 文件上传前验证
 const beforeUpload = (file) => {
   const maxSize = 50 * 1024 * 1024 // 50MB
@@ -795,7 +931,14 @@ const submitForm = async () => {
       expected_result: formData.expected_result || '',
       actual_result: formData.actual_result || '',
 
-      tags: formData.tags && Array.isArray(formData.tags) ? JSON.stringify(formData.tags) : formData.tags
+      tags: formData.tags && Array.isArray(formData.tags) ? JSON.stringify(formData.tags) : formData.tags,
+
+      // 关联测试用例：数组转为逗号分隔字符串
+      test_case_id: formData.test_case_ids && Array.isArray(formData.test_case_ids) && formData.test_case_ids.length > 0
+        ? formData.test_case_ids.map(String).join(',')
+        : null,
+      // 相关Bug
+      related_bug_id: formData.related_bug_id || null
     }
 
     if (isEdit.value) {
@@ -832,22 +975,40 @@ onMounted(async () => {
       await fetchProjectMembers(form.project_id)
     }
   } else {
+    // 新建Bug时自动将验证者设为当前登录用户
+    if (userStore.currentUser?.id) {
+      form.verifier_id = userStore.currentUser.id
+    }
+
     const projectIdParam = route.params.projectId || route.query.project_id
     if (projectIdParam) {
       const pid = parseInt(projectIdParam)
       form.project_id = pid
-      await fetchProjectMembers(pid)
+      await Promise.all([
+        fetchProjectMembers(pid),
+        fetchProjectTestCases(pid),
+        fetchProjectBugs(pid)
+      ])
     }
   }
 })
 
 // 监听项目变化，更新成员列表（添加防抖处理）
-watch(() => form.project_id, async (newProjectId) => {
+watch(() => form.project_id, async (newProjectId, oldProjectId) => {
   if (projectChangeTimer.value) {
     clearTimeout(projectChangeTimer.value)
   }
   projectChangeTimer.value = setTimeout(async () => {
-    await fetchProjectMembers(newProjectId)
+    await Promise.all([
+      fetchProjectMembers(newProjectId),
+      fetchProjectTestCases(newProjectId),
+      fetchProjectBugs(newProjectId)
+    ])
+    // 新建模式下项目切换时清空关联项
+    if (!isEdit.value && oldProjectId && newProjectId !== oldProjectId) {
+      form.test_case_ids = []
+      form.related_bug_id = ''
+    }
   }, 300)
 })
 </script>

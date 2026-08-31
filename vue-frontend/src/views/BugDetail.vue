@@ -816,20 +816,28 @@ const availableTransitions = computed(() => {
   const status = bug.value.status
   const user = currentUser.value
   if (!user) return []
-  
+
   const position = user.position
   const isSuperAdmin = user.is_super_admin
   const isManager = position === '管理员' || position?.includes('经理') || position === '项目经理'
-  const isDeveloper = position === '软件工程师'
+  const isResolver = bug.value.resolved_by && user.id && Number(bug.value.resolved_by) === Number(user.id)
   const isTester = position === '测试工程师'
 
-  if (isSuperAdmin || isManager) {
+  // 开始处理和标记解决：仅项目经理、超级管理员、解决者可操作
+  if (isSuperAdmin || isManager || isResolver) {
     if (status === 'new') {
       transitions.push({ to: 'in_progress', label: '开始处理', type: 'primary' })
     }
     if (status === 'in_progress') {
       transitions.push({ to: 'resolved', label: '标记解决', type: 'success' })
     }
+    if (status === 'reopened') {
+      transitions.push({ to: 'in_progress', label: '开始处理', type: 'primary' })
+    }
+  }
+
+  // 关闭和重新打开：项目经理、超级管理员可操作
+  if (isSuperAdmin || isManager) {
     if (status === 'resolved') {
       transitions.push({ to: 'closed', label: '关闭', type: 'success' })
       transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
@@ -837,23 +845,9 @@ const availableTransitions = computed(() => {
     if (status === 'closed') {
       transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
     }
-    if (status === 'reopened') {
-      transitions.push({ to: 'in_progress', label: '开始处理', type: 'primary' })
-    }
   }
 
-  if (isDeveloper) {
-    if (status === 'new') {
-      transitions.push({ to: 'in_progress', label: '开始处理', type: 'primary' })
-    }
-    if (status === 'in_progress') {
-      transitions.push({ to: 'resolved', label: '标记解决', type: 'success' })
-    }
-    if (status === 'reopened') {
-      transitions.push({ to: 'in_progress', label: '开始处理', type: 'primary' })
-    }
-  }
-
+  // 测试工程师可关闭和重新打开
   if (isTester) {
     if (status === 'resolved') {
       transitions.push({ to: 'closed', label: '关闭', type: 'success' })
