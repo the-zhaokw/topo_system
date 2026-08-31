@@ -3202,16 +3202,43 @@ EMAIL_CONFIG = load_mail_config()
 
 # 创建log
 def create_audit_log(user_id, action, resource_type, resource_id=None, details="", request=None):
-    """创建log记录（简化版本，仅记录日志）"""
+    """记录用户活动到数据库（Activity表 + AuditLog表）"""
     try:
-        # 简化实现：只记录日志，不创建数据库记录
         ip_address = request.remote_addr if request else None
         user_agent = request.headers.get('User-Agent') if request else None
-        
-        logger.info(f"log - 用户ID: {user_id}, 操作: {action}, 资源类型: {resource_type}, "
+
+        logger.info(f"活动记录 - 用户ID: {user_id}, 操作: {action}, 资源类型: {resource_type}, "
                    f"资源ID: {resource_id}, 详情: {details}, IP: {ip_address}")
-        
-        # 返回一个简单的字典而不是数据库对象
+
+        # user_id 不能为 None（Activity.performed_by 是 nullable=False）
+        if user_id is None:
+            logger.warning(f"活动记录跳过：user_id 为 None, action={action}")
+            return None
+
+        # 写入 Activity 表（前端活动记录页面读取的数据源）
+        activity = Activity(
+            action=action,
+            description=details or f'{action} {resource_type}',
+            performed_by=int(user_id),
+            target_type=resource_type,
+            target_id=int(resource_id) if resource_id is not None else 0
+        )
+        db.session.add(activity)
+
+        # 写入 AuditLog 表（包含 IP 和 User-Agent，用于安全审计）
+        audit_log = AuditLog(
+            user_id=int(user_id),
+            action=action,
+            resource_type=resource_type,
+            resource_id=int(resource_id) if resource_id is not None else None,
+            details=details,
+            ip_address=ip_address,
+            user_agent=user_agent,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(audit_log)
+        db.session.commit()
+
         return {
             'user_id': user_id,
             'action': action,
@@ -3223,7 +3250,8 @@ def create_audit_log(user_id, action, resource_type, resource_id=None, details="
             'created_at': datetime.utcnow()
         }
     except Exception as e:
-        logger.error(f"创建log失败: {str(e)}")
+        logger.error(f"创建活动记录失败: {str(e)}")
+        db.session.rollback()
         return None
 
 # 权限装饰器
