@@ -1,5 +1,6 @@
 """创建 permission_templates 表（权限模板）— 使用纯 SQL 避免 SQLAlchemy registry 冲突"""
 import sys, os, json
+from utils.time_utils import now_china
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from enhanced_app import app, db, init_extensions
@@ -53,7 +54,7 @@ def migrate():
             if count == 0:
                 print("  - 初始化内置模板...")
                 from datetime import datetime
-                now = datetime.utcnow().isoformat()
+                now = now_china().isoformat()
 
                 from models.permissions import (
                     PermissionCodes,

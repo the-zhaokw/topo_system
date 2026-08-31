@@ -3,6 +3,7 @@
 """
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # 创建通知蓝图
@@ -128,7 +129,7 @@ def mark_as_read(notification_id):
     
     # 标记为已读
     notification.is_read = True
-    notification.read_at = datetime.utcnow()
+    notification.read_at = now_china()
     db.session.commit()
     
     return jsonify({
@@ -155,7 +156,7 @@ def mark_all_as_read():
     # 批量标记为已读
     for notification in unread_notifications:
         notification.is_read = True
-        notification.read_at = datetime.utcnow()
+        notification.read_at = now_china()
     
     db.session.commit()
     
@@ -211,7 +212,7 @@ def send_test_notification():
         user_id=current_user_id,
         notification_type='system',
         title='测试通知',
-        content=f'这是一条测试通知，发送给用户 {current_user.username}。系统时间：{datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")}',
+        content=f'这是一条测试通知，发送给用户 {current_user.username}。系统时间：{now_china().strftime("%Y-%m-%d %H:%M:%S")}',
         related_bug_id=None,
         related_comment_id=None
     )

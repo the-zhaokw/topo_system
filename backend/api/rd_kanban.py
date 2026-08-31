@@ -13,6 +13,7 @@
 """
 
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 import os
 from flask import Blueprint, request, jsonify, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -271,7 +272,7 @@ def create_item():
     severity = data.get('severity') or None
     due_at = None
     if column == 'customer_issue' and severity in ISSUE_SLA_HOURS:
-        due_at = datetime.utcnow() + timedelta(hours=ISSUE_SLA_HOURS[severity])
+        due_at = now_china() + timedelta(hours=ISSUE_SLA_HOURS[severity])
 
     item = model(
         project_id=project_id,
@@ -281,8 +282,8 @@ def create_item():
         status_color=data.get('status_color') or None,
         assignee_id=data.get('assignee_id') or None,
         sort_order=next_order,
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=now_china(),
+        updated_at=now_china(),
         created_by=current_user_id,
         comment_count=0,
         severity=severity,
@@ -348,7 +349,7 @@ def update_item(item_id):
         item.severity = new_sev
         # 客户问题：只要严重度改变，就按新的 SLA 重新计算 due_at
         if item.column == 'customer_issue' and new_sev in ISSUE_SLA_HOURS and new_sev != old_sev:
-            item.due_at = datetime.utcnow() + timedelta(hours=ISSUE_SLA_HOURS[new_sev])
+            item.due_at = now_china() + timedelta(hours=ISSUE_SLA_HOURS[new_sev])
     if 'due_at' in data:
         item.due_at = _parse_iso(data.get('due_at'))
     if 'resolved_at' in data:
@@ -358,7 +359,7 @@ def update_item(item_id):
     if 'tags' in data:
         item.tags = _json_dumps_safe(data.get('tags'))
 
-    item.updated_at = datetime.utcnow()
+    item.updated_at = now_china()
     db.session.commit()
     return jsonify({'success': True, 'item': _serialize_item(item)})
 
@@ -400,7 +401,7 @@ def batch_sort():
                 item.sort_order = int(m['sort_order'] or 0)
             except (TypeError, ValueError):
                 pass
-        item.updated_at = datetime.utcnow()
+        item.updated_at = now_china()
     db.session.commit()
     return jsonify({'success': True})
 
@@ -457,8 +458,8 @@ def _get_models():
             assignee_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
             sort_order = Column(Integer, default=0, nullable=False, index=True)
             created_by = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
-            created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-            updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+            created_at = Column(DateTime, default=now_china, nullable=False)
+            updated_at = Column(DateTime, default=now_china, onupdate=now_china, nullable=False)
             # 客户问题专用
             severity = Column(String(20), nullable=True)
             due_at = Column(DateTime, nullable=True)
@@ -484,8 +485,8 @@ def _get_models():
             # 简单表情反应：JSON 字符串，{"👍": [user_ids], "❤️": [user_ids]}
             reactions = Column(Text, nullable=True)
             parent_id = Column(Integer, ForeignKey('rd_kanban_comments.id', ondelete='CASCADE'), nullable=True)
-            created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-            updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+            created_at = Column(DateTime, default=now_china, nullable=False)
+            updated_at = Column(DateTime, default=now_china, onupdate=now_china, nullable=False)
 
             def __repr__(self):
                 return f'<RDKanbanComment {self.id} item={self.item_id}>'
@@ -504,7 +505,7 @@ def _get_models():
             file_size = Column(BigInteger, default=0, nullable=False)
             mime_type = Column(String(120), nullable=True)
             uploaded_by = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
-            uploaded_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+            uploaded_at = Column(DateTime, default=now_china, nullable=False)
 
             def __repr__(self):
                 return f'<RDKanbanAttachment {self.id} {self.original_name}>'
@@ -689,8 +690,8 @@ def add_comment(item_id):
         content=content,
         parent_id=parent_id,
         reactions='{}',
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=now_china(),
+        updated_at=now_china(),
     )
     db = get_db()
     db.session.add(comment)
@@ -699,7 +700,7 @@ def add_comment(item_id):
     it = Item.query.get(item_id)
     if it:
         it.comment_count = (it.comment_count or 0) + 1
-        it.updated_at = datetime.utcnow()
+        it.updated_at = now_china()
     db.session.commit()
     return jsonify({'success': True, 'comment': _serialize_comment(comment, {current_user_id: current_user})})
 
@@ -723,7 +724,7 @@ def update_comment(comment_id):
     if current_user.role != 'admin' and comment.user_id != current_user_id:
         return jsonify({'success': False, 'error': '无权编辑此评论'}), 403
     comment.content = new_content
-    comment.updated_at = datetime.utcnow()
+    comment.updated_at = now_china()
     db = get_db()
     db.session.commit()
     return jsonify({'success': True, 'comment': _serialize_comment(comment, {current_user_id: current_user})})
@@ -750,7 +751,7 @@ def delete_comment(comment_id):
     it = Item.query.get(item_id)
     if it and (it.comment_count or 0) > 0:
         it.comment_count = it.comment_count - 1
-        it.updated_at = datetime.utcnow()
+        it.updated_at = now_china()
     db.session.commit()
     return jsonify({'success': True})
 
@@ -785,7 +786,7 @@ def react_comment(comment_id):
     elif emoji in reactions:
         del reactions[emoji]
     comment.reactions = _json.dumps(reactions, ensure_ascii=False)
-    comment.updated_at = datetime.utcnow()
+    comment.updated_at = now_china()
     db = get_db()
     db.session.commit()
     return jsonify({'success': True, 'reactions': reactions})
@@ -846,7 +847,7 @@ def upload_attachment(item_id):
     original_name = file.filename
     safe_name = secure_filename(original_name) or 'file'
     # 唯一文件名：item_id_timestamp_safe_name
-    stored_name = f"item{item_id}_{int(datetime.utcnow().timestamp() * 1000)}_{safe_name}"
+    stored_name = f"item{item_id}_{int(now_china().timestamp() * 1000)}_{safe_name}"
     target_dir = os.path.join(RD_ATTACHMENT_DIR, str(item_id))
     os.makedirs(target_dir, exist_ok=True)
     file_path = os.path.join(target_dir, stored_name)
@@ -861,7 +862,7 @@ def upload_attachment(item_id):
         file_size=size,
         mime_type=file.mimetype,
         uploaded_by=current_user_id,
-        uploaded_at=datetime.utcnow(),
+        uploaded_at=now_china(),
     )
     db = get_db()
     db.session.add(att)
@@ -1077,7 +1078,7 @@ def get_project_stats(project_id):
             by_status[it.status] = by_status.get(it.status, 0) + 1
 
     # 逾期客户问题
-    now = datetime.utcnow()
+    now = now_china()
     overdue_issues = []
     open_issues_by_severity = {s['value']: 0 for s in ISSUE_SEVERITY}
     for it in items:
@@ -1165,7 +1166,7 @@ def get_weekly_summary(project_id):
         except (TypeError, ValueError):
             days = 7
         days = max(1, min(days, 90))
-        since = datetime.utcnow() - timedelta(days=days)
+        since = now_china() - timedelta(days=days)
         reports = Item.query.filter(
             Item.project_id == project_id,
             Item.column == 'weekly_report',
@@ -1181,7 +1182,7 @@ def get_weekly_summary(project_id):
 
     # 生成 Markdown
     lines = [f'# {project.name} - 周报汇总（{range_label}）', '']
-    lines.append(f'> 生成时间: {datetime.utcnow().strftime("%Y-%m-%d %H:%M")} UTC')
+    lines.append(f'> 生成时间: {now_china().strftime("%Y-%m-%d %H:%M")} 北京时间')
     lines.append(f'> 条目数: {len(reports)}')
     lines.append('')
     if not reports:
@@ -1240,7 +1241,7 @@ def get_issue_stats(project_id):
     Item, _, _ = _get_models()
     issues = Item.query.filter_by(project_id=project_id, column='customer_issue').all()
 
-    now = datetime.utcnow()
+    now = now_china()
     by_severity = {s['value']: {'open': 0, 'resolved': 0, 'overdue': 0, 'sla_hours': ISSUE_SLA_HOURS[s['value']]} for s in ISSUE_SEVERITY}
     total_resolved_hours = 0.0
     resolved_count = 0
@@ -1296,7 +1297,7 @@ def resolve_issue(item_id):
         return err
 
     if not item.resolved_at:
-        item.resolved_at = datetime.utcnow()
+        item.resolved_at = now_china()
         item.updated_at = item.resolved_at
         db = get_db()
         db.session.commit()
@@ -1327,7 +1328,7 @@ def reopen_issue(item_id):
         return err
 
     item.resolved_at = None
-    item.updated_at = datetime.utcnow()
+    item.updated_at = now_china()
     db = get_db()
     db.session.commit()
     return jsonify({'success': True, 'item': _serialize_item(item)})

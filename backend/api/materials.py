@@ -8,6 +8,7 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import or_, func
 from datetime import datetime, timezone, timedelta
+from utils.time_utils import now_china
 
 # 统一权限系统
 from utils.permission_unified import (
@@ -2289,7 +2290,7 @@ class InventoryCheckResource(Resource):
             if 'status' in data:
                 check.status = data['status']
                 if data['status'] == 'completed':
-                    check.completed_at = datetime.utcnow()
+                    check.completed_at = now_china()
             
             # 更新盘点明细
             if 'details' in data:
@@ -2300,7 +2301,7 @@ class InventoryCheckResource(Resource):
                             detail.actual_quantity = detail_data['actual_quantity']
                             detail.difference = detail.actual_quantity - detail.system_quantity
                             detail.checked_by = detail_data.get('checked_by', 'system')
-                            detail.checked_at = datetime.utcnow()
+                            detail.checked_at = now_china()
                             
                             # 更新已盘点项数
                             if detail.actual_quantity is not None and check.checked_items < check.total_items:
@@ -2731,7 +2732,7 @@ def get_material_turnover():
         days = request.args.get('days', 30, type=int)
         category_id = request.args.get('category_id', type=int)
         
-        start_date = datetime.utcnow() - timedelta(days=days)
+        start_date = now_china() - timedelta(days=days)
         
         query = db.session.query(
             Material.id,

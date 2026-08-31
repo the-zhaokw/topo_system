@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 from collections import defaultdict
 from logging_decorators import log_api_call, log_business_operation, handle_validation_errors, handle_error
 from logging_config import get_log_manager
@@ -59,7 +60,7 @@ def get_dashboard_stats():
         log_manager.log_error(f"记录请求日志失败: {str(e)}")
 
     days = request.args.get('days', 30, type=int)
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = now_china() - timedelta(days=days)
 
     if current_user.role == 'admin':
         project_ids = [p.id for p in Project.query.all()]
@@ -92,7 +93,7 @@ def get_dashboard_stats():
         Project.id.in_(project_ids)
     ).count()
 
-    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    seven_days_ago = now_china() - timedelta(days=7)
 
     bug_activity = defaultdict(int)
     bugs = Bug.query.filter(
@@ -365,7 +366,7 @@ def get_bug_statistics():
         
         # 按日统计缺陷创建和关闭数量（最近30天）
         daily_bug_stats = []
-        today = datetime.utcnow().date()
+        today = now_china().date()
         for i in range(30):
             date = today - timedelta(days=29 - i)
             date_str = date.strftime('%Y-%m-%d')
@@ -410,7 +411,7 @@ def get_bug_statistics():
             if bug.closed_at:
                 age_days = (bug.closed_at - bug.created_at).days
             else:
-                age_days = (datetime.utcnow() - bug.created_at).days
+                age_days = (now_china() - bug.created_at).days
             
             if age_days <= 3:
                 age_distribution['0-3天'] += 1
@@ -503,7 +504,7 @@ def get_global_overview():
         ).count()
         
         # 本日新增Bug数
-        today = datetime.utcnow().date()
+        today = now_china().date()
         today_new_bugs = Bug.query.filter(
             Bug.created_at >= datetime.combine(today, datetime.min.time()),
             Bug.created_at < datetime.combine(today + timedelta(days=1), datetime.min.time()),
@@ -676,7 +677,7 @@ def get_projects_statistics():
         
         # 项目Bug趋势对比（最近30天）
         project_bug_trends = {}
-        today = datetime.utcnow().date()
+        today = now_china().date()
         
         for project in projects:
             project_trend = []
@@ -1420,7 +1421,7 @@ def get_project_statistics(project_id):
         # 项目进度时间线（过去30天的完成情况）
         timeline_data = []
         for i in range(30):
-            date = datetime.utcnow() - timedelta(days=29-i)
+            date = now_china() - timedelta(days=29-i)
             date_str = date.strftime('%Y-%m-%d')
             
             # 当日完成的任务
@@ -1514,7 +1515,7 @@ def get_user_statistics(user_id):
         
         # 默认时间范围为最近30天
         days = request.args.get('days', 30, type=int)
-        start_date = datetime.utcnow() - timedelta(days=days)
+        start_date = now_china() - timedelta(days=days)
         
         # 用户任务统计
         assigned_tasks = 0
@@ -1573,7 +1574,7 @@ def get_user_statistics(user_id):
         # 工作效率趋势（按周）
         weekly_stats = []
         for i in range(5):  # 最近5周
-            week_start = datetime.utcnow() - timedelta(days=datetime.utcnow().weekday()) - timedelta(weeks=i)
+            week_start = now_china() - timedelta(days=now_china().weekday()) - timedelta(weeks=i)
             week_end = week_start + timedelta(days=6)
             
             # 本周完成的任务
@@ -1843,7 +1844,7 @@ def export_data():
                 'message': '数据导出成功',
                 'data': export_data,
                 'export_type': export_type,
-                'export_time': datetime.utcnow().isoformat(),
+                'export_time': now_china().isoformat(),
                 'record_count': len(export_data)
             }), 200
         elif format in ['csv', 'excel']:
@@ -1855,14 +1856,14 @@ def export_data():
                 output = BytesIO()
                 df.to_csv(output, index=False, encoding='utf-8-sig')
                 output.seek(0)
-                filename = f'{export_type}_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}.csv'
+                filename = f'{export_type}_{now_china().strftime("%Y%m%d_%H%M%S")}.csv'
                 return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
             elif format == 'excel':
                 output = BytesIO()
                 with pd.ExcelWriter(output, engine='openpyxl') as writer:
                     df.to_excel(writer, index=False, sheet_name=export_type)
                 output.seek(0)
-                filename = f'{export_type}_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}.xlsx'
+                filename = f'{export_type}_{now_china().strftime("%Y%m%d_%H%M%S")}.xlsx'
                 return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', as_attachment=True, download_name=filename)
         else:
             return jsonify({'error': '不支持的导出格式'}), 400
@@ -2117,7 +2118,7 @@ def export_chart_data():
     export_format = data.get('format', 'csv')
     date_range = data.get('date_range', 30)
     
-    start_date = datetime.utcnow() - timedelta(days=date_range)
+    start_date = now_china() - timedelta(days=date_range)
     
     if current_user.role == 'admin':
         project_ids = [p.id for p in Project.query.all()]
@@ -2142,7 +2143,7 @@ def export_chart_data():
         
         trend_data = []
         for i in range(date_range):
-            date = datetime.utcnow().date() - timedelta(days=date_range - 1 - i)
+            date = now_china().date() - timedelta(days=date_range - 1 - i)
             date_str = date.strftime('%Y-%m-%d')
             
             new_bugs = Bug.query.filter(
@@ -2218,7 +2219,7 @@ def export_chart_data():
             'message': '图表数据导出成功',
             'chart_type': chart_type,
             'data': chart_data,
-            'export_time': datetime.utcnow().isoformat()
+            'export_time': now_china().isoformat()
         }), 200
     
     elif export_format in ['csv', 'excel']:
@@ -2250,7 +2251,7 @@ def export_chart_data():
             output = BytesIO()
             df.to_csv(output, index=False, encoding='utf-8-sig')
             output.seek(0)
-            filename = f'{chart_type}_chart_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}.csv'
+            filename = f'{chart_type}_chart_{now_china().strftime("%Y%m%d_%H%M%S")}.csv'
             return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
         
         elif export_format == 'excel':
@@ -2258,7 +2259,7 @@ def export_chart_data():
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 df.to_excel(writer, index=False, sheet_name=chart_type)
             output.seek(0)
-            filename = f'{chart_type}_chart_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}.xlsx'
+            filename = f'{chart_type}_chart_{now_china().strftime("%Y%m%d_%H%M%S")}.xlsx'
             return send_file(
                 output,
                 mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

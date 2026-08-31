@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Dict, List, Optional, Set
 from dataclasses import dataclass
 from datetime import datetime
+from utils.time_utils import now_china
 import logging
 
 logger = logging.getLogger(__name__)
@@ -482,12 +483,12 @@ class BugWorkflowManager:
         
         # Check for overdue bugs
         if hasattr(bug, 'due_date') and bug.due_date:
-            if datetime.utcnow() > bug.due_date:
+            if now_china() > bug.due_date:
                 warnings.append("Bug 已逾期")
         
         # Check for bugs stuck in same status too long
         if hasattr(bug, 'status_changed_at') and bug.status_changed_at:
-            days_in_status = (datetime.utcnow() - bug.status_changed_at).days
+            days_in_status = (now_china() - bug.status_changed_at).days
             if days_in_status > 7 and current_status in [SMBugStatus.ASSIGNED, SMBugStatus.IN_PROGRESS]:
                 warnings.append(f"Bug 在 {current_status.value} 状态已超过 {days_in_status} 天")
         

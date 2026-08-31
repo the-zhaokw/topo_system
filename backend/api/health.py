@@ -4,6 +4,7 @@ Health Check and System Monitoring Module
 from flask import Blueprint, jsonify
 from flask_restful import Api, Resource
 from datetime import datetime
+from utils.time_utils import now_china
 import os
 import sys
 from sqlalchemy import text
@@ -18,7 +19,7 @@ class HealthCheckResource(Resource):
         """System health status check"""
         checks = {
             'status': 'healthy',
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': now_china().isoformat(),
             'version': '1.0.0',
             'checks': {}
         }
@@ -66,7 +67,7 @@ class SystemInfoResource(Resource):
         info = {
             'python_version': sys.version,
             'platform': sys.platform,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': now_china().isoformat(),
             'environment': {
                 'FLASK_ENV': os.environ.get('FLASK_ENV', 'production'),
                 'FLASK_DEBUG': os.environ.get('FLASK_DEBUG', 'False')

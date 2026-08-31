@@ -4,6 +4,7 @@
 """
 import json
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 from sqlalchemy import Column, Integer, String, Boolean, Text, ForeignKey, Date, DateTime
 from sqlalchemy.orm import relationship
 from config.extensions import db
@@ -170,14 +171,14 @@ class User(BaseModel):
         if self.status == 'offline':
             return 'offline'
         if self.last_activity:
-            five_minutes_ago = datetime.utcnow() - timedelta(minutes=5)
+            five_minutes_ago = now_china() - timedelta(minutes=5)
             if self.last_activity >= five_minutes_ago:
                 return self.status or 'online'
         return 'offline'
     
     def update_activity(self):
         """更新用户最后活动时间"""
-        self.last_activity = datetime.utcnow()
+        self.last_activity = now_china()
 
     # ==================== 大功能模块（侧边栏一级菜单）可见性 ====================
     def get_accessible_modules(self):

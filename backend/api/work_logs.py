@@ -4,6 +4,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+from utils.time_utils import now_china
 import json
 
 work_logs_bp = Blueprint('work_logs', __name__, url_prefix='/work-logs')
@@ -224,7 +225,7 @@ def update_work_log(log_id):
         field_changes.append({'field': 'status', 'old_value': work_log.status, 'new_value': data['status']})
         work_log.status = data['status']
 
-    work_log.updated_at = datetime.utcnow()
+    work_log.updated_at = now_china()
 
     db.session.commit()
 

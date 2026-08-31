@@ -3,6 +3,7 @@
 """
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from utils.time_utils import now_china
 import json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import logging
@@ -135,7 +136,7 @@ def update_test_suite(suite_id):
             suite.parent_id = data['parent_id']
         
         suite.version += 1
-        suite.updated_at = datetime.utcnow()
+        suite.updated_at = now_china()
         
         db.session.commit()
         
@@ -423,7 +424,7 @@ def update_test_case(case_id):
                 db.session.add(step)
         
         case.version += 1
-        case.updated_at = datetime.utcnow()
+        case.updated_at = now_china()
         
         db.session.commit()
         
@@ -549,7 +550,7 @@ def submit_case_review(case_id):
             case.approved_by = current_user_id
         
         case.version += 1
-        case.updated_at = datetime.utcnow()
+        case.updated_at = now_china()
         
         db.session.commit()
         
@@ -728,7 +729,7 @@ def update_execution(execution_id):
         if 'status' in data:
             execution.status = data['status']
             if data['status'] == 'completed':
-                execution.completed_at = datetime.utcnow()
+                execution.completed_at = now_china()
         if 'environment' in data:
             execution.environment = data['environment']
         if 'test_version' in data:
@@ -738,7 +739,7 @@ def update_execution(execution_id):
         if 'notes' in data:
             execution.notes = data['notes']
         
-        execution.updated_at = datetime.utcnow()
+        execution.updated_at = now_china()
         
         db.session.commit()
         
@@ -803,7 +804,7 @@ def submit_test_result(execution_id):
         result.actual_result = data.get('actual_result')
         result.defect_id = data.get('defect_id')
         result.notes = data.get('notes')
-        result.executed_at = datetime.utcnow()
+        result.executed_at = now_china()
         result.duration = data.get('duration', 0)
         
         db.session.commit()

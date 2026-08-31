@@ -8,6 +8,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+from utils.time_utils import now_china
 import json
 
 project_logs_bp = Blueprint('project_logs', __name__, url_prefix='/project-logs')
@@ -204,7 +205,7 @@ def create_log():
             log_type=log_type,
             status=status,
             created_by=int(current_user_id),
-            logged_at=logged_at or datetime.utcnow(),
+            logged_at=logged_at or now_china(),
             start_date=start_date,
             end_date=end_date
         )
@@ -326,7 +327,7 @@ def update_log(log_id):
         except ValueError:
             pass
 
-    log.updated_at = datetime.utcnow()
+    log.updated_at = now_china()
 
     try:
         db.session.commit()

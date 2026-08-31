@@ -346,6 +346,26 @@
             <el-radio :label="false">休息日</el-radio>
           </el-radio-group>
         </el-form-item>
+
+        <el-form-item label="应用方式" prop="apply_mode">
+          <el-radio-group v-model="batchForm.apply_mode">
+            <el-radio label="replace">
+              <span class="radio-label">
+                <el-icon><RefreshRight /></el-icon>
+                替换已有
+              </span>
+            </el-radio>
+            <el-radio label="overlay">
+              <span class="radio-label">
+                <el-icon><CopyDocument /></el-icon>
+                叠加新增
+              </span>
+            </el-radio>
+          </el-radio-group>
+          <div class="form-tip-inline">
+            替换模式会覆盖日期范围内已有的排班，叠加模式会在已有排班基础上新增
+          </div>
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="batchDialogVisible = false">取消</el-button>
@@ -451,6 +471,26 @@
           </el-radio-group>
           <div class="form-tip-inline">
             仅作记录标识，实际生效由班次自身的"执行星期"决定
+          </div>
+        </el-form-item>
+
+        <el-form-item label="应用方式" prop="apply_mode">
+          <el-radio-group v-model="applyForm.apply_mode">
+            <el-radio label="replace">
+              <span class="radio-label">
+                <el-icon><RefreshRight /></el-icon>
+                替换已有
+              </span>
+            </el-radio>
+            <el-radio label="overlay">
+              <span class="radio-label">
+                <el-icon><CopyDocument /></el-icon>
+                叠加新增
+              </span>
+            </el-radio>
+          </el-radio-group>
+          <div class="form-tip-inline">
+            替换模式会覆盖日期范围内已有的排班，叠加模式会在已有排班基础上新增
           </div>
         </el-form-item>
 
@@ -664,7 +704,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, User, Calendar, Clock, List, CircleCheck, CircleClose, UserFilled, Timer, Edit, Delete, View, Aim, Warning, Postcard, Promotion, Sunny, Moon, Check, InfoFilled, OfficeBuilding } from '@element-plus/icons-vue'
+import { Plus, User, Calendar, Clock, List, CircleCheck, CircleClose, UserFilled, Timer, Edit, Delete, View, Aim, Warning, Postcard, Promotion, Sunny, Moon, Check, InfoFilled, OfficeBuilding, RefreshRight, CopyDocument } from '@element-plus/icons-vue'
 import { parseUTCDate } from '@/utils/dateUtils'
 
 const route = useRoute()
@@ -723,7 +763,8 @@ const usersLoading = ref(false)
 const applyForm = ref({
   user_ids: [],
   date_range: [],
-  is_working_day: true
+  is_working_day: true,
+  apply_mode: 'replace'  // replace=替换已有, overlay=叠加新增
 })
 const applyRules = {
   user_ids: [{ required: true, type: 'array', min: 1, message: '请至少选择一个用户', trigger: 'change' }],
@@ -859,7 +900,8 @@ const batchForm = ref({
   user_ids: [],
   shift_id: '',
   date_range: [],
-  is_working_day: true
+  is_working_day: true,
+  apply_mode: 'replace'  // replace=替换已有, overlay=叠加新增
 })
 
 const batchRules = {
@@ -977,7 +1019,8 @@ const handleApplyShift = async (shift) => {
   applyForm.value = {
     user_ids: [],
     date_range: [],
-    is_working_day: true
+    is_working_day: true,
+    apply_mode: 'replace'
   }
   applyDialogVisible.value = true
   // 确保用户列表已加载
@@ -1008,14 +1051,19 @@ const handleApplySave = async () => {
           user_ids: applyForm.value.user_ids,
           shift_id: applyShift.value.id,
           date_range: [startDate, endDate],
-          is_working_day: applyForm.value.is_working_day
+          is_working_day: applyForm.value.is_working_day,
+          apply_mode: applyForm.value.apply_mode
         })
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        ElMessage.success(data.message || `成功创建 ${data.count || applyPreviewCount.value} 条排班记录`)
+        if (applyForm.value.apply_mode === 'replace') {
+          ElMessage.success(data.message || `成功创建 ${data.count || 0} 条排班，替换 ${data.replaced_count || 0} 条已有记录`)
+        } else {
+          ElMessage.success(data.message || `成功创建 ${data.count || applyPreviewCount.value} 条排班记录`)
+        }
         applyDialogVisible.value = false
         fetchUserSchedules()
       } else {
@@ -1123,7 +1171,8 @@ const handleBatchAssign = () => {
     user_ids: [],
     shift_id: '',
     date_range: [],
-    is_working_day: true
+    is_working_day: true,
+    apply_mode: 'replace'
   }
   batchDialogVisible.value = true
 }
@@ -1148,7 +1197,11 @@ const handleBatchSave = async () => {
       const data = await response.json()
       
       if (response.ok) {
-        ElMessage.success('批量排班成功')
+        if (batchForm.value.apply_mode === 'replace') {
+          ElMessage.success(data.message || `批量排班成功，替换 ${data.replaced_count || 0} 条已有记录`)
+        } else {
+          ElMessage.success(data.message || '批量排班成功')
+        }
         batchDialogVisible.value = false
         fetchUserSchedules()
       } else {

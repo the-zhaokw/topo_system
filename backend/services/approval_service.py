@@ -4,6 +4,7 @@
 """
 import logging
 from datetime import datetime
+from utils.time_utils import now_china
 from config.extensions import db
 from models import User, Position, LeaveApplication
 from models.enums import ApprovalStatus
@@ -133,7 +134,7 @@ class ApprovalService:
             
             application.status = ApprovalStatus.APPROVED.value
             application.approver_id = approver_id
-            application.approved_at = datetime.utcnow()
+            application.approved_at = now_china()
             application.approval_comment = comment
             
             db.session.commit()
@@ -172,7 +173,7 @@ class ApprovalService:
             
             application.status = ApprovalStatus.REJECTED.value
             application.approver_id = approver_id
-            application.approved_at = datetime.utcnow()
+            application.approved_at = now_china()
             application.approval_comment = comment
             
             db.session.commit()

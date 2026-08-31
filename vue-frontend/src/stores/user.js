@@ -5,7 +5,9 @@ const getStoredUser = () => {
   const userStr = localStorage.getItem('user')
   if (userStr) {
     try {
-      return JSON.parse(userStr)
+      const parsed = JSON.parse(userStr)
+      // 兼容旧格式：数据可能嵌套在 user 字段下
+      return parsed.user || parsed
     } catch (e) {
       return null
     }
@@ -94,7 +96,8 @@ export const useUserStore = defineStore('user', {
           // 始终调用 fetchCurrentUser 获取完整用户信息（包含 custom_permissions）
           // 失败时保留 login 返回的用户信息，不触发登出
           try {
-            const fullUser = await apiService.auth.getCurrentUser()
+            const resp = await apiService.auth.getCurrentUser()
+            const fullUser = resp?.user || resp
             if (fullUser) {
               this.currentUser = fullUser
               localStorage.setItem('user', JSON.stringify(fullUser))
@@ -141,9 +144,11 @@ export const useUserStore = defineStore('user', {
       this.userLoading = true
       try {
         const response = await apiService.auth.getCurrentUser()
-        this.currentUser = response
-        localStorage.setItem('user', JSON.stringify(response))
-        return response
+        // /auth/me 返回 { user: { id, ... } }，提取 user 字段
+        const userData = response.user || response
+        this.currentUser = userData
+        localStorage.setItem('user', JSON.stringify(userData))
+        return userData
       } catch (error) {
         console.error('获取用户信息失败:', error)
         this.logout()

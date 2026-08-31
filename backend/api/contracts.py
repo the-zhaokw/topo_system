@@ -9,6 +9,7 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import or_, func
 from datetime import datetime, timezone, timedelta
+from utils.time_utils import now_china
 
 # 统一权限系统
 from utils.permission_unified import (
@@ -380,7 +381,7 @@ class ContractDetailResource(Resource):
             if 'delivery_progress' in data:
                 contract.delivery_progress = data['delivery_progress']
             
-            contract.updated_at = datetime.utcnow()
+            contract.updated_at = now_china()
             db.session.commit()
             
             return {'contract': contract.to_dict(), 'message': '合同更新成功'}
@@ -482,7 +483,7 @@ class ContractApprovalResource(Resource):
             
             if data.get('status') in ['approved', 'rejected']:
                 approval.status = data['status']
-                approval.approval_date = datetime.utcnow()
+                approval.approval_date = now_china()
                 
                 if data.get('status') == 'approved':
                     all_approved = True
@@ -589,7 +590,7 @@ class ContractDeliveryResource(Resource):
             if 'notes' in data:
                 delivery.notes = data['notes']
             
-            delivery.updated_at = datetime.utcnow()
+            delivery.updated_at = now_china()
             db.session.commit()
             
             return {'delivery': delivery.to_dict(), 'message': '交付记录更新成功'}
@@ -682,7 +683,7 @@ class ContractRiskResource(Resource):
                 mitigation_measures=data.get('mitigation_measures'),
                 status=data.get('status', 'identified'),
                 identified_by=current_user_id,
-                identified_date=datetime.utcnow()
+                identified_date=now_china()
             )
             
             db.session.add(risk)
@@ -713,7 +714,7 @@ class ContractRiskResource(Resource):
             if 'status' in data:
                 risk.status = data['status']
                 if data['status'] == 'resolved':
-                    risk.resolved_date = datetime.utcnow()
+                    risk.resolved_date = now_china()
             
             db.session.commit()
             

@@ -7,6 +7,7 @@ Bug管理模块统计功能API
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 from collections import defaultdict
 import json
 
@@ -94,7 +95,7 @@ def get_bug_dashboard():
     
     # 获取时间范围参数
     days = request.args.get('days', 30, type=int)
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = now_china() - timedelta(days=days)
     
     # 权限过滤：获取用户有权限访问的项目
     if current_user.role == 'admin':
@@ -113,7 +114,7 @@ def get_bug_dashboard():
     ).count()
     
     # 本日新增Bug数
-    today = datetime.utcnow().date()
+    today = now_china().date()
     today_new_bugs = Bug.query.filter(
         Bug.created_at >= datetime.combine(today, datetime.min.time()),
         Bug.created_at < datetime.combine(today + timedelta(days=1), datetime.min.time()),
@@ -232,7 +233,7 @@ def get_project_bug_statistics(project_id):
     
     # 获取时间范围参数
     days = request.args.get('days', 30, type=int)
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = now_china() - timedelta(days=days)
     
     # 3.2.1 项目Bug分布（按状态）
     status_distribution = defaultdict(int)
@@ -244,7 +245,7 @@ def get_project_bug_statistics(project_id):
     # 3.2.2 项目Bug趋势对比（单项目趋势）
     trend_data = []
     for i in range(days):
-        date = datetime.utcnow().date() - timedelta(days=days - 1 - i)
+        date = now_china().date() - timedelta(days=days - 1 - i)
         date_str = date.strftime('%Y-%m-%d')
         
         new_bugs = Bug.query.filter(
@@ -268,7 +269,7 @@ def get_project_bug_statistics(project_id):
     
     # 3.2.3 项目Bug年龄分析
     age_distribution = defaultdict(int)
-    today = datetime.utcnow()
+    today = now_china()
 
     for bug in project_bugs:
         if _status_eq(bug.status, BugStatus.CLOSED):
@@ -332,7 +333,7 @@ def get_developer_performance():
     
     # 获取时间范围参数
     days = request.args.get('days', 30, type=int)
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = now_china() - timedelta(days=days)
     
     # 权限过滤：获取用户有权限访问的项目
     if current_user.role == 'admin':
@@ -417,7 +418,7 @@ def get_tester_performance():
     
     # 获取时间范围参数
     days = request.args.get('days', 30, type=int)
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = now_china() - timedelta(days=days)
     
     # 权限过滤：获取用户有权限访问的项目
     if current_user.role == 'admin':
@@ -517,7 +518,7 @@ def get_reopen_analysis():
     
     # 获取时间范围参数
     days = request.args.get('days', 30, type=int)
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = now_china() - timedelta(days=days)
     
     # 权限过滤：获取用户有权限访问的项目
     if current_user.role == 'admin':
@@ -655,7 +656,7 @@ def generate_custom_report():
         'name': name,
         'charts': chart_data,
         'total_bugs': len(bugs),
-        'generated_at': datetime.utcnow().isoformat()
+        'generated_at': now_china().isoformat()
     })
 
 def generate_chart_option(chart_type, dimension, bugs, start_date, end_date):
@@ -993,7 +994,7 @@ def get_kpi_metrics():
                 count += 1
         avg_fix_time = round(total_time / count, 1) if count > 0 else 0
     
-    period_start = start_date if start_date else (datetime.utcnow() - timedelta(days=30)).isoformat()
+    period_start = start_date if start_date else (now_china() - timedelta(days=30)).isoformat()
     prev_query = Bug.query.filter(
         Bug.project_id.in_(project_id_list),
         Bug.created_at < datetime.fromisoformat(period_start)
@@ -1064,9 +1065,9 @@ def get_trend_analysis():
         project_id_list = accessible_project_ids
     
     if not start_date:
-        start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
+        start_date = (now_china() - timedelta(days=30)).strftime('%Y-%m-%d')
     if not end_date:
-        end_date = datetime.utcnow().strftime('%Y-%m-%d')
+        end_date = now_china().strftime('%Y-%m-%d')
     
     query = Bug.query.filter(
         Bug.project_id.in_(project_id_list),

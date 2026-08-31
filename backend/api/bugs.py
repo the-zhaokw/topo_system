@@ -8,6 +8,7 @@ import pandas as pd
 from io import BytesIO
 from flask import Blueprint, request, jsonify, send_file, make_response
 from datetime import datetime
+from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from logging_decorators import log_api_call, log_business_operation
 from functools import wraps
@@ -884,7 +885,7 @@ def update_bug(bug_id):
                     else:
                         setattr(bug, field, data[field])
     
-    bug.updated_at = datetime.utcnow()
+    bug.updated_at = now_china()
     
     import logging
     logger = logging.getLogger(__name__)
@@ -909,7 +910,7 @@ def update_bug(bug_id):
 您已被指定为Bug "#{bug.id} {bug.title}" 的解决者。
 
 指派人: {current_user.username}
-指派时间: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}
+指派时间: {now_china().strftime('%Y-%m-%d %H:%M:%S')}
 
 请登录TOPO系统查看详情并及时处理。
 
@@ -929,7 +930,7 @@ def update_bug(bug_id):
             </tr>
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>指派时间</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{now_china().strftime('%Y-%m-%d %H:%M:%S')}</td>
             </tr>
         </table>
         <p>请登录TOPO系统查看详情并及时处理。</p>
@@ -1039,13 +1040,13 @@ def update_bug_status(bug_id):
         return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
     
     bug.status = new_status_value.lower()
-    bug.updated_at = datetime.utcnow()
+    bug.updated_at = now_china()
     
     if new_status_value == 'resolved' and not bug.resolved_at:
-        bug.resolved_at = datetime.utcnow()
+        bug.resolved_at = now_china()
         bug.resolved_by = int(current_user_id)
     elif new_status_value == 'closed' and not bug.closed_at:
-        bug.closed_at = datetime.utcnow()
+        bug.closed_at = now_china()
     
     try:
         db.session.commit()
@@ -1062,7 +1063,7 @@ def update_bug_status(bug_id):
 您报告的Bug "#{bug.id} {bug.title}" 已经被解决。
 
 解决者: {current_user.username}
-解决时间: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}
+解决时间: {now_china().strftime('%Y-%m-%d %H:%M:%S')}
 
 请登录TOPO系统查看详情。
 
@@ -1082,7 +1083,7 @@ def update_bug_status(bug_id):
             </tr>
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>解决时间</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{now_china().strftime('%Y-%m-%d %H:%M:%S')}</td>
             </tr>
         </table>
         <p>请登录TOPO系统查看详情。</p>
@@ -1183,10 +1184,10 @@ def transition_bug_status(bug_id):
             return jsonify({'success': False, 'message': f'无效的状态值，可选值: {valid_statuses}', 'data': None}), 400
         
         bug.status = new_status_lower
-        bug.updated_at = datetime.utcnow()
+        bug.updated_at = now_china()
         
         if new_status_lower == 'resolved':
-            bug.resolved_at = datetime.utcnow()
+            bug.resolved_at = now_china()
             try:
                 bug.resolved_by = int(current_user_id) if current_user_id is not None else None
             except (TypeError, ValueError):
@@ -1196,7 +1197,7 @@ def transition_bug_status(bug_id):
             if not bug.verifier_id:
                 bug.verifier_id = bug.reported_by
         elif new_status_lower == 'closed':
-            bug.closed_at = datetime.utcnow()
+            bug.closed_at = now_china()
         elif new_status_lower == 'reopened':
             bug.reopened_count = (bug.reopened_count or 0) + 1
 
@@ -1226,7 +1227,7 @@ def transition_bug_status(bug_id):
 您报告的Bug "#{bug.id} {bug.title}" 已经被解决。
 
 解决者: {current_user.username}
-解决时间: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}
+解决时间: {now_china().strftime('%Y-%m-%d %H:%M:%S')}
 
 请登录TOPO系统查看详情。
 
@@ -1246,7 +1247,7 @@ def transition_bug_status(bug_id):
             </tr>
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>解决时间</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{now_china().strftime('%Y-%m-%d %H:%M:%S')}</td>
             </tr>
         </table>
         <p>请登录TOPO系统查看详情。</p>
@@ -1354,7 +1355,7 @@ def assign_bug(bug_id):
         new_assignee_name = assignee.username if assignee else str(assignee_id)
     
     bug.assigned_to = assignee_id
-    bug.updated_at = datetime.utcnow()
+    bug.updated_at = now_china()
     
     try:
         db.session.commit()

@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import re
 import logging
 from datetime import datetime
+from utils.time_utils import now_china
 from logging_config import get_log_manager
 from logging_decorators import log_api_call, log_business_operation
 
@@ -398,7 +399,7 @@ def get_user_home(user_id):
         'is_self': is_self
     }
     
-    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    thirty_days_ago = now_china() - timedelta(days=30)
     activities = db.session.query(Activity).filter(
         Activity.performed_by == user_id,
         Activity.created_at >= thirty_days_ago
@@ -430,8 +431,14 @@ def get_user_home(user_id):
             else:
                 match = re.search(r'工作日志[：:](.+)', activity.description)
                 activity_dict['resource_name'] = match.group(1) if match else f'工作日志 #{activity.target_id}'
+        elif activity.target_type == 'user':
+            target_user = db.session.query(User).get(activity.target_id)
+            activity_dict['resource_name'] = target_user.username if target_user else '未知用户'
         else:
-            activity_dict['resource_name'] = f'{activity.target_type} #{activity.target_id}'
+            if activity.description:
+                activity_dict['resource_name'] = activity.description
+            else:
+                activity_dict['resource_name'] = f'{activity.target_type} #{activity.target_id}'
         
         activity_list.append(activity_dict)
     

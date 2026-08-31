@@ -9,6 +9,7 @@ import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+from utils.time_utils import now_china
 from config.extensions import db
 from models import Notification
 
@@ -183,7 +184,7 @@ class NotificationService:
         try:
             count = Notification.query.filter_by(user_id=user_id, is_read=False).update({
                 'is_read': True,
-                'read_at': datetime.utcnow()
+                'read_at': now_china()
             })
             db.session.commit()
             return count

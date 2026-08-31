@@ -3,6 +3,7 @@
 提供基础模型类和通用枚举基类
 """
 from datetime import datetime
+from utils.time_utils import now_china
 from config.extensions import db
 import enum
 
@@ -15,8 +16,8 @@ class BaseModel(db.Model):
     __abstract__ = True
     
     id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_china)
+    updated_at = db.Column(db.DateTime, default=now_china, onupdate=now_china)
     
     def to_dict(self):
         """

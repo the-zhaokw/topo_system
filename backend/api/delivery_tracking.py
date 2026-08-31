@@ -7,6 +7,7 @@ from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+from utils.time_utils import now_china
 
 import sys
 import os
@@ -102,11 +103,11 @@ class DeliveryStatusTransitionResource(Resource):
         delivery.status = new_status
         if data.get('notes'):
             delivery.notes = (delivery.notes or '') + '\n' + data['notes']
-        delivery.updated_at = datetime.utcnow()
+        delivery.updated_at = now_china()
         
         # 如果是到货状态，记录实际到货日期
         if new_status == 'arrived':
-            delivery.actual_date = datetime.utcnow()
+            delivery.actual_date = now_china()
         
         db.session.commit()
         

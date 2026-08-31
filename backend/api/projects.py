@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
 import logging
@@ -621,7 +622,7 @@ def create_project():
                             project_id=new_project.id,
                             user_id=user_id_int,
                             role='member',
-                            join_date=datetime.utcnow()
+                            join_date=now_china()
                         )
                         db.session.add(new_member)
                 db.session.commit()
@@ -638,7 +639,7 @@ def create_project():
                     project_id=new_project.id,
                     user_id=new_project.manager_id,
                     role='manager',
-                    join_date=datetime.utcnow()
+                    join_date=now_china()
                 )
                 db.session.add(new_manager_member)
                 db.session.commit()
@@ -848,7 +849,7 @@ def update_project(project_id):
                             project_id=project_id,
                             user_id=manager_id_int,
                             role='manager',
-                            join_date=datetime.utcnow()
+                            join_date=now_china()
                         )
                         db.session.add(new_manager_member)
                 except (ValueError, TypeError):
@@ -935,7 +936,7 @@ def update_project(project_id):
         # 注意：cost 字段已在上面处理过，此处不再重复处理
         
         # 更新修改时间
-        project.updated_at = datetime.utcnow()
+        project.updated_at = now_china()
         
         try:
             db.session.commit()
@@ -980,7 +981,7 @@ def update_project(project_id):
                                 project_id=project_id,
                                 user_id=user_id_int,
                                 role='member',
-                                join_date=datetime.utcnow()
+                                join_date=now_china()
                             )
                             db.session.add(new_member)
                     
@@ -1264,7 +1265,7 @@ def add_project_member(project_id):
                 project_id=project_id,
                 user_id=user_id,
                 role=role,
-                join_date=datetime.utcnow()
+                join_date=now_china()
             )
             
             db.session.add(new_member)

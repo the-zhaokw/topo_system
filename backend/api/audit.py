@@ -7,6 +7,7 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import and_, or_, func
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 import json
 
 # 统一权限系统
@@ -111,7 +112,7 @@ def log_action(action, resource_type, resource_id=None, details=None, user_id=No
             details=json.dumps(details, ensure_ascii=False) if details else None,
             ip_address=ip_address,
             user_agent=user_agent,
-            created_at=datetime.utcnow()
+            created_at=now_china()
         )
         
         db.session.add(log)
@@ -231,7 +232,7 @@ class AuditLogStatisticsResource(Resource):
         
         # 时间范围
         days = request.args.get('days', 7, type=int)
-        start_date = datetime.utcnow() - timedelta(days=days)
+        start_date = now_china() - timedelta(days=days)
         
         # 操作类型分布
         action_stats = db.session.query(

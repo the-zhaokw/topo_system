@@ -3,6 +3,7 @@
 """
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import func
 import json
@@ -34,7 +35,7 @@ def get_statistics():
             Activity.action.like('%delete%')
         ).scalar() or 0
 
-        today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = now_china().replace(hour=0, minute=0, second=0, microsecond=0)
         today_count = db.session.query(func.count(Activity.id)).filter(
             Activity.created_at >= today_start
         ).scalar() or 0
@@ -204,7 +205,7 @@ def get_recent_activities():
     User, Activity, Bug, Project, WorkLog, app, db = get_models()
 
     with app.app_context():
-        recent_date = datetime.utcnow() - timedelta(days=7)
+        recent_date = now_china() - timedelta(days=7)
         activities = Activity.query.filter(
             Activity.created_at >= recent_date
         ).order_by(Activity.created_at.desc()).limit(50).all()

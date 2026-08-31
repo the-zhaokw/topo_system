@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
 import json
@@ -128,8 +129,8 @@ def get_work_calendar():
         current_user_id = get_jwt_identity()
         current_user = User.query.get(int(current_user_id))
         
-        year = request.args.get('year', datetime.utcnow().year, type=int)
-        month = request.args.get('month', datetime.utcnow().month, type=int)
+        year = request.args.get('year', now_china().year, type=int)
+        month = request.args.get('month', now_china().month, type=int)
         
         calendar = WorkCalendar.query.filter(
             db.extract('year', WorkCalendar.date) == year,
@@ -213,14 +214,29 @@ def get_attendance_records():
 
                 if not effective_user_shift and record.user_id and record.record_date:
                     rec_date = record.record_date.date() if hasattr(record.record_date, 'date') else record.record_date
-                    effective_user_shift = UserShift.query.filter(
+                    rec_weekday = str(rec_date.isoweekday())
+                    # 获取日期范围内的所有排班，按生效日期降序
+                    candidate_shifts = UserShift.query.filter(
                         UserShift.user_id == record.user_id,
                         UserShift.effective_date <= rec_date,
                         db.or_(
                             UserShift.expire_date == None,
                             UserShift.expire_date >= rec_date
                         )
-                    ).order_by(UserShift.effective_date.desc()).first()
+                    ).order_by(UserShift.effective_date.desc()).all()
+                    # 优先匹配 days_of_week 包含当天星期几的排班，
+                    # days_of_week 为空表示每天都适用
+                    for candidate in candidate_shifts:
+                        candidate_shift = candidate.shift
+                        if not candidate_shift:
+                            continue
+                        if not candidate_shift.days_of_week:
+                            effective_user_shift = candidate
+                            break
+                        weekdays = [d.strip() for d in candidate_shift.days_of_week.split(',')]
+                        if rec_weekday in weekdays:
+                            effective_user_shift = candidate
+                            break
 
                 if effective_user_shift and not shift_data:
                     shift_obj = effective_user_shift.shift
@@ -345,7 +361,7 @@ def clock_in():
         current_user_id = get_jwt_identity()
         current_user = User.query.get(int(current_user_id))
         
-        current_date = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        current_date = now_china().replace(hour=0, minute=0, second=0, microsecond=0)
         
         existing_record = AttendanceRecord.query.filter(
             AttendanceRecord.user_id == current_user_id,
@@ -360,15 +376,31 @@ def clock_in():
         json_data = request.get_json(silent=True) or {}
         location = json_data.get('location')
         
-        today = datetime.utcnow().date()
-        user_shift = UserShift.query.filter(
+        today = now_china().date()
+        today_weekday = str(today.isoweekday())
+        # 获取日期范围内的所有排班，按生效日期降序
+        candidate_shifts = UserShift.query.filter(
             UserShift.user_id == current_user_id,
             UserShift.effective_date <= today,
             db.or_(
                 UserShift.expire_date == None,
                 UserShift.expire_date >= today
             )
-        ).order_by(UserShift.effective_date.desc()).first()
+        ).order_by(UserShift.effective_date.desc()).all()
+        # 优先匹配 days_of_week 包含当天星期几的排班，
+        # days_of_week 为空表示每天都适用
+        user_shift = None
+        for candidate in candidate_shifts:
+            candidate_shift_obj = candidate.shift
+            if not candidate_shift_obj:
+                continue
+            if not candidate_shift_obj.days_of_week:
+                user_shift = candidate
+                break
+            weekdays = [d.strip() for d in candidate_shift_obj.days_of_week.split(',')]
+            if today_weekday in weekdays:
+                user_shift = candidate
+                break
 
         shift = None
         if user_shift:
@@ -377,14 +409,14 @@ def clock_in():
         late_minutes = 0
         if shift:
             shift_start = datetime.strptime(shift.start_time, '%H:%M').time()
-            actual_time = datetime.utcnow().time()
+            actual_time = now_china().time()
             if actual_time > shift_start:
                 shift_start_dt = datetime.combine(today, shift_start)
                 actual_dt = datetime.combine(today, actual_time)
                 late_minutes = int((actual_dt - shift_start_dt).total_seconds() / 60)
 
         if existing_record:
-            existing_record.clock_in_time = datetime.utcnow()
+            existing_record.clock_in_time = now_china()
             existing_record.clock_in_ip = client_ip
             existing_record.clock_in_location = location
             existing_record.late_minutes = late_minutes
@@ -397,7 +429,7 @@ def clock_in():
             record = AttendanceRecord(
                 user_id=current_user_id,
                 record_date=current_date,
-                clock_in_time=datetime.utcnow(),
+                clock_in_time=now_china(),
                 clock_in_ip=client_ip,
                 clock_in_location=location,
                 late_minutes=late_minutes,
@@ -436,7 +468,7 @@ def clock_out():
         current_user_id = get_jwt_identity()
         current_user = User.query.get(int(current_user_id))
         
-        current_date = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        current_date = now_china().replace(hour=0, minute=0, second=0, microsecond=0)
         
         record = AttendanceRecord.query.filter_by(
             user_id=current_user_id,
@@ -452,7 +484,7 @@ def clock_out():
         client_ip = request.remote_addr or '0.0.0.0'
         location = request.json.get('location') if request.json else None
         
-        record.clock_out_time = datetime.utcnow()
+        record.clock_out_time = now_china()
         record.clock_out_ip = client_ip
         record.clock_out_location = location
         
@@ -490,7 +522,7 @@ def get_today_record():
         current_user_id = get_jwt_identity()
         current_user = User.query.get(int(current_user_id))
         
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today = now_china().replace(hour=0, minute=0, second=0, microsecond=0)
         
         record = AttendanceRecord.query.filter_by(
             user_id=current_user_id,
@@ -985,7 +1017,7 @@ def approve_leave_application(application_id):
             application.status = ApprovalStatus.APPROVED.value
         application.approval_comment = comment
         application.approver_id = current_user_id
-        application.approved_at = datetime.utcnow()
+        application.approved_at = now_china()
         db.session.commit()
 
         try:
@@ -1064,7 +1096,7 @@ def approve_overtime_application(application_id):
                 application.rejection_reason = comment
 
         application.approver_id = current_user_id
-        application.approved_at = datetime.utcnow()
+        application.approved_at = now_china()
         db.session.commit()
 
         try:
@@ -1318,7 +1350,7 @@ def get_user_shifts():
         current_user = User.query.get(int(current_user_id))
         
         date_str = request.args.get('date')
-        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now_china().date()
         
         # 查询所有用户的班次安排
         user_shifts = UserShift.query.filter(
@@ -1384,7 +1416,10 @@ def get_user_shifts():
 @jwt_required()
 @require_permission('attendance:user_shift_assign')
 def create_user_shifts_batch():
-    """批量为多个用户在日期范围内创建/更新排班"""
+    """批量为多个用户在日期范围内创建/更新排班
+    
+    apply_mode: 'overlay'（叠加，默认）或 'replace'（替换已有重叠排班）
+    """
     db = get_db()
     logger = get_logger()
     create_audit_log = get_create_audit_log()
@@ -1400,9 +1435,13 @@ def create_user_shifts_batch():
         user_ids = data.get('user_ids') or []
         shift_id = data.get('shift_id')
         date_range = data.get('date_range') or []
+        apply_mode = data.get('apply_mode', 'overlay')  # overlay=叠加, replace=替换
 
         if not user_ids or not shift_id:
             return jsonify({'error': '员工和班次均为必填项'}), 400
+
+        if apply_mode not in ('overlay', 'replace'):
+            return jsonify({'error': '应用方式参数无效，应为 overlay 或 replace'}), 400
 
         # date_range 可能是 ['2025-01-01', '2025-01-31'] 或 null（表示永久生效）
         shift = ShiftSchedule.query.get(shift_id)
@@ -1420,7 +1459,11 @@ def create_user_shifts_batch():
             if expire_date < effective_date:
                 return jsonify({'error': '结束日期不能早于开始日期'}), 400
 
+        new_effective = effective_date or now_china().replace(hour=0, minute=0, second=0, microsecond=0)
+        new_expire = expire_date
+
         created_count = 0
+        replaced_count = 0
         for uid in user_ids:
             try:
                 uid_int = int(uid)
@@ -1429,11 +1472,37 @@ def create_user_shifts_batch():
             target_user = User.query.get(uid_int)
             if not target_user:
                 continue
+
+            # 替换模式：删除日期范围内已有的重叠排班记录
+            if apply_mode == 'replace':
+                # 查询与新排班日期范围重叠的已有记录
+                overlap_query = UserShift.query.filter(UserShift.user_id == uid_int)
+                
+                if new_expire:
+                    # 新排班有结束日期：已有记录的生效日期 <= 新结束日期
+                    overlap_query = overlap_query.filter(UserShift.effective_date <= new_expire)
+                    # 已有记录的失效日期为空 或 失效日期 >= 新开始日期
+                    overlap_query = overlap_query.filter(
+                        db.or_(
+                            UserShift.expire_date == None,
+                            UserShift.expire_date >= new_effective
+                        )
+                    )
+                else:
+                    # 新排班永久生效：所有已有记录都重叠（因为新记录没有结束日期）
+                    pass  # 该用户的所有排班记录都将被替换
+                
+                overlapping = overlap_query.all()
+                if overlapping:
+                    replaced_count += len(overlapping)
+                    for us_old in overlapping:
+                        db.session.delete(us_old)
+
             us = UserShift(
                 user_id=uid_int,
                 shift_id=shift_id,
-                effective_date=effective_date or datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0),
-                expire_date=expire_date
+                effective_date=new_effective,
+                expire_date=new_expire
             )
             db.session.add(us)
             created_count += 1
@@ -1441,17 +1510,27 @@ def create_user_shifts_batch():
         db.session.commit()
 
         try:
+            mode_text = '替换模式' if apply_mode == 'replace' else '叠加模式'
+            details = f'批量排班({mode_text}): 班次ID={shift_id}, 员工数={created_count}'
+            if apply_mode == 'replace' and replaced_count > 0:
+                details += f', 替换已有记录{replaced_count}条'
             create_audit_log(
                 user_id=current_user_id,
                 action='batch_create',
                 resource_type='user_shift',
                 resource_id=None,
-                details=f'批量排班: 班次ID={shift_id}, 员工数={created_count}',
+                details=details,
                 request=request
             )
         except Exception:
             pass
 
+        if apply_mode == 'replace':
+            return jsonify({
+                'message': f'批量排班成功，创建 {created_count} 条记录，替换 {replaced_count} 条已有记录',
+                'count': created_count,
+                'replaced_count': replaced_count
+            }), 201
         return jsonify({'message': f'批量排班成功，共创建 {created_count} 条记录', 'count': created_count}), 201
     except Exception as e:
         db.session.rollback()
@@ -1625,7 +1704,7 @@ def get_statistics():
         date_str = request.args.get('date')
         department = request.args.get('department')
         
-        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now_china().date()
         
         # 确定日期范围
         if period == 'daily':
@@ -1722,7 +1801,7 @@ def get_reports_overview():
         date_str = request.args.get('date')
         department = request.args.get('department')
         
-        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now_china().date()
         
         # 确定日期范围
         if period == 'daily':
@@ -1804,7 +1883,7 @@ def get_reports_detail():
         date_str = request.args.get('date')
         department = request.args.get('department')
         
-        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now_china().date()
         
         # 确定日期范围
         if period == 'daily':
@@ -1891,7 +1970,7 @@ def get_my_attendance_summary():
 
         # 支持自定义日期范围，默认本月
         date_str = request.args.get('date')
-        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now_china().date()
 
         year = request.args.get('year', target_date.year, type=int)
         month = request.args.get('month', target_date.month, type=int)
@@ -2239,7 +2318,7 @@ def export_attendance_report():
         start_date = request.args.get('start_date') or request.args.get('dateRange[0]')
         end_date = request.args.get('end_date') or request.args.get('dateRange[1]')
 
-        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else datetime.utcnow().date()
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now_china().date()
 
         # 自定义周期优先使用 dateRange
         if period == 'custom' and start_date and end_date:

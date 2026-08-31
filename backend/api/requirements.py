@@ -8,6 +8,7 @@ from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from functools import wraps
 from datetime import datetime
+from utils.time_utils import now_china
 import json
 import io
 
@@ -197,7 +198,7 @@ def update_requirement_document(doc_id):
         if 'status' in data:
             document.status = data['status']
         
-        document.updated_at = datetime.utcnow()
+        document.updated_at = now_china()
         db.session.commit()
 
         create_audit_log(
@@ -272,7 +273,7 @@ def change_document_status(doc_id):
             return jsonify({'error': '无权创建版本'}), 403
         
         document.status = new_status
-        document.updated_at = datetime.utcnow()
+        document.updated_at = now_china()
         db.session.commit()
 
         create_audit_log(
@@ -450,7 +451,7 @@ def update_requirement_item(item_id):
         if 'actual_version' in data:
             item.actual_version = data['actual_version']
         
-        item.updated_at = datetime.utcnow()
+        item.updated_at = now_china()
         db.session.commit()
 
         create_audit_log(
@@ -527,7 +528,7 @@ def change_item_status(item_id):
             return jsonify({'error': '无权变更该条目状态'}), 403
         
         item.status = new_status
-        item.updated_at = datetime.utcnow()
+        item.updated_at = now_china()
         db.session.commit()
 
         create_audit_log(
@@ -874,7 +875,7 @@ def create_document_version(doc_id):
         
         # 更新文档版本号
         document.version = new_version
-        document.updated_at = datetime.utcnow()
+        document.updated_at = now_china()
         
         db.session.commit()
 
@@ -1199,7 +1200,7 @@ def move_requirement_item(item_id):
 
         item.doc_id = target_doc_id
         item.identifier = new_identifier
-        item.updated_at = datetime.utcnow()
+        item.updated_at = now_china()
 
         db.session.commit()
 
@@ -1265,7 +1266,7 @@ def initiate_review(doc_id):
         review_type = data.get('review_type', 'document')
 
         document.status = 'reviewing'
-        document.updated_at = datetime.utcnow()
+        document.updated_at = now_china()
 
         from enhanced_app import Notification
 
@@ -1352,7 +1353,7 @@ def review_item(item_id):
             )
             db.session.add(reviewer_comment)
 
-        item.updated_at = datetime.utcnow()
+        item.updated_at = now_china()
         db.session.commit()
 
         return jsonify({
@@ -1454,7 +1455,7 @@ def rollback_to_version(doc_id, version_num):
         document.description = doc_data.get('description', document.description)
         document.doc_type = doc_data.get('doc_type', document.doc_type)
         document.status = doc_data.get('status', document.status)
-        document.updated_at = datetime.utcnow()
+        document.updated_at = now_china()
 
         RequirementItem.query.filter_by(doc_id=doc_id).delete()
 

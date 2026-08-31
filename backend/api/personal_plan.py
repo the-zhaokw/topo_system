@@ -5,6 +5,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 import logging
 import re
 
@@ -204,7 +205,7 @@ def update_task(task_id):
         if 'status' in data:
             task.status = data['status']
             if data['status'] == PersonalTaskStatus.DONE and not task.completed_at:
-                task.completed_at = datetime.utcnow()
+                task.completed_at = now_china()
         if 'priority' in data:
             task.priority = data['priority']
         if 'quadrant' in data:
@@ -402,7 +403,7 @@ def start_task():
             return jsonify({'success': False, 'message': '任务不存在'}), 404
 
         task.status = PersonalTaskStatus.IN_PROGRESS
-        task.started_at = datetime.utcnow()
+        task.started_at = now_china()
 
         db.session.commit()
 
@@ -444,7 +445,7 @@ def complete_task():
             return jsonify({'success': False, 'message': '任务不存在'}), 404
 
         task.status = PersonalTaskStatus.DONE
-        task.completed_at = datetime.utcnow()
+        task.completed_at = now_china()
 
         if actual_minutes:
             task.actual_minutes = actual_minutes
@@ -454,7 +455,7 @@ def complete_task():
             record = HabitRecord(
                 user_id=current_user_id,
                 task_id=task.id,
-                completed_date=datetime.utcnow().date(),
+                completed_date=now_china().date(),
                 duration_minutes=actual_minutes or task.estimated_minutes
             )
             db.session.add(record)
@@ -642,7 +643,7 @@ def start_focus():
             task_id=task_id,
             focus_type=focus_type,
             planned_duration=duration,
-            started_at=datetime.utcnow()
+            started_at=now_china()
         )
 
         db.session.add(session)
@@ -685,7 +686,7 @@ def end_focus():
         if not session:
             return jsonify({'success': False, 'message': '专注会话不存在'}), 404
 
-        session.ended_at = datetime.utcnow()
+        session.ended_at = now_china()
         session.actual_duration = int((session.ended_at - session.started_at).total_seconds() / 60)
         session.completed = completed
 
@@ -695,7 +696,7 @@ def end_focus():
             if task and task.status != PersonalTaskStatus.DONE:
                 if session.actual_duration >= session.planned_duration * 0.5:
                     task.status = PersonalTaskStatus.DONE
-                    task.completed_at = datetime.utcnow()
+                    task.completed_at = now_china()
                     task.actual_minutes = (task.actual_minutes or 0) + session.actual_duration
 
         db.session.commit()
@@ -726,7 +727,7 @@ def get_focus_stats():
         from enhanced_app import FocusSession
 
         days = int(request.args.get('days', 7))
-        start_date = datetime.utcnow() - timedelta(days=days)
+        start_date = now_china() - timedelta(days=days)
 
         sessions = FocusSession.query.filter(
             FocusSession.user_id == current_user_id,
@@ -817,7 +818,7 @@ def check_in_habit():
         record = HabitRecord(
             user_id=current_user_id,
             task_id=task_id,
-            completed_date=datetime.utcnow().date(),
+            completed_date=now_china().date(),
             duration_minutes=duration
         )
 
@@ -849,7 +850,7 @@ def get_daily_stats():
     try:
         from enhanced_app import PersonalTask, FocusSession
 
-        date = request.args.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+        date = request.args.get('date', now_china().strftime('%Y-%m-%d'))
 
         tasks = PersonalTask.query.filter(
             PersonalTask.user_id == current_user_id,
@@ -900,7 +901,7 @@ def get_weekly_stats():
     try:
         from enhanced_app import PersonalTask, FocusSession
 
-        today = datetime.utcnow().date()
+        today = now_china().date()
         week_start = today - timedelta(days=today.weekday())
         week_end = week_start + timedelta(days=6)
 
@@ -1061,7 +1062,7 @@ def parse_task_content(content):
             break
 
     if '明天下午' in content or '明天上午' in content or '明天' in content:
-        tomorrow = datetime.utcnow().date() + timedelta(days=1)
+        tomorrow = now_china().date() + timedelta(days=1)
         result['scheduled_date'] = tomorrow.strftime('%Y-%m-%d')
         if '下午' in content:
             result['scheduled_time'] = '14:00'
@@ -1116,7 +1117,7 @@ def calculate_streak(records):
 
     sorted_records = sorted(records, key=lambda x: x.completed_date, reverse=True)
     streak = 0
-    expected_date = datetime.utcnow().date()
+    expected_date = now_china().date()
 
     for record in sorted_records:
         record_date = record.completed_date if isinstance(record.completed_date, datetime) else record.completed_date
@@ -1358,11 +1359,11 @@ def batch_update_tasks():
             if action == 'complete':
                 task.status = 'done'
                 task.completed = True
-                task.completed_at = datetime.utcnow()
+                task.completed_at = now_china()
                 task.progress = 100
             elif action == 'start':
                 task.status = 'in_progress'
-                task.started_at = datetime.utcnow()
+                task.started_at = now_china()
             elif action == 'cancel':
                 task.status = 'cancelled'
             elif action == 'update':
@@ -1426,7 +1427,7 @@ def toggle_task_complete(task_id):
         if task.completed:
             task.status = 'done'
             task.progress = 100
-            task.completed_at = datetime.utcnow()
+            task.completed_at = now_china()
         else:
             task.status = 'todo'
             task.progress = 0
@@ -1486,7 +1487,7 @@ def update_task_progress(task_id):
         if progress >= 100:
             task.status = 'done'
             task.completed = True
-            task.completed_at = datetime.utcnow()
+            task.completed_at = now_china()
         elif progress > 0 and task.status == 'todo':
             task.status = 'in_progress'
 
@@ -1700,7 +1701,7 @@ def apply_template(template_id):
             return jsonify({'success': False, 'message': '模板不存在'}), 404
 
         data = request.get_json()
-        base_date = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+        base_date = data.get('date', now_china().strftime('%Y-%m-%d'))
 
         tasks_template = json.loads(template.tasks_template)
         created_tasks = []

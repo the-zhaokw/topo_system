@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, date
+from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
 import logging
@@ -268,7 +269,7 @@ def update_risk(risk_id):
             risk.related_task_id = data['related_task_id']
 
         risk.exposure = risk.calculate_exposure()
-        risk.updated_at = datetime.utcnow()
+        risk.updated_at = now_china()
 
         db.session.commit()
 

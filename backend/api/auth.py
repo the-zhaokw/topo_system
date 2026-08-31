@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
+from utils.time_utils import now_china
 import re
 import logging
 import traceback
@@ -283,9 +284,9 @@ def login():
 
             # 更新用户的last_login时间和状态为在线
             try:
-                user.last_login = datetime.utcnow()
+                user.last_login = now_china()
                 user.status = 'online'
-                user.last_activity = datetime.utcnow()
+                user.last_activity = now_china()
             except Exception as field_err:
                 logger.warning(f"更新用户状态字段失败（忽略继续）: {field_err}")
 
