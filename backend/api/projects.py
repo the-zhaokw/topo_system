@@ -28,7 +28,21 @@ def _check_proj_perm(user, perm_code):
     pos = user.get_position_info()
     if pos and (pos.is_admin or pos.is_manager):
         return True
-    return user.check_permission(perm_code)
+    if user.check_permission(perm_code):
+        return True
+    # project:view 权限额外允许项目成员访问
+    if perm_code == 'project:view':
+        try:
+            from enhanced_app import ProjectMember
+            member = _proj_db.session.query(ProjectMember).filter_by(user_id=user.id).first()
+            if member:
+                logger.info(f"用户 {user.username}(id={user.id}) 通过项目成员身份获得 project:view 权限")
+                return True
+            else:
+                logger.warning(f"用户 {user.username}(id={user.id}) 不是任何项目成员，project:view 权限被拒绝")
+        except Exception as e:
+            logger.error(f"检查项目成员身份时出错: {e}", exc_info=True)
+    return False
 
 
 def require_project_permission(perm_code):

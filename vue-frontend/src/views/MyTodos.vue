@@ -153,9 +153,9 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="applicant_name" label="申请人" width="100">
+          <el-table-column prop="applicant_name" label="创建人" width="100">
             <template #default="{ row }">
-              <div class="applicant-name">{{ row.applicant_name || '-' }}</div>
+              <div class="applicant-name">{{ row.applicant_name || row.creator_name || '-' }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="due_date" label="截止时间" width="120" align="center">
@@ -220,9 +220,9 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="applicant_name" label="申请人" width="100">
+          <el-table-column prop="applicant_name" label="创建人" width="100">
             <template #default="{ row }">
-              <div class="applicant-name">{{ row.applicant_name }}</div>
+              <div class="applicant-name">{{ row.applicant_name || row.creator_name || '-' }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态" width="100" align="center">

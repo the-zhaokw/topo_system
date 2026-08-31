@@ -324,7 +324,7 @@
           <el-table-column prop="end_date" label="结束日期" width="120" align="center" />
           <el-table-column label="天数" width="80" align="center">
             <template #default="{ row }">
-              <span class="days-badge">{{ Math.ceil(row.total_hours / 8) }}</span>
+              <span class="days-badge">{{ row.days || '-' }}天</span>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态" align="center">
