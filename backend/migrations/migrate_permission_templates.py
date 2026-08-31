@@ -34,6 +34,7 @@ def migrate():
                         modules TEXT DEFAULT '[]',
                         allowed_permissions TEXT DEFAULT '[]',
                         denied_permissions TEXT DEFAULT '[]',
+                        role VARCHAR(50),
                         is_builtin BOOLEAN DEFAULT 0,
                         is_active BOOLEAN DEFAULT 1,
                         sort_order INTEGER DEFAULT 0,
@@ -72,6 +73,7 @@ def migrate():
                         'modules': defaults,
                         'allowed': [],
                         'denied': [],
+                        'role': 'user',
                     },
                     {
                         'name': '开发工程师模板',
@@ -97,6 +99,7 @@ def migrate():
                         'denied': [
                             PermissionCodes.PROJECT_DELETE, PermissionCodes.BUG_DELETE,
                         ],
+                        'role': 'software_engineer',
                     },
                     {
                         'name': '测试工程师模板',
@@ -121,10 +124,15 @@ def migrate():
                             PermissionCodes.TEST_CASE_REVIEW, PermissionCodes.TEST_EXECUTION_CREATE,
                             PermissionCodes.TEST_EXECUTION_EDIT, PermissionCodes.TEST_RESULT_SUBMIT,
                             PermissionCodes.TEST_VIEW_REPORT,
+                            PermissionCodes.ATTENDANCE_VIEW,
+                            PermissionCodes.CLOCK_IN, PermissionCodes.CLOCK_OUT,
+                            PermissionCodes.LEAVE_APPLY, PermissionCodes.OVERTIME_APPLY,
+                            PermissionCodes.EXCEPTION_HANDLE,
                         ],
                         'denied': [
                             PermissionCodes.BUG_DELETE,
                         ],
+                        'role': 'test_engineer',
                     },
                     {
                         'name': '项目经理模板',
@@ -142,6 +150,7 @@ def migrate():
                         ],
                         'allowed': all_codes,
                         'denied': [],
+                        'role': 'project_manager',
                     },
                     {
                         'name': '考勤管理员模板',
@@ -158,6 +167,7 @@ def migrate():
                             PermissionCodes.ATTENDANCE_EXPORT,
                         ],
                         'denied': [],
+                        'role': 'hr',
                     },
                 ]
 
@@ -165,8 +175,8 @@ def migrate():
                     db.session.execute(text("""
                         INSERT INTO permission_templates
                         (name, description, category, icon, modules, allowed_permissions, denied_permissions,
-                         is_builtin, is_active, sort_order, created_by, created_at, updated_at)
-                        VALUES (:name, :desc, :cat, :icon, :mods, :allow, :deny, 1, 1, :sort, NULL, :now, :now)
+                         role, is_builtin, is_active, sort_order, created_by, created_at, updated_at)
+                        VALUES (:name, :desc, :cat, :icon, :mods, :allow, :deny, :role, 1, 1, :sort, NULL, :now, :now)
                     """), {
                         'name': t['name'],
                         'desc': t['description'],
@@ -175,6 +185,7 @@ def migrate():
                         'mods': json.dumps(list(dict.fromkeys(t['modules'])), ensure_ascii=False),
                         'allow': json.dumps(list(dict.fromkeys(t['allowed'])), ensure_ascii=False),
                         'deny': json.dumps(list(dict.fromkeys(t['denied'])), ensure_ascii=False),
+                        'role': t.get('role'),
                         'sort': t['sort_order'],
                         'now': now
                     })

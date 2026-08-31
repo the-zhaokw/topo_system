@@ -29,6 +29,8 @@ class PermissionTemplate(BaseModel):
     modules = Column(Text, default='[]')               # 可见模块编码列表
     allowed_permissions = Column(Text, default='[]')   # 额外权限编码列表
     denied_permissions = Column(Text, default='[]')    # 限制权限编码列表
+    # 应用模板时同步写入用户的角色（如 test_engineer），为空则不改动用户角色
+    role = Column(String(50), nullable=True)
 
     # 元数据
     is_builtin = Column(Boolean, default=False)        # 内置模板不允许删除
@@ -48,6 +50,7 @@ class PermissionTemplate(BaseModel):
             'is_active': bool(self.is_active),
             'sort_order': self.sort_order or 0,
             'created_by': self.created_by,
+            'role': self.role,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
@@ -99,9 +102,12 @@ class PermissionTemplate(BaseModel):
         - modules: 写入用户的 accessible_modules
         - allowed_permissions: 写入用户的 custom_permissions.allowed
         - denied_permissions: 写入用户的 custom_permissions.denied
+        - role: 同步写入用户角色（为空则不改动）
         """
         user.set_accessible_modules(self.get_modules())
         user.set_custom_permissions({
             'allowed': self.get_allowed_permissions(),
             'denied': self.get_denied_permissions()
         })
+        if self.role:
+            user.role = self.role

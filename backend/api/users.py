@@ -2802,6 +2802,7 @@ def create_permission_template():
         sort_order=int(data.get('sort_order') or 100),
         created_by=current_user_id
     )
+    tpl.role = (data.get('role') or '').strip() or None
     tpl.set_modules(data.get('modules') or [])
     tpl.set_allowed_permissions(data.get('allowed_permissions') or [])
     tpl.set_denied_permissions(data.get('denied_permissions') or [])
@@ -2864,6 +2865,8 @@ def update_permission_template(template_id):
             tpl.sort_order = int(data.get('sort_order') or 0)
         except (TypeError, ValueError):
             pass
+    if 'role' in data:
+        tpl.role = (data.get('role') or '').strip() or None
 
     if 'modules' in data:
         tpl.set_modules(data.get('modules') or [])

@@ -287,6 +287,24 @@
           />
         </el-form-item>
 
+        <el-form-item label="应用角色">
+          <el-select
+            v-model="form.role"
+            placeholder="应用模板时同步设置的用户角色（可不选）"
+            clearable
+            style="width: 100%;"
+          >
+            <el-option label="普通用户" value="user" />
+            <el-option label="软件工程师" value="software_engineer" />
+            <el-option label="测试工程师" value="test_engineer" />
+            <el-option label="项目经理" value="project_manager" />
+            <el-option label="人事专员" value="hr" />
+            <el-option label="部门经理" value="department_manager" />
+            <el-option label="系统管理员" value="admin" />
+            <el-option label="总经理" value="manager" />
+          </el-select>
+        </el-form-item>
+
         <el-tabs v-model="formTabActive" class="form-tabs">
           <!-- 可见模块 -->
           <el-tab-pane label="可见模块" name="modules">
@@ -476,6 +494,9 @@
             <el-tag v-else type="info" size="small">停用</el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="创建时间">{{ formatTime(viewingTemplate.created_at) }}</el-descriptions-item>
+          <el-descriptions-item label="应用角色">
+            {{ {user:'普通用户',software_engineer:'软件工程师',test_engineer:'测试工程师',project_manager:'项目经理',hr:'人事专员',department_manager:'部门经理',admin:'系统管理员',manager:'总经理'}[viewingTemplate.role] || '未设置' }}
+          </el-descriptions-item>
           <el-descriptions-item label="描述" :span="2">{{ viewingTemplate.description || '（暂无描述）' }}</el-descriptions-item>
         </el-descriptions>
 
@@ -820,7 +841,8 @@ const openCreateDialog = () => {
     category: 'custom',
     icon: 'Document',
     is_active: true,
-    sort_order: 100
+    sort_order: 100,
+    role: ''
   }
   formModules.value = [...defaultModuleCodes.value]
   formAllowedPermissions.value = []
@@ -843,7 +865,8 @@ const openEditDialog = async (row) => {
       category: fresh.category,
       icon: fresh.icon || 'Document',
       is_active: !!fresh.is_active,
-      sort_order: fresh.sort_order || 0
+      sort_order: fresh.sort_order || 0,
+      role: fresh.role || ''
     }
     formModules.value = Array.isArray(fresh.modules) ? [...fresh.modules] : []
     formAllowedPermissions.value = Array.isArray(fresh.allowed_permissions) ? [...fresh.allowed_permissions] : []
@@ -882,6 +905,7 @@ const handleSaveTemplate = async () => {
       icon: form.value.icon,
       is_active: form.value.is_active,
       sort_order: form.value.sort_order,
+      role: form.value.role || null,
       modules: [...formModules.value],
       allowed_permissions: [...formAllowedPermissions.value],
       denied_permissions: [...formDeniedPermissions.value]
