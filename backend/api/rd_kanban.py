@@ -1078,7 +1078,7 @@ def get_project_stats(project_id):
             by_status[it.status] = by_status.get(it.status, 0) + 1
 
     # 逾期客户问题
-    now = now_china()
+    now = now_china().replace(tzinfo=None)
     overdue_issues = []
     open_issues_by_severity = {s['value']: 0 for s in ISSUE_SEVERITY}
     for it in items:
@@ -1241,7 +1241,7 @@ def get_issue_stats(project_id):
     Item, _, _ = _get_models()
     issues = Item.query.filter_by(project_id=project_id, column='customer_issue').all()
 
-    now = now_china()
+    now = now_china().replace(tzinfo=None)
     by_severity = {s['value']: {'open': 0, 'resolved': 0, 'overdue': 0, 'sla_hours': ISSUE_SLA_HOURS[s['value']]} for s in ISSUE_SEVERITY}
     total_resolved_hours = 0.0
     resolved_count = 0

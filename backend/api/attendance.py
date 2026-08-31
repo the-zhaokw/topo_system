@@ -484,12 +484,18 @@ def clock_out():
         client_ip = request.remote_addr or '0.0.0.0'
         location = request.json.get('location') if request.json else None
         
-        record.clock_out_time = now_china()
+        clock_out_time = now_china()
+        record.clock_out_time = clock_out_time
         record.clock_out_ip = client_ip
         record.clock_out_location = location
-        
-        if record.clock_in_time and record.clock_out_time:
-            work_duration = record.clock_out_time - record.clock_in_time
+
+        if record.clock_in_time and clock_out_time:
+            # clock_in_time从数据库加载为时区无关，clock_out_time为时区感知，需统一
+            clock_in = record.clock_in_time
+            clock_out = clock_out_time
+            if clock_out.tzinfo is not None and clock_in.tzinfo is None:
+                clock_out = clock_out.replace(tzinfo=None)
+            work_duration = clock_out - clock_in
             record.work_hours = work_duration.total_seconds() / 3600
         
         db.session.commit()

@@ -411,7 +411,8 @@ def get_bug_statistics():
             if bug.closed_at:
                 age_days = (bug.closed_at - bug.created_at).days
             else:
-                age_days = (now_china() - bug.created_at).days
+                now_naive = now_china().replace(tzinfo=None)
+                age_days = (now_naive - bug.created_at).days
             
             if age_days <= 3:
                 age_distribution['0-3天'] += 1

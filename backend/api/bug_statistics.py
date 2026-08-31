@@ -269,7 +269,7 @@ def get_project_bug_statistics(project_id):
     
     # 3.2.3 项目Bug年龄分析
     age_distribution = defaultdict(int)
-    today = now_china()
+    today = now_china().replace(tzinfo=None)
 
     for bug in project_bugs:
         if _status_eq(bug.status, BugStatus.CLOSED):
