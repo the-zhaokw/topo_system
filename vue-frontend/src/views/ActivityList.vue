@@ -28,7 +28,7 @@
               <el-icon><List /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ total }}</div>
+              <div class="stat-value">{{ stats.total }}</div>
               <div class="stat-label">总记录数</div>
             </div>
           </div>
@@ -39,7 +39,7 @@
               <el-icon><CirclePlus /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ createCount }}</div>
+              <div class="stat-value">{{ stats.create_count }}</div>
               <div class="stat-label">创建操作</div>
             </div>
           </div>
@@ -50,7 +50,7 @@
               <el-icon><Edit /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ updateCount }}</div>
+              <div class="stat-value">{{ stats.update_count }}</div>
               <div class="stat-label">更新操作</div>
             </div>
           </div>
@@ -61,7 +61,7 @@
               <el-icon><Calendar /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ todayCount }}</div>
+              <div class="stat-value">{{ stats.today_count }}</div>
               <div class="stat-label">今日记录</div>
             </div>
           </div>
@@ -81,26 +81,49 @@
         </template>
         <el-form :model="filterForm" inline class="filter-form">
           <el-form-item label="资源类型">
-            <el-select v-model="filterForm.resource_type" placeholder="请选择资源类型" clearable class="filter-select">
+            <el-select v-model="filterForm.resource_type" placeholder="请选择资源类型" clearable class="filter-select" filterable>
               <el-option label="项目" value="project"></el-option>
               <el-option label="缺陷" value="bug"></el-option>
-              <el-option label="任务" value="task"></el-option>
               <el-option label="用户" value="user"></el-option>
+              <el-option label="项目成员" value="project_member"></el-option>
+              <el-option label="工作日志" value="work_log"></el-option>
+              <el-option label="项目日志" value="project_log"></el-option>
+              <el-option label="需求文档" value="requirement_document"></el-option>
+              <el-option label="需求条目" value="requirement_item"></el-option>
+              <el-option label="个人任务" value="personal_task"></el-option>
+              <el-option label="任务模板" value="personal_template"></el-option>
+              <el-option label="知识文章" value="knowledge_article"></el-option>
+              <el-option label="知识分类" value="knowledge_category"></el-option>
               <el-option label="请假申请" value="leave_application"></el-option>
               <el-option label="加班申请" value="overtime_application"></el-option>
               <el-option label="考勤" value="attendance"></el-option>
+              <el-option label="班次" value="shift_schedule"></el-option>
+              <el-option label="排班" value="user_shift"></el-option>
+              <el-option label="风险" value="risk"></el-option>
+              <el-option label="测试套件" value="test_suite"></el-option>
+              <el-option label="测试用例" value="test_case"></el-option>
               <el-option label="物料" value="material"></el-option>
               <el-option label="合同" value="contract"></el-option>
+              <el-option label="数据" value="data"></el-option>
             </el-select>
           </el-form-item>
-          
+
           <el-form-item label="操作类型">
-            <el-select v-model="filterForm.action" placeholder="请选择操作类型" clearable class="filter-select">
+            <el-select v-model="filterForm.action" placeholder="请选择操作类型" clearable class="filter-select" filterable>
               <el-option label="创建" value="create"></el-option>
               <el-option label="更新" value="update"></el-option>
               <el-option label="删除" value="delete"></el-option>
-              <el-option label="状态变更" value="status_change"></el-option>
+              <el-option label="状态变更" value="status"></el-option>
               <el-option label="分配" value="assign"></el-option>
+              <el-option label="审批" value="approve"></el-option>
+              <el-option label="拒绝" value="reject"></el-option>
+              <el-option label="打卡" value="clock"></el-option>
+              <el-option label="上传附件" value="upload"></el-option>
+              <el-option label="删除附件" value="delete_attachment"></el-option>
+              <el-option label="导出" value="export"></el-option>
+              <el-option label="导入" value="import"></el-option>
+              <el-option label="登录" value="login"></el-option>
+              <el-option label="注册" value="register"></el-option>
             </el-select>
           </el-form-item>
           
@@ -197,8 +220,8 @@
             <template #default="{ row }">
               <div class="action-content">
                 <div class="action-text">{{ row.description }}</div>
-                <div class="changes" v-if="row.changes">
-                  <el-tag v-for="change in getChanges(row.changes)" :key="change.field" size="small" type="info" effect="light" class="change-tag">
+                <div class="changes" v-if="row.field_changes && row.field_changes.length">
+                  <el-tag v-for="(change, idx) in getChanges(row.field_changes)" :key="idx" size="small" type="info" effect="light" class="change-tag">
                     {{ change.field }}: {{ change.from }} → {{ change.to }}
                   </el-tag>
                 </div>
@@ -251,7 +274,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Download, View, Clock, List, CirclePlus, Edit, Calendar, Filter, Document } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
@@ -262,19 +285,23 @@ const loading = ref(false)
 const activities = ref([])
 const total = ref(0)
 
-// 计算统计数据
-const createCount = computed(() => {
-  return activities.value.filter(a => a.action?.includes('create')).length
+// 统计数据（从后端获取全量统计）
+const stats = ref({
+  total: 0,
+  create_count: 0,
+  update_count: 0,
+  delete_count: 0,
+  today_count: 0
 })
 
-const updateCount = computed(() => {
-  return activities.value.filter(a => a.action?.includes('update')).length
-})
-
-const todayCount = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return activities.value.filter(a => a.created_at?.startsWith(today)).length
-})
+const loadStatistics = async () => {
+  try {
+    const response = await apiService.activities.getStatistics()
+    stats.value = response
+  } catch (error) {
+    console.error('加载统计数据失败:', error)
+  }
+}
 
 // 分页配置
 const pagination = reactive({
@@ -292,30 +319,16 @@ const filterForm = reactive({
 
 // 获取操作类型样式
 const getActionType = (action) => {
-  const types = {
-    'create': 'success',
-    'create_bug': 'success',
-    'create_leave_application': 'success',
-    'apply_leave': 'success',
-    'apply_overtime': 'success',
-    'update': 'warning',
-    'update_bug': 'warning',
-    'delete': 'danger',
-    'status_change': 'info',
-    'bug_status_update': 'info',
-    'bug_status_transition': 'info',
-    'assign': 'primary',
-    'assign_bug': 'primary',
-    'approve': 'warning',
-    'approve_leave_application': 'warning',
-    'approve_overtime_application': 'warning',
-    'approve_exception': 'warning',
-    'clock_in': 'primary',
-    'clock_out': 'primary',
-    'upload_attachment': 'primary',
-    'delete_attachment': 'danger'
-  }
-  return types[action] || 'info'
+  if (!action) return 'info'
+  if (action.includes('create') || action.includes('register')) return 'success'
+  if (action.includes('update') || action.includes('approve')) return 'warning'
+  if (action.includes('delete') || action.includes('reject') || action.includes('remove')) return 'danger'
+  if (action.includes('assign') || action.includes('add')) return 'primary'
+  if (action.includes('clock') || action.includes('upload')) return 'primary'
+  if (action.includes('login') || action.includes('logout')) return 'info'
+  if (action.includes('status') || action.includes('transition')) return 'info'
+  if (action.includes('export') || action.includes('batch')) return 'info'
+  return 'info'
 }
 
 // 获取操作类型文本
@@ -323,25 +336,31 @@ const getActionText = (action) => {
   const texts = {
     'create': '创建',
     'create_bug': '创建Bug',
-    'create_leave_application': '创建请假申请',
-    'apply_leave': '提交请假',
-    'apply_overtime': '提交加班',
+    'create_project': '创建项目',
+    'create_project_log': '创建日志',
     'update': '更新',
     'update_bug': '更新Bug',
+    'update_project': '更新项目',
+    'update_project_log': '更新日志',
+    'update_project_member': '更新成员',
     'delete': '删除',
-    'status_change': '状态变更',
-    'bug_status_update': 'Bug状态更新',
-    'bug_status_transition': 'Bug状态转换',
-    'assign': '分配',
-    'assign_bug': '分配Bug',
-    'approve': '审批',
-    'approve_leave_application': '审批请假',
-    'approve_overtime_application': '审批加班',
-    'approve_exception': '审批异常',
+    'delete_project': '删除项目',
+    'delete_attachment': '删除附件',
+    'bug_status_update': '状态更新',
+    'bug_status_transition': '状态转换',
+    'assign_bug': '分配',
+    'add_project_member': '添加成员',
+    'remove_project_member': '移除成员',
+    'approve': '审批通过',
+    'reject': '审批拒绝',
     'clock_in': '上班打卡',
     'clock_out': '下班打卡',
     'upload_attachment': '上传附件',
-    'delete_attachment': '删除附件'
+    'export': '导出',
+    'user_register': '用户注册',
+    'user_login': '用户登录',
+    'batch_create': '批量创建',
+    'import': '导入'
   }
   return texts[action] || action
 }
@@ -351,14 +370,33 @@ const getResourceType = (resourceType) => {
   const types = {
     'project': 'success',
     'bug': 'danger',
-    'task': 'warning',
     'user': 'info',
+    'project_member': 'primary',
+    'work_log': 'success',
+    'project_log': 'success',
+    'requirement_document': 'primary',
+    'requirement_item': 'primary',
+    'requirement_comment': 'info',
+    'requirement_link': 'info',
+    'requirement_version': 'info',
+    'personal_task': 'warning',
+    'personal_template': 'warning',
+    'personal_review': 'success',
+    'knowledge_article': 'success',
+    'knowledge_category': 'info',
+    'knowledge_comment': 'info',
     'leave_application': 'warning',
     'overtime_application': 'warning',
     'attendance': 'primary',
+    'attendance_report': 'primary',
+    'shift_schedule': 'info',
+    'user_shift': 'info',
+    'risk': 'danger',
+    'test_suite': 'warning',
+    'test_case': 'warning',
     'material': 'info',
     'contract': 'success',
-    'work_log': 'success'
+    'data': 'info'
   }
   return types[resourceType] || 'info'
 }
@@ -368,35 +406,65 @@ const getResourceText = (resourceType) => {
   const texts = {
     'project': '项目',
     'bug': '缺陷',
-    'task': '任务',
     'user': '用户',
+    'project_member': '项目成员',
+    'work_log': '工作日志',
+    'project_log': '项目日志',
+    'requirement_document': '需求文档',
+    'requirement_item': '需求条目',
+    'requirement_comment': '需求评论',
+    'requirement_link': '需求关联',
+    'requirement_version': '需求版本',
+    'personal_task': '个人任务',
+    'personal_template': '任务模板',
+    'personal_review': '复盘',
+    'knowledge_article': '知识文章',
+    'knowledge_category': '知识分类',
+    'knowledge_comment': '知识评论',
     'leave_application': '请假申请',
     'overtime_application': '加班申请',
     'attendance': '考勤',
+    'attendance_report': '考勤报表',
+    'shift_schedule': '班次',
+    'user_shift': '排班',
+    'risk': '风险',
+    'test_suite': '测试套件',
+    'test_case': '测试用例',
     'material': '物料',
     'contract': '合同',
-    'work_log': '工作日志'
+    'data': '数据'
   }
   return texts[resourceType] || resourceType
 }
 
 // 解析变更数据
 const getChanges = (changes) => {
-  if (!changes || typeof changes !== 'object') return []
-  
+  if (!changes) return []
+
   try {
     if (typeof changes === 'string') {
       changes = JSON.parse(changes)
     }
-    
-    return Object.keys(changes).map(field => ({
-      field: field,
-      from: changes[field].from || '',
-      to: changes[field].to || ''
-    }))
+
+    if (Array.isArray(changes)) {
+      return changes.map(c => ({
+        field: c.field || c.field_label || '',
+        from: c.old_value || c.from || '',
+        to: c.new_value || c.to || ''
+      }))
+    }
+
+    if (typeof changes === 'object') {
+      return Object.keys(changes).map(field => ({
+        field: field,
+        from: changes[field].from || changes[field].old_value || '',
+        to: changes[field].to || changes[field].new_value || ''
+      }))
+    }
   } catch (error) {
     return []
   }
+  return []
 }
 
 // 加载数据
@@ -448,6 +516,7 @@ const handleReset = () => {
 // 刷新数据
 const refreshData = () => {
   loadActivities()
+  loadStatistics()
 }
 
 // 导出数据
@@ -470,7 +539,7 @@ const viewDetail = (activity) => {
       <p><strong>操作用户：</strong>${activity.user_name || '未知用户'}</p>
       <p><strong>操作时间：</strong>${formatDate(activity.created_at)}</p>
       <p><strong>操作描述：</strong>${activity.description}</p>
-      ${activity.changes ? `<p><strong>变更详情：</strong></p><pre>${JSON.stringify(JSON.parse(activity.changes), null, 2)}</pre>` : ''}
+      ${activity.field_changes && activity.field_changes.length ? `<p><strong>变更详情：</strong></p><pre>${JSON.stringify(activity.field_changes, null, 2)}</pre>` : ''}
     </div>`,
     '活动记录详情',
     {
@@ -494,6 +563,7 @@ const handleCurrentChange = (page) => {
 
 onMounted(() => {
   loadActivities()
+  loadStatistics()
 })
 </script>
 

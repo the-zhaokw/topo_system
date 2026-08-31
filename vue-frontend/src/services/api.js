@@ -244,6 +244,7 @@ export const apiService = {
   // 活动记录
   activities: {
     getList: (params = {}) => api.get('/activities', { params }),
+    getStatistics: () => api.get('/activities/statistics'),
     getById: (id) => api.get(`/activities/${id}`),
     getRecent: () => api.get('/activities/recent'),
     getByResource: (resourceType, resourceId, params = {}) => api.get(`/activities/${resourceType}/${resourceId}`, { params }),
