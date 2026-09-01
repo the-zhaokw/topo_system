@@ -3385,16 +3385,19 @@ def register_api_blueprints():
 # 邮件通知功能
 def send_email_notification(to_email, subject, body, html_body=None):
     """发送邮件通知"""
-    if not EMAIL_CONFIG['EMAIL_ENABLED']:
+    # 每次从配置文件重新加载，确保使用最新配置
+    email_cfg = load_mail_config()
+
+    if not email_cfg['EMAIL_ENABLED']:
         logger.info(f"邮件通知已禁用。将发送: {subject} 到 {to_email}")
         return True
 
-    use_ssl = EMAIL_CONFIG.get('USE_SSL', True)
+    use_ssl = email_cfg.get('USE_SSL', True)
 
     try:
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
-        msg['From'] = EMAIL_CONFIG['FROM_EMAIL']
+        msg['From'] = email_cfg['FROM_EMAIL']
         msg['To'] = to_email
 
         text_part = MIMEText(body, 'plain', 'utf-8')
@@ -3405,13 +3408,13 @@ def send_email_notification(to_email, subject, body, html_body=None):
             msg.attach(html_part)
 
         if use_ssl:
-            with smtplib.SMTP_SSL(EMAIL_CONFIG['SMTP_SERVER'], EMAIL_CONFIG['SMTP_PORT']) as server:
-                server.login(EMAIL_CONFIG['SMTP_USERNAME'], EMAIL_CONFIG['SMTP_PASSWORD'])
+            with smtplib.SMTP_SSL(email_cfg['SMTP_SERVER'], email_cfg['SMTP_PORT']) as server:
+                server.login(email_cfg['SMTP_USERNAME'], email_cfg['SMTP_PASSWORD'])
                 server.send_message(msg)
         else:
-            with smtplib.SMTP(EMAIL_CONFIG['SMTP_SERVER'], EMAIL_CONFIG['SMTP_PORT']) as server:
+            with smtplib.SMTP(email_cfg['SMTP_SERVER'], email_cfg['SMTP_PORT']) as server:
                 server.starttls()
-                server.login(EMAIL_CONFIG['SMTP_USERNAME'], EMAIL_CONFIG['SMTP_PASSWORD'])
+                server.login(email_cfg['SMTP_USERNAME'], email_cfg['SMTP_PASSWORD'])
                 server.send_message(msg)
 
         logger.info(f"邮件发送成功到 {to_email}: {subject}")
@@ -3482,7 +3485,7 @@ def create_notification(user_id, notification_type, title, content, related_bug_
                     should_send_email = getattr(user, 'email_on_bug_assigned', True)
                 elif notification_type == 'bug_closed':
                     should_send_email = getattr(user, 'email_on_bug_closed', True)
-                elif notification_type in ['comment_mention', 'system']:
+                elif notification_type in ['comment_mention', 'system', 'approval_request', 'approval_result']:
                     should_send_email = True
             
             logger.info(f"[邮件通知检查] should_send_email: {should_send_email}")

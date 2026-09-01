@@ -307,7 +307,14 @@
           </div>
         </template>
 
-        <el-table :data="myApplications" v-loading="tableLoading" class="custom-table" stripe>
+        <el-table 
+          :data="myApplications" 
+          v-loading="tableLoading" 
+          class="custom-table" 
+          stripe
+          :row-class-name="tableRowClassName"
+          ref="tableRef"
+        >
           <el-table-column prop="id" label="申请ID" width="80" align="center">
             <template #default="{ row }">
               <span class="id-badge">{{ row.id }}</span>
@@ -577,13 +584,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, reactive, computed, nextTick } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, Refresh, Upload, Document, Calendar, Clock, CircleCheck, CircleClose, EditPen, List, Timer } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
 const router = useRouter()
+const route = useRoute()
 const formRef = ref()
 const editFormRef = ref()
 const loading = ref(false)
@@ -692,6 +700,8 @@ const myApplications = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+const highlightedId = ref(null)
+const tableRef = ref(null)
 
 // 统计数据计算
 const totalApplications = computed(() => myApplications.value.length)
@@ -799,12 +809,47 @@ const fetchMyApplications = async () => {
       myApplications.value = []
       total.value = 0
     }
+    // 检查是否有需要高亮的记录
+    await nextTick()
+    checkAndHighlightRecord()
   } catch (error) {
     console.error('获取请假申请失败:', error)
     ElMessage.error('获取请假申请失败')
   } finally {
     tableLoading.value = false
   }
+}
+
+// 检查并高亮指定记录
+const checkAndHighlightRecord = () => {
+  const targetId = route.query.id
+  if (!targetId) return
+  
+  const id = parseInt(targetId)
+  const record = myApplications.value.find(app => app.id === id)
+  
+  if (record) {
+    highlightedId.value = id
+    // 滚动到对应记录
+    nextTick(() => {
+      const rowElement = document.querySelector(`.highlighted-leave-row`)
+      if (rowElement) {
+        rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        // 3秒后移除高亮
+        setTimeout(() => {
+          highlightedId.value = null
+        }, 3000)
+      }
+    })
+  }
+}
+
+// 表格行 className
+const tableRowClassName = ({ row }) => {
+  if (highlightedId.value && row.id === highlightedId.value) {
+    return 'highlighted-leave-row'
+  }
+  return ''
 }
 
 // 请假类型标签
@@ -1506,6 +1551,17 @@ onMounted(() => {
 
 .custom-table :deep(.el-table__row) {
   transition: all 0.3s;
+}
+
+.custom-table :deep(.highlighted-leave-row td) {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%) !important;
+  animation: highlightPulse 2s ease-in-out;
+}
+
+@keyframes highlightPulse {
+  0% { background-color: rgba(59, 130, 246, 0.3); }
+  50% { background-color: rgba(59, 130, 246, 0.1); }
+  100% { background-color: rgba(59, 130, 246, 0.15); }
 }
 
 .id-badge {

@@ -353,8 +353,98 @@
         </el-row>
       </div>
 
+      <!-- 请假历史记录 -->
+      <div class="leave-history-section animate-fade-in-up delay-400">
+        <el-card class="glass-card" shadow="hover">
+          <template #header>
+            <div class="card-header">
+              <div class="card-title">
+                <div class="card-icon-wrapper card-icon-green">
+                  <el-icon><Tickets /></el-icon>
+                </div>
+                <span>请假历史记录</span>
+                <span class="history-count-badge">{{ leaveHistoryTotal }}</span>
+              </div>
+              <div class="header-actions-right">
+                <el-button type="primary" link @click="toggleExpand">
+                  {{ isExpanded ? '收起' : '展开' }}
+                  <el-icon>
+                    <ArrowDown v-if="!isExpanded" />
+                    <ArrowUp v-else />
+                  </el-icon>
+                </el-button>
+              </div>
+            </div>
+          </template>
+
+          <div
+            class="leave-history-wrapper"
+            :class="{ 'expanded': isExpanded, 'collapsed': !isExpanded }"
+            ref="historyListRef"
+            @scroll="handleScroll"
+          >
+            <div v-if="leaveHistoryLoading && leaveHistory.length === 0" class="history-loading">
+              <el-skeleton :rows="3" animated />
+            </div>
+            <div v-else-if="leaveHistory.length === 0" class="empty-mini">
+              暂无请假记录
+            </div>
+            <div v-else class="leave-history-list">
+              <div
+                v-for="item in displayedHistory"
+                :key="item.id"
+                class="leave-history-item"
+                @click="goToLeaveDetail(item)"
+              >
+                <div class="history-item-left">
+                  <div class="history-type-badge" :style="{ background: getLeaveTypeColor(item.leave_type) }">
+                    {{ getLeaveTypeLabel(item.leave_type) }}
+                  </div>
+                  <div class="history-date-info">
+                    <div class="history-date-range">{{ item.start_date }} ~ {{ item.end_date }}</div>
+                    <div class="history-meta">
+                      <span class="history-days">{{ item.days }} 天</span>
+                      <span class="history-dot">·</span>
+                      <span class="history-reason">{{ item.reason || '无备注' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="history-item-right">
+                  <el-tag :type="getStatusType(item.status)" size="small" effect="light">
+                    {{ getStatusLabel(item.status) }}
+                  </el-tag>
+                  <el-icon class="history-arrow"><ArrowRight /></el-icon>
+                </div>
+              </div>
+            </div>
+
+            <!-- 加载更多 -->
+            <div v-if="isExpanded && hasMore && leaveHistory.length > 0" class="load-more-wrapper">
+              <div v-if="loadingMore" class="loading-more">
+                <el-icon class="is-loading"><Loading /></el-icon>
+                <span>加载中...</span>
+              </div>
+              <el-button v-else type="primary" plain link @click="loadMore" class="load-more-btn">
+                加载更多
+                <el-icon><ArrowDown /></el-icon>
+              </el-button>
+            </div>
+
+            <div v-if="isExpanded && !hasMore && leaveHistory.length > 0" class="no-more-tip">
+              — 已加载全部记录 —
+            </div>
+          </div>
+
+          <!-- 展开提示 -->
+          <div v-if="!isExpanded && leaveHistory.length > 3" class="expand-hint" @click="toggleExpand">
+            <el-icon><ArrowDown /></el-icon>
+            <span>还有 {{ leaveHistoryTotal - 3 }} 条记录，点击展开查看更多</span>
+          </div>
+        </el-card>
+      </div>
+
       <!-- 底部快捷入口 -->
-      <div class="quick-actions animate-fade-in-up delay-400">
+      <div class="quick-actions animate-fade-in-up delay-500">
         <el-card class="glass-card" shadow="hover">
           <div class="quick-grid">
             <div class="quick-item" @click="$router.push('/attendance/records')">
@@ -395,7 +485,8 @@ import { ElMessage } from 'element-plus'
 import {
   Clock, Calendar, CircleCheckFilled, DataLine, QuestionFilled,
   AlarmClock, Timer, Back, WarningFilled, Postcard, ArrowRight,
-  Moon, Sunny, Star, Document, Promotion, DataAnalysis
+  Moon, Sunny, Star, Document, Promotion, DataAnalysis, Tickets,
+  ArrowDown, ArrowUp, Loading, ArrowLeft
 } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
@@ -404,6 +495,15 @@ const router = useRouter()
 const loading = ref(false)
 const summary = ref({})
 const periodValue = ref('')
+const leaveHistory = ref([])
+const leaveHistoryLoading = ref(false)
+const leaveHistoryTotal = ref(0)
+const leaveHistoryPage = ref(1)
+const leaveHistoryPageSize = ref(10)
+const hasMore = ref(true)
+const loadingMore = ref(false)
+const isExpanded = ref(false)
+const historyListRef = ref(null)
 
 const annualLeave = computed(() => {
   return summary.value.leave?.annual_leave || { quota: 0, used: 0, remaining: 0 }
@@ -475,6 +575,14 @@ const leaveItems = computed(() => {
     .sort((a, b) => b.days - a.days)
 })
 
+// 收起时只显示前3条，展开时显示全部
+const displayedHistory = computed(() => {
+  if (isExpanded.value) {
+    return leaveHistory.value
+  }
+  return leaveHistory.value.slice(0, 3)
+})
+
 const formatMinutes = (minutes) => {
   if (!minutes) return '0 分钟'
   const h = Math.floor(minutes / 60)
@@ -486,10 +594,113 @@ const formatMinutes = (minutes) => {
 
 const handlePeriodChange = () => {
   fetchSummary()
+  fetchLeaveHistory()
 }
 
 const handleClockIn = () => {
   router.push('/attendance/records')
+}
+
+// 请假类型标签颜色
+const getLeaveTypeColor = (type) => {
+  return leaveTypeMap[type]?.color || '#94a3b8'
+}
+
+const getLeaveTypeLabel = (type) => {
+  return leaveTypeMap[type]?.label || type
+}
+
+// 状态标签类型
+const getStatusType = (status) => {
+  const types = {
+    pending: 'warning',
+    approved: 'success',
+    rejected: 'danger'
+  }
+  return types[status] || 'info'
+}
+
+const getStatusLabel = (status) => {
+  const labels = {
+    pending: '待审批',
+    approved: '已批准',
+    rejected: '已拒绝'
+  }
+  return labels[status] || status
+}
+
+// 获取请假历史记录
+const fetchLeaveHistory = async (reset = true) => {
+  if (reset) {
+    leaveHistoryLoading.value = true
+    leaveHistoryPage.value = 1
+    hasMore.value = true
+  } else {
+    loadingMore.value = true
+  }
+  try {
+    const response = await apiService.attendance.getLeaveApplications({
+      page: leaveHistoryPage.value,
+      per_page: leaveHistoryPageSize.value
+    })
+    if (response && response.applications) {
+      if (reset) {
+        leaveHistory.value = response.applications
+      } else {
+        leaveHistory.value = [...leaveHistory.value, ...response.applications]
+      }
+      leaveHistoryTotal.value = response.total || response.applications.length
+      hasMore.value = leaveHistory.value.length < leaveHistoryTotal.value
+    } else {
+      leaveHistory.value = []
+      leaveHistoryTotal.value = 0
+      hasMore.value = false
+    }
+  } catch (error) {
+    console.error('获取请假历史记录失败:', error)
+    if (reset) {
+      leaveHistory.value = []
+      leaveHistoryTotal.value = 0
+    }
+    hasMore.value = false
+  } finally {
+    leaveHistoryLoading.value = false
+    loadingMore.value = false
+  }
+}
+
+// 加载更多
+const loadMore = () => {
+  if (!hasMore.value || loadingMore.value) return
+  leaveHistoryPage.value += 1
+  fetchLeaveHistory(false)
+}
+
+// 展开/收起
+const toggleExpand = () => {
+  isExpanded.value = !isExpanded.value
+  // 展开时如果还有更多，自动加载下一页
+  if (isExpanded.value && hasMore.value && leaveHistory.value.length <= 3) {
+    loadMore()
+  }
+}
+
+// 滚动加载
+const handleScroll = (e) => {
+  if (!isExpanded.value) return
+  const { scrollTop, scrollHeight, clientHeight } = e.target
+  // 距离底部50px时触发加载更多
+  if (scrollTop + clientHeight >= scrollHeight - 50) {
+    loadMore()
+  }
+}
+
+// 跳转到请假详情
+const goToLeaveDetail = (item) => {
+  router.push({
+    path: '/attendance/leave-application',
+    query: { id: item.id }
+  })
 }
 
 const fetchSummary = async () => {
@@ -516,6 +727,7 @@ onMounted(() => {
   const now = new Date()
   periodValue.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
   fetchSummary()
+  fetchLeaveHistory()
 })
 </script>
 
@@ -1257,6 +1469,233 @@ onMounted(() => {
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+
+/* 请假历史记录 */
+.leave-history-section {
+  margin-bottom: 24px;
+}
+
+.card-icon-green {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-count-badge {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.history-loading {
+  padding: 8px 0;
+}
+
+.leave-history-wrapper {
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.leave-history-wrapper.collapsed {
+  max-height: 260px;
+  position: relative;
+}
+
+.leave-history-wrapper.expanded {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.leave-history-wrapper.expanded::-webkit-scrollbar {
+  width: 6px;
+}
+
+.leave-history-wrapper.expanded::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 3px;
+}
+
+.leave-history-wrapper.expanded::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 3px;
+}
+
+.leave-history-wrapper.expanded::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
+.leave-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leave-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: rgba(241, 245, 249, 0.6);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.leave-history-item:hover {
+  background: white;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-color: rgba(59, 130, 246, 0.1);
+}
+
+.history-item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.history-type-badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.history-date-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-date-range {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.history-days {
+  font-weight: 500;
+}
+
+.history-dot {
+  color: #cbd5e1;
+}
+
+.history-reason {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  color: #94a3b8;
+}
+
+.history-item-right {
+  flex-shrink: 0;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-arrow {
+  color: #cbd5e1;
+  font-size: 14px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.leave-history-item:hover .history-arrow {
+  color: #3b82f6;
+  transform: translateX(2px);
+}
+
+/* 加载更多 */
+.load-more-wrapper {
+  padding: 16px 0 8px;
+  text-align: center;
+}
+
+.loading-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.loading-more .el-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.load-more-btn {
+  font-size: 13px;
+}
+
+.no-more-tip {
+  text-align: center;
+  padding: 16px 0 8px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* 展开提示 */
+.expand-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 0 4px;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
+  margin-top: 8px;
+}
+
+.expand-hint:hover {
+  color: #3b82f6;
+}
+
+.expand-hint .el-icon {
+  animation: bounceDown 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
 
 /* 响应式 */
 @media screen and (max-width: 768px) {

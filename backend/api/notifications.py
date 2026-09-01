@@ -269,7 +269,7 @@ def get_email_config():
 @jwt_required()
 def send_test_email():
     """发送测试邮件"""
-    from enhanced_app import email_service
+    from services.email_service import EmailService, load_config
 
     data = request.get_json()
     to_address = data.get('to_address')
@@ -277,14 +277,16 @@ def send_test_email():
     if not to_address:
         return jsonify({'error': '请提供收件人邮箱地址'}), 400
 
-    result = email_service.send_test_email(to_address)
+    config = load_config()
+    email_svc = EmailService(config)
+    result = email_svc.send_test_email(to_address)
     return jsonify(result)
 
 @notifications_bp.route('/email/send', methods=['POST'])
 @jwt_required()
 def send_email():
     """发送邮件"""
-    from enhanced_app import email_service
+    from services.email_service import EmailService, load_config
 
     data = request.get_json()
     to_address = data.get('to_address')
@@ -298,14 +300,16 @@ def send_email():
     if not body:
         return jsonify({'error': '邮件内容不能为空'}), 400
 
-    result = email_service.send_email(to_address, subject, body, html_body)
+    config = load_config()
+    email_svc = EmailService(config)
+    result = email_svc.send_email(to_address, subject, body, html_body)
     return jsonify(result)
 
 @notifications_bp.route('/email/bug-notification', methods=['POST'])
 @jwt_required()
 def send_bug_notification_email():
     """发送Bug通知邮件"""
-    from enhanced_app import email_service
+    from services.email_service import EmailService, load_config
 
     data = request.get_json()
     to_address = data.get('to_address')
@@ -315,5 +319,7 @@ def send_bug_notification_email():
     if not to_address:
         return jsonify({'error': '请提供收件人邮箱地址'}), 400
 
-    result = email_service.send_bug_assigned_email(to_address, bug_title, assignee_name)
+    config = load_config()
+    email_svc = EmailService(config)
+    result = email_svc.send_bug_assigned_email(to_address, bug_title, assignee_name)
     return jsonify(result)

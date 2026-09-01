@@ -1,13 +1,17 @@
 """
 活动记录API - 系统审计日志
 """
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file, make_response
 from datetime import datetime, timedelta
 from utils.time_utils import now_china
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import func
+from io import BytesIO
 import json
 import re
+import csv
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 # 创建活动记录蓝图
 activities_bp = Blueprint('activities', __name__, url_prefix='/activities')
@@ -115,6 +119,259 @@ def get_activities():
             'pages': pagination.pages,
             'per_page': per_page
         }), 200
+
+
+# 操作类型中文映射
+ACTION_TEXT_MAP = {
+    'create': '创建', 'create_bug': '创建Bug', 'create_project': '创建项目',
+    'create_project_log': '创建日志', 'create_project_member': '添加项目成员',
+    'create_user': '创建用户', 'create_work_log': '创建工作日志',
+    'create_leave_application': '创建请假申请', 'create_overtime_application': '创建加班申请',
+    'create_risk': '创建风险', 'create_requirement_document': '创建需求文档',
+    'create_requirement_item': '创建需求条目', 'create_knowledge_article': '创建知识文章',
+    'create_knowledge_category': '创建知识分类', 'create_personal_task': '创建个人任务',
+    'create_personal_template': '创建个人模板', 'create_test_suite': '创建测试套件',
+    'create_test_case': '创建测试用例', 'create_shift_schedule': '创建班次',
+    'create_user_shift': '分配班次', 'update': '更新', 'update_bug': '更新Bug',
+    'update_project': '更新项目', 'update_project_log': '更新日志',
+    'update_user': '更新用户', 'update_work_log': '更新工作日志',
+    'update_risk': '更新风险', 'delete': '删除', 'delete_project': '删除项目',
+    'delete_user': '删除用户', 'delete_work_log': '删除工作日志',
+    'delete_risk': '删除风险', 'bug_status_update': '状态更新',
+    'bug_status_transition': '状态转换', 'status_change': '状态变更',
+    'assign_bug': '分配', 'assign': '分配', 'add_project_member': '添加成员',
+    'remove_project_member': '移除成员', 'approve': '审批通过',
+    'approve_leave_application': '审批请假', 'approve_overtime_application': '审批加班',
+    'reject': '审批拒绝', 'clock_in': '上班打卡', 'clock_out': '下班打卡',
+    'upload_attachment': '上传附件', 'delete_attachment': '删除附件',
+    'export': '导出', 'data_import': '数据导入', 'data_export': '数据导出',
+    'import': '导入', 'user_register': '用户注册', 'user_login': '用户登录',
+    'batch_create': '批量创建', 'login': '登录', 'register': '注册',
+}
+
+# 资源类型中文映射
+RESOURCE_TYPE_TEXT_MAP = {
+    'project': '项目', 'bug': '缺陷', 'user': '用户', 'project_member': '项目成员',
+    'work_log': '工作日志', 'project_log': '项目日志',
+    'requirement_document': '需求文档', 'requirement_item': '需求条目',
+    'personal_task': '个人任务', 'personal_template': '任务模板',
+    'knowledge_article': '知识文章', 'knowledge_category': '知识分类',
+    'leave_application': '请假申请', 'overtime_application': '加班申请',
+    'attendance': '考勤', 'shift_schedule': '班次', 'user_shift': '排班',
+    'risk': '风险', 'test_suite': '测试套件', 'test_case': '测试用例',
+    'material': '物料', 'contract': '合同', 'data': '数据',
+}
+
+
+def _build_activity_export_rows(query, User, Activity):
+    """构造活动记录导出数据行"""
+    rows = []
+    activities = query.all()
+    # 预加载所有执行人，避免 N+1 查询
+    performer_ids = list({a.performed_by for a in activities if a.performed_by})
+    performers = {u.id: u for u in User.query.filter(User.id.in_(performer_ids)).all()} if performer_ids else {}
+
+    for activity in activities:
+        performer = performers.get(activity.performed_by)
+        # 解析变更详情
+        changes_text = ''
+        if activity.field_changes:
+            try:
+                changes = json.loads(activity.field_changes)
+                if isinstance(changes, list):
+                    parts = []
+                    for c in changes:
+                        field = c.get('field', c.get('field_label', ''))
+                        old_val = c.get('old_value', c.get('from', ''))
+                        new_val = c.get('new_value', c.get('to', ''))
+                        parts.append(f'{field}: {old_val} -> {new_val}')
+                    changes_text = '; '.join(parts)
+                elif isinstance(changes, dict):
+                    parts = []
+                    for field, val in changes.items():
+                        old_val = val.get('from', val.get('old_value', ''))
+                        new_val = val.get('to', val.get('new_value', ''))
+                        parts.append(f'{field}: {old_val} -> {new_val}')
+                    changes_text = '; '.join(parts)
+            except (json.JSONDecodeError, TypeError):
+                changes_text = str(activity.field_changes)
+
+        rows.append({
+            'ID': activity.id,
+            '操作类型': ACTION_TEXT_MAP.get(activity.action, activity.action or ''),
+            '资源类型': RESOURCE_TYPE_TEXT_MAP.get(activity.target_type, activity.target_type or ''),
+            '资源名称': resolve_resource_name(activity),
+            '资源ID': activity.target_id,
+            '操作描述': activity.description or '',
+            '变更详情': changes_text,
+            '操作用户': performer.username if performer else '',
+            '用户角色': performer.role if performer else '',
+            '操作时间': activity.created_at.strftime('%Y-%m-%d %H:%M:%S') if activity.created_at else '',
+        })
+    return rows
+
+
+def _generate_xlsx(rows, sheet_name='活动记录'):
+    """生成 xlsx 文件"""
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = sheet_name
+
+    if not rows:
+        ws.append(['暂无数据'])
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        return output
+
+    # 表头
+    headers = list(rows[0].keys())
+    ws.append(headers)
+
+    # 表头样式
+    header_font = Font(name='微软雅黑', size=11, bold=True, color='FFFFFF')
+    header_fill = PatternFill(start_color='38BDF8', end_color='38BDF8', fill_type='solid')
+    center_align = Alignment(horizontal='center', vertical='center')
+    thin_border = Border(
+        left=Side(style='thin', color='D1D5DB'),
+        right=Side(style='thin', color='D1D5DB'),
+        top=Side(style='thin', color='D1D5DB'),
+        bottom=Side(style='thin', color='D1D5DB'),
+    )
+
+    for col_idx, _ in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_idx)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center_align
+        cell.border = thin_border
+
+    # 数据行
+    data_font = Font(name='微软雅黑', size=10)
+    left_align = Alignment(horizontal='left', vertical='center', wrap_text=True)
+    for row_idx, row_data in enumerate(rows, 2):
+        for col_idx, key in enumerate(headers, 1):
+            cell = ws.cell(row=row_idx, column=col_idx, value=row_data[key])
+            cell.font = data_font
+            cell.alignment = left_align
+            cell.border = thin_border
+
+    # 自动列宽
+    for col_idx, key in enumerate(headers, 1):
+        max_len = len(str(key))
+        for row in rows:
+            val_len = len(str(row.get(key, '')))
+            if val_len > max_len:
+                max_len = val_len
+        col_letter = openpyxl.utils.get_column_letter(col_idx)
+        ws.column_dimensions[col_letter].width = min(max_len + 4, 60)
+
+    # 冻结表头
+    ws.freeze_panes = 'A2'
+
+    # 自动筛选
+    ws.auto_filter.ref = f'A1:{openpyxl.utils.get_column_letter(len(headers))}{len(rows) + 1}'
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+def _generate_csv(rows):
+    """生成 csv 文件（UTF-8 BOM，兼容 Excel 中文）"""
+    import io as _io
+    output = BytesIO()
+    if not rows:
+        output.write('\ufeff暂无数据\n'.encode('utf-8'))
+        output.seek(0)
+        return output
+
+    headers = list(rows[0].keys())
+    text_buf = _io.StringIO()
+    writer = csv.DictWriter(
+        text_buf,
+        fieldnames=headers,
+        extrasaction='ignore',
+        lineterminator='\n'
+    )
+    writer.writeheader()
+    for row in rows:
+        writer.writerow(row)
+    output.write('\ufeff'.encode('utf-8'))
+    output.write(text_buf.getvalue().encode('utf-8'))
+    output.seek(0)
+    return output
+
+
+# 导出活动记录
+@activities_bp.route('/export', methods=['GET'])
+@jwt_required()
+def export_activities():
+    """导出活动记录为 Excel/CSV 文件"""
+    from urllib.parse import quote
+    User, Activity, Bug, Project, WorkLog, app, db = get_models()
+
+    with app.app_context():
+        # 解析筛选条件（与列表接口一致）
+        resource_type = request.args.get('resource_type')
+        action = request.args.get('action')
+        user_name = request.args.get('user_name')
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        format_type = request.args.get('format', 'xlsx').lower()
+
+        query = Activity.query
+
+        if resource_type:
+            query = query.filter(Activity.target_type == resource_type)
+
+        if action:
+            query = query.filter(Activity.action.like(f'%{action}%'))
+
+        if user_name:
+            query = query.join(User).filter(User.username.contains(user_name))
+
+        if start_date:
+            query = query.filter(Activity.created_at >= datetime.fromisoformat(start_date))
+        if end_date:
+            # 结束日期包含当天全天
+            end_dt = datetime.fromisoformat(end_date).replace(hour=23, minute=59, second=59)
+            query = query.filter(Activity.created_at <= end_dt)
+
+        query = query.order_by(Activity.created_at.desc())
+        rows = _build_activity_export_rows(query, User, Activity)
+
+        # 生成文件
+        date_str = now_china().strftime('%Y%m%d')
+        if format_type == 'xlsx':
+            output = _generate_xlsx(rows)
+            mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            filename = f'活动记录_{date_str}.xlsx'
+        elif format_type == 'csv':
+            output = _generate_csv(rows)
+            mimetype = 'text/csv'
+            filename = f'活动记录_{date_str}.csv'
+        else:
+            return jsonify({'error': f'不支持的格式: {format_type}，仅支持 xlsx 和 csv'}), 400
+
+        response = make_response(send_file(
+            output,
+            mimetype=mimetype,
+            as_attachment=True,
+            download_name=filename
+        ))
+        origin = request.headers.get('Origin')
+        response.headers['Access-Control-Allow-Origin'] = origin or '*'
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        # 使用 RFC 5987 编码中文文件名，避免 WSGI latin-1 编码错误
+        ascii_name = f'activity_log_{date_str}.{format_type}'
+        encoded_name = quote(filename)
+        response.headers['Content-Disposition'] = (
+            f"attachment; filename=\"{ascii_name}\"; filename*=UTF-8''{encoded_name}"
+        )
+
+        return response
 
 
 def resolve_resource_name(activity):

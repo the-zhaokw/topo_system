@@ -2104,9 +2104,19 @@ def get_my_attendance_summary():
             'holiday': round(overtime_holiday, 2)
         }
 
-        # 7) 年假余额（这里采用通用约定：每满一年5天，传入用户入职信息，若无则默认为5天）
+        # 7) 年假余额（按全年统计，每满一年5天，若无入职信息则默认为5天）
         annual_leave_quota = 5.0
-        annual_leave_used = leave_breakdown.get('annual_leave', 0)
+        # 全年的年假使用记录（从当年1月1日到12月31日）
+        year_start = datetime(year, 1, 1).date()
+        year_end = datetime(year, 12, 31).date()
+        annual_leave_records = LeaveApplication.query.filter(
+            LeaveApplication.user_id == current_user_id,
+            LeaveApplication.leave_type == 'annual_leave',
+            LeaveApplication.start_date <= year_end,
+            LeaveApplication.end_date >= year_start,
+            LeaveApplication.status == ApprovalStatus.APPROVED.value
+        ).all()
+        annual_leave_used = sum((lv.days or 0) for lv in annual_leave_records)
         annual_leave_remaining = max(0.0, round(annual_leave_quota - annual_leave_used, 2))
 
         # 迟到分级提示

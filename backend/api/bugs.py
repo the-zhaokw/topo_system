@@ -1514,6 +1514,43 @@ def export_bugs():
     user_cache = {u.id: u for u in User.query.all()}
     project_cache = {p.id: p for p in Project.query.all()}
     
+    # 英文枚举值到中文的映射
+    status_map = {
+        'new': '新建', 'assigned': '已分配', 'in_progress': '进行中',
+        'fixed': '已修复', 'resolved': '已解决', 'verified': '已验证',
+        'closed': '已关闭', 'reopened': '重新打开', 'rejected': '已拒绝',
+        'open': '开放'
+    }
+    severity_map = {
+        'trivial': '微小', 'minor': '次要', 'major': '主要',
+        'low': '低', 'medium': '中', 'high': '高',
+        'critical': '严重', 'blocker': '阻塞'
+    }
+    priority_map = {
+        'low': '低', 'medium': '中', 'high': '高', 'critical': '紧急'
+    }
+    frequency_map = {
+        'always': '必然复现', 'often': '经常复现',
+        'occasionally': '偶尔复现', 'never': '无法复现'
+    }
+
+    def strip_html(text):
+        """去除富文本中的 HTML 标签，转换为纯文本"""
+        if not text:
+            return ''
+        # 将 <br> 和 <br/> 替换为换行
+        text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
+        # 将 </p> 和 </div> 替换为换行
+        text = re.sub(r'</p\s*>', '\n', text, flags=re.IGNORECASE)
+        text = re.sub(r'</div\s*>', '\n', text, flags=re.IGNORECASE)
+        # 去除所有 HTML 标签
+        text = re.sub(r'<[^>]+>', '', text)
+        # 解码常见 HTML 实体
+        text = text.replace('&nbsp;', ' ').replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&').replace('&quot;', '"')
+        # 去除多余空行
+        text = re.sub(r'\n{3,}', '\n\n', text).strip()
+        return text
+
     # 转换为导出格式
     export_data = []
     for bug in bugs:
@@ -1526,10 +1563,10 @@ def export_bugs():
         export_data.append({
             'ID': bug.id,
             '标题': bug.title,
-            '描述': bug.description,
-            '状态': str(bug.status) if bug.status else '',
-            '严重程度': str(bug.severity) if bug.severity else '',
-            '优先级': str(bug.priority) if bug.priority else '',
+            '描述': strip_html(bug.description),
+            '状态': status_map.get(bug.status, bug.status or ''),
+            '严重程度': severity_map.get(bug.severity, bug.severity or ''),
+            '优先级': priority_map.get(bug.priority, bug.priority or ''),
             '项目': project.name if project else '',
             '负责人': assignee.username if assignee else '',
             '创建人': reporter.username if reporter else '',
@@ -1537,7 +1574,7 @@ def export_bugs():
             '更新时间': bug.updated_at.strftime('%Y/%m/%d %H:%M:%S') if bug.updated_at else '',
             '归属版本': bug.version or '',
             '问题类型': bug.issue_type or '',
-            '重现频率': bug.reproduce_frequency or '',
+            '重现频率': frequency_map.get(bug.reproduce_frequency, bug.reproduce_frequency or ''),
             '发现构建': bug.found_build or '',
             '测试版本': bug.test_version or '',
             '模块': bug.module or '',
@@ -1555,10 +1592,10 @@ def export_bugs():
             '关联测试用例': bug.test_case_id or '',
             '相关 Bug': bug.related_bug_id or '',
             '标签': bug.tags or '',
-            '重现步骤': bug.steps_to_reproduce or '',
-            '期望结果': bug.expected_result or '',
-            '实际结果': bug.actual_result or '',
-            '解决方案': bug.resolution or '',
+            '重现步骤': strip_html(bug.steps_to_reproduce),
+            '期望结果': strip_html(bug.expected_result),
+            '实际结果': strip_html(bug.actual_result),
+            '解决方案': strip_html(bug.resolution),
             '解决版本': bug.resolution_version or '',
             '附件路径': bug.attachment_path or ''
         })

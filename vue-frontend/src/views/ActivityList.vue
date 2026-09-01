@@ -270,13 +270,55 @@
         </div>
       </el-card>
     </div>
+
+    <!-- 导出格式选择对话框 -->
+    <el-dialog
+      v-model="exportDialogVisible"
+      title="导出活动记录"
+      width="440px"
+      class="export-dialog"
+      :close-on-click-modal="false">
+      <div class="export-dialog-body">
+        <p class="export-tip">
+          <el-icon><InfoFilled /></el-icon>
+          将导出符合当前筛选条件的全部 {{ total }} 条记录
+        </p>
+        <div class="export-format-list">
+          <div
+            v-for="fmt in exportFormats"
+            :key="fmt.value"
+            class="export-format-item"
+            :class="{ active: exportFormat === fmt.value }"
+            @click="exportFormat = fmt.value">
+            <div class="format-icon-wrapper" :style="{ background: fmt.bg }">
+              <span class="format-icon-text">{{ fmt.label }}</span>
+            </div>
+            <div class="format-info">
+              <div class="format-name">{{ fmt.name }}</div>
+              <div class="format-desc">{{ fmt.desc }}</div>
+            </div>
+            <el-icon v-if="exportFormat === fmt.value" class="format-check"><CircleCheckFilled /></el-icon>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="export-dialog-footer">
+          <el-button @click="exportDialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="exporting" @click="confirmExport" class="btn-gradient">
+            <el-icon><Download /></el-icon>
+            确认导出
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Download, View, Clock, List, CirclePlus, Edit, Calendar, Filter, Document } from '@element-plus/icons-vue'
+import { Search, Refresh, Download, View, Clock, List, CirclePlus, Edit, Calendar, Filter, Document, InfoFilled, CircleCheckFilled } from '@element-plus/icons-vue'
+import { saveAs } from 'file-saver'
 import { apiService } from '@/services/api'
 import { formatDate, getTimeAgo } from '@/utils/dateUtils'
 
@@ -308,6 +350,15 @@ const pagination = reactive({
   currentPage: 1,
   pageSize: 20
 })
+
+// 导出相关
+const exportDialogVisible = ref(false)
+const exporting = ref(false)
+const exportFormat = ref('xlsx')
+const exportFormats = [
+  { value: 'xlsx', name: 'Excel 工作簿', label: 'XLSX', desc: '格式化表格，支持样式与筛选', bg: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' },
+  { value: 'csv', name: 'CSV 文件', label: 'CSV', desc: '纯文本格式，兼容性广泛', bg: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' },
+]
 
 // 筛选表单
 const filterForm = reactive({
@@ -587,12 +638,46 @@ const refreshData = () => {
   loadStatistics()
 }
 
-// 导出数据
-const exportData = async () => {
+// 导出数据 - 打开格式选择对话框
+const exportData = () => {
+  if (total.value === 0) {
+    ElMessage.warning('没有可导出的记录')
+    return
+  }
+  exportDialogVisible.value = true
+}
+
+// 确认导出
+const confirmExport = async () => {
+  exporting.value = true
   try {
-    ElMessage.info('导出功能开发中...')
+    const params = { format: exportFormat.value }
+    if (filterForm.resource_type) params.resource_type = filterForm.resource_type
+    if (filterForm.action) params.action = filterForm.action
+    if (filterForm.user_name) params.user_name = filterForm.user_name
+    if (filterForm.dateRange && filterForm.dateRange.length === 2) {
+      params.start_date = filterForm.dateRange[0]
+      params.end_date = filterForm.dateRange[1]
+    }
+
+    const response = await apiService.activities.exportData(params)
+    if (response && response.data) {
+      const mimeMap = {
+        xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        csv: 'text/csv;charset=utf-8',
+      }
+      const ext = exportFormat.value === 'xlsx' ? 'xlsx' : 'csv'
+      const blob = new Blob([response.data], { type: mimeMap[exportFormat.value] })
+      const dateStr = new Date().toISOString().split('T')[0]
+      saveAs(blob, `活动记录_${dateStr}.${ext}`)
+      ElMessage.success('导出成功')
+      exportDialogVisible.value = false
+    }
   } catch (error) {
-    ElMessage.error('导出失败')
+    console.error('导出失败:', error)
+    ElMessage.error('导出失败，请重试')
+  } finally {
+    exporting.value = false
   }
 }
 
@@ -1170,6 +1255,138 @@ onMounted(() => {
   overflow-x: auto;
   margin-top: 12px;
   border: 1px solid #e2e8f0;
+}
+
+/* 导出对话框 */
+:deep(.export-dialog) {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+:deep(.export-dialog .el-dialog__header) {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  padding: 20px 24px;
+  margin-right: 0;
+}
+
+:deep(.export-dialog .el-dialog__title) {
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+:deep(.export-dialog .el-dialog__headerbtn .el-dialog__close) {
+  color: white;
+}
+
+:deep(.export-dialog .el-dialog__body) {
+  padding: 24px;
+}
+
+:deep(.export-dialog .el-dialog__footer) {
+  padding: 0 24px 24px;
+}
+
+.export-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.export-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  color: #0369a1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.export-tip .el-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.export-format-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-format-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.export-format-item:hover {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(56, 189, 248, 0.2);
+}
+
+.export-format-item.active {
+  border-color: #38bdf8;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0.04) 100%);
+  box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.25);
+}
+
+.format-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.1);
+}
+
+.format-icon-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+
+.format-info {
+  flex: 1;
+}
+
+.format-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.format-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 3px;
+}
+
+.format-check {
+  font-size: 22px;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.export-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 /* 动画 */

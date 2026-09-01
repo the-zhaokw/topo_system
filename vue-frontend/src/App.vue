@@ -404,6 +404,11 @@ onMounted(async () => {
 
   await router.isReady()
   isRouteReady.value = true
+
+  // 确保通知加载（补充 watch immediate 的时序问题）
+  if (userStore.token) {
+    loadNotifications()
+  }
 })
 
 // 组件卸载时清理

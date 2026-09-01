@@ -525,8 +525,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh, ChatDotRound, MoreFilled, Flag, User, Delete, Rank, Check, RefreshLeft, Search, Document, DataAnalysis, CopyDocument, AlarmClock, Operation, Sort } from '@element-plus/icons-vue'
 import rdKanbanService from '@/services/rdKanbanService'
 import { apiService } from '@/services/api'
+import { useUserStore } from '@/stores/user'
 import CardDetailDrawer from './rd-kanban/CardDetailDrawer.vue'
 import WeeklyReportCard from './rd-kanban/WeeklyReportCard.vue'
+
+const userStore = useUserStore()
 
 const loading = ref(false)
 const submitting = ref(false)
@@ -661,7 +664,7 @@ function formatTime(iso) {
 
 async function loadProjects() {
   try {
-    const res = await apiService.projects.getList({ page: 1, per_page: 200 })
+    const res = await apiService.projects.getList({ page: 1, per_page: 200, user_id: userStore.currentUser?.id })
     const list = res.projects || res.data || res.items || res || []
     projectOptions.value = list.map((p) => ({
       id: p.id,
@@ -669,7 +672,8 @@ async function loadProjects() {
       code: p.code,
     }))
     if (!currentProjectId.value && projectOptions.value.length) {
-      currentProjectId.value = projectOptions.value[0].id
+      const ipram = projectOptions.value.find((p) => p.name === 'IPRAN')
+      currentProjectId.value = ipram ? ipram.id : projectOptions.value[0].id
     }
   } catch (e) {
     console.error('加载项目列表失败', e)

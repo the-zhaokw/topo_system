@@ -250,7 +250,8 @@ export const apiService = {
     getByResource: (resourceType, resourceId, params = {}) => api.get(`/activities/${resourceType}/${resourceId}`, { params }),
     create: (activityData) => api.post('/activities', activityData),
     update: (id, activityData) => api.put(`/activities/${id}`, activityData),
-    delete: (id) => api.delete(`/activities/${id}`)
+    delete: (id) => api.delete(`/activities/${id}`),
+    exportData: (params = {}) => api.get('/activities/export', { params, responseType: 'blob' })
   },
 
   // 工作日志
