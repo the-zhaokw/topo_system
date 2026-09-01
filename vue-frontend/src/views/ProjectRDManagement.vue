@@ -152,6 +152,7 @@
 
                   <!-- 标题 -->
                   <div class="card-title-wrap">
+                    <span class="card-seq">{{ getCardSeq(col.key, item) }}</span>
                     <div class="card-title" :title="item.title">
                       {{ item.title }}
                     </div>
@@ -206,6 +207,9 @@
                             </el-dropdown-item>
                             <el-dropdown-item command="assignee">
                               <el-icon><User /></el-icon>指派负责人
+                            </el-dropdown-item>
+                            <el-dropdown-item command="reorder">
+                              <el-icon><Sort /></el-icon>修改序号
                             </el-dropdown-item>
                             <el-dropdown-item v-if="item.column === 'customer_issue' && !item.resolved_at" command="resolve">
                               <el-icon style="color:#10b981"><Check /></el-icon>
@@ -378,6 +382,31 @@
       </template>
     </el-dialog>
 
+    <!-- 修改序号对话框 -->
+    <el-dialog
+      v-model="reorderDialogVisible"
+      title="修改序号"
+      width="360px"
+      custom-class="rd-kanban-dialog"
+    >
+      <el-form label-position="top">
+        <el-form-item label="目标序号">
+          <el-input-number
+            v-model="reorderForm.targetSeq"
+            :min="1"
+            :max="getColumnCount(reorderForm.column) || 99"
+            controls-position="right"
+            style="width: 100%"
+          />
+          <div class="form-hint">输入目标序号（1 ~ {{ getColumnCount(reorderForm.column) || 0 }}），卡片将移动到该位置，同列其他卡片自动顺延</div>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="reorderDialogVisible = false">取消</el-button>
+        <el-button type="primary" class="btn-gradient" @click="submitReorder" :loading="reorderLoading">确定</el-button>
+      </template>
+    </el-dialog>
+
     <!-- 周报汇总对话框 -->
     <el-dialog
       v-model="weeklyDialogVisible"
@@ -493,7 +522,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, ChatDotRound, MoreFilled, Flag, User, Delete, Rank, Check, RefreshLeft, Search, Document, DataAnalysis, CopyDocument, AlarmClock, Operation } from '@element-plus/icons-vue'
+import { Plus, Refresh, ChatDotRound, MoreFilled, Flag, User, Delete, Rank, Check, RefreshLeft, Search, Document, DataAnalysis, CopyDocument, AlarmClock, Operation, Sort } from '@element-plus/icons-vue'
 import rdKanbanService from '@/services/rdKanbanService'
 import { apiService } from '@/services/api'
 import CardDetailDrawer from './rd-kanban/CardDetailDrawer.vue'
@@ -525,6 +554,14 @@ const createForm = reactive({
   tagsInput: '',
 })
 const editingItem = ref(null)
+
+const reorderDialogVisible = ref(false)
+const reorderLoading = ref(false)
+const reorderForm = reactive({
+  itemId: null,
+  column: null,
+  targetSeq: 1,
+})
 
 const dragOverColumn = ref(null)
 const draggingId = ref(null)
@@ -558,6 +595,16 @@ function getItemsByColumn(key) {
   return allItems.value
     .filter((it) => it.column === key)
     .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+}
+
+function getCardSeq(columnKey, item) {
+  const items = getItemsByColumn(columnKey)
+  const idx = items.findIndex((it) => it.id === item.id)
+  return idx >= 0 ? idx + 1 : ''
+}
+
+function getColumnCount(columnKey) {
+  return getItemsByColumn(columnKey).length
 }
 
 function statusLabel(value) {
@@ -741,6 +788,11 @@ async function handleCardCommand(cmd, item) {
     editingItem.value = item
     pendingAssigneeId.value = item.assignee?.id || null
     assigneeDialogVisible.value = true
+  } else if (cmd === 'reorder') {
+    reorderForm.itemId = item.id
+    reorderForm.column = item.column
+    reorderForm.targetSeq = getCardSeq(item.column, item)
+    reorderDialogVisible.value = true
   } else if (cmd === 'resolve') {
     try {
       await rdKanbanService.resolveIssue(item.id)
@@ -813,6 +865,21 @@ async function submitAssignee() {
     await loadData()
   } catch (e) {
     ElMessage.error('更新失败')
+  }
+}
+
+async function submitReorder() {
+  if (!reorderForm.itemId) return
+  reorderLoading.value = true
+  try {
+    await rdKanbanService.reorder(reorderForm.itemId, reorderForm.targetSeq)
+    ElMessage.success('序号已更新')
+    reorderDialogVisible.value = false
+    await loadData()
+  } catch (e) {
+    ElMessage.error('修改序号失败')
+  } finally {
+    reorderLoading.value = false
   }
 }
 
@@ -1293,7 +1360,24 @@ async function onDetailDelete(item) {
   flex-shrink: 0;
 }
 .card-title-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   margin-bottom: 8px;
+}
+.card-seq {
+  flex-shrink: 0;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-top: 1px;
 }
 .card-title {
   font-size: 13px;

@@ -1,8 +1,8 @@
 """
 项目研发管理 - Kanban 看板 API
 每个项目一张看板，7 列布局：
-  - recent_req_pending  近期需求 - 待评估
-  - recent_req_approved 近期需求 - 已确认待排期
+  - long_term_req       远期需求列表
+  - short_term_req      近期需求列表
   - in_progress         正在开发
   - completed           已完成
   - pending_test        待测试
@@ -23,13 +23,15 @@ rd_kanban_bp = Blueprint('rd_kanban', __name__, url_prefix='/rd-kanban')
 
 # 列定义（顺序与前端一致）
 COLUMNS = [
-    {'key': 'recent_req_pending', 'name': '近期需求 - 待评估', 'color': '#0ea5e9'},
-    {'key': 'recent_req_approved', 'name': '近期需求 - 已确认', 'color': '#0284c7'},
+    {'key': 'long_term_req', 'name': '远期需求列表', 'color': '#0ea5e9'},
+    {'key': 'short_term_req', 'name': '近期需求列表', 'color': '#0284c7'},
     {'key': 'in_progress', 'name': '正在开发', 'color': '#f59e0b'},
     {'key': 'completed', 'name': '已完成', 'color': '#10b981'},
     {'key': 'pending_test', 'name': '待测试', 'color': '#8b5cf6'},
     {'key': 'weekly_report', 'name': '周报', 'color': '#ec4899'},
     {'key': 'customer_issue', 'name': '客户问题', 'color': '#ef4444'},
+    {'key': 'pending_issue', 'name': '挂起问题', 'color': '#f97316'},
+    {'key': 'important_update', 'name': '重要更新', 'color': '#6366f1'},
 ]
 COLUMN_KEYS = [c['key'] for c in COLUMNS]
 COLUMN_NAME_MAP = {c['key']: c['name'] for c in COLUMNS}
@@ -57,10 +59,12 @@ ISSUE_SLA_HOURS = {'critical': 4, 'high': 24, 'medium': 72, 'low': 168}
 
 # 老列名 -> 新列名 的兼容映射（数据迁移用）
 LEGACY_COLUMN_MAP = {
-    'recent_req_1': 'recent_req_pending',
-    'recent_req_2': 'recent_req_approved',
-    'requirement': 'recent_req_pending',
-    'pending': 'recent_req_pending',
+    'recent_req_1': 'long_term_req',
+    'recent_req_2': 'short_term_req',
+    'recent_req_pending': 'long_term_req',
+    'recent_req_approved': 'short_term_req',
+    'requirement': 'long_term_req',
+    'pending': 'long_term_req',
     'in_development': 'in_progress',
     'developing': 'in_progress',
     'test': 'pending_test',
@@ -402,6 +406,49 @@ def batch_sort():
             except (TypeError, ValueError):
                 pass
         item.updated_at = now_china()
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@rd_kanban_bp.route('/<int:item_id>/reorder', methods=['PUT'])
+@jwt_required()
+def reorder_item(item_id):
+    """修改卡片序号（同列内重排序）"""
+    data = request.get_json(silent=True) or {}
+    target_seq = data.get('target_seq')
+    if target_seq is None or not isinstance(target_seq, (int, float)) or target_seq < 1:
+        return jsonify({'success': False, 'error': 'target_seq 必须是正整数'}), 400
+
+    db = get_db()
+    _, User, _, _ = get_models()
+    current_user_id = int(get_jwt_identity())
+    current_user = User.query.get(current_user_id)
+
+    model = _get_model()
+    item = model.query.get(item_id)
+    if not item:
+        return jsonify({'success': False, 'error': '卡片不存在'}), 404
+
+    project, err = _check_project_access(item.project_id, current_user_id, current_user.role)
+    if err:
+        return err
+
+    # 获取同列所有卡片，按 sort_order 排序
+    col_items = model.query.filter_by(
+        project_id=item.project_id, column=item.column
+    ).order_by(model.sort_order, model.id).all()
+
+    target_idx = max(0, min(int(target_seq) - 1, len(col_items) - 1))
+
+    # 从列表中移除当前卡片，再插入到目标位置
+    col_items = [it for it in col_items if it.id != item_id]
+    col_items.insert(target_idx, item)
+
+    # 重新分配 sort_order（间隔 10）
+    for i, it in enumerate(col_items):
+        it.sort_order = i * 10
+        it.updated_at = now_china()
+
     db.session.commit()
     return jsonify({'success': True})
 

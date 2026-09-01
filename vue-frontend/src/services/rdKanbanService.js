@@ -19,6 +19,9 @@ const rdKanbanService = {
   /** 批量更新排序/换列 */
   sort: (moves) => api.put('/rd-kanban/sort', { moves }),
 
+  /** 修改卡片序号（同列内重排序） */
+  reorder: (itemId, targetSeq) => api.put(`/rd-kanban/${itemId}/reorder`, { target_seq: targetSeq }),
+
   /** 获取卡片详情（item + comments + attachments） */
   detail: (itemId) => api.get(`/rd-kanban/${itemId}/detail`),
 
