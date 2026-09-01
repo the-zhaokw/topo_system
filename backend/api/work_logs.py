@@ -30,11 +30,12 @@ def log_activity(action, description, target_type, target_id, user_id):
 @jwt_required()
 def get_work_logs():
     """获取工作日志列表
-    - 管理员/经理/项目经理：可以看到所有日志（可通过project_id过滤）
-    - 部门经理：可以看到本部门所有员工的日志
-    - 普通用户：只能看到自己的日志
+    - 项目日志视图（传入project_id）：显示该项目下所有人的日志
+    - 个人工作日志视图（不传project_id）：只显示当前登录用户的日志
+    - 部门经理：可查看本部门所有员工的日志
     """
     User, Activity, WorkLog, db = get_models()
+    from enhanced_app import ProjectLog
 
     current_user_id = get_jwt_identity()
     current_user = User.query.get(current_user_id)
@@ -48,48 +49,83 @@ def get_work_logs():
     project_id = request.args.get('project_id', type=int)
     user_id = request.args.get('user_id', type=int)
 
-    has_full_access = user_role in ['admin', 'manager', 'project_manager'] if user_role else False
     is_department_manager = user_role == 'department_manager' if user_role else False
 
-    if has_full_access and project_id:
-        query = WorkLog.query.filter(WorkLog.project_id == project_id)
-    elif has_full_access:
-        query = WorkLog.query
+    if project_id:
+        # === 项目日志视图：显示该项目下所有人的日志 ===
+        work_query = WorkLog.query.filter(WorkLog.project_id == project_id)
     elif is_department_manager:
+        # === 部门经理个人视图：本部门所有员工的日志 ===
         department_users = User.query.filter_by(department=current_user.department).with_entities(User.id).all()
         department_user_ids = [u.id for u in department_users]
         if user_id and user_id in department_user_ids:
-            query = WorkLog.query.filter(WorkLog.user_id == user_id)
+            work_query = WorkLog.query.filter(WorkLog.user_id == user_id)
         else:
-            query = WorkLog.query.filter(WorkLog.user_id.in_(department_user_ids))
-        if project_id:
-            query = query.filter(WorkLog.project_id == project_id)
+            work_query = WorkLog.query.filter(WorkLog.user_id.in_(department_user_ids))
     else:
-        query = WorkLog.query.filter(WorkLog.user_id == int(current_user_id))
-        if project_id:
-            query = query.filter(WorkLog.project_id == project_id)
+        # === 个人工作日志视图：只显示当前登录用户的 ===
+        work_query = WorkLog.query.filter(WorkLog.user_id == int(current_user_id))
 
     if log_date:
-        query = query.filter(WorkLog.log_date >= datetime.fromisoformat(log_date))
+        work_query = work_query.filter(WorkLog.log_date >= datetime.fromisoformat(log_date))
     if work_type:
-        query = query.filter(WorkLog.work_type == work_type)
+        work_query = work_query.filter(WorkLog.work_type == work_type)
     if status:
-        query = query.filter(WorkLog.status == status)
+        work_query = work_query.filter(WorkLog.status == status)
 
-    pagination = query.order_by(WorkLog.log_date.desc(), WorkLog.created_at.desc()).paginate(
-        page=page, per_page=per_page, error_out=False
-    )
-
-    logs = []
-    for log in pagination.items:
+    work_logs = work_query.order_by(WorkLog.log_date.desc(), WorkLog.created_at.desc()).all()
+    all_logs = []
+    for log in work_logs:
         log_dict = log.to_dict()
-        logs.append(log_dict)
+        log_dict['log_source'] = 'work_log'
+        all_logs.append(log_dict)
+
+    # === 查询项目日志（合并显示） ===
+    if project_id:
+        # 项目日志视图：显示该项目的所有项目日志
+        project_query = ProjectLog.query.filter(ProjectLog.project_id == project_id)
+    else:
+        # 个人工作日志视图：只显示当前登录用户的项目日志
+        project_query = ProjectLog.query.filter(ProjectLog.created_by == int(current_user_id))
+
+    if log_date:
+        project_query = project_query.filter(ProjectLog.logged_at >= datetime.fromisoformat(log_date))
+    if work_type:
+        project_query = project_query.filter(ProjectLog.log_type == work_type)
+    if status:
+        if status == 'completed':
+            project_query = project_query.filter(ProjectLog.status.in_(['published', 'archived']))
+        elif status == 'draft':
+            project_query = project_query.filter(ProjectLog.status == 'draft')
+
+    project_logs = project_query.order_by(ProjectLog.created_at.desc()).all()
+    for log in project_logs:
+        log_dict = log.to_dict()
+        log_dict['log_source'] = 'project_log'
+        log_dict['project_log_id'] = log.id
+        log_dict['user_id'] = log.created_by
+        log_dict['user_name'] = log_dict.get('creator_name', '')
+        log_dict['log_date'] = log.logged_at.isoformat() if log.logged_at else (log.created_at.isoformat() if log.created_at else None)
+        log_dict['work_type'] = log.log_type
+        log_dict['hours_spent'] = 0
+        if log.status in ('published', 'archived'):
+            log_dict['status'] = 'completed'
+        all_logs.append(log_dict)
+
+    # 合并后按日期和创建时间排序
+    all_logs.sort(key=lambda x: (x.get('log_date') or '', x.get('created_at') or ''), reverse=True)
+
+    # 内存分页
+    total = len(all_logs)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_logs = all_logs[start:end]
 
     return jsonify({
-        'logs': logs,
-        'total': pagination.total,
+        'logs': paginated_logs,
+        'total': total,
         'page': page,
-        'pages': pagination.pages,
+        'pages': (total + per_page - 1) // per_page if per_page > 0 else 1,
         'per_page': per_page
     }), 200
 
@@ -276,9 +312,9 @@ def delete_work_log(log_id):
 @jwt_required()
 def get_work_log_stats():
     """获取工作日志统计
-    - 管理员/经理/项目经理：可以看到所有日志的统计（可通过project_id过滤）
-    - 部门经理：可以看到本部门所有员工日志的统计
-    - 普通用户：只能看到自己的日志统计
+    - 项目日志视图（传入project_id）：统计该项目下所有人的日志
+    - 个人工作日志视图（不传project_id）：只统计当前登录用户的日志
+    - 部门经理：可查看本部门所有员工日志的统计
     """
     User, Activity, WorkLog, db = get_models()
 
@@ -288,52 +324,52 @@ def get_work_log_stats():
     project_id = request.args.get('project_id', type=int)
     user_id = request.args.get('user_id', type=int)
 
-    has_full_access = user_role in ['admin', 'manager', 'project_manager'] if user_role else False
     is_department_manager = user_role == 'department_manager' if user_role else False
 
-    if has_full_access and project_id:
-        total_logs = WorkLog.query.filter(WorkLog.project_id == project_id).count()
-        draft_logs = WorkLog.query.filter(WorkLog.project_id == project_id, WorkLog.status == 'draft').count()
-        completed_logs = WorkLog.query.filter(WorkLog.project_id == project_id, WorkLog.status == 'completed').count()
+    if project_id:
+        # === 项目日志视图：统计该项目下所有人的日志 ===
+        query_filter = WorkLog.query.filter(WorkLog.project_id == project_id)
+        total_logs = query_filter.count()
+        draft_logs = query_filter.filter(WorkLog.status == 'draft').count()
+        completed_logs = query_filter.filter(WorkLog.status == 'completed').count()
         total_hours = db.session.query(db.func.sum(WorkLog.hours_spent)).filter(
             WorkLog.project_id == project_id
         ).scalar() or 0
-    elif has_full_access:
-        total_logs = WorkLog.query.count()
-        draft_logs = WorkLog.query.filter(WorkLog.status == 'draft').count()
-        completed_logs = WorkLog.query.filter(WorkLog.status == 'completed').count()
-        total_hours = db.session.query(db.func.sum(WorkLog.hours_spent)).scalar() or 0
     elif is_department_manager:
+        # === 部门经理个人视图 ===
         department_users = User.query.filter_by(department=current_user.department).with_entities(User.id).all()
         department_user_ids = [u.id for u in department_users]
         if user_id and user_id in department_user_ids:
             query_filter = WorkLog.query.filter(WorkLog.user_id == user_id)
         else:
             query_filter = WorkLog.query.filter(WorkLog.user_id.in_(department_user_ids))
-        if project_id:
-            query_filter = query_filter.filter(WorkLog.project_id == project_id)
         total_logs = query_filter.count()
         draft_logs = query_filter.filter(WorkLog.status == 'draft').count()
         completed_logs = query_filter.filter(WorkLog.status == 'completed').count()
         hours_query = db.session.query(db.func.sum(WorkLog.hours_spent)).filter(
             WorkLog.user_id.in_(department_user_ids) if not (user_id and user_id in department_user_ids) else WorkLog.user_id == user_id
         )
-        if project_id:
-            hours_query = hours_query.filter(WorkLog.project_id == project_id)
         total_hours = hours_query.scalar() or 0
     else:
+        # === 个人工作日志视图：只统计当前登录用户的 ===
         query_filter = WorkLog.query.filter(WorkLog.user_id == int(current_user_id))
-        if project_id:
-            query_filter = query_filter.filter(WorkLog.project_id == project_id)
         total_logs = query_filter.count()
         draft_logs = query_filter.filter(WorkLog.status == 'draft').count()
         completed_logs = query_filter.filter(WorkLog.status == 'completed').count()
-        hours_query = db.session.query(db.func.sum(WorkLog.hours_spent)).filter(
+        total_hours = db.session.query(db.func.sum(WorkLog.hours_spent)).filter(
             WorkLog.user_id == int(current_user_id)
-        )
-        if project_id:
-            hours_query = hours_query.filter(WorkLog.project_id == project_id)
-        total_hours = hours_query.scalar() or 0
+        ).scalar() or 0
+
+    # === 合并项目日志统计 ===
+    from enhanced_app import ProjectLog
+    if project_id:
+        p_query = ProjectLog.query.filter(ProjectLog.project_id == project_id)
+    else:
+        p_query = ProjectLog.query.filter(ProjectLog.created_by == int(current_user_id))
+
+    total_logs += p_query.count()
+    draft_logs += p_query.filter(ProjectLog.status == 'draft').count()
+    completed_logs += p_query.filter(ProjectLog.status.in_(['published', 'archived'])).count()
 
     return jsonify({
         'total_logs': total_logs,

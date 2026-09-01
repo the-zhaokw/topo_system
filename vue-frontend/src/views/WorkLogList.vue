@@ -179,25 +179,29 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="标题" min-width="200">
+          <el-table-column label="标题" min-width="240">
             <template #default="{ row }">
-              <div class="log-title" @click="viewDetail(row)">
-                {{ row.title }}
+              <div class="log-title-wrapper">
+                <el-tag v-if="row.log_source === 'project_log'" type="warning" size="small" effect="plain" class="source-tag">项目日志</el-tag>
+                <el-tag v-else type="primary" size="small" effect="plain" class="source-tag">工作日志</el-tag>
+                <div class="log-title" @click="viewDetail(row)">
+                  {{ row.title }}
+                </div>
               </div>
             </template>
           </el-table-column>
 
           <el-table-column label="类型" width="100" align="center">
             <template #default="{ row }">
-              <el-tag :type="getWorkTypeTag(row.work_type)" size="small" effect="light" class="work-type-tag">
-                {{ getWorkTypeText(row.work_type) }}
+              <el-tag :type="getWorkTypeTag(row.work_type, row.log_source)" size="small" effect="light" class="work-type-tag">
+                {{ getWorkTypeText(row.work_type, row.log_source) }}
               </el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column v-if="isDepartmentManager" label="员工" width="120" align="center">
+          <el-table-column label="作者" width="120" align="center">
             <template #default="{ row }">
-              <div class="user-name">{{ row.user_name || row.username || '-' }}</div>
+              <div class="user-name">{{ row.user_name || row.creator_name || '-' }}</div>
             </template>
           </el-table-column>
 
@@ -244,7 +248,11 @@
                 <el-icon><View /></el-icon>
                 详情
               </el-button>
-              <el-button type="primary" link size="small" @click="openEditDialog(row)" class="action-btn">
+              <el-button v-if="row.log_source !== 'project_log'" type="primary" link size="small" @click="openEditDialog(row)" class="action-btn">
+                <el-icon><Edit /></el-icon>
+                编辑
+              </el-button>
+              <el-button v-else type="primary" link size="small" @click="goToProjectLog(row)" class="action-btn">
                 <el-icon><Edit /></el-icon>
                 编辑
               </el-button>
@@ -368,8 +376,15 @@
           <el-descriptions-item label="标题" :span="2">
             {{ currentLog.title }}
           </el-descriptions-item>
-          <el-descriptions-item label="工作类型">
-            {{ getWorkTypeText(currentLog.work_type) }}
+          <el-descriptions-item label="来源">
+            <el-tag v-if="currentLog.log_source === 'project_log'" type="warning" size="small">项目日志</el-tag>
+            <el-tag v-else type="primary" size="small">工作日志</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="作者">
+            {{ currentLog.user_name || currentLog.creator_name || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="类型">
+            {{ getWorkTypeText(currentLog.work_type, currentLog.log_source) }}
           </el-descriptions-item>
           <el-descriptions-item label="日期">
             {{ formatDate(currentLog.log_date) }}
@@ -446,14 +461,15 @@
 
 <script setup>
 import { ref, reactive, onMounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, View, Edit, Delete, ArrowLeft, Document, Clock, CircleCheck, Filter, List } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
-import { formatDate as formatDateUtil } from '@/utils/dateUtils'
+import { formatDate as formatDateUtil, parseUTCDate } from '@/utils/dateUtils'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 const currentUser = computed(() => userStore.currentUser)
 const isDepartmentManager = computed(() => {
@@ -550,7 +566,19 @@ const formatDate = (dateStr) => {
   return `${year}-${month}-${day}`
 }
 
-const getWorkTypeText = (type) => {
+const getWorkTypeText = (type, source) => {
+  if (source === 'project_log') {
+    const texts = {
+      'progress': '进展',
+      'issue': '问题',
+      'milestone': '里程碑',
+      'meeting': '会议',
+      'risk': '风险',
+      'change': '变更',
+      'general': '通用'
+    }
+    return texts[type] || type
+  }
   const texts = {
     'daily': '日报',
     'weekly': '周报',
@@ -561,7 +589,19 @@ const getWorkTypeText = (type) => {
   return texts[type] || type
 }
 
-const getWorkTypeTag = (type) => {
+const getWorkTypeTag = (type, source) => {
+  if (source === 'project_log') {
+    const types = {
+      'progress': 'primary',
+      'issue': 'danger',
+      'milestone': 'warning',
+      'meeting': 'info',
+      'risk': 'danger',
+      'change': 'warning',
+      'general': 'info'
+    }
+    return types[type] || 'info'
+  }
   const types = {
     'daily': '',
     'weekly': 'success',
@@ -722,10 +762,25 @@ const openEditDialog = (row) => {
 const viewDetail = async (row) => {
   currentLog.value = row
   detailVisible.value = true
-  await loadActivities(row.id)
+  if (row.log_source !== 'project_log') {
+    await loadActivities(row.id)
+  }
+}
+
+const goToProjectLog = (row) => {
+  if (row.project_id) {
+    router.push(`/projects/${row.project_id}`)
+  } else {
+    ElMessage.warning('该项目日志未关联项目')
+  }
 }
 
 const openEditFromDetail = () => {
+  if (currentLog.value?.log_source === 'project_log') {
+    goToProjectLog(currentLog.value)
+    detailVisible.value = false
+    return
+  }
   detailVisible.value = false
   openEditDialog(currentLog.value)
 }
@@ -764,8 +819,10 @@ const handleSubmit = async () => {
 }
 
 const handleDelete = (row) => {
+  const isProjectLog = row.log_source === 'project_log'
+  const label = isProjectLog ? '项目日志' : '工作日志'
   ElMessageBox.confirm(
-    `确定要删除工作日志"${row.title}"吗？此操作不可撤销。`,
+    `确定要删除${label}"${row.title}"吗？此操作不可撤销。`,
     '删除确认',
     {
       confirmButtonText: '确定删除',
@@ -774,12 +831,16 @@ const handleDelete = (row) => {
     }
   ).then(async () => {
     try {
-      await apiService.workLogs.delete(row.id)
+      if (isProjectLog) {
+        await apiService.projectLogs.delete(row.project_log_id)
+      } else {
+        await apiService.workLogs.delete(row.id)
+      }
       ElMessage.success('删除成功')
       loadWorkLogs()
       loadStatistics()
     } catch (error) {
-      console.error('删除工作日志失败:', error)
+      console.error('删除失败:', error)
       ElMessage.error('删除失败')
     }
   }).catch(() => {})
@@ -1288,12 +1349,18 @@ onMounted(() => {
 }
 
 .action-btn {
-  opacity: 0;
+  opacity: 1;
   transition: all 0.3s;
 }
 
-.custom-table :deep(.el-table__row:hover) .action-btn {
-  opacity: 1;
+.log-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.source-tag {
+  flex-shrink: 0;
 }
 
 /* 分页 */
