@@ -813,7 +813,15 @@ const submitApproval = async (action) => {
 
   try {
     const row = currentApproval.value
-    const numericId = row.id ? parseInt(row.id.replace(/^[a-z]+_/, ''), 10) : row.id
+    // 兼容数字 id 和带前缀的字符串 id
+    let numericId
+    if (typeof row.id === 'number') {
+      numericId = row.id
+    } else if (typeof row.id === 'string') {
+      numericId = parseInt(row.id.replace(/^[a-z]+_/, ''), 10)
+    } else {
+      numericId = row.id
+    }
     
     if (row.type === 'leave') {
       if (action === 'approve') {
@@ -856,7 +864,7 @@ const submitApproval = async (action) => {
     approvalForm.value.comment = ''
     refreshAll()
   } catch (error) {
-    ElMessage.error(error.response?.data?.message || '审批操作失败')
+    ElMessage.error(error.response?.data?.error || error.response?.data?.message || '审批操作失败')
   }
 }
 

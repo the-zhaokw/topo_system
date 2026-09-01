@@ -135,9 +135,22 @@
       </el-card>
     </div>
 
-    <!-- 考勤记录表格 -->
+    <!-- 视图切换按钮 + 内容区域 -->
     <div class="content-section animate-fade-in-up delay-300">
-      <el-card class="glass-card" shadow="hover">
+      <!-- 视图切换按钮 -->
+      <div class="view-toggle-bar">
+        <el-radio-group v-model="activeView" class="view-toggle-group">
+          <el-radio-button value="attendance">
+            <el-icon><Document /></el-icon> 考勤记录列表
+          </el-radio-button>
+          <el-radio-button value="event">
+            <el-icon><Notebook /></el-icon> 事件记录
+          </el-radio-button>
+        </el-radio-group>
+      </div>
+
+      <!-- 考勤记录表格 -->
+      <el-card v-show="activeView === 'attendance'" class="glass-card" shadow="hover">
         <template #header>
           <div class="table-header">
             <div class="table-title">
@@ -260,6 +273,60 @@
           />
         </div>
       </el-card>
+
+      <!-- 事件记录表格 -->
+      <el-card v-show="activeView === 'event'" class="glass-card" shadow="hover">
+        <template #header>
+          <div class="table-header">
+            <div class="table-title">
+              <el-icon class="event-title-icon"><Notebook /></el-icon>
+              <h3>事件记录</h3>
+              <span class="total-count">共 {{ eventRecords.length }} 条</span>
+            </div>
+            <el-radio-group v-model="eventFilter" size="small" class="event-radio-group">
+              <el-radio-button value="all">全部({{ eventRecords.length }})</el-radio-button>
+              <el-radio-button value="leave">请假({{ leaveCount }})</el-radio-button>
+              <el-radio-button value="overtime">加班({{ overtimeCount }})</el-radio-button>
+            </el-radio-group>
+          </div>
+        </template>
+
+        <div v-loading="eventLoading" class="event-table-wrapper">
+            <el-table :data="filteredEvents" stripe size="small" class="event-table" style="width: 100%" :show-overflow-tooltip="true" @row-click="handleEventClick" highlight-current-row>
+              <el-table-column label="类型" width="60" align="center">
+                <template #default="{ row }">
+                  <span class="event-type-badge" :class="'badge-' + row.type">
+                    {{ row.type === 'leave' ? '请假' : '加班' }}
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="userName" label="员工" min-width="70" show-overflow-tooltip />
+              <el-table-column label="时间" min-width="120">
+                <template #default="{ row }">
+                  <span class="event-time-text">{{ row.dateText }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="天数/时长" width="80" align="center">
+                <template #default="{ row }">
+                  <span v-if="row.type === 'leave' && row.days" class="event-duration">{{ row.days }}天</span>
+                  <span v-else-if="row.type === 'overtime' && row.hours" class="event-duration">{{ row.hours }}h</span>
+                  <span v-else class="text-muted">-</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="状态" width="70" align="center">
+                <template #default="{ row }">
+                  <span class="event-status" :class="'status-' + row.status">
+                    {{ formatEventStatus(row.status) }}
+                  </span>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div v-if="filteredEvents.length === 0 && !eventLoading" class="event-empty">
+              <el-icon><DocumentRemove /></el-icon>
+              <p>暂无事件记录</p>
+            </div>
+          </div>
+        </el-card>
     </div>
 
     <!-- 打卡对话框 -->
@@ -464,7 +531,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Clock, Download, Timer, Filter, Search, Refresh, Document, Edit, Delete, Warning, CircleClose, QuestionFilled, Calendar, CircleCheck, Sunrise, Sunset, View, Promotion } from '@element-plus/icons-vue'
+import { Clock, Download, Timer, Filter, Search, Refresh, Document, Edit, Delete, Warning, CircleClose, QuestionFilled, Calendar, CircleCheck, Sunrise, Sunset, View, Promotion, Notebook, DocumentRemove, Histogram } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
 const userStore = useUserStore()
@@ -475,6 +542,12 @@ const users = ref([])
 const todayRecord = ref(null)
 const punchDialogVisible = ref(false)
 const currentTime = ref('')
+
+// 事件记录（请假+加班）
+const eventRecords = ref([])
+const eventLoading = ref(false)
+const eventFilter = ref('all')
+const activeView = ref('attendance') // 'attendance' 或 'event'
 
 // 详情对话框
 const detailDialogVisible = ref(false)
@@ -704,6 +777,94 @@ const handleReset = () => {
   handleSearch()
 }
 
+// 事件记录：按类型筛选
+const filteredEvents = computed(() => {
+  if (eventFilter.value === 'all') return eventRecords.value
+  return eventRecords.value.filter(r => r.type === eventFilter.value)
+})
+
+const filterEvents = () => {}
+
+// 事件记录数量统计
+const leaveCount = computed(() => eventRecords.value.filter(r => r.type === 'leave').length)
+const overtimeCount = computed(() => eventRecords.value.filter(r => r.type === 'overtime').length)
+
+// 点击事件记录跳转
+const handleEventClick = (row) => {
+  if (row.type === 'leave') {
+    router.push('/attendance/leave-application')
+  } else if (row.type === 'overtime') {
+    router.push('/attendance/overtime-application')
+  }
+}
+
+// 获取请假和加班记录
+const fetchEventRecords = async () => {
+  eventLoading.value = true
+  try {
+    const [leaveRes, overtimeRes] = await Promise.all([
+      apiService.attendance.getLeaveApplications({ per_page: 50 }),
+      apiService.attendance.getOvertimeApplications({ per_page: 50 })
+    ])
+
+    const leaveList = (leaveRes.applications || []).map(item => ({
+      id: item.id,
+      type: 'leave',
+      userName: item.applicant?.name || item.applicant?.username || '未知',
+      leaveType: item.leave_type,
+      dateText: `${item.start_date || ''} ~ ${item.end_date || ''}`,
+      days: item.days,
+      reason: item.reason,
+      status: (item.status || 'pending').toLowerCase(),
+      createdAt: item.created_at
+    }))
+
+    const overtimeList = (overtimeRes.applications || []).map(item => ({
+      id: item.id,
+      type: 'overtime',
+      userName: item.applicant?.name || item.applicant?.username || '未知',
+      dateText: `${item.date || item.overtime_date || ''} ${item.start_time || ''}~${item.end_time || ''}`,
+      hours: item.total_hours,
+      reason: item.reason,
+      status: (item.status || 'pending').toLowerCase(),
+      createdAt: item.created_at
+    }))
+
+    // 合并并按创建时间倒序
+    eventRecords.value = [...leaveList, ...overtimeList].sort((a, b) => {
+      const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0
+      const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0
+      return tb - ta
+    })
+  } catch (error) {
+    console.error('获取事件记录失败:', error)
+    eventRecords.value = []
+  } finally {
+    eventLoading.value = false
+  }
+}
+
+// 事件状态格式化
+const formatEventStatus = (status) => {
+  const map = { pending: '待审批', approved: '已批准', rejected: '已驳回' }
+  return map[status] || status || '-'
+}
+
+// 请假类型格式化
+const formatLeaveType = (type) => {
+  const map = {
+    sick_leave: '病假',
+    personal_leave: '事假',
+    annual_leave: '年假',
+    marriage_leave: '婚假',
+    maternity_leave: '产假',
+    paternity_leave: '陪产假',
+    bereavement_leave: '丧假',
+    other: '其他'
+  }
+  return map[(type || '').toLowerCase()] || type || '-'
+}
+
 const handleSizeChange = (size) => {
   pagination.value.pageSize = size
   fetchAttendanceRecords()
@@ -841,6 +1002,7 @@ onMounted(() => {
   fetchAttendanceRecords()
   fetchUsers()
   fetchTodayRecord()
+  fetchEventRecords()
 })
 </script>
 
@@ -1176,6 +1338,146 @@ onMounted(() => {
 /* 内容区域 */
 .content-section {
   margin-bottom: 20px;
+}
+
+/* 视图切换按钮栏 */
+.view-toggle-bar {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.view-toggle-group :deep(.el-radio-button__inner) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 24px;
+  font-weight: 600;
+}
+
+.event-title-icon {
+  color: #8b5cf6;
+  font-size: 20px;
+}
+
+.event-radio-group {
+  margin-left: auto;
+}
+
+/* 事件表格 */
+.event-table-wrapper {
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+}
+
+.event-table {
+  --el-table-header-bg-color: rgba(241, 245, 249, 0.8);
+  --el-table-row-hover-bg-color: rgba(139, 92, 246, 0.05);
+}
+
+.event-table :deep(.el-table__header th) {
+  font-weight: 600;
+  color: #1e293b;
+  background: rgba(241, 245, 249, 0.8);
+  padding: 6px 0;
+}
+
+.event-table :deep(.el-table__row td) {
+  padding: 4px 0;
+}
+
+.event-table :deep(.el-table__row) {
+  cursor: pointer;
+}
+
+.event-table::-webkit-scrollbar {
+  width: 5px;
+}
+
+.event-table-wrapper::-webkit-scrollbar {
+  width: 5px;
+}
+
+.event-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 3px;
+}
+
+.event-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.event-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #9ca3af;
+}
+
+.event-empty .el-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.event-empty p {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* 事件表格中的徽章和状态 */
+.event-type-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.badge-leave {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+}
+
+.badge-overtime {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+
+.event-time-text {
+  font-size: 12px;
+  color: #475569;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.event-duration {
+  font-weight: 600;
+  font-size: 13px;
+  color: #7c3aed;
+}
+
+.event-status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+
+.status-approved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.status-rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
 }
 
 /* 表格头部 */
@@ -1639,6 +1941,15 @@ onMounted(() => {
 @media screen and (max-width: 768px) {
   .attendance-list-container {
     padding: 0;
+  }
+
+  .view-toggle-group :deep(.el-radio-button__inner) {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .event-table-wrapper {
+    max-height: 400px;
   }
 
   .page-header {
