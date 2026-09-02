@@ -11,6 +11,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
 from functools import wraps
+from sqlalchemy.exc import OperationalError
+import time
 
 # 从 config.extensions 导入 db 和 jwt，确保使用统一的实例
 from config.extensions import db, jwt, init_extensions
@@ -35,6 +37,26 @@ def sync_time_to_china():
 
 sync_time_to_china()
 
+# 数据库写操作重试工具：遇到锁冲突时自动退避重试，最多 3 次
+def safe_commit(max_retries=3):
+    """提交数据库事务，遇到锁冲突时自动重试（指数退避）"""
+    for attempt in range(max_retries):
+        try:
+            db.session.commit()
+            return True
+        except OperationalError as e:
+            db.session.rollback()
+            if "locked" in str(e).lower() and attempt < max_retries - 1:
+                wait = 0.1 * (attempt + 1)
+                logger.warning(f"数据库锁冲突，第 {attempt + 1} 次重试（等待 {wait:.1f}s）")
+                time.sleep(wait)
+                continue
+            raise
+        except Exception:
+            db.session.rollback()
+            raise
+    return False
+
 # 导入枚举和工具
 # 移除循环导入，改为本地定义UserRole
 # from utils import init_logging_system, setup_flask_logging
@@ -51,12 +73,14 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-
 _db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance', 'topo_system.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'sqlite:///{_db_path}')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# SQLite 锁超时配置：等待锁最多 30 秒，避免 "database is locked" 错误
+# SQLite 并发优化配置：锁等待 30 秒 + 连接健康检测 + 定期回收
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'connect_args': {
         'timeout': 30,
         'check_same_thread': False,
     },
+    'pool_pre_ping': True,      # 每次使用连接前检测有效性，避免失效连接
+    'pool_recycle': 3600,        # 每小时回收连接，防止长时间持有
 }
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-key-change-this')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
@@ -3237,7 +3261,7 @@ def create_audit_log(user_id, action, resource_type, resource_id=None, details="
             created_at=datetime.utcnow()
         )
         db.session.add(audit_log)
-        db.session.commit()
+        safe_commit()
 
         return {
             'user_id': user_id,
@@ -3468,7 +3492,7 @@ def create_notification(user_id, notification_type, title, content, related_bug_
             created_at=datetime.utcnow()
         )
         db.session.add(notification)
-        db.session.commit()
+        safe_commit()
         
         # 获取用户邮箱并检查是否需要发送邮件
         user = User.query.get(user_id)
@@ -3526,6 +3550,7 @@ def create_notification(user_id, notification_type, title, content, related_bug_
         
     except Exception as e:
         logger.error(f"为用户 {user_id} 创建通知失败: {str(e)}")
+        db.session.rollback()
         return None
 
 # 提取@提及
@@ -3951,10 +3976,12 @@ def init_db():
     """初始化数据库"""
     try:
         with app.app_context():
-            # 启用 WAL 模式，减少 SQLite 读写锁冲突
+            # SQLite 并发优化：WAL 模式 + busy_timeout + 自动检查点
             from sqlalchemy import text
             with db.engine.connect() as conn:
                 conn.execute(text("PRAGMA journal_mode=WAL"))
+                conn.execute(text("PRAGMA busy_timeout=30000"))
+                conn.execute(text("PRAGMA wal_autocheckpoint=1000"))
 
             # 初始化模型类，确保只创建一次
             init_models()
