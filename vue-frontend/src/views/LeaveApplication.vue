@@ -13,7 +13,7 @@
           </div>
           <div class="title-text">
             <h1>请假申请</h1>
-            <p class="subtitle">提交和管理您的请假申请</p>
+            <p class="subtitle">提交和管理你的请假申请</p>
           </div>
         </div>
         <div class="header-actions">

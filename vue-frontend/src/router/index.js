@@ -758,7 +758,7 @@ function continueHandleRoute(to, next, userStore) {
       next('/dashboard')
       setTimeout(() => {
         import('element-plus').then(({ ElMessage }) => {
-          ElMessage.error('您没有访问该功能的权限')
+          ElMessage.error('你没有访问该功能的权限')
         })
       }, 100)
       return

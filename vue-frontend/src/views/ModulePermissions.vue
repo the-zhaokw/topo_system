@@ -5,7 +5,7 @@
       <el-result
         icon="warning"
         title="权限不足"
-        sub-title="您没有权限访问模块权限管理页面"
+        sub-title="你没有权限访问模块权限管理页面"
       >
         <template #extra>
           <el-button type="primary" @click="$router.push('/dashboard')">

@@ -13,7 +13,7 @@
           </div>
           <div class="title-text">
             <h1>加班申请</h1>
-            <p class="subtitle">提交和管理您的加班申请记录</p>
+            <p class="subtitle">提交和管理你的加班申请记录</p>
           </div>
         </div>
         <div class="header-actions">

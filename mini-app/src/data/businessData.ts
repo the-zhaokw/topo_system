@@ -291,7 +291,7 @@ export const mockNotifications: Notification[] = [
   {
     id: 1,
     title: '新Bug指派通知',
-    content: '您有一个新的Bug被指派给您，请及时处理',
+    content: '你有一个新的Bug被指派给你，请及时处理',
     type: 'warning',
     is_read: false,
     created_at: '2026-05-18 10:30:00'
@@ -315,7 +315,7 @@ export const mockNotifications: Notification[] = [
   {
     id: 4,
     title: '代码审查通过',
-    content: '您的代码已通过审查，可以合并到主分支',
+    content: '你的代码已通过审查，可以合并到主分支',
     type: 'success',
     is_read: true,
     created_at: '2026-05-16 14:20:00'

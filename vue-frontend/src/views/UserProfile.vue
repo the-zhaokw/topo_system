@@ -13,7 +13,7 @@
           </div>
           <div class="title-text">
             <h1>个人配置</h1>
-            <p class="subtitle">管理您的个人信息和账户设置</p>
+            <p class="subtitle">管理你的个人信息和账户设置</p>
           </div>
         </div>
         <el-button type="primary" @click="saveProfile" class="btn-gradient btn-save">

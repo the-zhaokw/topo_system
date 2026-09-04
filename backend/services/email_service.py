@@ -112,7 +112,7 @@ class EmailService:
         subject = 'TOPO系统 - 邮件配置测试'
         body = '''这是一封来自TOPO系统的测试邮件。
 
-如果您收到这封邮件，说明邮件配置正确。
+如果你收到这封邮件，说明邮件配置正确。
 
 ---
 TOPO系统邮件服务
@@ -123,7 +123,7 @@ TOPO系统邮件服务
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #409EFF;">TOPO系统邮件配置测试</h2>
         <p>这是一封来自TOPO系统的测试邮件。</p>
-        <p style="color: #67C23A;"><strong>如果您收到这封邮件，说明邮件配置正确。</strong></p>
+        <p style="color: #67C23A;"><strong>如果你收到这封邮件，说明邮件配置正确。</strong></p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
         <p style="color: #909399; font-size: 12px;">
             邮件服务器: {self.host}:{self.port}<br>
@@ -139,7 +139,7 @@ TOPO系统邮件服务
     def send_bug_assigned_email(self, to_address: str, bug_title: str, assignee_name: str) -> Dict[str, Any]:
         """发送Bug分配通知邮件"""
         subject = f'[Bug分配] {bug_title}'
-        body = f'''您有一个新的Bug被分配给您:
+        body = f'''你有一个新的Bug被分配给你:
 
 Bug标题: {bug_title}
 分配人: {assignee_name}
@@ -195,9 +195,9 @@ TOPO系统
         app_url = os.environ.get('APP_URL', 'http://localhost:3000')
         full_link = f'{app_url}{review_link}' if review_link else app_url
 
-        body = f'''您好！
+        body = f'''你好！
 
-您有一个新的{review_type}需要处理：
+你有一个新的{review_type}需要处理：
 
 文档名称: {doc_name}
 发起人: {initiator_name}{deadline_info}
@@ -225,7 +225,7 @@ TOPO系统
             <h2 style="color: #409EFF; margin: 0;">📋 评审通知</h2>
         </div>
 
-        <p style="color: #606266; font-size: 14px;">您好！您有一个新的<strong>{review_type}</strong>需要处理：</p>
+        <p style="color: #606266; font-size: 14px;">你好！你有一个新的<strong>{review_type}</strong>需要处理：</p>
 
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background-color: #f5f7fa; border-radius: 4px;">
             <tr>

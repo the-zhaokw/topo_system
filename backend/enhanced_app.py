@@ -3518,7 +3518,7 @@ def create_notification(user_id, notification_type, title, content, related_bug_
                 # 发送邮件通知
                 email_subject = f"[TOPO系统] {title}"
                 email_body = f"""
-亲爱的 {user.username}，
+hi， {user.username}，
 
 {content}
 
@@ -3530,7 +3530,7 @@ def create_notification(user_id, notification_type, title, content, related_bug_
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #007bff;">TOPO系统通知</h2>
-        <p>亲爱的 <strong>{user.username}</strong>，</p>
+        <p>hi， <strong>{user.username}</strong>，</p>
         <p>{content}</p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
         <p style="font-size: 12px; color: #666;">
@@ -3584,8 +3584,8 @@ def send_mention_notifications(comment_text, comment_id, bug_id, created_by_user
         for username in mentions:
             user = User.query.filter_by(username=username).first()
             if user and user.id != created_by_user_id:  # 不给自己发通知
-                title = f"您被@{current_user.username}在Bug中提及"
-                content = f"用户 {current_user.username} 在Bug #{bug.id} '{bug.title}' 的评论中提到了您：\n\n{comment_text}"
+                title = f"你被@{current_user.username}在Bug中提及"
+                content = f"用户 {current_user.username} 在Bug #{bug.id} '{bug.title}' 的评论中提到了你：\n\n{comment_text}"
                 
                 create_notification(
                     user_id=user.id,
@@ -3723,7 +3723,7 @@ def send_approval_notification_with_email(application):
             body = f"""
 尊敬的 {approver.username}：
 
-您收到一个新的请假申请需要审批：
+你收到一个新的请假申请需要审批：
 
 申请人：{applicant.username}
 请假类型：{application.leave_type}
@@ -3746,7 +3746,7 @@ http://localhost:5173/attendance/approval
         
         <p>尊敬的 <strong>{approver.username}</strong>：</p>
         
-        <p>您收到一个新的请假申请需要审批：</p>
+        <p>你收到一个新的请假申请需要审批：</p>
         
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>申请人：</strong>{applicant.username}</p>

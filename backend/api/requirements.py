@@ -1290,8 +1290,8 @@ def initiate_review(doc_id):
             notification = Notification(
                 user_id=reviewer_id,
                 type='requirement_review',
-                title='您有新的需求评审',
-                content=f'需求文档 "{document.name}" 需要您进行评审',
+                title='你有新的需求评审',
+                content=f'需求文档 "{document.name}" 需要你进行评审',
                 link=review_link
             )
             db.session.add(notification)
@@ -1691,7 +1691,7 @@ def get_my_requirement_todos():
                 'identifier': item.identifier,
                 'title': item.title,
                 'status': item.status,
-                'message': f'您负责的需求 "{item.identifier}" 需要处理'
+                'message': f'你负责的需求 "{item.identifier}" 需要处理'
             })
 
         for item in items_as_reviewer:
@@ -1702,7 +1702,7 @@ def get_my_requirement_todos():
                 'identifier': item.identifier,
                 'title': item.title,
                 'status': item.status,
-                'message': f'需求 "{item.identifier}" 等待您的评审意见'
+                'message': f'需求 "{item.identifier}" 等待你的评审意见'
             })
 
         for doc in documents_to_review:
@@ -1712,7 +1712,7 @@ def get_my_requirement_todos():
                 'doc_id': doc.id,
                 'title': doc.name,
                 'status': doc.status,
-                'message': f'需求文档 "{doc.name}" 等待您的评审'
+                'message': f'需求文档 "{doc.name}" 等待你的评审'
             })
 
         return jsonify({

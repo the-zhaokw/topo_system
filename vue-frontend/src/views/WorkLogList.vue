@@ -19,7 +19,7 @@
           </div>
           <div class="title-text">
             <h1>工作日志</h1>
-            <p class="subtitle">记录和管理您的工作计划与进度</p>
+            <p class="subtitle">记录和管理你的工作计划与进度</p>
           </div>
         </div>
       </div>

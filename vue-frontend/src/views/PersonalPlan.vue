@@ -13,7 +13,7 @@
           </div>
           <div class="title-text">
             <h1>工作计划</h1>
-            <p class="subtitle">管理您的个人任务和计划</p>
+            <p class="subtitle">管理你的个人任务和计划</p>
           </div>
         </div>
         <div class="header-actions">

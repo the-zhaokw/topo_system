@@ -767,7 +767,7 @@ def create_leave_application():
                 create_notification(
                     user_id=approver_id,
                     notification_type='approval_request',
-                    title=f'{current_user.username} 提交了请假申请，待您审批',
+                    title=f'{current_user.username} 提交了请假申请，待你审批',
                     content=f'请假类型: {leave_type}，{start_date_str} 至 {end_date_str}，共 {days} 天。原因: {reason}'
                 )
             except Exception:
@@ -970,7 +970,7 @@ def create_overtime_application():
                 create_notification(
                     user_id=approver_id,
                     notification_type='approval_request',
-                    title=f'{current_user.username} 提交了加班申请，待您审批',
+                    title=f'{current_user.username} 提交了加班申请，待你审批',
                     content=f'加班日期: {date_str}，{start_time}-{end_time}。原因: {reason}'
                 )
             except Exception:
@@ -1046,7 +1046,7 @@ def approve_leave_application(application_id):
                 create_notification(
                     user_id=application.user_id,
                     notification_type='approval_result',
-                    title=f'您的请假申请{result_text}',
+                    title=f'你的请假申请{result_text}',
                     content=f'请假类型: {application.leave_type}，审批意见: {comment or "无"}'
                 )
             except Exception:
@@ -1126,7 +1126,7 @@ def approve_overtime_application(application_id):
                 create_notification(
                     user_id=application.user_id,
                     notification_type='approval_result',
-                    title=f'您的加班申请{result_text}',
+                    title=f'你的加班申请{result_text}',
                     content=f'加班日期: {ot_date}，审批意见: {comment or "无"}'
                 )
             except Exception:

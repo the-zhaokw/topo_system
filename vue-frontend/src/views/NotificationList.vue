@@ -13,7 +13,7 @@
           </div>
           <div class="title-text">
             <h1>我的通知</h1>
-            <p class="subtitle">查看和管理您的所有通知</p>
+            <p class="subtitle">查看和管理你的所有通知</p>
           </div>
         </div>
       </div>

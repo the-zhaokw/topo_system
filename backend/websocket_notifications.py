@@ -119,7 +119,7 @@ def notify_bug_assigned(bug_id, assignee_id, assigner_name):
     send_notification_to_user(assignee_id, {
         'type': 'bug_assigned',
         'title': 'Bug 分配通知',
-        'message': f'{assigner_name} 将 Bug #{bug_id} 分配给您',
+        'message': f'{assigner_name} 将 Bug #{bug_id} 分配给你',
         'bug_id': bug_id,
         'link': f'/bugs/{bug_id}',
         'created_at': datetime.now().isoformat()
@@ -163,7 +163,7 @@ def notify_approval_request(user_id, request_type, request_id, requester_name):
     send_notification_to_user(user_id, {
         'type': 'approval_request',
         'title': f'{type_names.get(request_type, "审批")}待审批',
-        'message': f'{requester_name} 提交了{type_names.get(request_type, "申请")}，需要您的审批',
+        'message': f'{requester_name} 提交了{type_names.get(request_type, "申请")}，需要你的审批',
         'request_type': request_type,
         'request_id': request_id,
         'link': f'/approvals/{request_type}/{request_id}',

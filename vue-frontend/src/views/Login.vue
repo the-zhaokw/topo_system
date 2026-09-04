@@ -68,7 +68,7 @@
         
         <h2 class="title glitch" data-text="TOPO系统">TOPO系统</h2>
         <div class="subtitle-wrapper">
-          <span class="subtitle-text">请登录您的账户</span>
+          <span class="subtitle-text">请登录你的账户</span>
           <span class="cursor">|</span>
         </div>
       </div>
@@ -199,7 +199,7 @@
         </div>
         
         <el-form-item label="角色" prop="role">
-          <el-select v-model="registerForm.role" placeholder="请选择您的角色" class="full-width">
+          <el-select v-model="registerForm.role" placeholder="请选择你的角色" class="full-width">
             <el-option label="软件工程师" value="software_engineer" />
             <el-option label="测试工程师" value="test_engineer" />
           </el-select>

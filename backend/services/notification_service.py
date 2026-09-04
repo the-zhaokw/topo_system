@@ -129,7 +129,7 @@ class NotificationService:
             return False
         
         subject = f"Bug分配通知: {bug.title}"
-        body = f"您好，\n\n您被分配了一个新的Bug:\n\n标题: {bug.title}\n描述: {bug.description}\n\n请尽快处理。"
+        body = f"你好，\n\n你被分配了一个新的Bug:\n\n标题: {bug.title}\n描述: {bug.description}\n\n请尽快处理。"
         
         return NotificationService.send_email_notification(user.email, subject, body)
     
@@ -149,7 +149,7 @@ class NotificationService:
             return False
         
         subject = f"Bug关闭通知: {bug.title}"
-        body = f"您好，\n\n您报告的Bug已被关闭:\n\n标题: {bug.title}\n\n感谢您的反馈。"
+        body = f"你好，\n\n你报告的Bug已被关闭:\n\n标题: {bug.title}\n\n感谢你的反馈。"
         
         return NotificationService.send_email_notification(user.email, subject, body)
     

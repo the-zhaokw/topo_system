@@ -2325,7 +2325,7 @@ def get_my_department():
             'is_system_admin': False,
             'can_view_all': False,
             'current_user': current_user_data,
-            'message': '您尚未加入任何部门'
+            'message': '你尚未加入任何部门'
         }), 200
 
     department = Department.query.filter_by(name=current_user.department).first()
@@ -2350,7 +2350,7 @@ def get_my_department():
         )
         response_data.update(members_result)
     else:
-        response_data['message'] = '您不是部门经理，无法查看部门员工列表'
+        response_data['message'] = '你不是部门经理，无法查看部门员工列表'
 
     return jsonify(response_data), 200
 

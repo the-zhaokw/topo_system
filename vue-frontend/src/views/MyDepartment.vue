@@ -22,7 +22,7 @@
             <p v-else-if="canViewAll" class="subtitle">
               <el-tag type="danger" size="small" class="admin-tag">系统管理员</el-tag>
             </p>
-            <p v-else class="subtitle">管理您的部门和团队成员</p>
+            <p v-else class="subtitle">管理你的部门和团队成员</p>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
     </div>
 
     <div v-else-if="!departmentInfo.has_department && !canViewAll" class="empty-state animate-fade-in-up">
-      <el-empty description="您尚未加入任何部门">
+      <el-empty description="你尚未加入任何部门">
         <template #image>
           <div class="empty-icon-wrapper">
             <el-icon :size="80" color="#909399">
@@ -77,7 +77,7 @@
             <el-icon><InfoFilled /></el-icon>
             <span style="margin-left: 5px;">提示</span>
           </template>
-          {{ departmentInfo.message || '您不是部门经理，无法查看部门员工列表' }}
+          {{ departmentInfo.message || '你不是部门经理，无法查看部门员工列表' }}
         </el-alert>
       </el-card>
 

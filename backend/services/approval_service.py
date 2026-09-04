@@ -144,7 +144,7 @@ class ApprovalService:
                 user_id=application.user_id,
                 notification_type='approval_result',
                 title='请假申请已批准',
-                content=f'您的请假申请已被批准。{comment if comment else ""}'
+                content=f'你的请假申请已被批准。{comment if comment else ""}'
             )
             
             return True
@@ -183,7 +183,7 @@ class ApprovalService:
                 user_id=application.user_id,
                 notification_type='approval_result',
                 title='请假申请被拒绝',
-                content=f'您的请假申请已被拒绝。{comment if comment else ""}'
+                content=f'你的请假申请已被拒绝。{comment if comment else ""}'
             )
             
             return True

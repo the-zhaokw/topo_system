@@ -462,8 +462,8 @@ def create_bug():
                         notification = create_notification(
                             user_id=assigned_to,
                             notification_type='bug_assigned',
-                            title=f'新缺陷分配给您: {bug.title}',
-                            content=f'缺陷 #{bug.id} "{bug.title}" 已分配给您，请及时处理。\n\n项目: {project.name if project else "未知"}\n优先级: {bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}\n严重程度: {bug.severity.value if hasattr(bug.severity, "value") else str(bug.severity)}',
+                            title=f'新缺陷分配给你: {bug.title}',
+                            content=f'缺陷 #{bug.id} "{bug.title}" 已分配给你，请及时处理。\n\n项目: {project.name if project else "未知"}\n优先级: {bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}\n严重程度: {bug.severity.value if hasattr(bug.severity, "value") else str(bug.severity)}',
                             related_bug_id=bug.id
                         )
                         logger = logging.getLogger(__name__)
@@ -494,16 +494,16 @@ def create_bug():
                             create_notification(
                                 user_id=resolved_by,
                                 notification_type='bug_assigned',
-                                title=f'新缺陷指派给您解决: {bug.title}',
-                                content=f'缺陷 #{bug.id} "{bug.title}" 已指派给您解决，请及时处理。',
+                                title=f'新缺陷指派给你解决: {bug.title}',
+                                content=f'缺陷 #{bug.id} "{bug.title}" 已指派给你解决，请及时处理。',
                                 related_bug_id=bug.id
                             )
                         if resolver_user and resolver_user.email:
                             from enhanced_app import send_email_notification as send_email
-                            email_subject = f"[TOPO系统] 新缺陷指派给您解决: {bug.title}"
-                            email_body = f"""亲爱的 {resolver_user.username}，
+                            email_subject = f"[TOPO系统] 新缺陷指派给你解决: {bug.title}"
+                            email_body = f"""hi， {resolver_user.username}，
 
-缺陷 #{bug.id} "{bug.title}" 已指派给您解决，请及时处理。
+缺陷 #{bug.id} "{bug.title}" 已指派给你解决，请及时处理。
 
 项目: {project.name if project else "未知"}
 优先级: {bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}
@@ -519,8 +519,8 @@ def create_bug():
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #2563eb;">新缺陷指派通知</h2>
-        <p>亲爱的 <strong>{resolver_user.username}</strong>，</p>
-        <p>缺陷 <strong>#{bug.id} {bug.title}</strong> 已指派给您解决，请及时处理。</p>
+        <p>hi， <strong>{resolver_user.username}</strong>，</p>
+        <p>缺陷 <strong>#{bug.id} {bug.title}</strong> 已指派给你解决，请及时处理。</p>
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>项目</strong></td>
@@ -904,10 +904,10 @@ def update_bug(bug_id):
                 if new_resolver and new_resolver.email:
                     try:
                         from enhanced_app import send_email_notification as send_email
-                        email_subject = f"[TOPO系统] 您被指定为Bug解决者: {bug.title}"
-                        email_body = f"""亲爱的 {new_resolver.username}，
+                        email_subject = f"[TOPO系统] 你被指定为Bug解决者: {bug.title}"
+                        email_body = f"""hi， {new_resolver.username}，
 
-您已被指定为Bug "#{bug.id} {bug.title}" 的解决者。
+你已被指定为Bug "#{bug.id} {bug.title}" 的解决者。
 
 指派人: {current_user.username}
 指派时间: {now_china().strftime('%Y-%m-%d %H:%M:%S')}
@@ -921,8 +921,8 @@ def update_bug(bug_id):
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #007bff;">Bug解决者指派通知</h2>
-        <p>亲爱的 <strong>{new_resolver.username}</strong>，</p>
-        <p>您已被指定为Bug <strong>#{bug.id} {bug.title}</strong> 的解决者。</p>
+        <p>hi， <strong>{new_resolver.username}</strong>，</p>
+        <p>你已被指定为Bug <strong>#{bug.id} {bug.title}</strong> 的解决者。</p>
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>指派人</strong></td>
@@ -957,8 +957,8 @@ def update_bug(bug_id):
                             notification = create_notification(
                                 user_id=new_resolver.id,
                                 notification_type='bug_assigned',
-                                title=f'您被指定为Bug解决者: {bug.title}',
-                                content=f'Bug #{bug.id} "{bug.title}" 已将您指定为解决者，请及时处理。\n\n项目: {project.name if project else "未知"}\n优先级: {bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}\n严重程度: {bug.severity.value if hasattr(bug.severity, "value") else str(bug.severity)}',
+                                title=f'你被指定为Bug解决者: {bug.title}',
+                                content=f'Bug #{bug.id} "{bug.title}" 已将你指定为解决者，请及时处理。\n\n项目: {project.name if project else "未知"}\n优先级: {bug.priority.value if hasattr(bug.priority, "value") else str(bug.priority)}\n严重程度: {bug.severity.value if hasattr(bug.severity, "value") else str(bug.severity)}',
                                 related_bug_id=bug.id
                             )
                             logger.info(f"Bug #{bug.id} 指定解决者 {new_resolver.username}，系统通知已发送, notification_id: {notification.id if notification else None}")
@@ -1067,9 +1067,9 @@ def update_bug_status(bug_id):
                 if reporter and reporter.email:
                     from enhanced_app import send_email_notification as send_email
                     email_subject = f"[TOPO系统] Bug已解决: {bug.title}"
-                    email_body = f"""亲爱的 {reporter.username}，
+                    email_body = f"""hi， {reporter.username}，
 
-您报告的Bug "#{bug.id} {bug.title}" 已经被解决。
+你报告的Bug "#{bug.id} {bug.title}" 已经被解决。
 
 解决者: {current_user.username}
 解决时间: {now_china().strftime('%Y-%m-%d %H:%M:%S')}
@@ -1083,8 +1083,8 @@ def update_bug_status(bug_id):
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #28a745;">Bug已解决通知</h2>
-        <p>亲爱的 <strong>{reporter.username}</strong>，</p>
-        <p>您报告的Bug <strong>#{bug.id} {bug.title}</strong> 已经被解决。</p>
+        <p>hi， <strong>{reporter.username}</strong>，</p>
+        <p>你报告的Bug <strong>#{bug.id} {bug.title}</strong> 已经被解决。</p>
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>解决者</strong></td>
@@ -1238,9 +1238,9 @@ def transition_bug_status(bug_id):
                 if reporter and reporter.email:
                     from enhanced_app import send_email_notification as send_email
                     email_subject = f"[TOPO系统] Bug已解决: {bug.title}"
-                    email_body = f"""亲爱的 {reporter.username}，
+                    email_body = f"""hi， {reporter.username}，
 
-您报告的Bug "#{bug.id} {bug.title}" 已经被解决。
+你报告的Bug "#{bug.id} {bug.title}" 已经被解决。
 
 解决者: {current_user.username}
 解决时间: {now_china().strftime('%Y-%m-%d %H:%M:%S')}
@@ -1254,8 +1254,8 @@ def transition_bug_status(bug_id):
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #28a745;">Bug已解决通知</h2>
-        <p>亲爱的 <strong>{reporter.username}</strong>，</p>
-        <p>您报告的Bug <strong>#{bug.id} {bug.title}</strong> 已经被解决。</p>
+        <p>hi， <strong>{reporter.username}</strong>，</p>
+        <p>你报告的Bug <strong>#{bug.id} {bug.title}</strong> 已经被解决。</p>
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>解决者</strong></td>
@@ -1436,8 +1436,8 @@ def assign_bug(bug_id):
                 create_notification(
                     user_id=assignee_id,
                     notification_type='bug_assigned',
-                    title=f'缺陷已分配给您: {bug.title}',
-                    content=f'缺陷 #{bug_id} "{bug.title}" 已分配给您，请及时处理。',
+                    title=f'缺陷已分配给你: {bug.title}',
+                    content=f'缺陷 #{bug_id} "{bug.title}" 已分配给你，请及时处理。',
                     related_bug_id=bug_id
                 )
             except Exception:

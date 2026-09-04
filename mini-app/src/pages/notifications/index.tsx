@@ -88,7 +88,7 @@ const NotificationsPage: React.FC = () => {
     <View className={styles.container}>
       {unreadCount > 0 && (
         <View className={styles.unreadBanner}>
-          <Text>您有 {unreadCount} 条未读通知</Text>
+          <Text>你有 {unreadCount} 条未读通知</Text>
         </View>
       )}
 

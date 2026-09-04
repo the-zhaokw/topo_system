@@ -950,7 +950,7 @@ const workflowSuggestions = computed(() => {
       suggestions.push({
         type: 'recommended',
         title: '开始处理 Bug',
-        description: '您可以开始处理此 Bug，将其状态变更为"进行中"。',
+        description: '你可以开始处理此 Bug，将其状态变更为"进行中"。',
         actions: [{ to: 'in_progress', label: '开始处理', btnType: 'primary' }]
       })
     }

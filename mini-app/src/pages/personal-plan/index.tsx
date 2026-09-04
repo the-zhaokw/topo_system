@@ -97,7 +97,7 @@ const PersonalPlanPage: React.FC = () => {
           <View className={styles.emptyState}>
             <Text className={styles.emptyIcon}>📋</Text>
             <Text className={styles.emptyText}>暂无个人计划</Text>
-            <Text className={styles.emptyHint}>开始制定您的第一个计划吧</Text>
+            <Text className={styles.emptyHint}>开始制定你的第一个计划吧</Text>
           </View>
         ) : (
           <>
