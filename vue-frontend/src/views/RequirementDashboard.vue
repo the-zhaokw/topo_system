@@ -529,7 +529,10 @@ const refreshData = () => {
 }
 
 const handleTodoClick = (todo) => {
-  if (todo.type === 'document_review') {
+  if (todo.type === 'requirement_review') {
+    // 条目级评审待办：跳转到文档并自动展开对应条目
+    router.push(`/projects/${projectId.value}/requirements/${todo.doc_id}?itemId=${todo.item_id}`)
+  } else if (todo.type === 'document_review') {
     router.push(`/projects/${projectId.value}/requirements/${todo.doc_id}`)
   } else if (todo.type === 'item_assigned' || todo.type === 'item_review') {
     router.push(`/projects/${projectId.value}/requirements/${todo.doc_id}`)
@@ -568,7 +571,8 @@ const getTodoTypeTag = (type) => {
   const tagMap = {
     'item_assigned': 'primary',
     'item_review': 'warning',
-    'document_review': 'danger'
+    'document_review': 'danger',
+    'requirement_review': 'warning'
   }
   return tagMap[type] || 'info'
 }
@@ -577,7 +581,8 @@ const getTodoTypeText = (type) => {
   const textMap = {
     'item_assigned': '待分配',
     'item_review': '待评审',
-    'document_review': '文档评审'
+    'document_review': '文档评审',
+    'requirement_review': '评审审批'
   }
   return textMap[type] || type
 }

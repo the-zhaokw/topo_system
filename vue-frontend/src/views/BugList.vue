@@ -366,7 +366,7 @@
         style="width: 100%"
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
-        class="custom-table"
+        class="custom-table bug-table-sticky"
       >
         <el-table-column type="selection" width="50" />
         <el-table-column prop="id" label="ID" width="80" sortable="custom" />
@@ -1696,6 +1696,19 @@ onMounted(() => {
 .custom-table {
   --el-table-header-bg-color: var(--neutral-50);
   --el-table-row-hover-bg-color: var(--primary-50);
+}
+
+/* 表头随页面滚动时固定 */
+.bug-table-sticky :deep(.el-table__header-wrapper) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* 避免sticky后首列selection和操作列fixed与sticky叠加产生视觉偏差 */
+.bug-table-sticky :deep(.el-table__header-wrapper table) {
+  background: var(--neutral-50);
 }
 
 :deep(.el-table th) {

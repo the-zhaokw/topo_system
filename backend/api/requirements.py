@@ -18,7 +18,8 @@ from services.email_service import email_service
 # 此时 enhanced_app 已完全定义，可直接导入模型，不会循环导入
 from enhanced_app import (
     db, RequirementDocument, RequirementItem, RequirementComment,
-    RequirementLink, RequirementVersion, User, create_audit_log,
+    RequirementLink, RequirementVersion, RequirementReview, RequirementReviewStep,
+    User, create_audit_log,
 )
 
 requirements_bp = Blueprint('requirements', __name__, url_prefix='/')
@@ -163,10 +164,21 @@ def get_requirement_document(doc_id):
         
         # 获取文档下的需求条目
         items = RequirementItem.query.filter_by(doc_id=doc_id).order_by(RequirementItem.identifier).all()
-        
+
+        # 批量查询各条目进行中的评审（条目级审批流程）
+        active_reviews = RequirementReview.query.filter_by(
+            doc_id=doc_id, status='pending'
+        ).all()
+        active_review_map = {r.item_id: r.to_dict() for r in active_reviews}
+
         result = document.to_dict()
-        result['items'] = [item.to_dict() for item in items]
-        
+        items_data = []
+        for item in items:
+            item_data = item.to_dict()
+            item_data['active_review'] = active_review_map.get(item.id)
+            items_data.append(item_data)
+        result['items'] = items_data
+
         return jsonify({
             'success': True,
             'document': result
@@ -1366,6 +1378,451 @@ def review_item(item_id):
         return jsonify({'error': str(e)}), 500
 
 
+# ==================== 条目级评审审批流程 API ====================
+
+def _review_detail_link(document, item):
+    """构建条目评审详情的前端跳转链接（带 itemId 参数，打开页面后自动展开对应条目）"""
+    return f'/projects/{document.project_id}/requirements/{item.doc_id}?itemId={item.id}'
+
+
+def _notify_review_user(user_id, title, content, link, notification_type='requirement_review'):
+    """创建评审相关系统通知"""
+    from enhanced_app import Notification
+    db.session.add(Notification(
+        user_id=user_id,
+        type=notification_type,
+        title=title,
+        content=content,
+        link=link
+    ))
+
+
+def _mark_review_notifications_read(user_id, link):
+    """将指定用户收到的与该评审链接相关的 requirement_review 通知标记为已读"""
+    from enhanced_app import Notification
+    if not link:
+        return
+    db.session.query(Notification).filter(
+        Notification.user_id == user_id,
+        Notification.type == 'requirement_review',
+        Notification.is_read == False,
+        Notification.link == link
+    ).update({'is_read': True}, synchronize_session=False)
+
+
+def _notify_current_reviewer(step, review, item, document, deadline):
+    """通知当前节点审批人（站内通知 + 邮件）"""
+    link = _review_detail_link(document, item)
+    _notify_review_user(
+        step.reviewer_id,
+        '你有新的需求评审任务',
+        f'需求条目 "{item.identifier} {item.title}" 进入第{step.step_order}步审批，需要你处理',
+        link
+    )
+
+    reviewer = User.query.get(step.reviewer_id)
+    if reviewer and reviewer.email:
+        try:
+            initiator = User.query.get(review.initiator_id)
+            initiator_name = initiator.username if initiator else '系统'
+            deadline_str = deadline.strftime('%Y-%m-%d %H:%M') if deadline else None
+            email_service.send_review_notification_email(
+                to_address=reviewer.email,
+                doc_name=f'{item.identifier} {item.title}',
+                initiator_name=initiator_name,
+                deadline=deadline_str,
+                review_type='需求条目评审',
+                review_link=link
+            )
+        except Exception as mail_err:
+            import logging
+            logging.warning(f'发送条目评审通知邮件失败: {mail_err}')
+
+
+@requirements_bp.route('/requirement-items/<int:item_id>/reviews', methods=['POST'])
+@jwt_required()
+def initiate_item_review(item_id):
+    """发起条目级评审：为单个需求条目创建完整的逐级审批流程"""
+    try:
+        user_id = get_current_user_id()
+        item = RequirementItem.query.get_or_404(item_id)
+        document = RequirementDocument.query.get_or_404(item.doc_id)
+        data = request.get_json() or {}
+
+        # 权限：有审批权限者，或条目/文档创建者可发起
+        can_approve = check_requirement_permission(document.project_id, user_id, 'approve')
+        if not can_approve and item.created_by != user_id and document.created_by != user_id:
+            return jsonify({'error': '无权发起评审'}), 403
+
+        # 评审人列表去重保序（选择顺序即审批顺序）
+        raw_reviewers = data.get('reviewers') or []
+        reviewer_ids = []
+        for rid in raw_reviewers:
+            if rid and rid not in reviewer_ids:
+                reviewer_ids.append(rid)
+        if not reviewer_ids:
+            return jsonify({'error': '请至少选择一名评审人员'}), 400
+        for rid in reviewer_ids:
+            if not User.query.get(rid):
+                return jsonify({'error': f'评审人员不存在（ID: {rid}）'}), 400
+
+        # 同一条目存在进行中的评审时不允许重复发起
+        active_review = RequirementReview.query.filter_by(
+            item_id=item_id, status='pending'
+        ).first()
+        if active_review:
+            return jsonify({'error': '该条目已有进行中的评审，请等待其结束或撤销后再发起'}), 400
+
+        # 解析截止时间
+        deadline_dt = None
+        deadline = data.get('deadline')
+        if deadline:
+            try:
+                deadline_dt = datetime.fromisoformat(str(deadline).replace('Z', ''))
+            except (ValueError, TypeError):
+                deadline_dt = None
+
+        review = RequirementReview(
+            item_id=item_id,
+            doc_id=item.doc_id,
+            project_id=document.project_id,
+            initiator_id=user_id,
+            status='pending',
+            current_step=1,
+            deadline=deadline_dt,
+            comment=data.get('comment', '')
+        )
+        db.session.add(review)
+        db.session.flush()  # 获取 review.id
+
+        # 按顺序创建审批节点；发起人本人所在节点自动通过
+        for idx, rid in enumerate(reviewer_ids, start=1):
+            step = RequirementReviewStep(
+                review_id=review.id,
+                step_order=idx,
+                name=f'第{idx}步审批',
+                reviewer_id=rid,
+                status='pending'
+            )
+            if rid == user_id:
+                step.status = 'approved'
+                step.acted_at = now_china()
+                step.comment = '发起人本人，自动通过'
+            db.session.add(step)
+        db.session.flush()
+
+        # 条目进入评审中状态
+        item.status = 'reviewing'
+        item.updated_at = now_china()
+
+        # 发起说明写入条目评论，便于追溯
+        if data.get('comment'):
+            db.session.add(RequirementComment(
+                target_type='item',
+                target_id=item_id,
+                item_id=item_id,
+                content=f"[发起评审] {data['comment']}",
+                created_by=user_id
+            ))
+
+        pending_steps = [s for s in review.steps if s.status == 'pending']
+        if not pending_steps:
+            # 所有节点均为发起人本人，直接自动通过
+            review.status = 'approved'
+            review.current_step = len(reviewer_ids)
+            review.completed_at = now_china()
+            item.status = 'approved'
+        else:
+            first_step = pending_steps[0]
+            review.current_step = first_step.step_order
+            _notify_current_reviewer(first_step, review, item, document, deadline_dt)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=user_id,
+            action='submit_review',
+            resource_type='requirement_review',
+            resource_id=review.id,
+            details=f'发起条目评审: {item.identifier} - {item.title}，共{len(reviewer_ids)}个审批节点',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': '评审已发起' if review.status == 'pending' else '评审已自动通过',
+            'review': review.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@requirements_bp.route('/requirement-items/<int:item_id>/reviews', methods=['GET'])
+@jwt_required()
+def get_item_reviews(item_id):
+    """获取条目的评审流程列表（含每个评审的全部审批节点，按时间倒序）"""
+    try:
+        user_id = get_current_user_id()
+        item = RequirementItem.query.get_or_404(item_id)
+        document = RequirementDocument.query.get(item.doc_id)
+
+        if not check_project_permission(document.project_id, user_id):
+            return jsonify({'error': '无权访问该条目'}), 403
+
+        reviews = RequirementReview.query.filter_by(
+            item_id=item_id
+        ).order_by(RequirementReview.created_at.desc()).all()
+
+        return jsonify({
+            'success': True,
+            'reviews': [r.to_dict() for r in reviews]
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@requirements_bp.route('/requirement-reviews/<int:review_id>', methods=['GET'])
+@jwt_required()
+def get_review_detail(review_id):
+    """获取单次条目评审的详情（含审批节点）"""
+    try:
+        user_id = get_current_user_id()
+        review = RequirementReview.query.get_or_404(review_id)
+        document = RequirementDocument.query.get(review.doc_id)
+
+        if not check_project_permission(document.project_id, user_id):
+            return jsonify({'error': '无权访问该评审'}), 403
+
+        return jsonify({
+            'success': True,
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+def _get_review_and_current_step(review_id):
+    """获取评审实例及其当前待审批节点，返回 (review, step, error_response)"""
+    review = RequirementReview.query.get_or_404(review_id)
+    if review.status != 'pending':
+        return review, None, (jsonify({'error': '该评审流程已结束'}), 400)
+    step = RequirementReviewStep.query.filter_by(
+        review_id=review_id,
+        step_order=review.current_step
+    ).first()
+    if not step or step.status != 'pending':
+        return review, None, (jsonify({'error': '当前审批节点不存在或已处理'}), 400)
+    return review, step, None
+
+
+@requirements_bp.route('/requirement-reviews/<int:review_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_item_review(review_id):
+    """当前节点审批人审批通过，流程推进到下一节点；全部通过则条目变为已批准"""
+    try:
+        user_id = get_current_user_id()
+        review, step, err = _get_review_and_current_step(review_id)
+        if err:
+            return err
+
+        user = User.query.get(user_id)
+        if step.reviewer_id != user_id and (not user or user.role not in ['admin', 'manager']):
+            return jsonify({'error': '你不是当前节点的审批人'}), 403
+
+        data = request.get_json() or {}
+        comment = (data.get('comment') or '').strip()
+        step.status = 'approved'
+        step.acted_at = now_china()
+        step.comment = comment or '同意'
+
+        item = RequirementItem.query.get(review.item_id)
+        document = RequirementDocument.query.get(review.doc_id)
+        link = _review_detail_link(document, item)
+
+        if comment:
+            db.session.add(RequirementComment(
+                target_type='item',
+                target_id=review.item_id,
+                item_id=review.item_id,
+                content=f"[评审通过·第{step.step_order}步] {comment}",
+                created_by=user_id
+            ))
+
+        next_step = RequirementReviewStep.query.filter_by(
+            review_id=review_id, status='pending'
+        ).order_by(RequirementReviewStep.step_order).first()
+
+        if next_step:
+            # 推进到下一审批节点
+            review.current_step = next_step.step_order
+            _notify_current_reviewer(next_step, review, item, document, review.deadline)
+            message = f'第{step.step_order}步审批已通过，流程进入第{next_step.step_order}步'
+        else:
+            # 全部节点通过
+            review.status = 'approved'
+            review.completed_at = now_china()
+            review.current_step = step.step_order
+            item.status = 'approved'
+            item.updated_at = now_china()
+            # 评审结束，把所有已发送的 requirement_review 通知标记为已读
+            from enhanced_app import Notification
+            _mark_review_notifications_read(step.reviewer_id, link)
+            _notify_review_user(
+                review.initiator_id,
+                '需求评审已全部通过',
+                f'你发起的需求条目 "{item.identifier} {item.title}" 评审已全部通过',
+                link,
+                notification_type='requirement_review_result'
+            )
+            message = '评审已全部通过'
+
+        # 无论推进到下一节点还是全部通过，都把当前审批人的评审通知标记为已读
+        _mark_review_notifications_read(user_id, link)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=user_id,
+            action='approve_review',
+            resource_type='requirement_review',
+            resource_id=review.id,
+            details=f'条目评审通过: {item.identifier} 第{step.step_order}步',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': message,
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@requirements_bp.route('/requirement-reviews/<int:review_id>/reject', methods=['POST'])
+@jwt_required()
+def reject_item_review(review_id):
+    """当前节点审批人驳回（需填写驳回原因），评审终止，条目退回待评审"""
+    try:
+        user_id = get_current_user_id()
+        review, step, err = _get_review_and_current_step(review_id)
+        if err:
+            return err
+
+        user = User.query.get(user_id)
+        if step.reviewer_id != user_id and (not user or user.role not in ['admin', 'manager']):
+            return jsonify({'error': '你不是当前节点的审批人'}), 403
+
+        data = request.get_json() or {}
+        comment = (data.get('comment') or '').strip()
+        if not comment:
+            return jsonify({'error': '驳回时必须填写驳回原因'}), 400
+
+        step.status = 'rejected'
+        step.acted_at = now_china()
+        step.comment = comment
+
+        review.status = 'rejected'
+        review.completed_at = now_china()
+
+        item = RequirementItem.query.get(review.item_id)
+        item.status = 'pending_review'  # 退回修改
+        item.updated_at = now_china()
+        document = RequirementDocument.query.get(review.doc_id)
+        link = _review_detail_link(document, item)
+
+        db.session.add(RequirementComment(
+            target_type='item',
+            target_id=review.item_id,
+            item_id=review.item_id,
+            content=f"[评审驳回·第{step.step_order}步] {comment}",
+            created_by=user_id
+        ))
+        _notify_review_user(
+            review.initiator_id,
+            '需求评审被驳回',
+            f'你发起的需求条目 "{item.identifier} {item.title}" 在第{step.step_order}步被驳回：{comment}',
+            link,
+            notification_type='requirement_review_result'
+        )
+
+        # 评审终止，把当前审批人的 requirement_review 通知标记为已读
+        _mark_review_notifications_read(user_id, link)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=user_id,
+            action='reject_review',
+            resource_type='requirement_review',
+            resource_id=review.id,
+            details=f'条目评审驳回: {item.identifier} 第{step.step_order}步，原因: {comment}',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': '已驳回，条目退回待评审',
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@requirements_bp.route('/requirement-reviews/<int:review_id>/cancel', methods=['POST'])
+@jwt_required()
+def cancel_item_review(review_id):
+    """发起人或管理员撤销进行中的评审，条目退回待评审"""
+    try:
+        user_id = get_current_user_id()
+        review = RequirementReview.query.get_or_404(review_id)
+
+        if review.status != 'pending':
+            return jsonify({'error': '该评审流程已结束'}), 400
+
+        user = User.query.get(user_id)
+        is_manager = user and user.role in ['admin', 'manager', 'project_manager']
+        if review.initiator_id != user_id and not is_manager:
+            return jsonify({'error': '只有发起人或管理员可以撤销评审'}), 403
+
+        review.status = 'cancelled'
+        review.completed_at = now_china()
+
+        item = RequirementItem.query.get(review.item_id)
+        item.status = 'pending_review'
+        item.updated_at = now_china()
+
+        # 把所有审批人收到的 requirement_review 通知标记为已读
+        document = RequirementDocument.query.get(review.doc_id)
+        link = _review_detail_link(document, item)
+        from enhanced_app import Notification
+        for step in RequirementReviewStep.query.filter_by(review_id=review_id).all():
+            _mark_review_notifications_read(step.reviewer_id, link)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=user_id,
+            action='cancel_review',
+            resource_type='requirement_review',
+            resource_id=review.id,
+            details=f'撤销条目评审: {item.identifier}',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': '评审已撤销',
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 # ==================== 版本对比与回滚 API ====================
 
 @requirements_bp.route('/requirement-documents/<int:doc_id>/compare-versions', methods=['GET'])
@@ -1681,6 +2138,11 @@ def get_my_requirement_todos():
             status='reviewing'
         ).all()
 
+        # 条目级评审：当前用户作为当前节点审批人的进行中评审
+        my_pending_steps = RequirementReviewStep.query.filter_by(
+            reviewer_id=user_id, status='pending'
+        ).all()
+
         todos = []
 
         for item in items_as_owner:
@@ -1703,6 +2165,25 @@ def get_my_requirement_todos():
                 'title': item.title,
                 'status': item.status,
                 'message': f'需求 "{item.identifier}" 等待你的评审意见'
+            })
+
+        for step in my_pending_steps:
+            review = step.review
+            if not review or review.status != 'pending' or review.current_step != step.step_order:
+                continue
+            item = RequirementItem.query.get(review.item_id)
+            if not item:
+                continue
+            todos.append({
+                'type': 'requirement_review',
+                'id': review.id,
+                'review_id': review.id,
+                'item_id': item.id,
+                'doc_id': review.doc_id,
+                'identifier': item.identifier,
+                'title': item.title,
+                'status': item.status,
+                'message': f'需求 "{item.identifier}" 第{step.step_order}步审批等待你处理'
             })
 
         for doc in documents_to_review:

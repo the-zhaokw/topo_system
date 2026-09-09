@@ -146,7 +146,6 @@ const beforeUpload = (file) => {
 
 const handleUpload = async () => {
   if (fileList.value.length === 0) {
-    ElMessage.warning('请选择要上传的文件')
     return
   }
 

@@ -171,7 +171,7 @@ def get_db_instance():
 
 # 直接在enhanced_app.py中定义所有模型类，避免循环导入和表定义冲突
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text, ForeignKey, Enum as SQLEnum, Float, Date, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 import enum
 
@@ -1060,6 +1060,46 @@ class AttendanceRecord(db.Model):
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
 
+# 月度考勤确认单发送记录
+class AttendanceConfirmation(db.Model):
+    """每月考勤确认单：人事向员工邮箱发送月度考勤确认邮件的记录表"""
+    __tablename__ = 'attendance_confirmations'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)  # 员工ID
+    period = Column(String(7), nullable=False)  # 考勤月份（YYYY-MM）
+    year = Column(Integer, nullable=False)  # 年
+    month = Column(Integer, nullable=False)  # 月
+    recipient_email = Column(String(255))  # 收件邮箱快照
+    stats_snapshot = Column(Text)  # 发送时考勤统计数据 JSON 快照
+    status = Column(String(20), default='sent')  # 发送状态：sent=已发送 / failed=失败
+    error_message = Column(Text)  # 失败原因
+    sent_by = Column(Integer, ForeignKey('users.id'))  # 发送人ID
+    sent_at = Column(DateTime)  # 发送时间
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # 关系
+    user = relationship("User", foreign_keys=[user_id])
+    sender = relationship("User", foreign_keys=[sent_by])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'period': self.period,
+            'year': self.year,
+            'month': self.month,
+            'recipient_email': self.recipient_email,
+            'status': self.status,
+            'error_message': self.error_message,
+            'sent_by': self.sent_by,
+            'sent_at': self.sent_at.isoformat() if self.sent_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
 # 请假申请模型
 class LeaveApplication(db.Model):
     __tablename__ = 'leave_applications'
@@ -1130,6 +1170,7 @@ class OvertimeApplication(db.Model):
     end_time = Column(String(5), nullable=False)  # 结束时间（格式：HH:MM）
     reason = Column(Text, nullable=False)  # 加班原因
     status = Column(String(20), default="pending", nullable=False)  # 审批状态
+    compensation_type = Column(String(20), default="leave", nullable=False)  # 加班转换方式：pay=转加班费，leave=转调休
     approver_id = Column(Integer, ForeignKey('users.id'))  # 审批人ID
     approved_at = Column(DateTime)  # 审批时间
     rejection_reason = Column(Text)  # 拒绝原因
@@ -1149,6 +1190,7 @@ class OvertimeApplication(db.Model):
             'end_time': self.end_time,
             'reason': self.reason,
             'status': self.status.value if hasattr(self.status, 'value') else str(self.status),
+            'compensation_type': self.compensation_type or 'leave',
             'approver_id': self.approver_id,
             'approved_at': self.approved_at.isoformat() if self.approved_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
@@ -2631,6 +2673,102 @@ class RequirementVersion(db.Model):
         }
 
 
+class RequirementReview(db.Model):
+    """需求条目评审实例表：每个条目可独立发起评审，拥有完整的逐级审批流程"""
+    __tablename__ = 'requirement_reviews'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    item_id = Column(Integer, ForeignKey('requirement_items.id'), nullable=False)
+    doc_id = Column(Integer, ForeignKey('requirement_documents.id'), nullable=False)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    initiator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    # pending-审批中, approved-已通过, rejected-已驳回, cancelled-已撤销
+    status = Column(String(20), default='pending')
+    current_step = Column(Integer, default=1)  # 当前待审批节点序号（从1开始）
+    deadline = Column(DateTime, nullable=True)
+    comment = Column(Text)  # 发起说明
+    created_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+
+    # 关系
+    item = relationship("RequirementItem", backref=backref("reviews", cascade="all, delete-orphan"))
+    doc = relationship("RequirementDocument")
+    initiator = relationship("User", foreign_keys=[initiator_id])
+    steps = relationship("RequirementReviewStep", back_populates="review",
+                         cascade="all, delete-orphan",
+                         order_by="RequirementReviewStep.step_order")
+
+    REVIEW_STATUS_TEXT = {
+        'pending': '审批中',
+        'approved': '已通过',
+        'rejected': '已驳回',
+        'cancelled': '已撤销'
+    }
+
+    def to_dict(self, include_steps=True):
+        data = {
+            'id': self.id,
+            'item_id': self.item_id,
+            'doc_id': self.doc_id,
+            'project_id': self.project_id,
+            'initiator_id': self.initiator_id,
+            'initiator_name': self.initiator.username if self.initiator else None,
+            'status': self.status,
+            'status_text': self.REVIEW_STATUS_TEXT.get(self.status, self.status),
+            'current_step': self.current_step,
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'comment': self.comment,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None
+        }
+        if include_steps:
+            data['steps'] = [s.to_dict() for s in self.steps]
+        return data
+
+
+class RequirementReviewStep(db.Model):
+    """需求条目评审审批节点表：一次评审包含多个有序节点，逐级审批"""
+    __tablename__ = 'requirement_review_steps'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    review_id = Column(Integer, ForeignKey('requirement_reviews.id'), nullable=False)
+    step_order = Column(Integer, nullable=False)  # 节点顺序，从1开始
+    name = Column(String(100))  # 节点名称
+    reviewer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    # pending-待审批, approved-已通过, rejected-已驳回
+    status = Column(String(20), default='pending')
+    comment = Column(Text)  # 审批意见
+    acted_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # 关系
+    review = relationship("RequirementReview", back_populates="steps")
+    reviewer = relationship("User", foreign_keys=[reviewer_id])
+
+    STEP_STATUS_TEXT = {
+        'pending': '待审批',
+        'approved': '已通过',
+        'rejected': '已驳回'
+    }
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'review_id': self.review_id,
+            'step_order': self.step_order,
+            'name': self.name or f'第{self.step_order}步审批',
+            'reviewer_id': self.reviewer_id,
+            'reviewer_name': self.reviewer.username if self.reviewer else None,
+            'status': self.status,
+            'status_text': self.STEP_STATUS_TEXT.get(self.status, self.status),
+            'comment': self.comment,
+            'acted_at': self.acted_at.isoformat() if self.acted_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+
 # ==================== 测试管理模型 ====================
 
 class TestSuite(db.Model):
@@ -2728,6 +2866,7 @@ class TestCase(db.Model):
             'id': self.id,
             'suite_id': self.suite_id,
             'suite_name': self.suite.name if self.suite else None,
+            'project_id': self.suite.project_id if self.suite else None,
             'identifier': self.identifier,
             'title': self.title,
             'description': self.description,
@@ -2928,6 +3067,102 @@ class TestCaseRequirementLink(db.Model):
             'link_type': self.link_type,
             'created_by': self.created_by,
             'creator_name': self.creator.username if self.creator else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+
+class TestCaseReview(db.Model):
+    """测试用例评审实例表：每个用例可独立发起评审，拥有完整的逐级审批流程"""
+    __tablename__ = 'test_case_reviews'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    case_id = Column(Integer, ForeignKey('test_cases.id'), nullable=False)
+    suite_id = Column(Integer, ForeignKey('test_suites.id'), nullable=False)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    initiator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    # pending-审批中, approved-已通过, rejected-已驳回, cancelled-已撤销
+    status = Column(String(20), default='pending')
+    current_step = Column(Integer, default=1)  # 当前待审批节点序号（从1开始）
+    deadline = Column(DateTime, nullable=True)
+    comment = Column(Text)  # 发起说明
+    created_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+
+    # 关系
+    case = relationship("TestCase", backref=backref("case_reviews", cascade="all, delete-orphan"))
+    suite = relationship("TestSuite")
+    initiator = relationship("User", foreign_keys=[initiator_id])
+    steps = relationship("TestCaseReviewStep", back_populates="review",
+                         cascade="all, delete-orphan",
+                         order_by="TestCaseReviewStep.step_order")
+
+    REVIEW_STATUS_TEXT = {
+        'pending': '审批中',
+        'approved': '已通过',
+        'rejected': '已驳回',
+        'cancelled': '已撤销'
+    }
+
+    def to_dict(self, include_steps=True):
+        data = {
+            'id': self.id,
+            'case_id': self.case_id,
+            'suite_id': self.suite_id,
+            'project_id': self.project_id,
+            'initiator_id': self.initiator_id,
+            'initiator_name': self.initiator.username if self.initiator else None,
+            'status': self.status,
+            'status_text': self.REVIEW_STATUS_TEXT.get(self.status, self.status),
+            'current_step': self.current_step,
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'comment': self.comment,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None
+        }
+        if include_steps:
+            data['steps'] = [s.to_dict() for s in self.steps]
+        return data
+
+
+class TestCaseReviewStep(db.Model):
+    """测试用例评审审批节点表：一次评审包含多个有序节点，逐级审批"""
+    __tablename__ = 'test_case_review_steps'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    review_id = Column(Integer, ForeignKey('test_case_reviews.id'), nullable=False)
+    step_order = Column(Integer, nullable=False)  # 节点顺序，从1开始
+    name = Column(String(100))  # 节点名称
+    reviewer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    # pending-待审批, approved-已通过, rejected-已驳回
+    status = Column(String(20), default='pending')
+    comment = Column(Text)  # 审批意见
+    acted_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # 关系
+    review = relationship("TestCaseReview", back_populates="steps")
+    reviewer = relationship("User", foreign_keys=[reviewer_id])
+
+    STEP_STATUS_TEXT = {
+        'pending': '待审批',
+        'approved': '已通过',
+        'rejected': '已驳回'
+    }
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'review_id': self.review_id,
+            'step_order': self.step_order,
+            'name': self.name or f'第{self.step_order}步审批',
+            'reviewer_id': self.reviewer_id,
+            'reviewer_name': self.reviewer.username if self.reviewer else None,
+            'status': self.status,
+            'status_text': self.STEP_STATUS_TEXT.get(self.status, self.status),
+            'comment': self.comment,
+            'acted_at': self.acted_at.isoformat() if self.acted_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
@@ -3720,13 +3955,20 @@ def send_approval_notification_with_email(application):
             subject = f"[请假审批] {applicant.username}的请假申请待审批"
             
             # 邮件正文
+            leave_type_text_map = {
+                'annual_leave': '年假', 'sick_leave': '病假', 'personal_leave': '事假',
+                'marriage_leave': '婚假', 'maternity_leave': '产假',
+                'paternity_leave': '陪产假', 'bereavement_leave': '丧假', 'other': '调休假',
+            }
+            _lt = leave_type_text_map.get(application.leave_type, application.leave_type)
+
             body = f"""
 尊敬的 {approver.username}：
 
 你收到一个新的请假申请需要审批：
 
 申请人：{applicant.username}
-请假类型：{application.leave_type}
+请假类型：{_lt}
 请假时间：{application.start_date} 至 {application.end_date}
 请假天数：{(application.end_date - application.start_date).days + 1}天
 请假事由：{application.reason}
@@ -3750,7 +3992,7 @@ http://localhost:5173/attendance/approval
         
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>申请人：</strong>{applicant.username}</p>
-            <p><strong>请假类型：</strong>{application.leave_type}</p>
+            <p><strong>请假类型：</strong>{_lt}</p>
             <p><strong>请假时间：</strong>{application.start_date} 至 {application.end_date}</p>
             <p><strong>请假天数：</strong>{(application.end_date - application.start_date).days + 1}天</p>
             <p><strong>请假事由：</strong>{application.reason}</p>

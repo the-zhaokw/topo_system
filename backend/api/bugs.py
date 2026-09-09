@@ -1119,8 +1119,16 @@ def update_bug_status(bug_id):
         }]
         field_changes_json = json.dumps(field_changes, ensure_ascii=False)
 
+        # 根据目标状态细分操作类型: 解决/关闭/重新打开
+        status_action_map = {
+            'resolved': 'resolve_bug',
+            'closed': 'close_bug',
+            'reopened': 'reopen_bug'
+        }
+        status_action = status_action_map.get(new_status_value.lower(), 'update_bug')
+
         activity = Activity(
-            action='update_bug',
+            action=status_action,
             description=f'更新缺陷状态: {old_status} -> {new_status_value}',
             performed_by=int(current_user_id),
             target_type='bug',
@@ -1323,8 +1331,16 @@ def transition_bug_status(bug_id):
         
         field_changes_json = json.dumps(field_changes, ensure_ascii=False)
 
+        # 根据目标状态细分操作类型: 解决/关闭/重新打开
+        status_action_map = {
+            'resolved': 'resolve_bug',
+            'closed': 'close_bug',
+            'reopened': 'reopen_bug'
+        }
+        status_action = status_action_map.get(new_status_lower, 'update_bug')
+
         activity = Activity(
-            action='update_bug',
+            action=status_action,
             description=f'Bug状态变更: {old_status} -> {new_status_lower}',
             performed_by=int(current_user_id) if current_user_id is not None else None,
             target_type='bug',
@@ -1419,7 +1435,7 @@ def assign_bug(bug_id):
         field_changes_json = json.dumps(field_changes, ensure_ascii=False)
 
         activity = Activity(
-            action='update_bug',
+            action='assign_bug',
             description=f'分配缺陷: {bug.title}, 从用户 {old_assignee_name} 分配给用户 {new_assignee_name}',
             performed_by=int(current_user_id),
             target_type='bug',

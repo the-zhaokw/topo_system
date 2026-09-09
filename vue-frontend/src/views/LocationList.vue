@@ -364,11 +364,7 @@ const occupancyRate = computed(() => {
   return Math.round((occupiedCount.value / total.value) * 100)
 })
 
-// 格式化日期
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return format(parseUTCDate(dateString), 'yyyy-MM-dd HH:mm')
-}
+// 格式化日期（使用 dateUtils 中的 formatDate）
 
 // 加载仓库列表
 const loadWarehouses = async () => {

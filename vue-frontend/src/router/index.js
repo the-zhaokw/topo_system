@@ -18,10 +18,13 @@ const AttendanceList = () => import('@/views/AttendanceList.vue')
 const AttendanceDetail = () => import('@/views/AttendanceDetail.vue')
 const ShiftManagement = () => import('@/views/ShiftManagement.vue')
 const AttendanceReport = () => import('@/views/AttendanceReport.vue')
+const EmployeeAttendance = () => import('@/views/EmployeeAttendance.vue')
 const LeaveApplication = () => import('@/views/LeaveApplication.vue')
+const LeaveApplicationForm = () => import('@/views/LeaveApplicationForm.vue')
 const LeaveApproval = () => import('@/views/LeaveApproval.vue')
 const OvertimeApproval = () => import('@/views/OvertimeApproval.vue')
 const OvertimeApplication = () => import('@/views/OvertimeApplication.vue')
+const OvertimeApplicationForm = () => import('@/views/OvertimeApplicationForm.vue')
 
 // 物料管理组件
 const MaterialCategoryList = () => import('@/views/MaterialCategoryList.vue')
@@ -380,15 +383,33 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
+        path: 'employee-records',
+        name: 'EmployeeAttendance',
+        component: EmployeeAttendance,
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'leave-application',
         name: 'LeaveApplication',
         component: LeaveApplication,
         meta: { requiresAuth: true }
       },
       {
+        path: 'leave-application-form',
+        name: 'LeaveApplicationForm',
+        component: LeaveApplicationForm,
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'overtime-application',
         name: 'OvertimeApplication',
         component: OvertimeApplication,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'overtime-application-form',
+        name: 'OvertimeApplicationForm',
+        component: OvertimeApplicationForm,
         meta: { requiresAuth: true }
       },
       {
@@ -564,6 +585,13 @@ const routes = [
     path: '/requirements/:id',
     name: 'RequirementDetail',
     component: RequirementDetail,
+    meta: { requiresAuth: true }
+  },
+  // 独立测试用例详情路由（活动记录跳转用，仅需 caseId）
+  {
+    path: '/test-cases/:caseId',
+    name: 'TestCaseDetailStandalone',
+    component: TestCaseDetail,
     meta: { requiresAuth: true }
   },
   // 知识库模块（新版）

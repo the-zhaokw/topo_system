@@ -39,7 +39,7 @@ def get_test_suites(project_id):
         return jsonify({'error': '获取测试集列表失败'}), 500
 
 
-@test_management_bp.route('/suites/<int:suite_id>', methods=['GET'])
+@test_management_bp.route('/suites/<int:suite_id>/detail', methods=['GET'])
 @jwt_required()
 def get_test_suite_by_id(suite_id):
     """根据ID获取测试集详情"""
@@ -265,12 +265,73 @@ def get_suite_version_history(suite_id):
 @test_management_bp.route('/cases/by-suite/<int:suite_id>', methods=['GET'])
 @jwt_required()
 def get_cases_by_suite(suite_id):
-    """获取测试集下的所有用例"""
+    """获取测试集下的用例（支持分页与筛选）"""
     try:
         db, _, TestCase, _, _, _, _, _, _, _, _, _ = get_db_and_models()
-        
-        cases = TestCase.query.filter_by(suite_id=suite_id).all()
-        return jsonify([c.to_dict(include_steps=True, include_links=True) for c in cases])
+        from enhanced_app import TestCaseReview
+
+        # 分页参数
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        per_page = max(1, min(per_page, 1000))
+
+        query = TestCase.query.filter_by(suite_id=suite_id)
+
+        # 筛选条件
+        status = request.args.get('status')
+        if status:
+            query = query.filter(TestCase.status == status)
+
+        priority = request.args.get('priority')
+        if priority is not None and priority != '':
+            try:
+                query = query.filter(TestCase.priority == int(priority))
+            except (ValueError, TypeError):
+                pass
+
+        case_type = request.args.get('type')
+        if case_type:
+            query = query.filter(TestCase.type == case_type)
+
+        search = request.args.get('search', '').strip()
+        if search:
+            like_pattern = f'%{search}%'
+            query = query.filter(
+                db.or_(
+                    TestCase.title.like(like_pattern),
+                    TestCase.identifier.like(like_pattern)
+                )
+            )
+
+        total = query.count()
+        cases = query.order_by(TestCase.updated_at.desc()) \
+            .offset((page - 1) * per_page) \
+            .limit(per_page) \
+            .all()
+
+        # 批量查询进行中的评审，附加到用例数据
+        case_ids = [c.id for c in cases]
+        active_reviews = {}
+        if case_ids:
+            reviews = TestCaseReview.query.filter(
+                TestCaseReview.case_id.in_(case_ids),
+                TestCaseReview.status == 'pending'
+            ).all()
+            for r in reviews:
+                active_reviews[r.case_id] = r.to_dict()
+
+        result = []
+        for c in cases:
+            case_data = c.to_dict(include_steps=True, include_links=True)
+            case_data['active_review'] = active_reviews.get(c.id)
+            result.append(case_data)
+
+        return jsonify({
+            'cases': result,
+            'total': total,
+            'page': page,
+            'per_page': per_page
+        })
     except Exception as e:
         logger.error(f'获取用例列表失败: {str(e)}')
         return jsonify({'error': '获取用例列表失败'}), 500
@@ -282,12 +343,16 @@ def get_case_by_id(case_id):
     """根据ID获取测试用例"""
     try:
         db, _, TestCase, _, _, _, _, _, _, _, _, _ = get_db_and_models()
-        
+        from enhanced_app import TestCaseReview
+
         case = TestCase.query.get(case_id)
         if not case:
             return jsonify({'error': '用例不存在'}), 404
-        
-        return jsonify(case.to_dict(include_steps=True, include_links=True))
+
+        case_data = case.to_dict(include_steps=True, include_links=True)
+        active_review = TestCaseReview.query.filter_by(case_id=case_id, status='pending').first()
+        case_data['active_review'] = active_review.to_dict() if active_review else None
+        return jsonify(case_data)
     except Exception as e:
         logger.error(f'获取用例详情失败: {str(e)}')
         return jsonify({'error': '获取用例详情失败'}), 500
@@ -414,10 +479,10 @@ def update_test_case(case_id):
             # 删除旧步骤
             TestStep.query.filter_by(case_id=case_id).delete()
             # 添加新步骤
-            for step_data in data['steps']:
+            for idx, step_data in enumerate(data['steps']):
                 step = TestStep(
                     case_id=case.id,
-                    step_number=step_data.get('step_number'),
+                    step_number=step_data.get('step_number', idx + 1),
                     action=step_data.get('action', ''),
                     expected_result=step_data.get('expected_result', '')
                 )
@@ -561,6 +626,408 @@ def submit_case_review(case_id):
         return jsonify({'error': '提交评审失败'}), 500
 
 
+# ==================== 用例级评审审批流程 API ====================
+
+def _case_review_detail_link(case):
+    """构建用例评审详情的前端跳转链接"""
+    return f'/projects/{case.project_id if hasattr(case, "project_id") else 0}/tests/suites/{case.suite_id}/cases/{case.id}'
+
+
+def _notify_case_review_user(user_id, title, content, link, notification_type='test_review'):
+    """创建用例评审相关系统通知"""
+    from enhanced_app import db, Notification
+    db.session.add(Notification(
+        user_id=user_id,
+        type=notification_type,
+        title=title,
+        content=content,
+        link=link
+    ))
+
+
+def _mark_case_review_notifications_read(user_id, link):
+    """将指定用户收到的与该评审链接相关的 test_review 通知标记为已读"""
+    from enhanced_app import db, Notification
+    if not link:
+        return
+    db.session.query(Notification).filter(
+        Notification.user_id == user_id,
+        Notification.type == 'test_review',
+        Notification.is_read == False,
+        Notification.link == link
+    ).update({'is_read': True}, synchronize_session=False)
+
+
+def _notify_case_reviewer(step, review, case, initiator):
+    """通知当前用例评审节点审批人（站内通知）"""
+    link = f'/projects/{review.project_id}/tests/suites/{case.suite_id}/cases/{case.id}'
+    _notify_case_review_user(
+        step.reviewer_id,
+        '你有新的用例评审任务',
+        f'测试用例 "{case.title}" 进入第{step.step_order}步审批，需要你处理',
+        link
+    )
+
+
+@test_management_bp.route('/cases/<int:case_id>/reviews', methods=['POST'])
+@jwt_required()
+def initiate_case_review(case_id):
+    """发起用例级评审：为单个测试用例创建完整的逐级审批流程"""
+    try:
+        db, _, TestCase, _, _, _, _, User, _, _, _, create_audit_log = get_db_and_models()
+        from enhanced_app import TestCaseReview, TestCaseReviewStep
+        current_user_id = get_jwt_identity()
+
+        case = TestCase.query.get(case_id)
+        if not case:
+            return jsonify({'error': '用例不存在'}), 404
+        suite = case.suite
+        if not suite:
+            return jsonify({'error': '用例所属测试集不存在'}), 404
+
+        data = request.get_json() or {}
+
+        # 评审人列表去重保序（选择顺序即审批顺序）
+        raw_reviewers = data.get('reviewers') or []
+        reviewer_ids = []
+        for rid in raw_reviewers:
+            if rid and rid not in reviewer_ids:
+                reviewer_ids.append(rid)
+        if not reviewer_ids:
+            return jsonify({'error': '请至少选择一名评审人员'}), 400
+        for rid in reviewer_ids:
+            if not User.query.get(rid):
+                return jsonify({'error': f'评审人员不存在（ID: {rid}）'}), 400
+
+        # 同一用例存在进行中的评审时不允许重复发起
+        active_review = TestCaseReview.query.filter_by(
+            case_id=case_id, status='pending'
+        ).first()
+        if active_review:
+            return jsonify({'error': '该用例已有进行中的评审，请等待其结束或撤销后再发起'}), 400
+
+        # 解析截止时间
+        deadline_dt = None
+        deadline = data.get('deadline')
+        if deadline:
+            try:
+                from datetime import datetime as dt
+                deadline_dt = dt.fromisoformat(str(deadline).replace('Z', ''))
+            except (ValueError, TypeError):
+                deadline_dt = None
+
+        review = TestCaseReview(
+            case_id=case_id,
+            suite_id=case.suite_id,
+            project_id=suite.project_id,
+            initiator_id=current_user_id,
+            status='pending',
+            current_step=1,
+            deadline=deadline_dt,
+            comment=data.get('comment', '')
+        )
+        db.session.add(review)
+        db.session.flush()
+
+        # 按顺序创建审批节点；发起人本人所在节点自动通过
+        for idx, rid in enumerate(reviewer_ids, start=1):
+            step = TestCaseReviewStep(
+                review_id=review.id,
+                step_order=idx,
+                name=f'第{idx}步审批',
+                reviewer_id=rid,
+                status='pending'
+            )
+            if rid == current_user_id:
+                step.status = 'approved'
+                step.acted_at = now_china()
+                step.comment = '发起人本人，自动通过'
+            db.session.add(step)
+        db.session.flush()
+
+        # 用例进入待评审状态
+        case.status = 'pending_review'
+        case.updated_at = now_china()
+
+        pending_steps = [s for s in review.steps if s.status == 'pending']
+        if not pending_steps:
+            # 所有节点均为发起人本人，直接自动通过
+            review.status = 'approved'
+            review.current_step = len(reviewer_ids)
+            review.completed_at = now_china()
+            case.status = 'approved'
+            case.reviewer_id = current_user_id
+            case.approved_by = current_user_id
+        else:
+            first_step = pending_steps[0]
+            review.current_step = first_step.step_order
+            _notify_case_reviewer(first_step, review, case, review.initiator)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=current_user_id,
+            action='submit_review',
+            resource_type='test_case_review',
+            resource_id=review.id,
+            details=f'发起用例评审: {case.title}，共{len(reviewer_ids)}个审批节点',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': '评审已发起' if review.status == 'pending' else '评审已自动通过',
+            'review': review.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'发起用例评审失败: {str(e)}')
+        return jsonify({'error': str(e)}), 500
+
+
+@test_management_bp.route('/cases/<int:case_id>/reviews', methods=['GET'])
+@jwt_required()
+def get_case_reviews(case_id):
+    """获取用例的评审流程列表（含每个评审的全部审批节点，按时间倒序）"""
+    try:
+        db, _, TestCase, _, _, _, _, _, _, _, _, _ = get_db_and_models()
+        from enhanced_app import TestCaseReview
+
+        case = TestCase.query.get(case_id)
+        if not case:
+            return jsonify({'error': '用例不存在'}), 404
+
+        reviews = TestCaseReview.query.filter_by(
+            case_id=case_id
+        ).order_by(TestCaseReview.created_at.desc()).all()
+
+        return jsonify({
+            'success': True,
+            'reviews': [r.to_dict() for r in reviews]
+        })
+    except Exception as e:
+        logger.error(f'获取用例评审列表失败: {str(e)}')
+        return jsonify({'error': str(e)}), 500
+
+
+def _get_case_review_and_current_step(review_id):
+    """获取用例评审实例及其当前待审批节点，返回 (review, step, error_response)"""
+    from enhanced_app import TestCaseReview, TestCaseReviewStep
+    review = TestCaseReview.query.get(review_id)
+    if not review:
+        return None, None, (jsonify({'error': '评审不存在'}), 404)
+    if review.status != 'pending':
+        return review, None, (jsonify({'error': '该评审流程已结束'}), 400)
+    step = TestCaseReviewStep.query.filter_by(
+        review_id=review_id,
+        step_order=review.current_step
+    ).first()
+    if not step or step.status != 'pending':
+        return review, None, (jsonify({'error': '当前审批节点不存在或已处理'}), 400)
+    return review, step, None
+
+
+@test_management_bp.route('/case-reviews/<int:review_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_case_review(review_id):
+    """当前节点审批人审批通过，流程推进到下一节点；全部通过则用例变为已批准"""
+    try:
+        db, _, TestCase, _, _, _, _, User, _, _, _, create_audit_log = get_db_and_models()
+        from enhanced_app import TestCaseReviewStep
+        current_user_id = get_jwt_identity()
+
+        review, step, err = _get_case_review_and_current_step(review_id)
+        if err:
+            return err
+
+        user = User.query.get(current_user_id)
+        if step.reviewer_id != current_user_id and (not user or user.role not in ['admin', 'manager']):
+            return jsonify({'error': '你不是当前节点的审批人'}), 403
+
+        data = request.get_json() or {}
+        comment = (data.get('comment') or '').strip()
+        step.status = 'approved'
+        step.acted_at = now_china()
+        step.comment = comment or '同意'
+
+        case = TestCase.query.get(review.case_id)
+        link = f'/projects/{review.project_id}/tests/suites/{case.suite_id}/cases/{case.id}'
+
+        next_step = TestCaseReviewStep.query.filter_by(
+            review_id=review_id, status='pending'
+        ).order_by(TestCaseReviewStep.step_order).first()
+
+        if next_step:
+            # 推进到下一审批节点
+            review.current_step = next_step.step_order
+            _notify_case_reviewer(next_step, review, case, review.initiator)
+            message = f'第{step.step_order}步审批已通过，流程进入第{next_step.step_order}步'
+        else:
+            # 全部节点通过
+            review.status = 'approved'
+            review.completed_at = now_china()
+            review.current_step = step.step_order
+            case.status = 'approved'
+            case.reviewer_id = step.reviewer_id
+            case.approved_by = step.reviewer_id
+            case.updated_at = now_china()
+            # 评审结束，把所有已发送的 test_review 通知标记为已读
+            _mark_case_review_notifications_read(step.reviewer_id, link)
+            _notify_case_review_user(
+                review.initiator_id,
+                '用例评审已全部通过',
+                f'你发起的测试用例 "{case.title}" 评审已全部通过',
+                link,
+                notification_type='test_review_result'
+            )
+            message = '评审已全部通过'
+
+        # 无论推进到下一节点还是全部通过，都把当前审批人的评审通知标记为已读
+        _mark_case_review_notifications_read(current_user_id, link)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=current_user_id,
+            action='approve_review',
+            resource_type='test_case_review',
+            resource_id=review.id,
+            details=f'用例评审通过: {case.title} 第{step.step_order}步',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': message,
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'用例评审通过失败: {str(e)}')
+        return jsonify({'error': str(e)}), 500
+
+
+@test_management_bp.route('/case-reviews/<int:review_id>/reject', methods=['POST'])
+@jwt_required()
+def reject_case_review(review_id):
+    """当前节点审批人驳回（需填写驳回原因），评审终止，用例退回设计"""
+    try:
+        db, _, TestCase, _, _, _, _, User, _, _, _, create_audit_log = get_db_and_models()
+        current_user_id = get_jwt_identity()
+
+        review, step, err = _get_case_review_and_current_step(review_id)
+        if err:
+            return err
+
+        user = User.query.get(current_user_id)
+        if step.reviewer_id != current_user_id and (not user or user.role not in ['admin', 'manager']):
+            return jsonify({'error': '你不是当前节点的审批人'}), 403
+
+        data = request.get_json() or {}
+        comment = (data.get('comment') or '').strip()
+        if not comment:
+            return jsonify({'error': '驳回时必须填写驳回原因'}), 400
+
+        step.status = 'rejected'
+        step.acted_at = now_china()
+        step.comment = comment
+
+        review.status = 'rejected'
+        review.completed_at = now_china()
+
+        case = TestCase.query.get(review.case_id)
+        case.status = 'designing'  # 退回设计修改
+        case.updated_at = now_china()
+        link = f'/projects/{review.project_id}/tests/suites/{case.suite_id}/cases/{case.id}'
+
+        _notify_case_review_user(
+            review.initiator_id,
+            '用例评审被驳回',
+            f'你发起的测试用例 "{case.title}" 在第{step.step_order}步被驳回：{comment}',
+            link,
+            notification_type='test_review_result'
+        )
+
+        # 评审终止，把当前审批人的 test_review 通知标记为已读
+        _mark_case_review_notifications_read(current_user_id, link)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=current_user_id,
+            action='reject_review',
+            resource_type='test_case_review',
+            resource_id=review.id,
+            details=f'用例评审驳回: {case.title} 第{step.step_order}步，原因: {comment}',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': '已驳回，用例退回设计',
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'用例评审驳回失败: {str(e)}')
+        return jsonify({'error': str(e)}), 500
+
+
+@test_management_bp.route('/case-reviews/<int:review_id>/cancel', methods=['POST'])
+@jwt_required()
+def cancel_case_review(review_id):
+    """发起人或管理员撤销进行中的用例评审，用例退回设计"""
+    try:
+        db, _, TestCase, _, _, _, _, User, _, _, _, create_audit_log = get_db_and_models()
+        from enhanced_app import TestCaseReview, TestCaseReviewStep
+        current_user_id = get_jwt_identity()
+
+        review = TestCaseReview.query.get(review_id)
+        if not review:
+            return jsonify({'error': '评审不存在'}), 404
+
+        if review.status != 'pending':
+            return jsonify({'error': '该评审流程已结束'}), 400
+
+        user = User.query.get(current_user_id)
+        is_manager = user and user.role in ['admin', 'manager', 'project_manager']
+        if review.initiator_id != current_user_id and not is_manager:
+            return jsonify({'error': '只有发起人或管理员可以撤销评审'}), 403
+
+        review.status = 'cancelled'
+        review.completed_at = now_china()
+
+        case = TestCase.query.get(review.case_id)
+        case.status = 'designing'
+        case.updated_at = now_china()
+
+        # 把所有审批人收到的 test_review 通知标记为已读
+        link = f'/projects/{review.project_id}/tests/suites/{case.suite_id}/cases/{case.id}'
+        for step in TestCaseReviewStep.query.filter_by(review_id=review_id).all():
+            _mark_case_review_notifications_read(step.reviewer_id, link)
+
+        db.session.commit()
+
+        create_audit_log(
+            user_id=current_user_id,
+            action='cancel_review',
+            resource_type='test_case_review',
+            resource_id=review.id,
+            details=f'撤销用例评审: {case.title}',
+            request=request
+        )
+
+        return jsonify({
+            'success': True,
+            'message': '评审已撤销',
+            'review': review.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'撤销用例评审失败: {str(e)}')
+        return jsonify({'error': str(e)}), 500
+
+
 @test_management_bp.route('/cases/<int:case_id>/copy', methods=['POST'])
 @jwt_required()
 def copy_case(case_id):
@@ -658,7 +1125,7 @@ def get_execution_by_id(execution_id):
 def create_execution():
     """创建执行记录"""
     try:
-        db, _, _, _, TestExecution, TestResult, TestCase, _, User, _, _, create_audit_log = get_db_and_models()
+        db, _, TestCase, _, TestExecution, TestResult, _, User, _, _, _, create_audit_log = get_db_and_models()
         current_user_id = get_jwt_identity()
         current_user = User.query.get(int(current_user_id))
         
@@ -705,9 +1172,10 @@ def create_execution():
         
         return jsonify(execution.to_dict(include_results=True)), 201
     except Exception as e:
-        logger.error(f'创建执行记录失败: {str(e)}')
+        import traceback
+        logger.error(f'创建执行记录失败: {str(e)}\n{traceback.format_exc()}')
         db.session.rollback()
-        return jsonify({'error': '创建执行记录失败'}), 500
+        return jsonify({'error': f'创建执行记录失败: {str(e)}'}), 500
 
 
 @test_management_bp.route('/executions/<int:execution_id>', methods=['PUT'])

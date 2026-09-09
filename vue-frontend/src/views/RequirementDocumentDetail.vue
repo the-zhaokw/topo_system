@@ -54,10 +54,6 @@
             <el-icon><Edit /></el-icon>
             编辑文档
           </el-button>
-          <el-button type="success" @click="showReviewDialog = true" v-if="canManage">
-            <el-icon><Select /></el-icon>
-            发起评审
-          </el-button>
         </div>
       </div>
 
@@ -155,9 +151,14 @@
                       <el-icon><Warning /></el-icon>
                     </el-button>
                   </el-tooltip>
-                  <el-tooltip content="评审" placement="top">
-                    <el-button type="success" link size="small" @click.stop="handleItemCommand('review', item)">
-                      <el-icon><Share /></el-icon>
+                  <el-tooltip v-if="item.active_review" content="评审中，点击查看审批流程" placement="top">
+                    <el-button type="warning" link size="small" @click.stop="viewItemReviewFlow(item)">
+                      <el-icon class="review-spin-icon"><Loading /></el-icon>
+                    </el-button>
+                  </el-tooltip>
+                  <el-tooltip v-else-if="canInitiateReview(item)" content="发起评审" placement="top">
+                    <el-button type="success" link size="small" @click.stop="openInitiateReviewDialog(item)">
+                      <el-icon><Promotion /></el-icon>
                     </el-button>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
@@ -228,10 +229,107 @@
                 />
               </div>
               
+              <!-- 评审流程区域（条目级完整审批流程） -->
+              <div class="review-section">
+                <div class="section-title-row">
+                  <h4>评审流程</h4>
+                  <el-button
+                    v-if="!item.active_review && canInitiateReview(item)"
+                    type="success"
+                    size="small"
+                    @click.stop="openInitiateReviewDialog(item)"
+                  >
+                    <el-icon><Promotion /></el-icon>
+                    发起评审
+                  </el-button>
+                </div>
+
+                <div v-if="reviewLoading[item.id]" v-loading="true" class="review-loading"></div>
+                <template v-else>
+                  <el-empty
+                    v-if="!(itemReviews[item.id] && itemReviews[item.id].length)"
+                    description="暂无评审记录"
+                    :image-size="50"
+                  />
+                  <div
+                    v-for="review in (itemReviews[item.id] || [])"
+                    :key="review.id"
+                    class="review-block"
+                    :class="{ 'review-active': review.status === 'pending' }"
+                  >
+                    <div class="review-header">
+                      <el-tag :type="getReviewStatusType(review.status)" size="small">
+                        {{ review.status_text }}
+                      </el-tag>
+                      <span class="review-meta">
+                        发起人：{{ review.initiator_name }} ｜ {{ formatDate(review.created_at) }}
+                        <template v-if="review.deadline"> ｜ 截止：{{ formatDate(review.deadline) }}</template>
+                      </span>
+                      <el-button
+                        v-if="review.status === 'pending' && canCancelReview(review)"
+                        type="danger"
+                        link
+                        size="small"
+                        @click.stop="handleCancelReview(review)"
+                      >
+                        撤销评审
+                      </el-button>
+                    </div>
+                    <div v-if="review.comment" class="review-comment">发起说明：{{ review.comment }}</div>
+
+                    <!-- 审批节点链 -->
+                    <div class="review-steps">
+                      <div
+                        v-for="step in review.steps"
+                        :key="step.id"
+                        class="review-step"
+                        :class="getStepClass(review, step)"
+                      >
+                        <div class="step-indicator">
+                          <el-icon v-if="step.status === 'approved'" class="icon-approved"><CircleCheckFilled /></el-icon>
+                          <el-icon v-else-if="step.status === 'rejected'" class="icon-rejected"><CircleCloseFilled /></el-icon>
+                          <el-icon v-else-if="review.status === 'pending' && review.current_step === step.step_order" class="icon-current"><Loading /></el-icon>
+                          <el-icon v-else class="icon-waiting"><Clock /></el-icon>
+                        </div>
+                        <div class="step-body">
+                          <div class="step-title">
+                            <span class="step-name">{{ step.name }}</span>
+                            <el-tag size="small" :type="getStepStatusType(step.status)">{{ step.status_text }}</el-tag>
+                            <span class="step-reviewer">审批人：{{ step.reviewer_name }}</span>
+                          </div>
+                          <div v-if="step.comment" class="step-comment">{{ step.comment }}</div>
+                          <div v-if="step.acted_at" class="step-time">处理时间：{{ formatDate(step.acted_at) }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 当前节点审批人操作区 -->
+                    <div v-if="review.status === 'pending' && canActReview(review)" class="review-actions">
+                      <el-input
+                        v-model="reviewActionComments[review.id]"
+                        type="textarea"
+                        :rows="2"
+                        placeholder="请输入审批意见（通过时可选，驳回时必填）"
+                      />
+                      <div class="review-action-btns">
+                        <el-button type="success" size="small" :loading="reviewActing" @click.stop="handleApproveReview(review, item)">
+                          <el-icon><Check /></el-icon>
+                          通过
+                        </el-button>
+                        <el-button type="danger" size="small" :loading="reviewActing" @click.stop="handleRejectReview(review, item)">
+                          <el-icon><Close /></el-icon>
+                          驳回
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
               <!-- 评论区域 -->
               <div class="comments-section">
                 <h4>评论</h4>
-                <RequirementComments 
+                <RequirementComments
                   :target-type="'item'"
                   :target-id="item.id"
                 />
@@ -509,28 +607,28 @@
         </div>
       </el-dialog>
 
-      <!-- 发起评审对话框 -->
-      <el-dialog v-model="showReviewDialog" title="发起评审" width="550px">
-        <el-form :model="reviewForm" ref="reviewFormRef" label-width="100px">
-          <el-form-item label="评审范围">
-            <el-radio-group v-model="reviewForm.scope">
-              <el-radio label="all">整个文档</el-radio>
-              <el-radio label="items">部分条目</el-radio>
-            </el-radio-group>
+      <!-- 发起条目评审对话框 -->
+      <el-dialog v-model="showItemInitiateDialog" title="发起条目评审" width="550px">
+        <el-form :model="itemInitiateForm" ref="itemInitiateFormRef" label-width="100px">
+          <el-form-item label="评审条目">
+            <span class="initiate-item-name">
+              {{ selectedItem?.identifier }} {{ selectedItem?.title }}
+            </span>
           </el-form-item>
-          <el-form-item label="评审人员">
-            <UserSelector v-model="reviewForm.reviewers" :projectId="projectId" :multiple="true" placeholder="选择评审人员" />
+          <el-form-item label="评审人员" required>
+            <UserSelector v-model="itemInitiateForm.reviewers" :projectId="projectId" :multiple="true" placeholder="按顺序选择评审人员" />
+            <div class="form-tip">评审人员按选择顺序逐级审批，全部通过后条目变为"已批准"；任一人驳回则退回修改。</div>
           </el-form-item>
           <el-form-item label="截止时间">
-            <el-date-picker v-model="reviewForm.deadline" type="datetime" placeholder="选择截止时间" style="width: 100%;" />
+            <el-date-picker v-model="itemInitiateForm.deadline" type="datetime" placeholder="选择截止时间" style="width: 100%;" />
           </el-form-item>
-          <el-form-item label="补充说明">
-            <el-input v-model="reviewForm.comment" type="textarea" :rows="3" placeholder="请输入补充说明" />
+          <el-form-item label="发起说明">
+            <el-input v-model="itemInitiateForm.comment" type="textarea" :rows="3" placeholder="请输入评审说明（可选）" />
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button @click="showReviewDialog = false">取消</el-button>
-          <el-button type="primary" @click="handleInitiateReview" :loading="submittingReview">
+          <el-button @click="showItemInitiateDialog = false">取消</el-button>
+          <el-button type="success" @click="handleInitiateItemReview" :loading="submittingReview">
             发起评审
           </el-button>
         </template>
@@ -584,27 +682,6 @@
         </div>
       </el-dialog>
 
-      <!-- 条目评审对话框 -->
-      <el-dialog v-model="showItemReviewDialog" title="评审需求条目" width="500px">
-        <el-form :model="itemReviewForm" ref="itemReviewFormRef" label-width="100px">
-          <el-form-item label="评审结论">
-            <el-radio-group v-model="itemReviewForm.conclusion">
-              <el-radio label="approved">通过</el-radio>
-              <el-radio label="needs_modification">需要修改</el-radio>
-              <el-radio label="rejected">拒绝</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="评审意见">
-            <el-input v-model="itemReviewForm.comment" type="textarea" :rows="4" placeholder="请输入评审意见" />
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button @click="showItemReviewDialog = false">取消</el-button>
-          <el-button type="primary" @click="handleItemReview" :loading="submittingItemReview">
-            提交评审
-          </el-button>
-        </template>
-      </el-dialog>
     </div>
   </div>
 </template>
@@ -616,7 +693,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   ArrowLeft, Edit, Plus, ArrowRight, User,
   ChatDotRound, More, Clock, Connection, Warning, Download, Select,
-  Delete, CopyDocument, Rank, Timer, Share, View
+  Delete, CopyDocument, Rank, Timer, View,
+  Promotion, CircleCheckFilled, CircleCloseFilled, Loading, Check, Close
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import api from '@/services/api'
@@ -645,18 +723,22 @@ const showCreateItemDialog = ref(false)
 const showEditItemDialog = ref(false)
 const showVersionHistory = ref(false)
 const showVersionCompare = ref(false)
-const showReviewDialog = ref(false)
+const showItemInitiateDialog = ref(false)
 const showCopyMoveDialog = ref(false)
 const showHistoryDialog = ref(false)
 const showImpactDialog = ref(false)
-const showItemReviewDialog = ref(false)
 
 const updating = ref(false)
 const creatingItem = ref(false)
 const updatingItem = ref(false)
 const submittingReview = ref(false)
 const submittingCopyMove = ref(false)
-const submittingItemReview = ref(false)
+
+// 条目级评审流程相关状态
+const itemReviews = ref({})        // { [itemId]: 评审列表 }
+const reviewLoading = ref({})      // { [itemId]: 是否加载中 }
+const reviewActionComments = ref({}) // { [reviewId]: 审批意见输入 }
+const reviewActing = ref(false)
 
 const compareVersion1 = ref(null)
 const compareVersion2 = ref(null)
@@ -665,12 +747,10 @@ const versionDiff = ref(null)
 const createAttachmentRef = ref(null)
 const editAttachmentRef = ref(null)
 
-const reviewFormRef = ref(null)
-const reviewForm = ref({
+const itemInitiateFormRef = ref(null)
+const itemInitiateForm = ref({
   reviewers: [],
   deadline: null,
-  reviewType: 'document',
-  scope: 'all',
   comment: ''
 })
 
@@ -682,12 +762,6 @@ const copyMoveAction = ref('copy')
 
 const itemHistory = ref([])
 const impactAnalysis = ref(null)
-
-const itemReviewFormRef = ref(null)
-const itemReviewForm = ref({
-  conclusion: 'approved',
-  comment: ''
-})
 
 const editFormRef = ref(null)
 const itemFormRef = ref(null)
@@ -1132,12 +1206,6 @@ const handleItemCommand = (command, item) => {
     fetchItemHistory(item)
   } else if (command === 'impact') {
     fetchImpactAnalysis(item)
-  } else if (command === 'review') {
-    itemReviewForm.value = {
-      conclusion: 'approved',
-      comment: ''
-    }
-    showItemReviewDialog.value = true
   }
 }
 
@@ -1211,29 +1279,226 @@ const fetchImpactAnalysis = async (item) => {
   }
 }
 
-const handleItemReview = async () => {
-  if (!itemReviewFormRef.value) return
+// ==================== 条目级评审审批流程 ====================
 
-  try {
-    await itemReviewFormRef.value.validate()
-    submittingItemReview.value = true
+// 是否可以发起条目评审：无进行中评审，且为管理员/经理或条目/文档创建者
+const canInitiateReview = (item) => {
+  const user = userStore.currentUser
+  if (!user || !item || item.active_review) return false
+  if (user.is_super_admin) return true
+  if (canManage.value) return true
+  return item.created_by === user.id || document.value?.created_by === user.id
+}
 
-    const data = {
-      conclusion: itemReviewForm.value.conclusion,
-      comment: itemReviewForm.value.comment
+// 是否可以撤销评审：发起人或管理员/经理
+const canCancelReview = (review) => {
+  const user = userStore.currentUser
+  if (!user || !review) return false
+  if (user.is_super_admin || canManage.value) return true
+  return review.initiator_id === user.id
+}
+
+// 当前用户是否可以审批该评审（当前节点审批人，或管理员/经理代审）
+const canActReview = (review) => {
+  const user = userStore.currentUser
+  if (!user || !review || review.status !== 'pending') return false
+  if (user.is_super_admin || canManage.value) return true
+  const currentStep = (review.steps || []).find(
+    s => s.step_order === review.current_step && s.status === 'pending'
+  )
+  return currentStep && currentStep.reviewer_id === user.id
+}
+
+// 获取评审状态标签类型
+const getReviewStatusType = (status) => {
+  const typeMap = {
+    'pending': 'warning',
+    'approved': 'success',
+    'rejected': 'danger',
+    'cancelled': 'info'
+  }
+  return typeMap[status] || 'info'
+}
+
+// 获取审批节点状态标签类型
+const getStepStatusType = (status) => {
+  const typeMap = {
+    'pending': 'warning',
+    'approved': 'success',
+    'rejected': 'danger'
+  }
+  return typeMap[status] || 'info'
+}
+
+// 节点样式类
+const getStepClass = (review, step) => {
+  if (step.status === 'approved') return 'step-approved'
+  if (step.status === 'rejected') return 'step-rejected'
+  if (review.status === 'pending' && review.current_step === step.step_order) return 'step-current'
+  return 'step-waiting'
+}
+
+// 打开"发起条目评审"对话框
+const openInitiateReviewDialog = (item) => {
+  selectedItem.value = item
+  itemInitiateForm.value = {
+    reviewers: [],
+    deadline: null,
+    comment: ''
+  }
+  showItemInitiateDialog.value = true
+}
+
+// 点击"评审中"按钮：展开条目并加载评审流程
+const viewItemReviewFlow = async (item) => {
+  if (!expandedItems.value.includes(item.id)) {
+    expandedItems.value.push(item.id)
+  }
+  await fetchItemReviews(item)
+  nextTick(() => {
+    const element = document.querySelector(`[data-item-id="${item.id}"] .review-section`)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
+  })
+}
 
-    const response = await api.post(`/requirement-items/${selectedItem.value.id}/review`, data)
+// 加载条目的评审流程列表
+const fetchItemReviews = async (item) => {
+  if (!item) return
+  try {
+    reviewLoading.value = { ...reviewLoading.value, [item.id]: true }
+    const response = await api.get(`/requirement-items/${item.id}/reviews`)
     if (response.success) {
-      ElMessage.success('评审提交成功')
-      showItemReviewDialog.value = false
-      fetchDocument()
+      itemReviews.value = { ...itemReviews.value, [item.id]: response.reviews || [] }
     }
   } catch (error) {
-    console.error('评审提交失败:', error)
-    ElMessage.error(error.response?.data?.error || '评审提交失败')
+    console.error('获取评审流程失败:', error)
   } finally {
-    submittingItemReview.value = false
+    reviewLoading.value = { ...reviewLoading.value, [item.id]: false }
+  }
+}
+
+// 发起条目评审
+const handleInitiateItemReview = async () => {
+  if (!itemInitiateFormRef.value || !selectedItem.value) return
+
+  if (!itemInitiateForm.value.reviewers || itemInitiateForm.value.reviewers.length === 0) {
+    ElMessage.warning('请至少选择一名评审人员')
+    return
+  }
+
+  try {
+    submittingReview.value = true
+    const data = {
+      reviewers: itemInitiateForm.value.reviewers,
+      deadline: itemInitiateForm.value.deadline,
+      comment: itemInitiateForm.value.comment
+    }
+
+    const response = await api.post(`/requirement-items/${selectedItem.value.id}/reviews`, data)
+    if (response.success) {
+      ElMessage.success(response.message || '评审已发起')
+      showItemInitiateDialog.value = false
+      const item = selectedItem.value
+      await fetchDocument()
+      await fetchItemReviews(item)
+    }
+  } catch (error) {
+    console.error('发起评审失败:', error)
+    ElMessage.error(error.response?.data?.error || '发起评审失败')
+  } finally {
+    submittingReview.value = false
+  }
+}
+
+// 评审通过
+const handleApproveReview = async (review, item) => {
+  try {
+    await ElMessageBox.confirm('确认通过当前审批节点？', '审批确认', {
+      confirmButtonText: '确定通过',
+      cancelButtonText: '取消',
+      type: 'success'
+    })
+  } catch (e) {
+    return
+  }
+
+  try {
+    reviewActing.value = true
+    const response = await api.post(`/requirement-reviews/${review.id}/approve`, {
+      comment: reviewActionComments.value[review.id] || ''
+    })
+    if (response.success) {
+      ElMessage.success(response.message || '审批已通过')
+      reviewActionComments.value = { ...reviewActionComments.value, [review.id]: '' }
+      await Promise.all([fetchDocument(), fetchItemReviews(item)])
+    }
+  } catch (error) {
+    console.error('审批通过失败:', error)
+    ElMessage.error(error.response?.data?.error || '审批通过失败')
+  } finally {
+    reviewActing.value = false
+  }
+}
+
+// 评审驳回（必须填写原因）
+const handleRejectReview = async (review, item) => {
+  let reason = reviewActionComments.value[review.id] || ''
+  try {
+    const { value } = await ElMessageBox.prompt('请填写驳回原因（必填）', '驳回评审', {
+      confirmButtonText: '确定驳回',
+      cancelButtonText: '取消',
+      inputType: 'textarea',
+      inputPlaceholder: '请说明驳回原因，将通知发起人',
+      inputValue: reason,
+      inputValidator: (val) => (val && val.trim()) ? true : '驳回原因不能为空'
+    })
+    reason = value
+  } catch (e) {
+    return
+  }
+
+  try {
+    reviewActing.value = true
+    const response = await api.post(`/requirement-reviews/${review.id}/reject`, {
+      comment: reason
+    })
+    if (response.success) {
+      ElMessage.success('已驳回')
+      reviewActionComments.value = { ...reviewActionComments.value, [review.id]: '' }
+      await Promise.all([fetchDocument(), fetchItemReviews(item)])
+    }
+  } catch (error) {
+    console.error('驳回失败:', error)
+    ElMessage.error(error.response?.data?.error || '驳回失败')
+  } finally {
+    reviewActing.value = false
+  }
+}
+
+// 撤销评审
+const handleCancelReview = async (review) => {
+  const item = items.value.find(i => i.id === review.item_id)
+  try {
+    await ElMessageBox.confirm('撤销后评审流程终止，条目退回待评审状态。确认撤销？', '撤销评审', {
+      confirmButtonText: '确定撤销',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+  } catch (e) {
+    return
+  }
+
+  try {
+    const response = await api.post(`/requirement-reviews/${review.id}/cancel`)
+    if (response.success) {
+      ElMessage.success('评审已撤销')
+      await Promise.all([fetchDocument(), item ? fetchItemReviews(item) : null])
+    }
+  } catch (error) {
+    console.error('撤销评审失败:', error)
+    ElMessage.error(error.response?.data?.error || '撤销评审失败')
   }
 }
 
@@ -1283,35 +1548,6 @@ const handleRollback = async (versionNum) => {
       console.error('回滚失败:', error)
       ElMessage.error(error.response?.data?.error || '回滚失败')
     }
-  }
-}
-
-const handleInitiateReview = async () => {
-  if (!reviewFormRef.value) return
-
-  try {
-    await reviewFormRef.value.validate()
-    submittingReview.value = true
-
-    const data = {
-      reviewers: reviewForm.value.reviewers,
-      deadline: reviewForm.value.deadline,
-      review_type: reviewForm.value.reviewType,
-      scope: reviewForm.value.scope,
-      comment: reviewForm.value.comment
-    }
-
-    const response = await api.post(`/requirement-documents/${docId.value}/review`, data)
-    if (response.success) {
-      ElMessage.success('评审已发起')
-      showReviewDialog.value = false
-      fetchDocument()
-    }
-  } catch (error) {
-    console.error('发起评审失败:', error)
-    ElMessage.error(error.response?.data?.error || '发起评审失败')
-  } finally {
-    submittingReview.value = false
   }
 }
 
@@ -1379,6 +1615,11 @@ const toggleExpand = (itemId) => {
     expandedItems.value.splice(index, 1)
   } else {
     expandedItems.value.push(itemId)
+    // 首次展开时懒加载该条目的评审流程
+    if (!itemReviews.value[itemId]) {
+      const item = items.value.find(i => i.id === itemId)
+      fetchItemReviews(item)
+    }
   }
 }
 
@@ -1423,8 +1664,10 @@ const getStatusText = (status) => {
 const getItemStatusType = (status) => {
   const typeMap = {
     'pending_review': 'info',
+    'reviewing': 'warning',
     'reviewed': 'warning',
     'approved': 'success',
+    'rejected': 'danger',
     'in_progress': 'primary',
     'completed': 'success',
     'verified': 'success'
@@ -1435,8 +1678,10 @@ const getItemStatusType = (status) => {
 const getItemStatusText = (status) => {
   const textMap = {
     'pending_review': '待评审',
+    'reviewing': '评审中',
     'reviewed': '已评审',
     'approved': '已批准',
+    'rejected': '已驳回',
     'in_progress': '开发中',
     'completed': '已完成',
     'verified': '已验证'
@@ -1481,6 +1726,11 @@ onMounted(async () => {
       const id = parseInt(itemId)
       if (!expandedItems.value.includes(id)) {
         expandedItems.value.push(id)
+      }
+      // 自动加载该条目的评审流程
+      const targetItem = items.value.find(i => i.id === id)
+      if (targetItem) {
+        fetchItemReviews(targetItem)
       }
       nextTick(() => {
         const element = document.querySelector(`[data-item-id="${id}"]`)
@@ -1687,6 +1937,205 @@ onMounted(async () => {
 .detail-item span {
   color: #303133;
   font-size: 14px;
+}
+
+/* 条目级评审流程样式 */
+.review-spin-icon {
+  animation: review-spin 1.6s linear infinite;
+}
+
+.review-section {
+  margin-bottom: 20px;
+  background-color: #f5f7fa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-title-row h4 {
+  margin: 0;
+  color: #303133;
+  font-size: 14px;
+}
+
+.review-loading {
+  min-height: 60px;
+}
+
+.review-block {
+  background: #fff;
+  border: 1px solid #ebeef5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.review-block.review-active {
+  border-color: #e6a23c;
+  box-shadow: 0 0 0 1px rgba(230, 162, 60, 0.2);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.review-meta {
+  color: #909399;
+  font-size: 12px;
+  flex: 1;
+}
+
+.review-comment {
+  color: #606266;
+  font-size: 13px;
+  background: #f5f7fa;
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+}
+
+.review-steps {
+  padding-left: 4px;
+}
+
+.review-step {
+  display: flex;
+  gap: 10px;
+  padding-bottom: 14px;
+  position: relative;
+}
+
+.review-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 22px;
+  bottom: 0;
+  width: 2px;
+  background: #dcdfe6;
+}
+
+.review-step.step-approved:not(:last-child)::before {
+  background: #67c23a;
+}
+
+.review-step.step-rejected:not(:last-child)::before {
+  background: #f56c6c;
+}
+
+.step-indicator {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  z-index: 1;
+  background: #fff;
+}
+
+.step-indicator .icon-approved {
+  color: #67c23a;
+}
+
+.step-indicator .icon-rejected {
+  color: #f56c6c;
+}
+
+.step-indicator .icon-current {
+  color: #e6a23c;
+  animation: review-spin 1.6s linear infinite;
+}
+
+.step-indicator .icon-waiting {
+  color: #c0c4cc;
+}
+
+@keyframes review-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.step-name {
+  font-weight: 600;
+  color: #303133;
+  font-size: 13px;
+}
+
+.review-step.step-current .step-name {
+  color: #e6a23c;
+}
+
+.review-step.step-waiting .step-name {
+  color: #909399;
+  font-weight: normal;
+}
+
+.step-reviewer {
+  color: #606266;
+  font-size: 12px;
+}
+
+.step-comment {
+  color: #606266;
+  font-size: 13px;
+  margin-top: 4px;
+  background: #f5f7fa;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.step-time {
+  color: #c0c4cc;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.review-actions {
+  margin-top: 10px;
+  border-top: 1px dashed #ebeef5;
+  padding-top: 10px;
+}
+
+.review-action-btns {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.initiate-item-name {
+  font-weight: 600;
+  color: #303133;
+}
+
+.form-tip {
+  color: #909399;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 4px;
 }
 
 .comments-section {

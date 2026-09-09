@@ -447,8 +447,8 @@ export const apiService = {
   // 测试管理相关
   tests: {
     getSuites: (projectId, params = {}) => api.get(`/test-management/suites/${projectId}`, { params }),
-    getSuiteById: (id, params = {}) => api.get(`/test-management/suites/${id}`, { params }),
-    getSuiteDetail: (id) => api.get(`/test-management/suites/${id}`),
+    getSuiteById: (id, params = {}) => api.get(`/test-management/suites/${id}/detail`, { params }),
+    getSuiteDetail: (id) => api.get(`/test-management/suites/${id}/detail`),
     createSuite: (suiteData) => api.post('/test-management/suites', suiteData),
     updateSuite: (id, suiteData) => api.put(`/test-management/suites/${id}`, suiteData),
     deleteSuite: (id) => api.delete(`/test-management/suites/${id}`),
@@ -494,6 +494,13 @@ export const apiService = {
     getLinksByCase: (caseId) => api.get(`/test-management/links/by-case/${caseId}`),
     getLinksByRequirement: (requirementId) => api.get(`/test-management/links/by-requirement/${requirementId}`),
 
+    // 用例评审流程
+    getCaseReviews: (caseId) => api.get(`/test-management/cases/${caseId}/reviews`),
+    initiateCaseReview: (caseId, data) => api.post(`/test-management/cases/${caseId}/reviews`, data),
+    approveCaseReview: (reviewId, data = {}) => api.post(`/test-management/case-reviews/${reviewId}/approve`, data),
+    rejectCaseReview: (reviewId, data = {}) => api.post(`/test-management/case-reviews/${reviewId}/reject`, data),
+    cancelCaseReview: (reviewId) => api.post(`/test-management/case-reviews/${reviewId}/cancel`),
+
     getProjectStatistics: (projectId) => api.get(`/test-management/statistics/project/${projectId}`),
     getExecutionReport: (executionId) => api.get(`/test-management/reports/execution/${executionId}`),
     getProjectTestReport: (projectId) => api.get(`/test-management/reports/project/${projectId}`),
@@ -530,6 +537,7 @@ export const apiService = {
     createRecord: (recordData) => api.post('/attendance/records', recordData),
     updateRecord: (id, recordData) => api.put(`/attendance/records/${id}`, recordData),
     deleteRecord: (id) => api.delete(`/attendance/records/${id}`),
+    importRecords: (formData) => api.post('/attendance/records/import', formData, { timeout: 120000 }),
     clockIn: (clockData = {}) => api.post('/attendance/clock-in', clockData),
     clockOut: (clockData = {}) => api.post('/attendance/clock-out', clockData),
     
@@ -573,7 +581,14 @@ export const apiService = {
     exportData: (params = {}) => api.get('/attendance/export', { params }),
     getAbsenceSummary: (params = {}) => api.get('/attendance/summary/absence', { params }),
     getOvertimeSummary: (params = {}) => api.get('/attendance/summary/overtime', { params }),
-    getMySummary: (params = {}) => api.get('/attendance/my-summary', { params })
+    getMySummary: (params = {}) => api.get('/attendance/my-summary', { params }),
+    getEmployeeSummary: (params = {}) => api.get('/attendance/employee-summary', { params }),
+    exportEmployeeSummary: (params = {}) => api.get('/attendance/employee-summary/export', { params, responseType: 'blob' }),
+
+    // 每月考勤确认单
+    getConfirmations: (params = {}) => api.get('/attendance/confirmations', { params }),
+    sendConfirmations: (data) => api.post('/attendance/confirmations/send', data, { timeout: 120000 }),
+    saveConfirmation: (data) => api.post('/attendance/confirmations/save', data)
   },
   
   // 物料管理

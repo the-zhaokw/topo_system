@@ -102,6 +102,8 @@
               <el-option label="风险" value="risk"></el-option>
               <el-option label="测试套件" value="test_suite"></el-option>
               <el-option label="测试用例" value="test_case"></el-option>
+              <el-option label="用例评审" value="test_case_review"></el-option>
+              <el-option label="需求评审" value="requirement_review"></el-option>
               <el-option label="物料" value="material"></el-option>
               <el-option label="合同" value="contract"></el-option>
               <el-option label="数据" value="data"></el-option>
@@ -114,9 +116,17 @@
               <el-option label="更新" value="update"></el-option>
               <el-option label="删除" value="delete"></el-option>
               <el-option label="状态变更" value="status"></el-option>
+              <el-option label="解决Bug" value="resolve_bug"></el-option>
+              <el-option label="关闭Bug" value="close_bug"></el-option>
+              <el-option label="重新打开Bug" value="reopen_bug"></el-option>
+              <el-option label="分配Bug" value="assign_bug"></el-option>
               <el-option label="分配" value="assign"></el-option>
               <el-option label="审批" value="approve"></el-option>
               <el-option label="拒绝" value="reject"></el-option>
+              <el-option label="发起评审" value="submit_review"></el-option>
+              <el-option label="评审通过" value="approve_review"></el-option>
+              <el-option label="评审驳回" value="reject_review"></el-option>
+              <el-option label="撤销评审" value="cancel_review"></el-option>
               <el-option label="打卡" value="clock"></el-option>
               <el-option label="上传附件" value="upload"></el-option>
               <el-option label="删除附件" value="delete_attachment"></el-option>
@@ -316,11 +326,14 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Download, View, Clock, List, CirclePlus, Edit, Calendar, Filter, Document, InfoFilled, CircleCheckFilled } from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver'
 import { apiService } from '@/services/api'
 import { formatDate, getTimeAgo } from '@/utils/dateUtils'
+
+const router = useRouter()
 
 // 响应式数据
 const loading = ref(false)
@@ -371,6 +384,16 @@ const filterForm = reactive({
 // 获取操作类型样式
 const getActionType = (action) => {
   if (!action) return 'info'
+  // Bug 操作专属配色
+  if (action === 'resolve_bug') return 'success'
+  if (action === 'close_bug') return 'info'
+  if (action === 'reopen_bug') return 'warning'
+  if (action === 'assign_bug') return 'primary'
+  // 评审类操作专属配色
+  if (action.includes('submit_review')) return 'primary'
+  if (action.includes('approve_review')) return 'success'
+  if (action.includes('reject_review')) return 'danger'
+  if (action.includes('cancel_review')) return 'info'
   if (action.includes('create') || action.includes('register')) return 'success'
   if (action.includes('update') || action.includes('approve')) return 'warning'
   if (action.includes('delete') || action.includes('reject') || action.includes('remove')) return 'danger'
@@ -413,6 +436,10 @@ const getActionText = (action) => {
     'create_user_shift': '分配用户班次',
     'update': '更新',
     'update_bug': '更新Bug',
+    'resolve_bug': '解决Bug',
+    'close_bug': '关闭Bug',
+    'reopen_bug': '重新打开Bug',
+    'verify_bug': '验证Bug',
     'update_project': '更新项目',
     'update_project_log': '更新日志',
     'update_project_member': '更新成员',
@@ -452,7 +479,7 @@ const getActionText = (action) => {
     'bug_status_update': '状态更新',
     'bug_status_transition': '状态转换',
     'status_change': '状态变更',
-    'assign_bug': '分配',
+    'assign_bug': '分配Bug',
     'assign': '分配',
     'add_project_member': '添加成员',
     'remove_project_member': '移除成员',
@@ -479,7 +506,11 @@ const getActionText = (action) => {
     'share_knowledge_article': '分享知识文章',
     'start_focus_session': '开始专注',
     'complete_focus_session': '完成专注',
-    'habit_checkin': '习惯打卡'
+    'habit_checkin': '习惯打卡',
+    'submit_review': '发起评审',
+    'approve_review': '评审通过',
+    'reject_review': '评审驳回',
+    'cancel_review': '撤销评审'
   }
   return texts[action] || action
 }
@@ -513,6 +544,8 @@ const getResourceType = (resourceType) => {
     'risk': 'danger',
     'test_suite': 'warning',
     'test_case': 'warning',
+    'test_case_review': 'primary',
+    'requirement_review': 'primary',
     'material': 'info',
     'contract': 'success',
     'data': 'info'
@@ -549,6 +582,8 @@ const getResourceText = (resourceType) => {
     'risk': '风险',
     'test_suite': '测试套件',
     'test_case': '测试用例',
+    'test_case_review': '用例评审',
+    'requirement_review': '需求评审',
     'material': '物料',
     'contract': '合同',
     'data': '数据'
@@ -681,8 +716,43 @@ const confirmExport = async () => {
   }
 }
 
-// 查看详情
+// 查看详情 - 跳转到对应资源的详情页
 const viewDetail = (activity) => {
+  const targetType = activity.target_type || activity.resource_type
+  const targetId = activity.target_id || activity.resource_id
+
+  if (!targetId || targetId === 0) {
+    // 无关联资源，显示详情弹窗
+    showActivityDetail(activity)
+    return
+  }
+
+  // 根据资源类型跳转到对应详情页
+  const routeMap = {
+    'bug': `/bugs/${targetId}`,
+    'project': `/projects/${targetId}`,
+    'user': `/users/${targetId}`,
+    'contract': `/contracts/${targetId}`,
+    'knowledge_article': `/knowledge/articles/${targetId}`,
+    'requirement_document': `/requirements/${targetId}`,
+    'work_log': `/work-logs?highlight=${targetId}`,
+    'leave_application': `/attendance/leave-application`,
+    'overtime_application': `/attendance/overtime-application`,
+    'test_case': `/test-cases/${targetId}`,
+    'test_case_review': `/test-cases/${targetId}`,
+  }
+
+  const path = routeMap[targetType]
+  if (path) {
+    router.push(path)
+  } else {
+    // 暂不支持跳转的资源类型，显示详情弹窗
+    showActivityDetail(activity)
+  }
+}
+
+// 显示活动记录详情弹窗（不支持跳转时的兜底）
+const showActivityDetail = (activity) => {
   ElMessageBox.alert(
     `<div>
       <p><strong>操作类型：</strong>${getActionText(activity.action)}</p>

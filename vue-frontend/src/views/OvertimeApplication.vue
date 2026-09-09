@@ -92,98 +92,21 @@
       </el-row>
     </div>
 
-    <!-- 申请表单 -->
+    <!-- 填写申请按钮 -->
     <div class="form-section animate-fade-in-up delay-200">
-      <el-card class="glass-card application-form" shadow="hover">
-        <template #header>
-          <div class="card-header">
-            <span class="card-title">
-              <el-icon><Edit /></el-icon>
-              填写申请
-            </span>
+      <el-card class="glass-card application-form" shadow="hover" @click="goToForm" style="cursor: pointer;">
+        <div class="form-entry-content">
+          <div class="entry-icon">
+            <el-icon><Edit /></el-icon>
           </div>
-        </template>
-        <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-          <el-form-item label="加班日期" prop="date">
-            <el-date-picker
-              v-model="form.date"
-              type="date"
-              placeholder="选择加班日期"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
-              :disabled-date="disabledDate"
-            />
-          </el-form-item>
-
-          <el-form-item label="加班时间" required>
-            <el-col :span="11">
-              <el-form-item prop="start_time">
-                <el-time-picker
-                  v-model="form.start_time"
-                  placeholder="开始时间"
-                  format="HH:mm"
-                  value-format="HH:mm"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="2" class="text-center">-</el-col>
-            <el-col :span="11">
-              <el-form-item prop="end_time">
-                <el-time-picker
-                  v-model="form.end_time"
-                  placeholder="结束时间"
-                  format="HH:mm"
-                  value-format="HH:mm"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-
-          <el-form-item label="加班时长">
-            <el-input v-model="calculatedHours" readonly>
-              <template #append>小时</template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item label="加班事由" prop="reason">
-            <el-input
-              v-model="form.reason"
-              type="textarea"
-              :rows="4"
-              placeholder="请详细说明加班原因和内容"
-            />
-          </el-form-item>
-
-          <el-form-item label="审批人" prop="approver_id">
-            <el-select
-              v-model="form.approver_id"
-              placeholder="请选择审批人"
-              filterable
-              style="width: 100%"
-            >
-              <el-option
-                v-for="user in approverList"
-                :key="user.id"
-                :label="`${user.real_name || user.username} (${user.department || ''})`"
-                :value="user.id"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="handleSubmit" :loading="submitting" class="btn-gradient">
-              <el-icon><Check /></el-icon>
-              提交申请
-            </el-button>
-            <el-button @click="handleReset" class="btn-secondary">
-              <el-icon><Refresh /></el-icon>
-              重置
-            </el-button>
-          </el-form-item>
-        </el-form>
+          <div class="entry-text">
+            <div class="entry-title">填写加班申请</div>
+            <div class="entry-desc">点击填写加班日期、时间、事由等信息</div>
+          </div>
+          <div class="entry-arrow">
+            <el-icon><ArrowRight /></el-icon>
+          </div>
+        </div>
       </el-card>
     </div>
 
@@ -350,62 +273,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { ArrowLeft, Timer, Document, Clock, CircleCheck, CircleClose, Calendar, Edit, Check, Refresh, List, User, View, ChatDotRound } from '@element-plus/icons-vue'
+import { ArrowLeft, Timer, Document, Clock, CircleCheck, CircleClose, Calendar, Edit, List, User, View, ChatDotRound, ArrowRight } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
-const formRef = ref(null)
-const submitting = ref(false)
 const myApplications = ref([])
-const approverList = ref([])
 const detailDialogVisible = ref(false)
 const currentDetail = ref(null)
-
-const form = reactive({
-  date: '',
-  start_time: '',
-  end_time: '',
-  reason: '',
-  approver_id: ''
-})
-
-const rules = {
-  date: [
-    { required: true, message: '请选择加班日期', trigger: 'change' }
-  ],
-  start_time: [
-    { required: true, message: '请选择开始时间', trigger: 'change' }
-  ],
-  end_time: [
-    { required: true, message: '请选择结束时间', trigger: 'change' }
-  ],
-  reason: [
-    { required: true, message: '请输入加班事由', trigger: 'blur' },
-    { min: 5, message: '加班事由至少5个字符', trigger: 'blur' }
-  ]
-}
-
-// 计算加班时长
-const calculatedHours = computed(() => {
-  if (!form.start_time || !form.end_time) return '0'
-  
-  const [startHour, startMin] = form.start_time.split(':').map(Number)
-  const [endHour, endMin] = form.end_time.split(':').map(Number)
-  
-  const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
-  
-  if (endMinutes <= startMinutes) {
-    return '0'
-  }
-  
-  const diffMinutes = endMinutes - startMinutes
-  return (diffMinutes / 60).toFixed(1)
-})
 
 // 统计计算
 const totalCount = computed(() => myApplications.value.length)
@@ -419,10 +296,6 @@ const monthHours = computed(() => {
     .reduce((sum, a) => sum + (parseFloat(a.total_hours) || 0), 0)
     .toFixed(1)
 })
-
-const disabledDate = (time) => {
-  return time.getTime() > Date.now()
-}
 
 const getStatusType = (status) => {
   const typeMap = {
@@ -448,48 +321,9 @@ const formatDate = (dateStr) => {
   return date.toLocaleString('zh-CN')
 }
 
-const handleSubmit = async () => {
-  if (parseFloat(calculatedHours.value) <= 0) {
-    ElMessage.warning('加班时间必须大于 0')
-    return
-  }
-  
-  if (!formRef.value) return
-  
-  await formRef.value.validate(async (valid) => {
-    if (valid) {
-      submitting.value = true
-      try {
-        const submitData = {
-          date: form.date,
-          start_time: form.start_time,
-          end_time: form.end_time,
-          reason: form.reason,
-          total_hours: parseFloat(calculatedHours.value)
-        }
-        if (form.approver_id) {
-          submitData.approver_id = form.approver_id
-        }
-        await apiService.attendance.createOvertimeApplication(submitData)
-        ElMessage.success('加班申请提交成功')
-        handleReset()
-        fetchMyApplications()
-      } catch (error) {
-        ElMessage.error(error.response?.data?.error || '提交失败')
-      } finally {
-        submitting.value = false
-      }
-    }
-  })
-}
-
-const handleReset = () => {
-  formRef.value?.resetFields()
-  form.date = ''
-  form.start_time = ''
-  form.end_time = ''
-  form.reason = ''
-  form.approver_id = ''
+// 跳转到填写申请页面
+const goToForm = () => {
+  router.push('/attendance/overtime-application-form')
 }
 
 const fetchMyApplications = async () => {
@@ -498,17 +332,6 @@ const fetchMyApplications = async () => {
     myApplications.value = response.applications || []
   } catch (error) {
     console.error('获取加班申请记录失败', error)
-  }
-}
-
-const fetchApproverList = async () => {
-  try {
-    const response = await apiService.users.getList({ 
-      per_page: 100 
-    })
-    approverList.value = response.users || []
-  } catch (error) {
-    console.error('获取审批人列表失败', error)
   }
 }
 
@@ -523,7 +346,6 @@ const handleViewDetail = (row) => {
 
 onMounted(() => {
   fetchMyApplications()
-  fetchApproverList()
 })
 </script>
 
@@ -828,6 +650,63 @@ onMounted(() => {
 /* 表单区域 */
 .form-section {
   margin-bottom: 24px;
+}
+
+/* 表单入口按钮样式 */
+.form-entry-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 4px;
+}
+
+.entry-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  box-shadow: 0 8px 20px -4px rgba(56, 189, 248, 0.4);
+  flex-shrink: 0;
+}
+
+.entry-text {
+  flex: 1;
+}
+
+.entry-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.entry-desc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.entry-arrow {
+  width: 40px;
+  height: 40px;
+  background: rgba(56, 189, 248, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0ea5e9;
+  font-size: 20px;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.application-form:hover .entry-arrow {
+  background: rgba(56, 189, 248, 0.2);
+  transform: translateX(4px);
 }
 
 .application-form :deep(.el-card__header) {

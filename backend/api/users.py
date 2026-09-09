@@ -116,6 +116,8 @@ def get_users():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     department = request.args.get('department')
+    position = request.args.get('position')
+    is_active = request.args.get('is_active')
     search = request.args.get('search', '').strip()
 
     # 构建查询
@@ -124,6 +126,12 @@ def get_users():
     # 应用筛选条件
     if department:
         query = query.filter_by(department=department)
+
+    if position:
+        query = query.filter_by(position=position)
+
+    if is_active is not None and is_active != '':
+        query = query.filter_by(is_active=is_active.lower() == 'true')
 
     if search:
         query = query.filter(
@@ -351,7 +359,7 @@ def get_user_home(user_id):
     from datetime import timedelta
 
     db, User, UserRole, create_audit_log = get_db_and_models()
-    Activity, Bug, Project, WorkLog = get_activity_models()
+    Activity, Bug, Project, WorkLog, TestCase, TestCaseReview, RequirementReview, RequirementItem, RequirementDocument = get_activity_models()
 
     current_user_id = get_jwt_identity()
 
@@ -434,6 +442,47 @@ def get_user_home(user_id):
         elif activity.target_type == 'user':
             target_user = db.session.query(User).get(activity.target_id)
             activity_dict['resource_name'] = target_user.username if target_user else '未知用户'
+        elif activity.target_type == 'test_case':
+            # 测试用例：补充 project_id、suite_id 以便前端跳转
+            test_case = db.session.query(TestCase).get(activity.target_id)
+            if test_case:
+                activity_dict['resource_name'] = test_case.title
+                activity_dict['project_id'] = test_case.suite.project_id if test_case.suite else None
+                activity_dict['suite_id'] = test_case.suite_id
+                activity_dict['case_id'] = test_case.id
+                activity_dict['identifier'] = test_case.identifier
+            else:
+                activity_dict['resource_name'] = f'测试用例 #{activity.target_id}'
+        elif activity.target_type == 'test_case_review':
+            # 用例评审：解析出对应用例的 project_id、suite_id、case_id
+            review = db.session.query(TestCaseReview).get(activity.target_id)
+            if review:
+                activity_dict['resource_name'] = activity.description
+                activity_dict['project_id'] = review.project_id
+                activity_dict['suite_id'] = review.suite_id
+                activity_dict['case_id'] = review.case_id
+            else:
+                activity_dict['resource_name'] = activity.description
+        elif activity.target_type == 'requirement_review':
+            # 需求评审：解析出对应条目的 project_id、doc_id、item_id
+            review = db.session.query(RequirementReview).get(activity.target_id)
+            if review:
+                activity_dict['resource_name'] = activity.description
+                activity_dict['project_id'] = review.project_id
+                activity_dict['doc_id'] = review.doc_id
+                activity_dict['item_id'] = review.item_id
+            else:
+                activity_dict['resource_name'] = activity.description
+        elif activity.target_type == 'requirement_item':
+            # 需求条目：解析出 doc_id、project_id 以便跳转
+            item = db.session.query(RequirementItem).get(activity.target_id)
+            if item:
+                activity_dict['resource_name'] = item.title
+                activity_dict['doc_id'] = item.doc_id
+                activity_dict['item_id'] = item.id
+                activity_dict['project_id'] = item.document.project_id if item.document else None
+            else:
+                activity_dict['resource_name'] = f'需求条目 #{activity.target_id}'
         else:
             if activity.description:
                 activity_dict['resource_name'] = activity.description
@@ -459,8 +508,8 @@ def get_user_home(user_id):
 
 def get_activity_models():
     """获取活动相关模型"""
-    from enhanced_app import Activity, Bug, Project, WorkLog
-    return Activity, Bug, Project, WorkLog
+    from enhanced_app import Activity, Bug, Project, WorkLog, TestCase, TestCaseReview, RequirementReview, RequirementItem, RequirementDocument
+    return Activity, Bug, Project, WorkLog, TestCase, TestCaseReview, RequirementReview, RequirementItem, RequirementDocument
 
 # 更新用户状态
 @users_bp.route('/<int:user_id>/status', methods=['PUT'])
@@ -963,10 +1012,113 @@ def delete_user(user_id):
             return jsonify({'error': '无法删除自己的管理员账号'}), 403
     
     try:
-        Notification.query.filter_by(user_id=user_id).delete()
+        from sqlalchemy import text
+
+        uid = user_id
+        admin_uid = current_user_id
+
+        # --- 1. 删除用户个人数据（这些表的数据属于用户个人，应删除）---
+        personal_delete = [
+            ("personal_tasks", "user_id"),
+            ("focus_sessions", "user_id"),
+            ("habit_records", "user_id"),
+            ("plan_templates", "user_id"),
+            ("review_records", "user_id"),
+            ("personal_settings", "user_id"),
+            ("project_members", "user_id"),
+            ("user_shifts", "user_id"),
+            ("attendance_records", "user_id"),
+            ("leave_applications", "user_id"),
+            ("overtime_applications", "user_id"),
+            ("attendance_exceptions", "user_id"),
+            ("notifications", "user_id"),
+            ("work_logs", "user_id"),
+            ("knowledge_favorites", "user_id"),
+            ("knowledge_read_records", "user_id"),
+            ("knowledge_comments", "user_id"),
+            ("bug_comments", "user_id"),
+            ("rd_kanban_comments", "user_id"),
+            ("rd_kanban_attachments", "uploaded_by"),
+        ]
+        for table, col in personal_delete:
+            try:
+                db.session.execute(text(f"DELETE FROM {table} WHERE {col} = :uid"), {"uid": uid})
+            except Exception as e:
+                logger.warning(f"清理 {table}.{col} 失败(已忽略): {str(e)}")
+
+        # --- 2. 对可空外键 SET NULL（保留业务数据，仅解除关联）---
+        set_null = [
+            ("projects", "owner_id"), ("projects", "manager_id"), ("projects", "created_by"),
+            ("bugs", "assigned_to"), ("bugs", "resolved_by"), ("bugs", "verifier_id"), ("bugs", "verified_by"),
+            ("leave_applications", "approver_id"),
+            ("overtime_applications", "approver_id"),
+            ("attendance_exceptions", "approver_id"),
+            ("attachments", "uploaded_by"), ("attachments", "created_by"),
+            ("project_logs", "created_by"),
+            ("risks", "identified_by"), ("risks", "assigned_to"), ("risks", "created_by"),
+            ("materials", "created_by"),
+            ("warehouses", "created_by"),
+            ("inventory_transactions", "created_by"),
+            ("inventory_checks", "checked_by"), ("inventory_checks", "approved_by"),
+            ("contracts", "project_manager_id"), ("contracts", "tech_lead_id"),
+            ("contracts", "supply_chain_lead_id"), ("contracts", "created_by"),
+            ("contract_approvals", "approver_id"),
+            ("contract_changes", "requested_by"), ("contract_changes", "approved_by"),
+            ("contract_risks", "identified_by"),
+            ("contract_attachments", "uploaded_by"),
+            ("requirement_documents", "owner_id"), ("requirement_documents", "created_by"),
+            ("requirement_items", "owner_id"), ("requirement_items", "created_by"),
+            ("requirement_links", "created_by"),
+            ("requirement_versions", "created_by"),
+            ("test_suites", "owner_id"), ("test_suites", "created_by"),
+            ("test_cases", "designer_id"), ("test_cases", "reviewer_id"),
+            ("test_cases", "approved_by"), ("test_cases", "created_by"),
+            ("test_executions", "executor_id"),
+            ("test_results", "executor_id"),
+            ("test_case_requirement_links", "created_by"),
+            ("knowledge_categories", "created_by"),
+            ("knowledge_articles", "author_id"),
+            ("knowledge_versions", "created_by"),
+            ("knowledge_shares", "created_by"),
+            ("rd_kanban_items", "assignee_id"), ("rd_kanban_items", "created_by"),
+        ]
+        for table, col in set_null:
+            try:
+                db.session.execute(
+                    text(f"UPDATE {table} SET {col} = NULL WHERE {col} = :uid"),
+                    {"uid": uid}
+                )
+            except Exception as e:
+                # SET NULL 失败（可能字段为 NOT NULL），尝试转移给管理员
+                try:
+                    db.session.execute(
+                        text(f"UPDATE {table} SET {col} = :admin_uid WHERE {col} = :uid"),
+                        {"uid": uid, "admin_uid": admin_uid}
+                    )
+                except Exception as e2:
+                    logger.warning(f"清理 {table}.{col} 失败(已忽略): {str(e2)}")
+
+        # --- 3. 对非空外键，转移给当前操作的管理员 ---
+        transfer = [
+            ("bugs", "reported_by"),
+            ("comments", "created_by"),
+            ("activities", "performed_by"),
+            ("audit_logs", "user_id"),
+            ("requirement_comments", "created_by"),
+        ]
+        for table, col in transfer:
+            try:
+                db.session.execute(
+                    text(f"UPDATE {table} SET {col} = :admin_uid WHERE {col} = :uid"),
+                    {"uid": uid, "admin_uid": admin_uid}
+                )
+            except Exception as e:
+                logger.warning(f"转移 {table}.{col} 失败(已忽略): {str(e)}")
+
+        # --- 4. 删除用户 ---
         db.session.delete(user)
         db.session.commit()
-        
+
         # 使用增强日志系统记录业务操作
         log_manager = get_log_manager()
         log_manager.log_business(
@@ -979,8 +1131,8 @@ def delete_user(user_id):
                 'position': user.position
             }
         )
-        
-        # 创建log
+
+        # 创建审计日志
         create_audit_log(
             user_id=current_user_id,
             action='delete_user',
@@ -988,7 +1140,7 @@ def delete_user(user_id):
             resource_id=user_id,
             details={'username': user.username}
         )
-        
+
         return jsonify({'message': '用户删除成功'}), 200
     except Exception as e:
         db.session.rollback()
@@ -997,7 +1149,7 @@ def delete_user(user_id):
             log_manager.log_error('delete_user_database_error', f"删除用户失败: {str(e)}")
         except Exception as log_e:
             logger.error(f"记录删除用户数据库错误日志失败: {str(log_e)}")
-        return jsonify({'error': '删除用户失败'}), 500
+        return jsonify({'error': f'删除用户失败: {str(e)}'}), 500
 
 # 重置用户密码
 @users_bp.route('/<int:user_id>/reset-password', methods=['POST'])
@@ -2844,8 +2996,7 @@ def update_permission_template(template_id):
     if not tpl:
         return jsonify({'error': '模板不存在'}), 404
 
-    if tpl.is_builtin and not (current_user.is_super_admin or (current_user.get_position_info() and (current_user.get_position_info().is_admin or current_user.get_position_info().is_manager))):
-        return jsonify({'error': '内置模板仅管理员可编辑'}), 403
+    # 内置模板允许有 template:edit 权限的用户编辑
 
     data = request.get_json() or {}
 
@@ -2863,7 +3014,7 @@ def update_permission_template(template_id):
         tpl.description = (data.get('description') or '').strip()
     if 'icon' in data:
         tpl.icon = (data.get('icon') or 'Document').strip() or 'Document'
-    if 'category' in data and not tpl.is_builtin:
+    if 'category' in data:
         tpl.category = (data.get('category') or 'custom').strip() or 'custom'
     if 'is_active' in data:
         tpl.is_active = bool(data.get('is_active'))

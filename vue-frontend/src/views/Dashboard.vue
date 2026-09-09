@@ -259,6 +259,62 @@
                   >
                     {{ activity.details }}
                   </el-link>
+                  <el-link
+                    v-else-if="activity.target_type === 'test_case' && activity.case_id"
+                    type="primary"
+                    @click="goToTestCase(activity)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link
+                    v-else-if="activity.target_type === 'test_case_review' && activity.case_id"
+                    type="primary"
+                    @click="goToTestCase(activity)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link
+                    v-else-if="(activity.target_type === 'requirement_review' && activity.item_id) || activity.target_type === 'requirement_item'"
+                    type="primary"
+                    @click="goToRequirement(activity)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link
+                    v-else-if="activity.target_type === 'knowledge_article' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/knowledge/articles/${activity.target_id}`)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link
+                    v-else-if="activity.target_type === 'user' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/users/${activity.target_id}`)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link
+                    v-else-if="activity.target_type === 'contract' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/contracts/${activity.target_id}`)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
+                  <el-link
+                    v-else-if="activity.target_type === 'requirement_document' && activity.target_id"
+                    type="primary"
+                    @click="$router.push(`/requirements/${activity.target_id}`)"
+                    class="activity-details"
+                  >
+                    {{ activity.details }}
+                  </el-link>
                   <span v-else class="activity-details">{{ activity.details }}</span>
                 </div>
               </div>
@@ -590,6 +646,25 @@ const formatTimeAgo = (timeString) => {
   return formatDate(timeString)
 }
 
+// 跳转到测试用例详情页（优先使用完整路径，否则使用独立路由）
+const goToTestCase = (activity) => {
+  if (activity.project_id && activity.suite_id && activity.case_id) {
+    router.push(`/projects/${activity.project_id}/tests/suites/${activity.suite_id}/cases/${activity.case_id}`)
+  } else if (activity.case_id) {
+    router.push(`/test-cases/${activity.case_id}`)
+  }
+}
+
+// 跳转到需求详情页并定位到对应条目
+const goToRequirement = (activity) => {
+  const itemId = activity.item_id || activity.target_id
+  if (activity.project_id && activity.doc_id) {
+    router.push(`/projects/${activity.project_id}/requirements/${activity.doc_id}?itemId=${itemId}`)
+  } else if (activity.doc_id) {
+    router.push(`/requirements/${activity.doc_id}?itemId=${itemId}`)
+  }
+}
+
 // 获取我的活动记录
 const fetchMyActivities = async () => {
   try {
@@ -617,7 +692,12 @@ const fetchMyActivities = async () => {
           action: activity.action,
           details: details,
           target_type: activity.target_type,
-          target_id: activity.target_id
+          target_id: activity.target_id,
+          project_id: activity.project_id,
+          suite_id: activity.suite_id,
+          case_id: activity.case_id,
+          doc_id: activity.doc_id,
+          item_id: activity.item_id
         }
       })
     }
@@ -1016,6 +1096,11 @@ const getActionText = (action) => {
     'apply_overtime': '提交加班',
     'update': '更新',
     'update_bug': '更新Bug',
+    'resolve_bug': '解决Bug',
+    'close_bug': '关闭Bug',
+    'reopen_bug': '重新打开Bug',
+    'assign_bug': '分配Bug',
+    'verify_bug': '验证Bug',
     'update_work_log': '更新工作日志',
     'update_project': '更新项目',
     'update_user': '更新用户',
@@ -1064,6 +1149,10 @@ const getActionText = (action) => {
     'delete_attachment': '删除附件',
     'user_login': '用户登录',
     'user_register': '用户注册',
+    'submit_review': '发起评审',
+    'approve_review': '评审通过',
+    'reject_review': '评审驳回',
+    'cancel_review': '撤销评审',
     'data_import': '数据导入',
     'data_export': '数据导出',
     'copy_requirement_document': '复制需求文档',

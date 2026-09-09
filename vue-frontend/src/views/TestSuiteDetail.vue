@@ -142,7 +142,6 @@
             highlight-current-row
           >
             <el-table-column type="index" width="50" />
-            <el-table-column label="标识" width="100" prop="identifier" />
             <el-table-column label="标题" min-width="200" show-overflow-tooltip>
               <template #default="{ row }">
                 <div class="case-title-cell">
@@ -350,8 +349,9 @@ const loadSuiteInfo = async () => {
 const loadCases = async () => {
   loading.value = true
   try {
-    const response = await apiService.tests.getCasesBySuite(suiteId.value)
-    cases.value = response || []
+    // 详情页在前端做筛选，传大分页以加载全部用例
+    const response = await apiService.tests.getCasesBySuite(suiteId.value, { per_page: 1000 })
+    cases.value = response?.cases || []
   } catch (error) {
     console.error('加载用例列表失败:', error)
     ElMessage.error('加载用例列表失败')

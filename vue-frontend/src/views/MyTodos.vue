@@ -400,7 +400,7 @@
           </el-table-column>
           <el-table-column prop="status" label="状态" width="100" align="center">
             <template #default="{ row }">
-              <el-tag type="warning" size="small" effect="light" class="status-tag">{{ row.status }}</el-tag>
+              <el-tag :type="getContractStatusTagType(row.status)" size="small" effect="light" class="status-tag">{{ getContractStatusText(row.status) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="priority" label="优先级" width="90" align="center">
@@ -765,9 +765,21 @@ const viewDetail = (row) => {
         ElMessage.info('无法查看需求文档：缺少文档ID')
       }
       break
-    case 'test_case':
-      router.push(`/test-cases/${row.id}`)
+    case 'test_case': {
+      // 测试用例评审：后端返回 link（/projects/{pid}/tests/suites/{sid}/cases/{caseId}）
+      // 注意 row.id 是 test_case_review_{stepId} 字符串，不能当作用例 ID 使用
+      // 携带 review=1，目标页会自动滚动定位到评审流程区域
+      const casePath = row.link ||
+        (row.project_id && row.suite_id && row.case_id
+          ? `/projects/${row.project_id}/tests/suites/${row.suite_id}/cases/${row.case_id}`
+          : null)
+      if (casePath) {
+        router.push({ path: casePath, query: { review: 1 } })
+      } else {
+        ElMessage.info('无法查看测试用例：缺少用例信息')
+      }
       break
+    }
     case 'delivery':
     case 'risk':
     case 'payment':
@@ -917,16 +929,60 @@ const getCategoryTagType = (category) => {
 }
 
 const getStatusTagType = (status) => {
-  if (status === 'pending') return 'warning'
-  return 'info'
+  const map = {
+    pending: 'warning',
+    pending_review: 'warning',
+    in_progress: 'warning',
+    approved: 'success',
+    rejected: 'danger',
+    new: 'info',
+    assigned: 'primary',
+    fixed: 'success',
+    resolved: 'success',
+    verified: 'success',
+    reopened: 'danger',
+    open: 'info',
+    closed: 'info'
+  }
+  return map[status] || 'info'
 }
 
 const getStatusText = (status) => {
   const map = {
     pending: '待处理',
+    pending_review: '待评审',
     in_progress: '进行中',
+    approved: '已批准',
+    rejected: '已拒绝',
+    new: '新建',
+    assigned: '已分配',
+    fixed: '已修复',
     resolved: '已解决',
+    verified: '已验证',
+    reopened: '重新打开',
+    open: '打开',
     closed: '已关闭'
+  }
+  return map[status] || status || '待处理'
+}
+
+// 合同待办状态映射
+const getContractStatusTagType = (status) => {
+  const map = {
+    pending: 'warning',
+    identified: 'danger',
+    mitigation_in_progress: 'warning',
+    resolved: 'success'
+  }
+  return map[status] || 'info'
+}
+
+const getContractStatusText = (status) => {
+  const map = {
+    pending: '待处理',
+    identified: '已识别',
+    mitigation_in_progress: '缓解中',
+    resolved: '已解决'
   }
   return map[status] || status || '待处理'
 }

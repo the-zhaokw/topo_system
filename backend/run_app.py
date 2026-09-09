@@ -325,6 +325,11 @@ def ensure_columns():
         'end_date': 'DATE'
     }
 
+    # overtime_applications 表列定义
+    overtime_applications_columns = {
+        'compensation_type': 'VARCHAR(20) DEFAULT "leave" NOT NULL'
+    }
+
     # 定义所有表及其列
     all_tables = {
         'users': users_columns,
@@ -342,7 +347,8 @@ def ensure_columns():
         'test_executions': test_executions_columns,
         'test_results': test_results_columns,
         'test_case_requirement_links': test_case_requirement_links_columns,
-        'project_logs': project_logs_columns
+        'project_logs': project_logs_columns,
+        'overtime_applications': overtime_applications_columns
     }
     
     # 添加缺失的列

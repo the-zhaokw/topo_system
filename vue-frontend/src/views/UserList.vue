@@ -360,7 +360,7 @@
           </div>
         </template>
         
-        <el-table :data="users" v-loading="loading" style="width: 100%" class="custom-table">
+        <el-table :data="users" v-loading="loading" style="width: 100%" class="custom-table user-table-sticky">
           <el-table-column prop="id" label="ID" width="80" />
           
           <el-table-column prop="username" label="用户名" width="120">
@@ -467,6 +467,19 @@
             </template>
           </el-table-column>
         </el-table>
+        
+        <!-- 分页 -->
+        <div class="pagination-container">
+          <el-pagination
+            v-model:current-page="pagination.currentPage"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="pagination.total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handlePageSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
       </el-card>
       
       <!-- 创建/编辑用户对话框 -->
@@ -846,6 +859,55 @@ const userStore = useUserStore()
 const router = useRouter()
 const loading = ref(false)
 const users = ref([])
+
+// 分页状态
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 20,
+  total: 0
+})
+
+// 拉取全部用户（用于批量添加成员下拉等场景，不分页）
+const fetchAllUsersForDialog = async () => {
+  let response = await api.users.getList({ per_page: 500 })
+  let userList = response.users || []
+  if ((response.total || 0) > userList.length) {
+    response = await api.users.getList({ per_page: response.total })
+    userList = response.users || []
+  }
+  return userList
+}
+
+// 获取用户列表（分页）
+const fetchUsers = async () => {
+  if (!isAdmin.value) {
+    return
+  }
+  
+  loading.value = true
+  try {
+    const response = await api.users.getList({
+      page: pagination.currentPage,
+      per_page: pagination.pageSize,
+      search: filters.username || filters.email || undefined,
+      department: filters.department || undefined,
+      position: filters.position || undefined,
+      is_active: filters.is_active ?? undefined
+    })
+    users.value = response.users || []
+    pagination.total = response.total || 0
+  } catch (error) {
+    console.error('获取用户列表失败:', error)
+    if (error.response?.status === 403) {
+      ElMessage.error('权限不足，无法查看用户列表')
+    } else {
+      ElMessage.error('获取用户列表失败')
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
 const showCreateDialog = ref(false)
 const editingUser = ref(null)
 const userFormRef = ref(null)
@@ -968,28 +1030,6 @@ const userRules = {
       trigger: 'blur'
     }
   ]
-}
-
-// 获取用户列表
-const fetchUsers = async () => {
-  if (!isAdmin.value) {
-    return
-  }
-  
-  loading.value = true
-  try {
-    const response = await api.users.getList()
-    users.value = response.users || []
-  } catch (error) {
-    console.error('获取用户列表失败:', error)
-    if (error.response?.status === 403) {
-      ElMessage.error('权限不足，无法查看用户列表')
-    } else {
-      ElMessage.error('获取用户列表失败')
-    }
-  } finally {
-    loading.value = false
-  }
 }
 
 // 获取部门列表
@@ -1185,9 +1225,7 @@ const showBatchAddDialog = async () => {
   showBatchAddDialogVisible.value = true
   
   try {
-    const response = await api.users.getList({ per_page: 1000 })
-    const allUserList = response.users || []
-    allUsers.value = allUserList
+    allUsers.value = await fetchAllUsersForDialog()
     filterAvailableUsers()
   } catch (error) {
     console.error('获取用户列表失败:', error)
@@ -1248,22 +1286,10 @@ const submitBatchRemove = async () => {
   }
 }
 
-// 筛选用户
+// 筛选用户（后端筛选 + 重置到第一页）
 const handleFilter = () => {
-  if (!users.value.length) return
-  
-  const filteredUsers = users.value.filter(user => {
-    return (
-      (!filters.username || user.username?.toLowerCase().includes(filters.username.toLowerCase())) &&
-      (!filters.email || user.email?.toLowerCase().includes(filters.email.toLowerCase())) &&
-      (filters.is_active === null || user.is_active === filters.is_active) &&
-      (!filters.department || user.department?.toLowerCase().includes(filters.department.toLowerCase())) &&
-      (!filters.position || user.position?.toLowerCase().includes(filters.position.toLowerCase()))
-    )
-  })
-  
-  users.value = filteredUsers
-  ElMessage.success(`筛选到 ${filteredUsers.length} 个用户`)
+  pagination.currentPage = 1
+  fetchUsers()
 }
 
 // 重置筛选
@@ -1271,6 +1297,7 @@ const resetFilter = () => {
   Object.keys(filters).forEach(key => {
     filters[key] = key === 'is_active' ? null : ''
   })
+  pagination.currentPage = 1
   fetchUsers()
   ElMessage.success('筛选条件已重置')
 }
@@ -1279,6 +1306,17 @@ const resetFilter = () => {
 const refreshUsers = () => {
   fetchUsers()
   ElMessage.success('用户列表已刷新')
+}
+
+// 处理分页大小变化
+const handlePageSizeChange = () => {
+  pagination.currentPage = 1
+  fetchUsers()
+}
+
+// 处理页码变化
+const handlePageChange = () => {
+  fetchUsers()
 }
 
 // 创建用户
@@ -1909,9 +1947,27 @@ onMounted(() => {
   margin-bottom: 24px;
 }
 
+.pagination-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .custom-table {
   --el-table-header-bg-color: var(--neutral-50);
   --el-table-row-hover-bg-color: var(--primary-50);
+}
+
+/* 表头随页面滚动时固定 */
+.user-table-sticky :deep(.el-table__header-wrapper) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.user-table-sticky :deep(.el-table__header-wrapper table) {
+  background: var(--neutral-50);
 }
 
 :deep(.el-table th) {

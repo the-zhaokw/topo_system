@@ -479,7 +479,7 @@ const loadExecutions = async () => {
 const loadSuites = async () => {
   try {
     const response = await apiService.tests.getSuites(projectId.value)
-    suites.value = response?.data || []
+    suites.value = Array.isArray(response) ? response : (response?.data || [])
   } catch (error) {
     console.error('加载测试集失败:', error)
   }

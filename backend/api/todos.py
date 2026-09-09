@@ -17,8 +17,8 @@ def get_models():
         db, User, Bug, BugStatus, Project,
         LeaveApplication, OvertimeApplication, AttendanceException,
         Contract, ContractApproval, ContractDelivery, ContractRisk, ContractPayment,
-        RequirementDocument, RequirementItem,
-        TestCase, TestSuite
+        RequirementDocument, RequirementItem, RequirementReview, RequirementReviewStep,
+        TestCase, TestSuite, Notification
     )
     from api.rd_kanban import _get_models as _init_rd_models
     _init_rd_models()
@@ -39,10 +39,153 @@ def get_models():
         'ContractPayment': ContractPayment,
         'RequirementDocument': RequirementDocument,
         'RequirementItem': RequirementItem,
+        'RequirementReview': RequirementReview,
+        'RequirementReviewStep': RequirementReviewStep,
         'TestCase': TestCase,
         'TestSuite': TestSuite,
+        'Notification': Notification,
         'RDKanbanItem': RDKanbanItem
     }
+
+
+def _get_requirement_review_todos(models, current_user_id, db_session):
+    """基于 RequirementReviewStep 直接查当前用户需要审批的需求条目评审
+
+    这才是待办的真相来源：review.status=pending 且 step.status=pending 且 reviewer_id=当前用户
+    Notification 表只作为补充和已读标记，不作为唯一数据源。
+    """
+    RequirementReview = models['RequirementReview']
+    RequirementReviewStep = models['RequirementReviewStep']
+    RequirementItem = models['RequirementItem']
+    RequirementDocument = models['RequirementDocument']
+    User = models['User']
+
+    result = []
+    seen_keys = set()
+
+    # 主数据源：查当前用户是 pending 审批节点的 reviewer
+    pending_steps = db_session.query(RequirementReviewStep).join(
+        RequirementReview, RequirementReviewStep.review_id == RequirementReview.id
+    ).filter(
+        RequirementReviewStep.reviewer_id == current_user_id,
+        RequirementReviewStep.status == 'pending',
+        RequirementReview.status == 'pending',
+        RequirementReviewStep.step_order == RequirementReview.current_step
+    ).all()
+
+    for step in pending_steps:
+        review = step.review
+        item = db_session.get(RequirementItem, review.item_id)
+        if not item:
+            continue
+        doc = db_session.get(RequirementDocument, review.doc_id)
+        creator = db_session.get(User, doc.created_by) if doc else None
+        key = f"review_step_{step.id}"
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+
+        link = f'/projects/{review.project_id}/requirements/{review.doc_id}?itemId={item.id}'
+        result.append({
+            'id': f'requirement_review_{step.id}',
+            'step_id': step.id,
+            'review_id': review.id,
+            'item_id': item.id,
+            'doc_id': review.doc_id,
+            'project_id': review.project_id,
+            'category': 'review',
+            'type': 'requirement',
+            'type_name': '需求评审',
+            'title': item.title,
+            'creator_name': creator.username if creator else '未知',
+            'status': 'pending_review',
+            'priority': 'medium',
+            'created_at': step.created_at.isoformat() if step.created_at else None,
+            'link': link
+        })
+
+    return result
+
+
+
+def _parse_requirement_review_link(link):
+    """从评审通知的 link 中解析 project_id, doc_id, item_id
+
+    link 示例: /projects/1/requirements/3?itemId=5
+    返回: (project_id, doc_id, item_id)
+    """
+    if not link:
+        return None, None, None
+    import re
+    project_id, doc_id, item_id = None, None, None
+    # 匹配 /projects/<pid>/requirements/<did>?itemId=<iid>
+    m = re.search(r'/projects/(\d+)/requirements/(\d+)', link)
+    if m:
+        project_id = int(m.group(1))
+        doc_id = int(m.group(2))
+    else:
+        m = re.search(r'/requirements/(\d+)', link)
+        if m:
+            doc_id = int(m.group(1))
+    # 匹配 ?itemId=<iid>
+    m = re.search(r'[?&]itemId=(\d+)', link)
+    if m:
+        item_id = int(m.group(1))
+    return project_id, doc_id, item_id
+
+
+def _get_test_case_review_todos(models, current_user_id, db_session):
+    """基于 TestCaseReviewStep 直接查当前用户需要审批的测试用例评审
+
+    review.status=pending 且 step.status=pending 且 reviewer_id=当前用户
+    """
+    from enhanced_app import TestCaseReview, TestCaseReviewStep
+    User = models['User']
+
+    result = []
+    seen_keys = set()
+
+    pending_steps = db_session.query(TestCaseReviewStep).join(
+        TestCaseReview, TestCaseReviewStep.review_id == TestCaseReview.id
+    ).filter(
+        TestCaseReviewStep.reviewer_id == current_user_id,
+        TestCaseReviewStep.status == 'pending',
+        TestCaseReview.status == 'pending',
+        TestCaseReviewStep.step_order == TestCaseReview.current_step
+    ).all()
+
+    for step in pending_steps:
+        review = step.review
+        case = review.case
+        if not case:
+            continue
+        creator = db_session.get(User, review.initiator_id)
+        key = f"test_case_review_step_{step.id}"
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+
+        link = f'/projects/{review.project_id}/tests/suites/{review.suite_id}/cases/{case.id}'
+        result.append({
+            'id': f'test_case_review_{step.id}',
+            'step_id': step.id,
+            'review_id': review.id,
+            'case_id': case.id,
+            'suite_id': review.suite_id,
+            'project_id': review.project_id,
+            'category': 'review',
+            'type': 'test_case',
+            'type_name': '测试用例评审',
+            'title': case.title,
+            'creator_name': creator.username if creator else '未知',
+            'status': 'pending_review',
+            'priority': 'medium',
+            'created_at': step.created_at.isoformat() if step.created_at else None,
+            'link': link
+        })
+
+    return result
+
 
 @todos_bp.route('/summary', methods=['GET'])
 @jwt_required()
@@ -144,16 +287,16 @@ def get_todo_summary():
         
         summary['bugs']['total'] = to_resolve_count + to_verify_count
         
-        requirement_count = models['RequirementItem'].query.filter(
-            models['RequirementItem'].status == 'pending_review',
-            models['RequirementItem'].owner_id == current_user_id
+        # 需求评审待办：当前用户未读的 requirement_review 通知
+        # （发起评审时仅给评审人发通知，未更新 RequirementItem 状态）
+        requirement_count = models['Notification'].query.filter(
+            models['Notification'].user_id == current_user_id,
+            models['Notification'].type == 'requirement_review',
+            models['Notification'].is_read == False
         ).count()
         summary['reviews']['requirements'] = requirement_count
         
-        test_case_count = models['TestCase'].query.filter(
-            models['TestCase'].status == 'pending_review',
-            models['TestCase'].reviewer_id == current_user_id
-        ).count()
+        test_case_count = len(_get_test_case_review_todos(models, current_user_id, db.session))
         summary['reviews']['test_cases'] = test_case_count
         
         summary['reviews']['total'] = requirement_count + test_case_count
@@ -446,45 +589,12 @@ def get_review_todos():
             return jsonify({'success': False, 'message': '用户不存在'}), 404
         
         reviews = []
-        
-        pending_requirements = models['RequirementItem'].query.filter(
-            models['RequirementItem'].status == 'pending_review',
-            models['RequirementItem'].owner_id == current_user_id
-        ).all()
-        
-        for req in pending_requirements:
-            doc = db.session.get(models['RequirementDocument'], req.doc_id)
-            reviews.append({
-                'id': req.id,
-                'doc_id': req.doc_id,
-                'type': 'requirement',
-                'type_name': '需求评审',
-                'title': req.title,
-                'identifier': req.identifier,
-                'status': req.status,
-                'project_id': doc.project_id if doc else None,
-                'created_at': req.created_at.isoformat() if req.created_at else None,
-                'link': f'/requirements/{req.id}'
-            })
-        
-        pending_test_cases = models['TestCase'].query.filter(
-            models['TestCase'].status == 'pending_review',
-            models['TestCase'].reviewer_id == current_user_id
-        ).all()
-        
-        for tc in pending_test_cases:
-            suite = db.session.get(models['TestSuite'], tc.suite_id)
-            reviews.append({
-                'id': tc.id,
-                'type': 'test_case',
-                'type_name': '测试用例评审',
-                'title': tc.title,
-                'identifier': tc.identifier,
-                'status': tc.status,
-                'project_id': suite.project_id if suite else None,
-                'created_at': tc.created_at.isoformat() if tc.created_at else None,
-                'link': f'/test-cases/{tc.id}'
-            })
+
+        # 需求评审：以 RequirementReviewStep 为真相源（当前用户是 pending 审批节点的 reviewer）
+        reviews.extend(_get_requirement_review_todos(models, current_user_id, db.session))
+
+        # 测试用例评审：以 TestCaseReviewStep 为真相源
+        reviews.extend(_get_test_case_review_todos(models, current_user_id, db.session))
         
         reviews.sort(key=lambda x: x['created_at'] or '', reverse=True)
         
@@ -775,48 +885,13 @@ def get_all_todos():
                 'link': f'/bugs/{bug.id}'
             })
         
-        pending_requirements = models['RequirementItem'].query.filter(
-            models['RequirementItem'].status == 'pending_review',
-            models['RequirementItem'].owner_id == current_user_id
-        ).all()
+        # 需求评审：以 RequirementReviewStep 为真相源
+        for rev_todo in _get_requirement_review_todos(models, current_user_id, db.session):
+            all_todos.append(rev_todo)
 
-        for req in pending_requirements:
-            doc = db.session.get(models['RequirementDocument'], req.doc_id)
-            creator = db.session.get(models['User'], req.created_by)
-            all_todos.append({
-                'id': req.id,
-                'doc_id': req.doc_id,
-                'project_id': doc.project_id if doc else None,
-                'category': 'review',
-                'type': 'requirement',
-                'type_name': '需求评审',
-                'title': req.title,
-                'creator_name': creator.username if creator else '未知',
-                'status': req.status,
-                'priority': 'medium',
-                'created_at': req.created_at.isoformat() if req.created_at else None,
-                'link': f'/requirements/{req.id}'
-            })
-
-        pending_test_cases = models['TestCase'].query.filter(
-            models['TestCase'].status == 'pending_review',
-            models['TestCase'].reviewer_id == current_user_id
-        ).all()
-
-        for tc in pending_test_cases:
-            creator = db.session.get(models['User'], tc.created_by)
-            all_todos.append({
-                'id': f'testcase_{tc.id}',
-                'category': 'review',
-                'type': 'test_case',
-                'type_name': '测试用例评审',
-                'title': tc.title,
-                'creator_name': creator.username if creator else '未知',
-                'status': tc.status,
-                'priority': 'medium',
-                'created_at': tc.created_at.isoformat() if tc.created_at else None,
-                'link': f'/test-cases/{tc.id}'
-            })
+        # 测试用例评审：以 TestCaseReviewStep 为真相源
+        for rev_todo in _get_test_case_review_todos(models, current_user_id, db.session):
+            all_todos.append(rev_todo)
         
         pending_deliveries = models['ContractDelivery'].query.filter(
             models['ContractDelivery'].status == 'pending'

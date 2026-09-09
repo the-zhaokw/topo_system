@@ -1357,3 +1357,31 @@
     border-color: rgba(255, 255, 255, 0.1);
   }
 }
+
+/* ===== 表格按住拖拽横向滚动（见 directives/tableDragScroll.js） ===== */
+/* 表格体区域显示抓手光标，提示可拖动 */
+.el-table .el-table__body-wrapper {
+  cursor: grab;
+}
+
+/* 拖动中显示抓取光标并禁止文本选中 */
+.el-table .el-table__body-wrapper.is-table-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.el-table .el-table__body-wrapper.is-table-dragging .el-table__row,
+.el-table .el-table__body-wrapper.is-table-dragging .el-table__row td {
+  cursor: grabbing;
+}
+
+/* 可交互元素保持各自的指针样式，不被抓手覆盖 */
+.el-table .el-table__body-wrapper .el-button,
+.el-table .el-table__body-wrapper a,
+.el-table .el-table__body-wrapper .el-link,
+.el-table .el-table__body-wrapper .el-checkbox,
+.el-table .el-table__body-wrapper .el-switch,
+.el-table .el-table__body-wrapper .el-input,
+.el-table .el-table__body-wrapper .el-select {
+  cursor: pointer;
+}

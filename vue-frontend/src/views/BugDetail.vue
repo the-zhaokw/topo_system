@@ -692,8 +692,9 @@ const statusTimeline = computed(() => {
   })
 
   // 2. 从Activity记录中提取状态变更
+  const bugStatusActions = ['update_bug', 'bug_status_transition', 'resolve_bug', 'close_bug', 'reopen_bug']
   activities.value.forEach(activity => {
-    if (activity.action === 'update_bug' || activity.action === 'bug_status_transition') {
+    if (bugStatusActions.includes(activity.action)) {
       let fieldChanges = activity.field_changes
 
       // 兼容处理：如果field_changes是字符串，尝试解析为数组
@@ -876,6 +877,7 @@ const availableTransitions = computed(() => {
   const isSuperAdmin = user.is_super_admin
   const isManager = position === '管理员' || position?.includes('经理') || position === '项目经理'
   const isResolver = bug.value.resolved_by && user.id && Number(bug.value.resolved_by) === Number(user.id)
+  const isVerifier = bug.value.verifier_id && user.id && Number(bug.value.verifier_id) === Number(user.id)
   const isTester = position === '测试工程师'
 
   // 开始处理和标记解决：仅项目经理、超级管理员、解决者可操作
@@ -891,18 +893,8 @@ const availableTransitions = computed(() => {
     }
   }
 
-  // 关闭和重新打开：项目经理、超级管理员可操作
-  if (isSuperAdmin || isManager) {
-    if (status === 'resolved') {
-      transitions.push({ to: 'closed', label: '关闭', type: 'success' })
-    }
-    if (status === 'closed') {
-      transitions.push({ to: 'reopened', label: '重新打开', type: 'warning' })
-    }
-  }
-
-  // 测试工程师可关闭和重新打开
-  if (isTester) {
+  // 关闭和重新打开：项目经理、超级管理员、测试工程师、验证者可操作
+  if (isSuperAdmin || isManager || isTester || isVerifier) {
     if (status === 'resolved') {
       transitions.push({ to: 'closed', label: '关闭', type: 'success' })
     }
@@ -928,6 +920,7 @@ const workflowSuggestions = computed(() => {
   const isManager = position === '管理员' || position?.includes('经理') || position === '项目经理'
   const isDeveloper = position === '软件工程师'
   const isTester = position === '测试工程师'
+  const isVerifier = bug.value?.verifier_id && user?.id && Number(bug.value.verifier_id) === Number(user.id)
 
   if (status === 'new') {
     suggestions.push({
@@ -975,7 +968,7 @@ const workflowSuggestions = computed(() => {
   }
 
   if (status === 'resolved') {
-    if (isTester || isSuperAdmin || isManager) {
+    if (isTester || isSuperAdmin || isManager || isVerifier) {
       suggestions.push({
         type: 'recommended',
         title: '验证修复',

@@ -133,13 +133,15 @@ ACTION_TEXT_MAP = {
     'create_personal_template': '创建个人模板', 'create_test_suite': '创建测试套件',
     'create_test_case': '创建测试用例', 'create_shift_schedule': '创建班次',
     'create_user_shift': '分配班次', 'update': '更新', 'update_bug': '更新Bug',
+    'resolve_bug': '解决Bug', 'close_bug': '关闭Bug', 'reopen_bug': '重新打开Bug',
+    'verify_bug': '验证Bug',
     'update_project': '更新项目', 'update_project_log': '更新日志',
     'update_user': '更新用户', 'update_work_log': '更新工作日志',
     'update_risk': '更新风险', 'delete': '删除', 'delete_project': '删除项目',
     'delete_user': '删除用户', 'delete_work_log': '删除工作日志',
     'delete_risk': '删除风险', 'bug_status_update': '状态更新',
     'bug_status_transition': '状态转换', 'status_change': '状态变更',
-    'assign_bug': '分配', 'assign': '分配', 'add_project_member': '添加成员',
+    'assign_bug': '分配Bug', 'assign': '分配', 'add_project_member': '添加成员',
     'remove_project_member': '移除成员', 'approve': '审批通过',
     'approve_leave_application': '审批请假', 'approve_overtime_application': '审批加班',
     'reject': '审批拒绝', 'clock_in': '上班打卡', 'clock_out': '下班打卡',
@@ -147,6 +149,8 @@ ACTION_TEXT_MAP = {
     'export': '导出', 'data_import': '数据导入', 'data_export': '数据导出',
     'import': '导入', 'user_register': '用户注册', 'user_login': '用户登录',
     'batch_create': '批量创建', 'login': '登录', 'register': '注册',
+    'submit_review': '发起评审', 'approve_review': '评审通过',
+    'reject_review': '评审驳回', 'cancel_review': '撤销评审',
 }
 
 # 资源类型中文映射
@@ -160,6 +164,7 @@ RESOURCE_TYPE_TEXT_MAP = {
     'attendance': '考勤', 'shift_schedule': '班次', 'user_shift': '排班',
     'risk': '风险', 'test_suite': '测试套件', 'test_case': '测试用例',
     'material': '物料', 'contract': '合同', 'data': '数据',
+    'test_case_review': '用例评审', 'requirement_review': '需求评审',
 }
 
 

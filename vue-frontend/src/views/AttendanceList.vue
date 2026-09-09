@@ -21,6 +21,10 @@
             <el-icon><Timer /></el-icon>
             打卡
           </el-button>
+          <el-button type="success" @click="handleImportClick" v-if="hasManagePermission" class="btn-import">
+            <el-icon><Upload /></el-icon>
+            导入数据
+          </el-button>
           <el-button @click="handleExport" v-if="hasManagePermission" v-permission="'attendance:export'" class="btn-secondary">
             <el-icon><Download /></el-icon>
             导出数据
@@ -103,11 +107,17 @@
             />
           </el-form-item>
           <el-form-item label="员工" v-if="hasManagePermission">
-            <el-select v-model="filterForm.userId" placeholder="选择员工" clearable class="filter-select">
+            <el-select
+              v-model="filterForm.userId"
+              placeholder="选择员工"
+              clearable
+              filterable
+              class="filter-select"
+            >
               <el-option
                 v-for="user in users"
                 :key="user.id"
-                :label="user.username"
+                :label="userDisplayName(user)"
                 :value="user.id"
               />
             </el-select>
@@ -523,6 +533,145 @@
         </template>
       </div>
     </el-dialog>
+
+    <!-- 考勤记录导入对话框 -->
+    <el-dialog v-model="importDialogVisible" title="导入考勤记录" width="760px" class="import-dialog-wrapper">
+      <div v-loading="importLoading" class="import-dialog-body">
+        <!-- 格式说明 -->
+        <el-alert type="info" :closable="false" show-icon class="import-tip">
+          <template #title>
+            支持钉钉导出的两种 Excel 报表：「打卡时间」月度网格表（每人一行、每日一列、单元格内为打卡时间）和「每日统计」明细表（每人每天一行）。选择文件后自动解析并预览，确认无误后再导入。
+          </template>
+        </el-alert>
+
+        <!-- 上传区 -->
+        <el-upload
+          v-if="!importResult"
+          drag
+          :auto-upload="false"
+          :show-file-list="false"
+          accept=".xlsx,.xlsm"
+          :on-change="handleImportFileChange"
+          class="import-upload"
+        >
+          <el-icon class="import-upload-icon"><UploadFilled /></el-icon>
+          <div class="import-upload-text">将 Excel 文件拖到此处，或<em>点击选择文件</em></div>
+          <template #tip>
+            <div class="import-upload-tip">仅支持 .xlsx 格式，文件较大时解析需要几秒钟</div>
+          </template>
+        </el-upload>
+
+        <!-- 自动建档选项 -->
+        <div class="import-option">
+          <el-checkbox v-model="autoCreateUsers">
+            未匹配到系统账号的员工自动建档
+          </el-checkbox>
+          <span class="import-option-hint">新账号用户名为钉钉工号、随机密码不可登录，需管理员后续重置密码并完善资料</span>
+        </div>
+
+        <!-- 预览结果 -->
+        <div v-if="importResult" class="import-result">
+          <!-- 汇总信息 -->
+          <div class="import-summary">
+            <el-tag type="primary" effect="light">报表格式：{{ importFormatText(importResult.format) }}</el-tag>
+            <el-tag type="info" effect="light">统计周期：{{ importResult.period || '-' }}</el-tag>
+            <el-tag type="success" effect="light">匹配员工 {{ importResult.employees_total }} 人</el-tag>
+            <el-tag v-if="importResult.users_created > 0" type="danger" effect="light">
+              新建账号 {{ importResult.users_created }} 个
+            </el-tag>
+            <el-tag effect="light">新增 {{ importResult.created }} 条</el-tag>
+            <el-tag type="warning" effect="light">更新 {{ importResult.updated }} 条</el-tag>
+            <el-tag type="info" effect="light">跳过休息日 {{ importResult.skipped_rest }} 天</el-tag>
+          </div>
+
+          <!-- 未匹配员工警告 -->
+          <el-alert
+            v-if="importResult.unmatched_names && importResult.unmatched_names.length"
+            type="warning"
+            :closable="false"
+            show-icon
+            class="import-alert"
+          >
+            <template #title>
+              以下 {{ importResult.unmatched_names.length }} 名员工未匹配到系统账号，相关记录已跳过：{{ importResult.unmatched_names.join('、') }}
+            </template>
+          </el-alert>
+
+          <!-- 其他错误提示 -->
+          <el-alert
+            v-for="(err, idx) in importResult.errors"
+            :key="idx"
+            type="warning"
+            :closable="false"
+            show-icon
+            class="import-alert"
+          >
+            <template #title>{{ err }}</template>
+          </el-alert>
+
+          <!-- 月度汇总（打卡时间网格表） -->
+          <div v-if="importResult.monthly_summary && importResult.monthly_summary.length" class="import-monthly">
+            <div class="import-monthly-title">
+              <el-icon><Histogram /></el-icon>
+              月度汇总信息（来自报表统计列，仅供核对）
+            </div>
+            <div class="import-monthly-list">
+              <div v-for="item in importResult.monthly_summary" :key="item.name" class="import-monthly-item">
+                <span class="import-monthly-name">{{ item.name }}</span>
+                <span class="import-monthly-detail">{{ item.summary }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 记录预览表格 -->
+          <div class="import-preview-title">
+            记录预览（前 {{ importResult.preview.length }} 条，共 {{ importResult.records_total }} 条）
+          </div>
+          <el-table :data="importResult.preview" stripe size="small" max-height="280" class="import-preview-table">
+            <el-table-column prop="date" label="日期" width="105" align="center" />
+            <el-table-column label="上班" width="75" align="center">
+              <template #default="{ row }">
+                <span :class="{ 'text-missing': !row.clock_in }">{{ row.clock_in || '缺卡' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="下班" width="75" align="center">
+              <template #default="{ row }">
+                <span :class="{ 'text-missing': !row.clock_out }">{{ row.clock_out || '缺卡' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" width="80" align="center">
+              <template #default="{ row }">
+                <el-tag size="small" :type="getStatusTagType(row.status)">{{ formatStatus(row.status) }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="工时" width="70" align="center">
+              <template #default="{ row }">{{ row.work_hours ? Number(row.work_hours).toFixed(1) + 'h' : '-' }}</template>
+            </el-table-column>
+            <el-table-column label="操作" width="70" align="center">
+              <template #default="{ row }">
+                <el-tag size="small" :type="row.action === 'create' ? 'success' : 'warning'" effect="plain">
+                  {{ row.action === 'create' ? '新增' : '覆盖' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" min-width="140" show-overflow-tooltip />
+          </el-table>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="importDialogVisible = false">关闭</el-button>
+        <el-button v-if="importResult" @click="handleImportReselect">重新选择文件</el-button>
+        <el-button
+          type="primary"
+          :loading="importLoading"
+          :disabled="!importResult || importResult.records_total === 0"
+          @click="handleConfirmImport"
+        >
+          确认导入 {{ importResult ? importResult.records_total : 0 }} 条记录
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -531,7 +680,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Clock, Download, Timer, Filter, Search, Refresh, Document, Edit, Delete, Warning, CircleClose, QuestionFilled, Calendar, CircleCheck, Sunrise, Sunset, View, Promotion, Notebook, DocumentRemove, Histogram } from '@element-plus/icons-vue'
+import { Clock, Download, Timer, Filter, Search, Refresh, Document, Edit, Delete, Warning, CircleClose, QuestionFilled, Calendar, CircleCheck, Sunrise, Sunset, View, Promotion, Notebook, DocumentRemove, Histogram, Upload, UploadFilled } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
 const userStore = useUserStore()
@@ -652,13 +801,22 @@ const fetchAttendanceRecords = async () => {
 const fetchUsers = async () => {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch('/api/users', {
+    // /api/users 默认每页仅 20 条且按 id 倒序，导入时自动建档的用户 id 最大，
+    // 不传分页参数会导致下拉框只看到 dt_ 开头的用户、老员工被分页截断
+    const fetchPage = (perPage) => fetch(`/api/users?per_page=${perPage}`, {
       headers: {
         'Authorization': token ? `Bearer ${token}` : ''
       }
     })
-    const data = await response.json()
-    
+    let response = await fetchPage(500)
+    let data = await response.json()
+
+    if (response.ok && data.total > (data.users || []).length) {
+      // 用户总数超过首屏数量时，按总数再拉一次，确保候选完整
+      response = await fetchPage(data.total)
+      data = await response.json()
+    }
+
     if (response.ok) {
       users.value = data.users || data || []
     } else {
@@ -667,6 +825,12 @@ const fetchUsers = async () => {
   } catch (error) {
     console.error('获取用户列表失败:', error)
   }
+}
+
+// 员工下拉显示名：优先中文「姓+名」，无姓名时回退到用户名
+const userDisplayName = (u) => {
+  const name = `${u.last_name || ''}${u.first_name || ''}`.trim()
+  return name || u.username
 }
 
 // 获取今日打卡记录
@@ -995,6 +1159,101 @@ const handleExport = async () => {
     }
   } catch (error) {
     ElMessage.error('导出失败')
+  }
+}
+
+// ==================== 考勤记录导入 ====================
+const importDialogVisible = ref(false)
+const importLoading = ref(false)
+const importResult = ref(null)
+const importFile = ref(null)
+// 未匹配员工时是否自动建档（默认开启；新建账号为随机密码，需管理员重置）
+const autoCreateUsers = ref(true)
+
+// 打开导入对话框
+const handleImportClick = () => {
+  importResult.value = null
+  importFile.value = null
+  autoCreateUsers.value = true
+  importDialogVisible.value = true
+}
+
+// 重新选择文件
+const handleImportReselect = () => {
+  importResult.value = null
+  importFile.value = null
+}
+
+// 报表格式文案（接口返回 grid / daily_detail 或两者组合）
+const importFormatText = (fmt) => {
+  const map = { grid: '打卡时间月度表', daily_detail: '每日统计明细表' }
+  if (!fmt) return '-'
+  return fmt.split('+').map((f) => map[f] || f).join(' + ')
+}
+
+// 选择文件后先预览（dry_run=1）
+const handleImportFileChange = (uploadFile) => {
+  if (!uploadFile || !uploadFile.raw) return
+  importFile.value = uploadFile.raw
+  runImport('预览解析失败')
+}
+
+// 调用导入接口；dryRun=true 仅预览，false 确认写入
+const runImport = async (failText, dryRun = true) => {
+  if (!importFile.value) return
+  importLoading.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', importFile.value)
+    formData.append('dry_run', dryRun ? '1' : '0')
+    formData.append('auto_create_users', autoCreateUsers.value ? '1' : '0')
+    const data = await apiService.attendance.importRecords(formData)
+    importResult.value = data
+    if (dryRun) {
+      if (data.unmatched_names && data.unmatched_names.length) {
+        ElMessage.warning(`有 ${data.unmatched_names.length} 名员工未匹配，相关记录已跳过，请核对`)
+      } else if (data.records_total > 0) {
+        ElMessage.success(`解析成功，共 ${data.records_total} 条记录待导入`)
+      } else {
+        ElMessage.warning('未解析到任何考勤记录，请检查文件格式')
+      }
+    }
+    return data
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || failText || '操作失败')
+    if (dryRun) importResult.value = null
+    return null
+  } finally {
+    importLoading.value = false
+  }
+}
+
+// 确认导入（dry_run=0）
+const handleConfirmImport = async () => {
+  if (!importFile.value) return
+  const data = await runImport('导入失败', false)
+  if (data && !data.error) {
+    ElMessage.success(data.message || '导入成功')
+    importDialogVisible.value = false
+    importResult.value = null
+    importFile.value = null
+    // 导入的多为历史月份数据：自动把日期范围切换到导入周期，
+    // 否则列表按最新日期排序，导入的数据会排在很后面看不到
+    const period = data.period || ''
+    const m = period.match(/(\d{4})-(\d{1,2})/)
+    if (m) {
+      const y = Number(m[1])
+      const mo = Number(m[2])
+      const lastDay = new Date(y, mo, 0).getDate()
+      const mm = String(mo).padStart(2, '0')
+      filterForm.value.dateRange = [
+        `${m[1]}-${mm}-01`,
+        `${m[1]}-${mm}-${String(lastDay).padStart(2, '0')}`
+      ]
+    }
+    // 刷新列表与统计
+    pagination.value.currentPage = 1
+    fetchAttendanceRecords()
   }
 }
 
@@ -1894,6 +2153,186 @@ onMounted(() => {
   color: #475569;
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+/* 导入按钮 */
+.btn-import {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-import:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5);
+  color: white;
+}
+
+/* 导入对话框 */
+.import-dialog-wrapper :deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%);
+  padding: 18px 20px;
+  margin-right: 0;
+}
+
+.import-dialog-wrapper :deep(.el-dialog__title) {
+  color: white;
+  font-weight: 600;
+}
+
+.import-dialog-wrapper :deep(.el-dialog__headerbtn .el-dialog__close) {
+  color: white;
+}
+
+.import-dialog-body {
+  padding: 4px 0;
+}
+
+.import-tip {
+  margin-bottom: 16px;
+}
+
+.import-upload {
+  width: 100%;
+}
+
+.import-upload :deep(.el-upload-dragger) {
+  width: 100%;
+  padding: 30px 20px;
+  border: 2px dashed #a7f3d0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  transition: all 0.3s;
+}
+
+.import-upload :deep(.el-upload-dragger:hover) {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+}
+
+.import-upload-icon {
+  font-size: 44px;
+  color: #10b981;
+  margin-bottom: 10px;
+}
+
+.import-upload-text {
+  font-size: 14px;
+  color: #475569;
+}
+
+.import-upload-text em {
+  color: #10b981;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.import-upload-tip {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.import-option {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+}
+
+.import-option-hint {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.import-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.import-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.import-summary .el-tag {
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.import-alert {
+  margin: 0;
+}
+
+.import-monthly {
+  background: rgba(241, 245, 249, 0.7);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.import-monthly-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.import-monthly-title .el-icon {
+  color: #10b981;
+}
+
+.import-monthly-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.import-monthly-item {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.import-monthly-name {
+  font-weight: 600;
+  color: #334155;
+  min-width: 60px;
+}
+
+.import-monthly-detail {
+  color: #64748b;
+}
+
+.import-preview-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.import-preview-table {
+  --el-table-header-bg-color: rgba(240, 253, 244, 0.9);
+}
+
+.import-preview-table .text-missing {
+  color: #f59e0b;
+  font-size: 12px;
 }
 
 /* 动画 */

@@ -93,201 +93,21 @@
       </el-row>
     </div>
 
-    <!-- 请假申请表单 -->
+    <!-- 填写申请按钮 -->
     <div class="form-section animate-fade-in-up delay-300">
-      <el-card class="glass-card application-form" shadow="hover">
-        <template #header>
-          <div class="card-header">
-            <span class="card-title">
-              <el-icon><EditPen /></el-icon>
-              填写请假申请
-            </span>
+      <el-card class="glass-card application-form" shadow="hover" @click="goToForm" style="cursor: pointer;">
+        <div class="form-entry-content">
+          <div class="entry-icon">
+            <el-icon><EditPen /></el-icon>
           </div>
-        </template>
-        <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-          <el-form-item label="请假类型" prop="leave_type">
-            <el-select v-model="form.leave_type" placeholder="请选择请假类型" class="form-select">
-              <el-option label="年假" value="annual_leave" />
-              <el-option label="病假" value="sick_leave" />
-              <el-option label="事假" value="personal_leave" />
-              <el-option label="调休假" value="other" />
-              <el-option label="婚假" value="marriage_leave" />
-              <el-option label="产假" value="maternity_leave" />
-              <el-option label="陪产假" value="paternity_leave" />
-              <el-option label="丧假" value="bereavement_leave" />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="请假时间" required>
-            <el-col :span="11">
-              <el-form-item prop="start_date">
-                <el-date-picker
-                  v-model="form.start_date"
-                  type="date"
-                  placeholder="开始日期"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="2" class="text-center">-</el-col>
-            <el-col :span="11">
-              <el-form-item prop="end_date">
-                <el-date-picker
-                  v-model="form.end_date"
-                  type="date"
-                  placeholder="结束日期"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-
-          <el-form-item label="请假天数" prop="days">
-            <el-input-number
-              v-model="form.days"
-              :min="0.5"
-              :step="0.5"
-              :precision="1"
-              placeholder="请假天数"
-            />
-            <span class="days-hint">天（0.5表示半天）</span>
-          </el-form-item>
-
-          <el-form-item label="紧急情况" prop="emergency_flag">
-            <el-switch
-              v-model="form.emergency_flag"
-              active-text="紧急"
-              inactive-text="正常"
-            />
-            <span class="emergency-hint">紧急情况可先电话/微信口头报备，48小时内补单</span>
-          </el-form-item>
-
-          <el-form-item label="附件上传" prop="attachment">
-            <el-upload
-              class="upload-demo"
-              :action="uploadUrl"
-              :on-success="handleUploadSuccess"
-              :on-error="handleUploadError"
-              :before-upload="beforeUpload"
-              :show-file-list="false"
-            >
-              <el-button type="primary" class="btn-gradient">
-                <el-icon><Upload /></el-icon>
-                上传附件
-              </el-button>
-              <template #tip>
-                <div class="el-upload__tip">
-                  支持上传病假证明、结婚证等附件，文件大小不超过10MB
-                </div>
-              </template>
-            </el-upload>
-            <div v-if="form.attachment_path" class="attachment-info">
-              <el-icon><Document /></el-icon>
-              <span>{{ getFileName(form.attachment_path) }}</span>
-              <el-button type="text" @click="removeAttachment" class="btn-text-danger">删除</el-button>
-            </div>
-          </el-form-item>
-
-          <el-form-item label="审批人" prop="approver_id">
-            <el-select
-              v-model="form.approver_id"
-              placeholder="请选择审批人"
-              filterable
-              clearable
-              remote
-              :remote-method="searchUsers"
-              :loading="loading"
-              style="width: 100%"
-              class="form-select"
-            >
-              <el-option
-                v-for="user in allUsers"
-                :key="user.id"
-                :label="`${user.username} (${user.email}) - ${user.position || ''}`"
-                :value="user.id"
-              />
-            </el-select>
-            <div class="approver-hint">
-              支持搜索用户名、邮箱、姓名、工号
-            </div>
-          </el-form-item>
-
-          <el-form-item label="多级审批">
-            <el-switch
-              v-model="enableMultiLevelApproval"
-              active-text="启用多级审批"
-              inactive-text="单级审批"
-            />
-          </el-form-item>
-
-          <el-form-item v-if="enableMultiLevelApproval" label="审批流程">
-            <div v-for="(level, index) in approvalLevels" :key="index" class="approval-level-item">
-              <el-tag type="info" class="level-tag">第{{ index + 1 }}级审批</el-tag>
-              <el-select
-                v-model="level.approver_id"
-                placeholder="选择审批人"
-                filterable
-                clearable
-                remote
-                :remote-method="searchUsers"
-                :loading="loading"
-                style="width: 280px; margin-left: 10px;"
-                class="form-select"
-              >
-                <el-option
-                  v-for="user in allUsers"
-                  :key="user.id"
-                  :label="`${user.username} (${user.position || ''})`"
-                  :value="user.id"
-                />
-              </el-select>
-              <el-button 
-                v-if="index > 0" 
-                type="danger" 
-                link 
-                @click="removeApprovalLevel(index)"
-                style="margin-left: 10px;"
-                class="btn-text-danger"
-              >
-                删除
-              </el-button>
-            </div>
-            <el-button 
-              v-if="approvalLevels.length < 3" 
-              type="primary" 
-              link 
-              @click="addApprovalLevel"
-              class="btn-link-primary"
-            >
-              + 添加下一级审批
-            </el-button>
-            <div class="approver-hint">
-              最多支持3级审批（如：组长 → 经理 → 总监）
-            </div>
-          </el-form-item>
-
-          <el-form-item label="请假事由" prop="reason">
-            <el-input
-              v-model="form.reason"
-              type="textarea"
-              :rows="4"
-              placeholder="请详细说明请假原因"
-              maxlength="500"
-              show-word-limit
-            />
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="handleSubmit" :loading="loading" class="btn-gradient">
-              提交申请
-            </el-button>
-            <el-button @click="handleReset" class="btn-secondary">重置</el-button>
-          </el-form-item>
-        </el-form>
+          <div class="entry-text">
+            <div class="entry-title">填写请假申请</div>
+            <div class="entry-desc">点击填写请假类型、时间、事由等信息</div>
+          </div>
+          <div class="entry-arrow">
+            <el-icon><ArrowRight /></el-icon>
+          </div>
+        </div>
       </el-card>
     </div>
 
@@ -587,27 +407,13 @@
 import { ref, onMounted, reactive, computed, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft, Refresh, Upload, Document, Calendar, Clock, CircleCheck, CircleClose, EditPen, List, Timer } from '@element-plus/icons-vue'
+import { ArrowLeft, Refresh, Upload, Document, Calendar, Clock, CircleCheck, CircleClose, EditPen, List, Timer, ArrowRight } from '@element-plus/icons-vue'
 import { apiService } from '@/services/api'
 
 const router = useRouter()
 const route = useRoute()
-const formRef = ref()
 const editFormRef = ref()
-const loading = ref(false)
 const tableLoading = ref(false)
-
-// 表单数据
-const form = reactive({
-  leave_type: '',
-  start_date: '',
-  end_date: '',
-  days: 1,
-  reason: '',
-  emergency_flag: false,
-  attachment_path: '',
-  approver_id: ''
-})
 
 // 编辑表单数据
 const editForm = reactive({
@@ -637,23 +443,7 @@ const detailDialog = reactive({
 // 文件上传URL
 const uploadUrl = '/api/upload'
 
-// 表单验证规则
-const rules = {
-  leave_type: [{ required: true, message: '请选择请假类型', trigger: 'change' }],
-  start_date: [{ required: true, message: '请选择开始日期', trigger: 'change' }],
-  end_date: [{ required: true, message: '请选择结束日期', trigger: 'change' }],
-  days: [
-    { required: true, message: '请输入请假天数', trigger: 'blur' },
-    { type: 'number', min: 0.5, message: '请假天数不能小于0.5天', trigger: 'blur' }
-  ],
-  reason: [
-    { required: true, message: '请输入请假事由', trigger: 'blur' },
-    { min: 5, max: 500, message: '请假事由长度在5到500个字符之间', trigger: 'blur' }
-  ],
-  approver_id: [{ required: true, message: '请选择审批人', trigger: 'change' }]
-}
-
-// 编辑表单验证规则（与主表单相同）
+// 编辑表单验证规则
 const editRules = {
   leave_type: [{ required: true, message: '请选择请假类型', trigger: 'change' }],
   start_date: [{ required: true, message: '请选择开始日期', trigger: 'change' }],
@@ -671,29 +461,6 @@ const editRules = {
 
 // 所有用户列表（用于审批人选择）
 const allUsers = ref([])
-
-// 多级审批相关
-const enableMultiLevelApproval = ref(false)
-const approvalLevels = ref([
-  { level: 1, approver_id: null, status: 'pending' }
-])
-
-const addApprovalLevel = () => {
-  if (approvalLevels.value.length < 3) {
-    approvalLevels.value.push({
-      level: approvalLevels.value.length + 1,
-      approver_id: null,
-      status: 'pending'
-    })
-  }
-}
-
-const removeApprovalLevel = (index) => {
-  approvalLevels.value.splice(index, 1)
-  approvalLevels.value.forEach((level, i) => {
-    level.level = i + 1
-  })
-}
 
 // 我的申请记录
 const myApplications = ref([])
@@ -728,32 +495,6 @@ const currentYearDays = computed(() => {
     .reduce((sum, app) => sum + (app.days || Math.ceil(app.total_hours / 8) || 0), 0)
 })
 
-// 搜索用户
-const searchUsers = async (keyword) => {
-  loading.value = true
-  try {
-    if (!keyword.trim()) {
-      await fetchAllUsers()
-      return
-    }
-    
-    const response = await apiService.users.getApprovers()
-    const allUsersList = response.users || []
-    const keywordLower = keyword.toLowerCase()
-    allUsers.value = allUsersList.filter(user => 
-      user.username.toLowerCase().includes(keywordLower) ||
-      user.email.toLowerCase().includes(keywordLower) ||
-      (user.first_name && user.first_name.toLowerCase().includes(keywordLower)) ||
-      (user.last_name && user.last_name.toLowerCase().includes(keywordLower))
-    )
-  } catch (error) {
-    console.error('搜索用户失败:', error)
-    await fetchAllUsers()
-  } finally {
-    loading.value = false
-  }
-}
-
 // 获取所有用户列表
 const fetchAllUsers = async () => {
   try {
@@ -766,15 +507,6 @@ const fetchAllUsers = async () => {
 }
 
 // 文件上传相关函数
-const handleUploadSuccess = (response, file) => {
-  if (response && response.file_path) {
-    form.attachment_path = response.file_path
-    ElMessage.success('附件上传成功')
-  } else {
-    ElMessage.error('上传失败')
-  }
-}
-
 const handleUploadError = (error, file) => {
   console.error('上传失败:', error)
   ElMessage.error('附件上传失败')
@@ -789,12 +521,13 @@ const beforeUpload = (file) => {
   return true
 }
 
-const removeAttachment = () => {
-  form.attachment_path = ''
-}
-
 const getFileName = (path) => {
   return path.split('/').pop()
+}
+
+// 跳转到填写申请页面
+const goToForm = () => {
+  router.push('/attendance/leave-application-form')
 }
 
 // 获取我的请假申请
@@ -991,46 +724,6 @@ const handleEditUploadSuccess = (response) => {
     editForm.attachment_path = response.file_path
     ElMessage.success('附件上传成功')
   }
-}
-
-// 提交申请
-const handleSubmit = async () => {
-  if (!formRef.value) return
-  
-  await formRef.value.validate(async (valid) => {
-    if (!valid) return
-    
-    loading.value = true
-    try {
-      const submitData = { ...form }
-      
-      if (enableMultiLevelApproval.value && approvalLevels.value.length > 0) {
-        submitData.approval_levels = approvalLevels.value.filter(level => level.approver_id)
-        if (submitData.approval_levels.length > 0) {
-          submitData.approver_id = submitData.approval_levels[0].approver_id
-        }
-      }
-      
-      const response = await apiService.attendance.createLeaveApplication(submitData)
-      ElMessage.success('请假申请提交成功')
-      handleReset()
-      fetchMyApplications()
-    } catch (error) {
-      ElMessage.error(error.response?.data?.error || '提交失败')
-    } finally {
-      loading.value = false
-    }
-  })
-}
-
-// 重置表单
-const handleReset = () => {
-  formRef.value?.resetFields()
-  form.days = 1
-  enableMultiLevelApproval.value = false
-  approvalLevels.value = [
-    { level: 1, approver_id: null, status: 'pending' }
-  ]
 }
 
 onMounted(() => {
@@ -1394,6 +1087,63 @@ onMounted(() => {
 /* 表单区域 */
 .form-section {
   margin-bottom: 24px;
+}
+
+/* 表单入口按钮样式 */
+.form-entry-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 4px;
+}
+
+.entry-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  box-shadow: 0 8px 20px -4px rgba(56, 189, 248, 0.4);
+  flex-shrink: 0;
+}
+
+.entry-text {
+  flex: 1;
+}
+
+.entry-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.entry-desc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.entry-arrow {
+  width: 40px;
+  height: 40px;
+  background: rgba(56, 189, 248, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0ea5e9;
+  font-size: 20px;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.application-form:hover .entry-arrow {
+  background: rgba(56, 189, 248, 0.2);
+  transform: translateX(4px);
 }
 
 .card-header {

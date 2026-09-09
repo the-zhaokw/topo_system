@@ -86,7 +86,6 @@
         @row-dblclick="handleRowDoubleClick"
       >
         <el-table-column type="selection" width="45" />
-        <el-table-column prop="identifier" label="标识符" width="120" />
         <el-table-column prop="title" label="标题" min-width="200" show-overflow-tooltip />
         <el-table-column prop="priority" label="优先级" width="80">
           <template #default="{ row }">
@@ -126,11 +125,19 @@
             {{ formatDate(row.updated_at) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click="handleView(row)">查看</el-button>
             <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
             <el-button type="success" link size="small" @click="handleQuickExecute(row)">执行</el-button>
+            <el-button
+              v-if="!row.active_review && canInitiateReview(row)"
+              type="success"
+              link
+              size="small"
+              @click="openInitiateReviewDialog(row)"
+            >发起评审</el-button>
+            <el-tag v-else-if="row.active_review" type="warning" size="small">评审中</el-tag>
             <el-button type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -438,6 +445,31 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+
+    <!-- 发起评审对话框 -->
+    <el-dialog v-model="showInitiateReviewDialog" title="发起用例评审" width="550px">
+      <el-form :model="initiateReviewForm" label-width="100px">
+        <el-form-item label="评审用例">
+          <span class="initiate-case-name">{{ reviewCase?.title }}</span>
+        </el-form-item>
+        <el-form-item label="评审人员" required>
+          <UserSelector v-model="initiateReviewForm.reviewers" :projectId="suiteInfo?.project_id" :multiple="true" placeholder="按顺序选择评审人员" />
+          <div class="form-tip">评审人员按选择顺序逐级审批，全部通过后用例变为"已批准"；任一人驳回则退回设计。</div>
+        </el-form-item>
+        <el-form-item label="截止时间">
+          <el-date-picker v-model="initiateReviewForm.deadline" type="datetime" placeholder="选择截止时间" style="width: 100%;" />
+        </el-form-item>
+        <el-form-item label="发起说明">
+          <el-input v-model="initiateReviewForm.comment" type="textarea" :rows="3" placeholder="请输入评审说明（可选）" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showInitiateReviewDialog = false">取消</el-button>
+        <el-button type="success" @click="handleInitiateReview" :loading="submittingReview">
+          发起评审
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -449,9 +481,11 @@ import { Plus, ArrowLeft, Delete, Download, Upload, UploadFilled, Top, Bottom, C
 import { apiService } from '@/services/api'
 import UserSelector from '@/components/common/UserSelector.vue'
 import { parseUTCDate } from '@/utils/dateUtils'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 
 const suiteId = ref(null)
 const suiteInfo = ref(null)
@@ -490,6 +524,59 @@ const linkForm = reactive({
 
 const availableSuites = ref([])
 const availableRequirements = ref([])
+
+// 用例评审流程
+const showInitiateReviewDialog = ref(false)
+const submittingReview = ref(false)
+const reviewCase = ref(null)
+const initiateReviewForm = reactive({
+  reviewers: [],
+  deadline: null,
+  comment: ''
+})
+
+// 是否可以发起评审：无进行中评审，且为管理员/经理或用例创建者/设计人
+const canInitiateReview = (row) => {
+  const user = userStore.currentUser
+  if (!user || !row || row.active_review) return false
+  if (user.is_super_admin) return true
+  if (['admin', 'manager', 'project_manager'].includes(user.role)) return true
+  return row.created_by === user.id || row.designer_id === user.id
+}
+
+// 打开发起评审对话框
+const openInitiateReviewDialog = (row) => {
+  reviewCase.value = row
+  initiateReviewForm.reviewers = []
+  initiateReviewForm.deadline = null
+  initiateReviewForm.comment = ''
+  showInitiateReviewDialog.value = true
+}
+
+// 发起评审
+const handleInitiateReview = async () => {
+  if (!reviewCase.value) return
+  if (!initiateReviewForm.reviewers || initiateReviewForm.reviewers.length === 0) {
+    ElMessage.warning('请至少选择一名评审人员')
+    return
+  }
+  try {
+    submittingReview.value = true
+    const response = await apiService.tests.initiateCaseReview(reviewCase.value.id, {
+      reviewers: initiateReviewForm.reviewers,
+      deadline: initiateReviewForm.deadline,
+      comment: initiateReviewForm.comment
+    })
+    ElMessage.success(response?.message || '评审已发起')
+    showInitiateReviewDialog.value = false
+    await loadCases()
+  } catch (error) {
+    console.error('发起评审失败:', error)
+    ElMessage.error(error.response?.data?.error || '发起评审失败')
+  } finally {
+    submittingReview.value = false
+  }
+}
 
 const stepTemplates = ref([
   { name: '登录测试', description: '标准登录流程步骤', steps: [{ action: '打开登录页面', expected_result: '登录页面正常显示' }, { action: '输入用户名密码', expected_result: '输入框正常显示输入内容' }, { action: '点击登录按钮', expected_result: '登录成功，跳转到首页' }] },
@@ -577,7 +664,7 @@ const loadAvailableSuites = async () => {
   if (!suiteInfo.value?.project_id) return
   try {
     const response = await apiService.tests.getSuites(suiteInfo.value.project_id)
-    availableSuites.value = response?.data || []
+    availableSuites.value = Array.isArray(response) ? response : (response?.data || [])
   } catch (error) {
     console.error('加载测试集列表失败:', error)
   }
@@ -619,7 +706,7 @@ const handleBack = () => {
 }
 
 const handleView = (row) => {
-  router.push(`/projects/${suiteInfo.value.project_id}/tests/cases/${suiteId.value}/${row.id}`)
+  router.push(`/projects/${suiteInfo.value.project_id}/tests/suites/${suiteId.value}/cases/${row.id}`)
 }
 
 const handleRowDoubleClick = (row) => {
@@ -627,26 +714,7 @@ const handleRowDoubleClick = (row) => {
 }
 
 const handleEdit = (row) => {
-  editingCase.value = row
-  activeTab.value = 'basic'
-  Object.assign(caseForm, {
-    title: row.title,
-    description: row.description,
-    priority: row.priority,
-    type: row.type,
-    status: row.status,
-    precondition: row.precondition,
-    test_data: row.test_data,
-    environment: row.environment,
-    is_automated: row.is_automated,
-    tags: row.tags,
-    estimated_duration: row.estimated_duration,
-    designer_id: row.designer_id,
-    reviewer_id: row.reviewer_id,
-    steps: row.steps?.length > 0 ? row.steps.map(s => ({ action: s.action, expected_result: s.expected_result })) : [{ action: '', expected_result: '' }]
-  })
-  loadLinkedRequirements(row.id)
-  showCreateDialog.value = true
+  router.push(`/projects/${suiteInfo.value.project_id}/tests/suites/${suiteId.value}/cases/${row.id}/edit`)
 }
 
 const handleDelete = async (row) => {
@@ -671,10 +739,10 @@ const handleQuickExecute = (row) => {
 }
 
 const handleCreateCase = () => {
-  editingCase.value = null
-  activeTab.value = 'basic'
-  resetCaseForm()
-  showCreateDialog.value = true
+  const projectId = suiteInfo.value?.project_id
+  if (projectId && suiteId.value) {
+    router.push(`/projects/${projectId}/tests/suites/${suiteId.value}/cases/new`)
+  }
 }
 
 const resetCaseForm = () => {
@@ -1236,5 +1304,17 @@ onMounted(async () => {
   .el-table {
     font-size: 10px !important;
   }
+}
+
+.initiate-case-name {
+  color: #303133;
+  font-weight: 500;
+}
+
+.form-tip {
+  font-size: 12px;
+  color: #909399;
+  line-height: 1.5;
+  margin-top: 4px;
 }
 </style>

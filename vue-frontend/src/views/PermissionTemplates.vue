@@ -204,7 +204,6 @@
                 size="small"
                 link
                 v-permission="'template:edit'"
-                :disabled="row.is_builtin"
                 @click="openEditDialog(row)"
               >
                 <el-icon><Edit /></el-icon>

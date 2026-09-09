@@ -63,6 +63,9 @@
           <el-menu-item index="/attendance/records">
             <span>考勤记录</span>
           </el-menu-item>
+          <el-menu-item v-if="currentUser && canViewEmployeeAttendance" index="/attendance/employee-records">
+            <span>员工考勤记录</span>
+          </el-menu-item>
           <el-menu-item index="/attendance/leave-application">
             <span>请假申请</span>
           </el-menu-item>
@@ -205,6 +208,18 @@ const hasModule = (moduleCode) => {
 
 const hasAttendanceManagePermission = computed(() => {
   return currentUser.value?.role === 'admin' || currentUser.value?.role === 'manager' || currentUser.value?.role === 'project_manager' || currentUser.value?.role === 'hr' || currentUser.value?.role === 'department_manager'
+})
+
+// 员工考勤记录可见权限：超级管理员 / 总经理 / 人事经理 / 人事专员
+const canViewEmployeeAttendance = computed(() => {
+  const u = currentUser.value
+  if (!u) return false
+  if (u.is_super_admin || u.role === 'admin') return true
+  const role = u.role || ''
+  const position = u.position || ''
+  if (role === 'division_leader' || role === 'general_manager' || position.includes('总经理')) return true
+  if (role === 'hr' || position.includes('人事')) return true
+  return false
 })
 
 const hasMaterialManagePermission = computed(() => {
