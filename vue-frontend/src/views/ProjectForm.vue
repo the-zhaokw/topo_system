@@ -334,11 +334,16 @@ const removeVersion = (index) => {
   versions.value.splice(index, 1)
 }
 
-// 加载用户列表
+// 加载用户列表（全量，用于下拉选择器）
 const loadUsers = async () => {
   try {
-    const response = await apiService.users.getList()
-    users.value = response.users || response || []
+    let response = await apiService.users.getList({ per_page: 500 })
+    let list = response.users || []
+    if ((response.total || 0) > list.length) {
+      response = await apiService.users.getList({ per_page: response.total })
+      list = response.users || []
+    }
+    users.value = list
   } catch (error) {
     console.error('加载用户列表失败:', error)
     ElMessage.error('加载用户列表失败')

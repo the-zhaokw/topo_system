@@ -139,7 +139,7 @@ const handleRemoteSearch = async (query) => {
     const response = await apiService.users.getList({
       search: query,
       project_id: props.projectId,
-      per_page: 20
+      per_page: 100
     })
     const users = response?.users || response?.data || []
     userList.value = users.filter(u => !props.excludeUserIds.includes(u.id))
@@ -153,12 +153,17 @@ const handleRemoteSearch = async (query) => {
 const loadUsers = async () => {
   loading.value = true
   try {
-    const params = { per_page: 50 }
+    let params = { per_page: 500 }
     if (props.projectId) {
       params.project_id = props.projectId
     }
-    const response = await apiService.users.getList(params)
-    const users = response?.users || response?.data || []
+    let response = await apiService.users.getList(params)
+    let users = response?.users || response?.data || []
+    if ((response?.total || 0) > users.length) {
+      params.per_page = response.total
+      response = await apiService.users.getList(params)
+      users = response?.users || response?.data || []
+    }
     userList.value = users.filter(u => !props.excludeUserIds.includes(u.id))
   } catch (error) {
     console.error('加载用户列表失败:', error)

@@ -763,11 +763,16 @@ const delayedProjectsCount = computed(() => {
   return filteredProjects.value.filter(p => p.progress < 50 && p.status === 'active').length
 })
 
-// 获取所有用户列表
+// 获取所有用户列表（全量，用于下拉选择器）
 const fetchAllUsers = async () => {
   try {
-    const response = await apiService.users.getList()
-    allUsers.value = response.users || response || []
+    let response = await apiService.users.getList({ per_page: 500 })
+    let list = response.users || []
+    if ((response.total || 0) > list.length) {
+      response = await apiService.users.getList({ per_page: response.total })
+      list = response.users || []
+    }
+    allUsers.value = list
   } catch (error) {
     console.error('获取用户列表失败:', error)
     ElMessage.error('获取用户列表失败: ' + (error.message || '未知错误'))

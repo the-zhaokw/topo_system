@@ -750,11 +750,16 @@ const fetchProjects = async () => {
   }
 }
 
-// 获取用户列表
+// 获取用户列表（全量，用于下拉选择器）
 const fetchUsers = async () => {
   try {
-    const response = await api.get('/users')
-    users.value = response.users || []
+    let response = await apiService.users.getList({ per_page: 500 })
+    let list = response.users || []
+    if ((response.total || 0) > list.length) {
+      response = await apiService.users.getList({ per_page: response.total })
+      list = response.users || []
+    }
+    users.value = list
   } catch (error) {
     console.error('获取用户列表失败:', error)
     users.value = []

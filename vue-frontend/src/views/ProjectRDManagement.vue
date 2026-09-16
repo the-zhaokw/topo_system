@@ -681,8 +681,12 @@ async function loadProjects() {
 }
 async function loadUsers() {
   try {
-    const res = await apiService.users.getList()
-    const list = res.users || res.data || res.items || res || []
+    let res = await apiService.users.getList({ per_page: 500 })
+    let list = res.users || []
+    if ((res.total || 0) > list.length) {
+      res = await apiService.users.getList({ per_page: res.total })
+      list = res.users || []
+    }
     userOptions.value = list.map((u) => ({
       id: u.id,
       name: (u.first_name || '') + (u.last_name || '') || u.username || u.name || `#${u.id}`,
