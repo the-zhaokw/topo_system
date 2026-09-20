@@ -5,7 +5,6 @@
       <h2>{{ contract.contract_no }} - {{ contract.title }}</h2>
       <div class="header-actions">
         <el-button type="primary" @click="handleEdit">编辑</el-button>
-        <el-button type="success" @click="handleApprove" v-if="canApprove">审批</el-button>
       </div>
     </div>
 
@@ -166,37 +165,122 @@
         </el-table>
       </el-tab-pane>
 
-      <el-tab-pane label="审批记录" name="approval">
-        <el-table :data="approvals" stripe v-loading="approvalLoading">
-          <el-table-column prop="approval_level" label="审批级别" width="100" />
-          <el-table-column prop="approver_role" label="审批角色" width="120" />
-          <el-table-column prop="status" label="状态" width="100">
-            <template #default="{ row }">
-              <el-tag :type="getApprovalStatusTag(row.status)">{{ getApprovalStatusName(row.status) }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="comments" label="审批意见" show-overflow-tooltip />
-          <el-table-column prop="approval_date" label="审批日期" width="180">
-            <template #default="{ row }">{{ formatDate(row.approval_date) }}</template>
-          </el-table-column>
-        </el-table>
-        <div class="tab-header" style="margin-top: 20px">
-          <el-button type="primary" @click="handleApprove">提交审批</el-button>
+      <el-tab-pane label="审批流程" name="approval">
+        <div class="tab-header">
+          <el-button
+            v-if="!activeReview && canInitiateReview"
+            type="success"
+            @click="openInitiateReviewDialog"
+          >
+            <el-icon><Promotion /></el-icon>
+            发起审批
+          </el-button>
         </div>
+
+        <div v-if="approvalLoading" v-loading="true" style="min-height: 200px"></div>
+        <template v-else>
+          <el-empty
+            v-if="!contractReviews.length"
+            description="暂无审批流程"
+            :image-size="60"
+          />
+          <div
+            v-for="review in contractReviews"
+            :key="review.id"
+            class="review-block"
+            :class="{ 'review-active': review.status === 'pending' }"
+          >
+            <div class="review-header">
+              <el-tag :type="getReviewStatusType(review.status)" size="small">
+                {{ review.status_text }}
+              </el-tag>
+              <span class="review-meta">
+                发起人：{{ review.initiator_name }} ｜ {{ formatDate(review.created_at) }}
+                <template v-if="review.deadline"> ｜ 截止：{{ formatDate(review.deadline) }}</template>
+              </span>
+              <el-button
+                v-if="review.status === 'pending' && canCancelReview(review)"
+                type="danger"
+                link
+                size="small"
+                @click="handleCancelReview(review)"
+              >撤销审批</el-button>
+            </div>
+            <div v-if="review.comment" class="review-comment">发起说明：{{ review.comment }}</div>
+
+            <!-- 审批节点链 -->
+            <div class="review-steps">
+              <div
+                v-for="step in review.steps"
+                :key="step.id"
+                class="review-step"
+                :class="getStepClass(review, step)"
+              >
+                <div class="step-indicator">
+                  <el-icon v-if="step.status === 'approved'" class="icon-approved"><CircleCheckFilled /></el-icon>
+                  <el-icon v-else-if="step.status === 'rejected'" class="icon-rejected"><CircleCloseFilled /></el-icon>
+                  <el-icon v-else-if="review.status === 'pending' && review.current_step === step.step_order" class="icon-current"><Loading /></el-icon>
+                  <el-icon v-else class="icon-waiting"><Clock /></el-icon>
+                </div>
+                <div class="step-body">
+                  <div class="step-title">
+                    <span class="step-name">{{ step.name }}</span>
+                    <el-tag size="small" :type="getStepStatusType(step.status)">{{ step.status_text }}</el-tag>
+                    <span class="step-reviewer">审批人：{{ step.reviewer_name }}</span>
+                  </div>
+                  <div v-if="step.comment" class="step-comment">{{ step.comment }}</div>
+                  <div v-if="step.acted_at" class="step-time">处理时间：{{ formatDate(step.acted_at) }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 当前节点审批人操作区 -->
+            <div v-if="review.status === 'pending' && canActReview(review)" class="review-actions">
+              <el-input
+                v-model="reviewActionComments[review.id]"
+                type="textarea"
+                :rows="2"
+                placeholder="请输入审批意见（通过时可选，驳回时必填）"
+              />
+              <div class="review-action-btns">
+                <el-button type="success" size="small" :loading="reviewActing" @click="handleApproveReview(review)">
+                  <el-icon><Check /></el-icon>
+                  通过
+                </el-button>
+                <el-button type="danger" size="small" :loading="reviewActing" @click="handleRejectReview(review)">
+                  <el-icon><Close /></el-icon>
+                  驳回
+                </el-button>
+              </div>
+            </div>
+          </div>
+        </template>
       </el-tab-pane>
 
       <el-tab-pane label="附件" name="attachments">
         <div class="tab-header">
-          <el-button type="primary" @click="showAttachmentDialog = true">上传附件</el-button>
+          <el-button type="primary" @click="openAttachmentDialog">上传附件</el-button>
         </div>
         <el-table :data="attachments" stripe v-loading="attachmentLoading">
           <el-table-column prop="file_name" label="文件名" show-overflow-tooltip />
-          <el-table-column prop="file_type" label="文件类型" width="100" />
-          <el-table-column prop="attachment_type" label="附件类型" width="120" />
+          <el-table-column label="文件大小" width="120">
+            <template #default="{ row }">{{ formatFileSize(row.file_size) }}</template>
+          </el-table-column>
+          <el-table-column prop="file_type" label="文件类型" width="160" show-overflow-tooltip />
+          <el-table-column prop="attachment_type" label="附件类型" width="120">
+            <template #default="{ row }">{{ getAttachmentTypeName(row.attachment_type) }}</template>
+          </el-table-column>
           <el-table-column prop="description" label="描述" show-overflow-tooltip />
           <el-table-column prop="uploaded_by" label="上传人" width="100" />
           <el-table-column prop="created_at" label="上传时间" width="180">
             <template #default="{ row }">{{ formatDate(row.created_at) }}</template>
+          </el-table-column>
+          <el-table-column label="操作" width="220" fixed="right">
+            <template #default="{ row }">
+              <el-button link type="primary" @click="previewAttachment(row)">在线查看</el-button>
+              <el-button link type="success" @click="downloadAttachment(row)">下载</el-button>
+              <el-button link type="danger" @click="deleteAttachment(row)">删除</el-button>
+            </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
@@ -318,10 +402,25 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showAttachmentDialog" title="上传附件" width="500px">
+    <el-dialog v-model="showAttachmentDialog" title="上传附件" width="560px" @close="resetAttachmentForm">
       <el-form :model="attachmentForm" label-width="100px">
-        <el-form-item label="文件名">
-          <el-input v-model="attachmentForm.file_name" />
+        <el-form-item label="选择文件" required>
+          <el-upload
+            ref="attachmentUploadRef"
+            :auto-upload="false"
+            :limit="1"
+            :on-change="handleAttachmentFileChange"
+            :on-exceed="handleAttachmentExceed"
+            :on-remove="handleAttachmentRemove"
+            accept="*/*"
+            drag
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
+            <template #tip>
+              <div class="el-upload__tip">支持任意类型文件，单个文件最大 50MB</div>
+            </template>
+          </el-upload>
         </el-form-item>
         <el-form-item label="附件类型">
           <el-select v-model="attachmentForm.attachment_type" style="width: 100%">
@@ -338,45 +437,126 @@
       </el-form>
       <template #footer>
         <el-button @click="showAttachmentDialog = false">取消</el-button>
-        <el-button type="primary" @click="submitAttachment">确定</el-button>
+        <el-button type="primary" :loading="attachmentSubmitting" @click="submitAttachment">上传</el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showApproveDialog" title="合同审批" width="500px">
-      <el-form :model="approveForm" label-width="100px">
-        <el-form-item label="审批决定">
-          <el-radio-group v-model="approveForm.status">
-            <el-radio label="approved">批准</el-radio>
-            <el-radio label="rejected">拒绝</el-radio>
-          </el-radio-group>
+    <el-dialog v-model="showInitiateDialog" title="发起合同审批" width="550px">
+      <el-form :model="initiateForm" label-width="100px">
+        <el-form-item label="审批人员" required>
+          <el-select
+            v-model="initiateForm.reviewers"
+            multiple
+            filterable
+            placeholder="选择审批人员，按选择顺序逐级审批"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="u in availableReviewers"
+              :key="u.id"
+              :label="u.username"
+              :value="u.id"
+            />
+          </el-select>
+          <div class="form-tip">按选择顺序逐级审批，全部通过后合同变为"执行中"；任一人驳回则退回。</div>
         </el-form-item>
-        <el-form-item label="审批意见">
-          <el-input v-model="approveForm.comments" type="textarea" :rows="4" />
+        <el-form-item label="截止时间">
+          <el-date-picker
+            v-model="initiateForm.deadline"
+            type="datetime"
+            placeholder="可选"
+            style="width: 100%"
+          />
+        </el-form-item>
+        <el-form-item label="发起说明">
+          <el-input v-model="initiateForm.comment" type="textarea" :rows="3" placeholder="可选" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showApproveDialog = false">取消</el-button>
-        <el-button type="primary" @click="submitApproval">提交</el-button>
+        <el-button @click="showInitiateDialog = false">取消</el-button>
+        <el-button type="primary" :loading="initiatingReview" @click="handleInitiateReview">发起审批</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  Promotion, CircleCheckFilled, CircleCloseFilled, Loading, Clock, Check, Close
+} from '@element-plus/icons-vue'
+import api from '@/services/api'
 import { parseUTCDate } from '@/utils/dateUtils'
+import { useUserStore } from '@/stores/user'
+import { useAllUsers } from '@/composables/useAllUsers'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
+const { allUsers, fetchAll } = useAllUsers()
 
 const contractId = route.params.id
 const activeTab = ref('basic')
 
 const contract = ref({})
-const approvals = ref([])
+const contractReviews = ref([])
+const activeReview = computed(() => contractReviews.value.find(r => r.status === 'pending') || null)
+const reviewActionComments = ref({})
+const reviewActing = ref(false)
+const initiatingReview = ref(false)
+
+const canApprove = computed(() => {
+  const u = userStore.currentUser
+  if (!u) return false
+  if (u.is_super_admin) return true
+  return u.position === '管理员' || u.position?.includes('经理')
+})
+
+const canInitiateReview = computed(() => {
+  const u = userStore.currentUser
+  if (!u) return false
+  if (contract.value.status === 'active' || contract.value.status === 'expired' || contract.value.status === 'terminated') return false
+  return u.is_super_admin || canApprove.value || contract.value.created_by === u.id
+})
+
+const availableReviewers = computed(() => allUsers.value)
+
+const canCancelReview = (review) => {
+  const u = userStore.currentUser
+  if (!u || !review) return false
+  if (u.is_super_admin || canApprove.value) return true
+  return review.initiator_id === u.id
+}
+
+const canActReview = (review) => {
+  const u = userStore.currentUser
+  if (!u || !review || review.status !== 'pending') return false
+  if (u.is_super_admin || canApprove.value) return true
+  const currentStep = (review.steps || []).find(
+    s => s.step_order === review.current_step && s.status === 'pending'
+  )
+  return currentStep && currentStep.reviewer_id === u.id
+}
+
+const getReviewStatusType = (status) => {
+  const map = { pending: 'warning', approved: 'success', rejected: 'danger', cancelled: 'info' }
+  return map[status] || 'info'
+}
+
+const getStepStatusType = (status) => {
+  const map = { pending: 'warning', approved: 'success', rejected: 'danger' }
+  return map[status] || 'info'
+}
+
+const getStepClass = (review, step) => {
+  if (step.status === 'approved') return 'step-approved'
+  if (step.status === 'rejected') return 'step-rejected'
+  if (review.status === 'pending' && review.current_step === step.step_order) return 'step-current'
+  return 'step-waiting'
+}
+
 const deliveries = ref([])
 const changes = ref([])
 const risks = ref([])
@@ -395,7 +575,10 @@ const showPaymentDialog = ref(false)
 const showChangeDialog = ref(false)
 const showRiskDialog = ref(false)
 const showAttachmentDialog = ref(false)
-const showApproveDialog = ref(false)
+const showInitiateDialog = ref(false)
+const attachmentSubmitting = ref(false)
+const attachmentUploadRef = ref(null)
+const attachmentSelectedFile = ref(null)
 
 const deliveryForm = reactive({
   site_name: '',
@@ -430,17 +613,15 @@ const riskForm = reactive({
 })
 
 const attachmentForm = reactive({
-  file_name: '',
-  attachment_type: '',
+  attachment_type: 'other',
   description: ''
 })
 
-const approveForm = reactive({
-  status: 'approved',
-  comments: ''
+const initiateForm = reactive({
+  reviewers: [],
+  deadline: null,
+  comment: ''
 })
-
-const canApprove = ref(true)
 
 const typeMap = {
   equipment_sales: '设备销售合同',
@@ -473,9 +654,32 @@ const riskMap = {
   critical: '重大风险'
 }
 
+const attachmentTypeMap = {
+  contract_body: '合同正文',
+  technical_attachment: '技术附件',
+  business_attachment: '商务附件',
+  acceptance_report: '验收报告',
+  other: '其他'
+}
+
 const getTypeName = (type) => typeMap[type] || type
 const getStatusName = (status) => statusMap[status] || status
 const getRiskName = (risk) => riskMap[risk] || risk
+const getAttachmentTypeName = (type) => attachmentTypeMap[type] || type || '其他'
+
+// 文件大小友好展示
+const formatFileSize = (bytes) => {
+  if (!bytes && bytes !== 0) return '-'
+  if (bytes === 0) return '0 B'
+  const units = ['B', 'KB', 'MB', 'GB']
+  let i = 0
+  let size = Number(bytes)
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024
+    i++
+  }
+  return `${size.toFixed(i === 0 ? 0 : 1)} ${units[i]}`
+}
 
 const getTypeTag = (type) => ''
 const getStatusTag = (status) => {
@@ -536,8 +740,8 @@ const formatDate = (date) => {
 
 const fetchContract = async () => {
   try {
-    const response = await axios.get(`/api/contracts/${contractId}`)
-    contract.value = response.data.contract
+    const response = await api.get(`/contracts/${contractId}`)
+    contract.value = response.contract
   } catch (error) {
     ElMessage.error('获取合同详情失败')
   }
@@ -546,8 +750,8 @@ const fetchContract = async () => {
 const fetchDeliveries = async () => {
   deliveryLoading.value = true
   try {
-    const response = await axios.get(`/api/contracts/${contractId}/deliveries`)
-    deliveries.value = response.data.deliveries
+    const response = await api.get(`/contracts/${contractId}/deliveries`)
+    deliveries.value = response.deliveries
   } catch (error) {
     ElMessage.error('获取交付记录失败')
   } finally {
@@ -558,8 +762,8 @@ const fetchDeliveries = async () => {
 const fetchPayments = async () => {
   paymentLoading.value = true
   try {
-    const response = await axios.get(`/api/contracts/${contractId}/payments`)
-    payments.value = response.data.payments
+    const response = await api.get(`/contracts/${contractId}/payments`)
+    payments.value = response.payments
   } catch (error) {
     ElMessage.error('获取付款计划失败')
   } finally {
@@ -570,8 +774,8 @@ const fetchPayments = async () => {
 const fetchChanges = async () => {
   changeLoading.value = true
   try {
-    const response = await axios.get(`/api/contracts/${contractId}/changes`)
-    changes.value = response.data.changes
+    const response = await api.get(`/contracts/${contractId}/changes`)
+    changes.value = response.changes
   } catch (error) {
     ElMessage.error('获取变更记录失败')
   } finally {
@@ -582,8 +786,8 @@ const fetchChanges = async () => {
 const fetchRisks = async () => {
   riskLoading.value = true
   try {
-    const response = await axios.get(`/api/contracts/${contractId}/risks`)
-    risks.value = response.data.risks
+    const response = await api.get(`/contracts/${contractId}/risks`)
+    risks.value = response.risks
   } catch (error) {
     ElMessage.error('获取风险记录失败')
   } finally {
@@ -591,23 +795,129 @@ const fetchRisks = async () => {
   }
 }
 
-const fetchApprovals = async () => {
+const fetchReviews = async () => {
   approvalLoading.value = true
   try {
-    const response = await axios.get(`/api/contracts/${contractId}/approvals`)
-    approvals.value = response.data.approvals
+    const response = await api.get(`/contracts/${contractId}/reviews`)
+    contractReviews.value = response.reviews || []
   } catch (error) {
-    ElMessage.error('获取审批记录失败')
+    console.error('获取审批流程失败:', error)
   } finally {
     approvalLoading.value = false
+  }
+}
+
+const openInitiateReviewDialog = () => {
+  initiateForm.reviewers = []
+  initiateForm.deadline = null
+  initiateForm.comment = ''
+  showInitiateDialog.value = true
+}
+
+const handleInitiateReview = async () => {
+  if (!initiateForm.reviewers.length) {
+    ElMessage.warning('请至少选择一名审批人')
+    return
+  }
+  initiatingReview.value = true
+  try {
+    const response = await api.post(`/contracts/${contractId}/reviews`, {
+      reviewers: initiateForm.reviewers,
+      deadline: initiateForm.deadline,
+      comment: initiateForm.comment
+    })
+    if (response.success) {
+      ElMessage.success(response.message || '审批流程已发起')
+      showInitiateDialog.value = false
+      await fetchContract()
+      await fetchReviews()
+    } else {
+      ElMessage.error(response.error || '发起审批失败')
+    }
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '发起审批失败')
+  } finally {
+    initiatingReview.value = false
+  }
+}
+
+const handleApproveReview = async (review) => {
+  try {
+    await ElMessageBox.confirm('确认通过当前审批节点？', '审批确认', {
+      confirmButtonText: '确定通过',
+      cancelButtonText: '取消',
+      type: 'success'
+    })
+  } catch (e) {
+    return
+  }
+  reviewActing.value = true
+  try {
+    await api.post(`/contracts/reviews/${review.id}/approve`, {
+      comment: reviewActionComments.value[review.id] || ''
+    })
+    ElMessage.success('审批已通过')
+    reviewActionComments.value = { ...reviewActionComments.value, [review.id]: '' }
+    await Promise.all([fetchContract(), fetchReviews()])
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '审批通过失败')
+  } finally {
+    reviewActing.value = false
+  }
+}
+
+const handleRejectReview = async (review) => {
+  let reason = reviewActionComments.value[review.id] || ''
+  try {
+    const { value } = await ElMessageBox.prompt('请填写驳回原因（必填）', '驳回审批', {
+      confirmButtonText: '确定驳回',
+      cancelButtonText: '取消',
+      inputType: 'textarea',
+      inputPlaceholder: '请说明驳回原因，将通知发起人',
+      inputValue: reason,
+      inputValidator: (val) => (val && val.trim()) ? true : '驳回原因不能为空'
+    })
+    reason = value
+  } catch (e) {
+    return
+  }
+  reviewActing.value = true
+  try {
+    await api.post(`/contracts/reviews/${review.id}/reject`, { comment: reason })
+    ElMessage.success('已驳回')
+    reviewActionComments.value = { ...reviewActionComments.value, [review.id]: '' }
+    await Promise.all([fetchContract(), fetchReviews()])
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '驳回失败')
+  } finally {
+    reviewActing.value = false
+  }
+}
+
+const handleCancelReview = async (review) => {
+  try {
+    await ElMessageBox.confirm('撤销后审批流程终止，合同退回草稿状态。确认撤销？', '撤销审批', {
+      confirmButtonText: '确定撤销',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+  } catch (e) {
+    return
+  }
+  try {
+    await api.post(`/contracts/reviews/${review.id}/cancel`)
+    ElMessage.success('审批已撤销')
+    await Promise.all([fetchContract(), fetchReviews()])
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '撤销失败')
   }
 }
 
 const fetchAttachments = async () => {
   attachmentLoading.value = true
   try {
-    const response = await axios.get(`/api/contracts/${contractId}/attachments`)
-    attachments.value = response.data.attachments
+    const response = await api.get(`/contracts/${contractId}/attachments`)
+    attachments.value = response.attachments
   } catch (error) {
     ElMessage.error('获取附件失败')
   } finally {
@@ -620,28 +930,12 @@ const goBack = () => {
 }
 
 const handleEdit = () => {
-  router.push(`/contracts/edit/${contractId}`)
-}
-
-const handleApprove = () => {
-  showApproveDialog.value = true
-}
-
-const submitApproval = async () => {
-  try {
-    await axios.post(`/api/contracts/${contractId}/approvals`, approveForm)
-    ElMessage.success('审批提交成功')
-    showApproveDialog.value = false
-    fetchApprovals()
-    fetchContract()
-  } catch (error) {
-    ElMessage.error('审批提交失败')
-  }
+  router.push(`/contracts/list?edit=${contractId}`)
 }
 
 const submitDelivery = async () => {
   try {
-    await axios.post(`/api/contracts/${contractId}/deliveries`, deliveryForm)
+    await api.post(`/contracts/${contractId}/deliveries`, deliveryForm)
     ElMessage.success('添加成功')
     showDeliveryDialog.value = false
     fetchDeliveries()
@@ -653,7 +947,7 @@ const submitDelivery = async () => {
 const updateDeliveryStatus = async (row) => {
   const status = row.status === 'pending' ? 'accepted' : 'pending'
   try {
-    await axios.put(`/api/contracts/${contractId}/deliveries/${row.id}`, { status })
+    await api.put(`/contracts/${contractId}/deliveries/${row.id}`, { status })
     ElMessage.success('状态更新成功')
     fetchDeliveries()
   } catch (error) {
@@ -663,7 +957,7 @@ const updateDeliveryStatus = async (row) => {
 
 const submitPayment = async () => {
   try {
-    await axios.post(`/api/contracts/${contractId}/payments`, paymentForm)
+    await api.post(`/contracts/${contractId}/payments`, paymentForm)
     ElMessage.success('添加成功')
     showPaymentDialog.value = false
     fetchPayments()
@@ -674,7 +968,7 @@ const submitPayment = async () => {
 
 const submitChange = async () => {
   try {
-    await axios.post(`/api/contracts/${contractId}/changes`, changeForm)
+    await api.post(`/contracts/${contractId}/changes`, changeForm)
     ElMessage.success('变更申请已提交')
     showChangeDialog.value = false
     fetchChanges()
@@ -685,7 +979,7 @@ const submitChange = async () => {
 
 const submitRisk = async () => {
   try {
-    await axios.post(`/api/contracts/${contractId}/risks`, riskForm)
+    await api.post(`/contracts/${contractId}/risks`, riskForm)
     ElMessage.success('添加成功')
     showRiskDialog.value = false
     fetchRisks()
@@ -696,7 +990,7 @@ const submitRisk = async () => {
 
 const resolveRisk = async (row) => {
   try {
-    await axios.put(`/api/contracts/${contractId}/risks/${row.id}`, { status: 'resolved' })
+    await api.put(`/contracts/${contractId}/risks/${row.id}`, { status: 'resolved' })
     ElMessage.success('风险已解决')
     fetchRisks()
   } catch (error) {
@@ -704,14 +998,141 @@ const resolveRisk = async (row) => {
   }
 }
 
+// ============ 附件相关 ============
+const openAttachmentDialog = () => {
+  resetAttachmentForm()
+  showAttachmentDialog.value = true
+}
+
+const resetAttachmentForm = () => {
+  attachmentForm.attachment_type = 'other'
+  attachmentForm.description = ''
+  attachmentSelectedFile.value = null
+  // 清空 el-upload 的文件列表
+  if (attachmentUploadRef.value) {
+    attachmentUploadRef.value.clearFiles()
+  }
+}
+
+const handleAttachmentFileChange = (file) => {
+  // 单文件模式：每次选择都以最新文件为准
+  attachmentSelectedFile.value = file.raw
+}
+
+const handleAttachmentExceed = () => {
+  ElMessage.warning('一次只能上传一个文件，请先移除已选文件')
+}
+
+const handleAttachmentRemove = () => {
+  attachmentSelectedFile.value = null
+}
+
 const submitAttachment = async () => {
+  if (!attachmentSelectedFile.value) {
+    ElMessage.warning('请先选择要上传的文件')
+    return
+  }
+  // 前端大小校验（50MB）
+  if (attachmentSelectedFile.value.size > 50 * 1024 * 1024) {
+    ElMessage.error('文件大小不能超过 50MB')
+    return
+  }
+
+  const formData = new FormData()
+  formData.append('file', attachmentSelectedFile.value)
+  formData.append('attachment_type', attachmentForm.attachment_type || 'other')
+  if (attachmentForm.description) {
+    formData.append('description', attachmentForm.description)
+  }
+
+  attachmentSubmitting.value = true
   try {
-    await axios.post(`/api/contracts/${contractId}/attachments`, attachmentForm)
+    await api.post(`/contracts/${contractId}/attachments`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
     ElMessage.success('上传成功')
     showAttachmentDialog.value = false
     fetchAttachments()
   } catch (error) {
-    ElMessage.error('上传失败')
+    // 错误消息已由响应拦截器统一处理
+  } finally {
+    attachmentSubmitting.value = false
+  }
+}
+
+// 以 blob 方式获取附件内容（携带 JWT），返回 Blob
+const fetchAttachmentBlob = async (row, asDownload = false) => {
+  const url = `/contracts/${contractId}/attachments/${row.id}${asDownload ? '?mode=download' : ''}`
+  const response = await api.get(url, { responseType: 'blob' })
+  return response
+}
+
+// 在线查看：拉取 blob 并在新标签页打开
+const previewAttachment = async (row) => {
+  try {
+    const response = await fetchAttachmentBlob(row, false)
+    const blob = response.data
+    // 浏览器无法直接预览的，回退为下载
+    const contentType = row.file_type || response.headers?.['content-type'] || blob.type
+    const downloadableTypes = ['application/octet-stream', '']
+    const url = URL.createObjectURL(blob)
+    // 文本/图片/PDF/视频/音频等可内嵌预览
+    const inlineRegex = /^(image\/|video\/|audio\/|text\/|application\/pdf|application\/vnd\.|application\/ms|application\/x-)/i
+    if (inlineRegex.test(contentType) && !downloadableTypes.includes(contentType)) {
+      window.open(url, '_blank')
+    } else if (contentType === 'text/plain' || row.file_name?.toLowerCase().match(/\.(txt|log|csv|json|md)$/)) {
+      window.open(url, '_blank')
+    } else {
+      // 不支持预览时直接触发下载
+      triggerBlobDownload(blob, row.file_name)
+      URL.revokeObjectURL(url)
+      ElMessage.info('该文件类型不支持在线预览，已开始下载')
+    }
+  } catch (error) {
+    ElMessage.error('获取附件失败')
+  }
+}
+
+// 下载
+const downloadAttachment = async (row) => {
+  try {
+    const response = await fetchAttachmentBlob(row, true)
+    triggerBlobDownload(response.data, row.file_name)
+  } catch (error) {
+    ElMessage.error('下载附件失败')
+  }
+}
+
+// 触发浏览器下载
+const triggerBlobDownload = (blob, filename) => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename || 'download'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  // 稍延迟释放，避免某些浏览器下载未启动
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+// 删除附件
+const deleteAttachment = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除附件「${row.file_name}」吗？该操作不可恢复。`,
+      '删除确认',
+      { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' }
+    )
+  } catch (e) {
+    return
+  }
+  try {
+    await api.delete(`/contracts/${contractId}/attachments/${row.id}`)
+    ElMessage.success('附件已删除')
+    fetchAttachments()
+  } catch (error) {
+    ElMessage.error('删除附件失败')
   }
 }
 
@@ -721,8 +1142,9 @@ onMounted(() => {
   fetchPayments()
   fetchChanges()
   fetchRisks()
-  fetchApprovals()
+  fetchReviews()
   fetchAttachments()
+  fetchAll()
 })
 </script>
 
@@ -757,6 +1179,176 @@ onMounted(() => {
 
 .tab-header {
   margin-bottom: 15px;
+}
+
+/* ===== 审批流程样式（与需求审批同款） ===== */
+.form-tip {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 6px;
+}
+
+.review-block {
+  border: 1px solid #ebeef5;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fafbfc;
+  transition: all 0.3s;
+}
+
+.review-block.review-active {
+  border-color: #e6a23c;
+  background: linear-gradient(135deg, rgba(230, 162, 60, 0.06) 0%, #fafbfc 100%);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-meta {
+  color: #909399;
+  font-size: 12px;
+  flex: 1;
+}
+
+.review-comment {
+  color: #606266;
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  border-left: 3px solid #409eff;
+}
+
+.review-steps {
+  padding: 8px 0;
+}
+
+.review-step {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 16px;
+}
+
+.review-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  width: 2px;
+  bottom: 0;
+  background: #e4e7ed;
+}
+
+.review-step.step-approved:not(:last-child)::before {
+  background: #67c23a;
+}
+
+.review-step.step-rejected:not(:last-child)::before {
+  background: #f56c6c;
+}
+
+.step-indicator {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f5;
+  color: #909399;
+  z-index: 1;
+}
+
+.step-indicator .icon-approved {
+  color: #67c23a;
+  background: rgba(103, 194, 58, 0.15);
+  border-radius: 50%;
+}
+
+.step-indicator .icon-rejected {
+  color: #f56c6c;
+  background: rgba(245, 108, 108, 0.15);
+  border-radius: 50%;
+}
+
+.step-indicator .icon-current {
+  color: #e6a23c;
+  background: rgba(230, 162, 60, 0.15);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.step-indicator .icon-waiting {
+  color: #c0c4cc;
+}
+
+.step-body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.step-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #303133;
+}
+
+.step-reviewer {
+  color: #909399;
+  font-size: 12px;
+}
+
+.step-comment {
+  color: #606266;
+  font-size: 13px;
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+}
+
+.step-time {
+  color: #b1b3b8;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.review-actions {
+  margin-top: 12px;
+  padding: 14px;
+  background: rgba(230, 162, 60, 0.08);
+  border-radius: 8px;
+  border: 1px dashed rgba(230, 162, 60, 0.4);
+}
+
+.review-action-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: flex-end;
 }
 
 /* 移动端适配 */

@@ -187,8 +187,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center" fixed="right">
+          <el-table-column label="操作" width="200" align="center" fixed="right">
             <template #default="{ row }">
+              <el-button type="success" link size="small" @click="openViewDrawer(row)" class="action-btn">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
               <el-button type="primary" link size="small" @click="editMaterial(row)" class="action-btn">
                 <el-icon><Edit /></el-icon>
                 编辑
@@ -328,13 +332,120 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 查看详情抽屉 -->
+    <el-drawer
+      v-model="viewDrawerVisible"
+      title="物料详情"
+      direction="rtl"
+      size="520px"
+      class="view-drawer"
+    >
+      <template v-if="viewData">
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Box /></el-icon>
+            基本信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="ID">
+              <span class="id-badge">{{ viewData.id }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="物料编码">
+              <span class="code-text">{{ viewData.material_code || viewData.code }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="物料名称">
+              <span class="highlight-text">{{ viewData.name }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="规格型号">
+              {{ viewData.specification || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="单位">
+              {{ viewData.unit || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="分类">
+              <el-tag size="small" effect="light">{{ viewData.category_name || '-' }}</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Box /></el-icon>
+            库存信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="当前库存">
+              <span :class="{ 'warning-text': viewData.is_low_stock }">
+                {{ viewData.total_quantity || 0 }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="安全库存">
+              {{ viewData.safety_stock || 0 }}
+            </el-descriptions-item>
+            <el-descriptions-item label="库存状态">
+              <el-tag v-if="viewData.is_low_stock" type="danger" effect="light">库存不足</el-tag>
+              <el-tag v-else type="success" effect="light">正常</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><ShoppingCart /></el-icon>
+            供应商信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="供应商">
+              {{ viewData.supplier || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="供应商编码">
+              {{ viewData.supplier_code || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="单价">
+              {{ viewData.unit_cost ? `¥${viewData.unit_cost}` : '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><InfoFilled /></el-icon>
+            其他信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="状态">
+              <el-tag :type="viewData.status === 'active' ? 'success' : 'danger'" effect="light">
+                {{ viewData.status === 'active' ? '启用' : '禁用' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="描述">
+              {{ viewData.description || '暂无描述' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="创建时间">
+              {{ formatDate(viewData.created_at) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="更新时间">
+              {{ viewData.updated_at ? formatDate(viewData.updated_at) : '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="viewDrawerVisible = false">关闭</el-button>
+          <el-button type="primary" @click="handleViewEdit">编辑</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Box, Plus, Download, Upload, Search, Refresh, List, Edit, Delete, CircleCheck, Warning, DataAnalysis } from '@element-plus/icons-vue'
+import { Box, Plus, Download, Upload, Search, Refresh, List, Edit, Delete, CircleCheck, Warning, DataAnalysis, View, ShoppingCart, InfoFilled } from '@element-plus/icons-vue'
 import materialsService from '@/services/materials'
 import { apiService } from '@/services/api'
 import { formatDate } from '@/utils/dateUtils'
@@ -342,7 +453,7 @@ import { formatDate } from '@/utils/dateUtils'
 export default {
   name: 'MaterialList',
   components: {
-    Box, Plus, Download, Upload, Search, Refresh, List, Edit, Delete, CircleCheck, Warning, DataAnalysis
+    Box, Plus, Download, Upload, Search, Refresh, List, Edit, Delete, CircleCheck, Warning, DataAnalysis, View, ShoppingCart, InfoFilled
   },
   setup() {
     const materials = ref([])
@@ -354,6 +465,9 @@ export default {
     const submitting = ref(false)
     const importing = ref(false)
     const materialFormRef = ref(null)
+    // 查看详情
+    const viewDrawerVisible = ref(false)
+    const viewData = ref(null)
     
     const searchForm = ref({
       code: '',
@@ -466,6 +580,17 @@ export default {
           ElMessage.error('删除失败：' + error.message)
         }
       }
+    }
+
+    // 查看详情
+    const openViewDrawer = (row) => {
+      viewData.value = { ...row }
+      viewDrawerVisible.value = true
+    }
+
+    const handleViewEdit = () => {
+      viewDrawerVisible.value = false
+      editMaterial(viewData.value)
     }
 
     const handleExport = async () => {
@@ -615,7 +740,12 @@ export default {
       handleCurrentChange,
       handleExport,
       handleImport,
-      handleFileChange
+      handleFileChange,
+      // 查看详情
+      viewDrawerVisible,
+      viewData,
+      openViewDrawer,
+      handleViewEdit
     }
   },
   watch: {

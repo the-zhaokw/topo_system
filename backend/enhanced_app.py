@@ -2487,6 +2487,95 @@ class ContractAttachment(db.Model):
 
 # ==================== 需求管理模型 ====================
 
+class ContractReview(db.Model):
+    """合同审批实例：每个合同可独立发起审批，拥有完整逐级审批流程"""
+    __tablename__ = 'contract_reviews'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    contract_id = Column(Integer, ForeignKey('contracts.id'), nullable=False)
+    initiator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    # pending-审批中, approved-已通过, rejected-已驳回, cancelled-已撤销
+    status = Column(String(20), default='pending')
+    current_step = Column(Integer, default=1)  # 当前待审批节点序号（从1开始）
+    deadline = Column(DateTime, nullable=True)
+    comment = Column(Text)  # 发起说明
+    created_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+
+    contract = relationship("Contract", backref=backref("reviews", cascade="all, delete-orphan"))
+    initiator = relationship("User", foreign_keys=[initiator_id])
+    steps = relationship("ContractReviewStep", back_populates="review",
+                         cascade="all, delete-orphan",
+                         order_by="ContractReviewStep.step_order")
+
+    REVIEW_STATUS_TEXT = {
+        'pending': '审批中',
+        'approved': '已通过',
+        'rejected': '已驳回',
+        'cancelled': '已撤销'
+    }
+
+    def to_dict(self, include_steps=True):
+        data = {
+            'id': self.id,
+            'contract_id': self.contract_id,
+            'initiator_id': self.initiator_id,
+            'initiator_name': self.initiator.username if self.initiator else None,
+            'status': self.status,
+            'status_text': self.REVIEW_STATUS_TEXT.get(self.status, self.status),
+            'current_step': self.current_step,
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'comment': self.comment,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None
+        }
+        if include_steps:
+            data['steps'] = [s.to_dict() for s in self.steps]
+        return data
+
+
+class ContractReviewStep(db.Model):
+    """合同审批节点：一次审批包含多个有序节点，逐级审批"""
+    __tablename__ = 'contract_review_steps'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    review_id = Column(Integer, ForeignKey('contract_reviews.id'), nullable=False)
+    step_order = Column(Integer, nullable=False)  # 节点顺序，从1开始
+    name = Column(String(100))  # 节点名称（如"部门负责人审批"）
+    reviewer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    # pending-待审批, approved-已通过, rejected-已驳回
+    status = Column(String(20), default='pending')
+    comment = Column(Text)  # 审批意见
+    acted_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    review = relationship("ContractReview", back_populates="steps")
+    reviewer = relationship("User", foreign_keys=[reviewer_id])
+
+    STEP_STATUS_TEXT = {
+        'pending': '待审批',
+        'approved': '已通过',
+        'rejected': '已驳回'
+    }
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'review_id': self.review_id,
+            'step_order': self.step_order,
+            'name': self.name or f'第{self.step_order}步审批',
+            'reviewer_id': self.reviewer_id,
+            'reviewer_name': self.reviewer.username if self.reviewer else None,
+            'status': self.status,
+            'status_text': self.STEP_STATUS_TEXT.get(self.status, self.status),
+            'comment': self.comment,
+            'acted_at': self.acted_at.isoformat() if self.acted_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+
 class RequirementDocument(db.Model):
     """需求文档表"""
     __tablename__ = 'requirement_documents'

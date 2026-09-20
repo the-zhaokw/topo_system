@@ -39,6 +39,7 @@
           <el-form-item label="附件">
             <el-upload
               action="/api/knowledge/upload"
+              :headers="uploadHeaders"
               multiple
               :on-success="handleUploadSuccess"
               :on-remove="handleRemove"
@@ -145,6 +146,7 @@
             <el-upload
               class="cover-uploader"
               action="/api/knowledge/upload"
+              :headers="uploadHeaders"
               :show-file-list="false"
               :on-success="handleCoverSuccess"
               accept="image/*"
@@ -176,6 +178,7 @@ import { Plus, Upload } from '@element-plus/icons-vue'
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
 import CategoryManager from './CategoryManager.vue'
 import { useUserStore } from '@/stores/user'
+import { useAllUsers } from '@/composables/useAllUsers'
 
 const props = defineProps({
   article: {
@@ -228,8 +231,8 @@ const form = reactive({
 // 文件列表
 const fileList = ref([])
 
-// 用户列表
-const userList = ref([])
+// 用户列表（使用全量加载 composable，避免后端默认 per_page=20 截断）
+const { allUsers: userList, fetchAll: fetchAllUsers } = useAllUsers()
 const showUserSelector = ref(false)
 const userSearchKeyword = ref('')
 
@@ -239,6 +242,12 @@ const isAdmin = computed(() => {
   if (!user) return false
   if (user.is_super_admin) return true
   return user.position === '管理员' || user.position?.includes('经理')
+})
+
+// el-upload 走原生 XHR，不经过 axios 拦截器，需手动注入 JWT
+const uploadHeaders = computed(() => {
+  const token = localStorage.getItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
 })
 
 // 当前选中的作者
@@ -261,26 +270,11 @@ const handleSelectAuthor = (user) => {
   showUserSelector.value = false
 }
 
-// API 请求
-const apiRequest = async (url, options = {}) => {
-  const token = localStorage.getItem('token')
-  const headers = {
-    ...options.headers,
-    ...(token ? { Authorization: `Bearer ${token}` } : {})
-  }
-  const response = await fetch(`${API_BASE_URL}${url}`, { ...options, headers })
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
-  }
-  return response.json()
-}
-
 // 加载用户列表
 const loadUsers = async () => {
   if (!isAdmin.value) return
   try {
-    const response = await apiRequest('/api/users')
-    userList.value = response.users || response.data || []
+    await fetchAllUsers()
   } catch (error) {
     console.error('加载用户列表失败:', error)
   }

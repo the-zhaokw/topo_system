@@ -33,7 +33,6 @@ def __getattr__(name):
         'AttendanceRecord': 'AttendanceRecord',
         'LeaveApplication': 'LeaveApplication',
         'Bug': 'Bug',
-        'BugComment': 'BugComment',
         'Notification': 'Notification',
         'UserRole': 'UserRole',
         'ProjectStatus': 'ProjectStatus',
@@ -54,6 +53,9 @@ from models.base import BaseModel, CaseInsensitiveEnum
 from models.enums import (
     NotificationType, LeaveType
 )
+
+# 权限模板（唯一不在 enhanced_app.py 中的模型，独立维护以避免重复注册冲突）
+from models.permission_template import PermissionTemplate
 
 __all__ = [
     # 基础类
@@ -87,7 +89,8 @@ __all__ = [
     'LeaveApplication',
     # Bug相关模型
     'Bug',
-    'BugComment',
     # 通知相关模型
     'Notification',
+    # 权限模板
+    'PermissionTemplate',
 ]

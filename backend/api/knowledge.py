@@ -5,8 +5,9 @@
 增强版：支持分类树、多级分类、文章状态、批量操作、权限控制
 """
 
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify, send_file, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.utils import secure_filename
 from datetime import datetime
 from sqlalchemy import or_, func, desc
 from sqlalchemy.orm import joinedload, subqueryload
@@ -1088,6 +1089,59 @@ def export_article(art_id, export_type):
 
     except Exception as e:
         logger.error(f"导出文章错误：{str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@knowledge_bp.route('/upload', methods=['POST'])
+@jwt_required()
+def upload_file():
+    """通用文件上传（用于文章封面、附件等，无需预先创建文章）
+
+    请求字段：file（multipart 文件）
+    返回：{ success, url, data: { url, filename } }
+    文件保存至 UPLOAD_FOLDER/knowledge/，URL 形如 /uploads/knowledge/<filename>
+    """
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': '没有上传文件'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': '文件名为空'}), 400
+
+    try:
+        # 上传根目录：优先使用 app 配置，回退到项目根 uploads/
+        upload_folder = current_app.config.get(
+            'UPLOAD_FOLDER',
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
+        )
+        upload_dir = os.path.join(upload_folder, 'knowledge')
+        os.makedirs(upload_dir, exist_ok=True)
+
+        # 生成唯一文件名，保留原始扩展名
+        file_ext = os.path.splitext(file.filename)[1]
+        safe_name = secure_filename(file.filename) or 'file'
+        unique_filename = f"{uuid.uuid4().hex}_{safe_name}"
+        if file_ext and not unique_filename.lower().endswith(file_ext.lower()):
+            unique_filename = f"{uuid.uuid4().hex}{file_ext}"
+
+        file_path = os.path.join(upload_dir, unique_filename)
+        file.save(file_path)
+
+        # 返回相对路径，由 enhanced_app 的 /uploads/<path> 路由提供静态访问
+        url = f"/uploads/knowledge/{unique_filename}"
+
+        return jsonify({
+            'success': True,
+            'message': '文件上传成功',
+            'url': url,
+            'data': {
+                'url': url,
+                'filename': file.filename,
+                'file_size': os.path.getsize(file_path)
+            }
+        })
+    except Exception as e:
+        logger.error(f"知识库文件上传错误：{str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 

@@ -141,8 +141,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right" align="center">
+          <el-table-column label="操作" width="220" fixed="right" align="center">
             <template #default="{ row }">
+              <el-button type="success" link size="small" @click="openViewDrawer(row)" class="action-btn">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
               <el-button type="primary" link size="small" @click="editCategory(row)" class="action-btn">
                 <el-icon><Edit /></el-icon>
                 编辑
@@ -202,13 +206,66 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 查看详情抽屉 -->
+    <el-drawer
+      v-model="viewDrawerVisible"
+      title="分类详情"
+      direction="rtl"
+      size="480px"
+      class="view-drawer"
+    >
+      <template v-if="viewData">
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Folder /></el-icon>
+            基本信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="ID">
+              <span class="id-badge">{{ viewData.id }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="分类名称">
+              <span class="highlight-text">{{ viewData.name }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="分类编码">
+              <span class="code-text">{{ viewData.code }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="层级">
+              <el-tag :type="viewData.level === 1 ? 'primary' : 'info'" effect="light">
+                {{ viewData.level === 1 || !viewData.parent_id ? '一级分类' : '二级分类' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="父级分类">
+              {{ viewData.parent_id || '顶级分类' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="描述">
+              {{ viewData.description || '暂无描述' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="创建时间">
+              {{ formatDate(viewData.created_at) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="更新时间">
+              {{ viewData.updated_at ? formatDate(viewData.updated_at) : '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="viewDrawerVisible = false">关闭</el-button>
+          <el-button type="primary" @click="handleViewEdit">编辑</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Folder, FolderOpened, FolderAdd, Box, Plus, Refresh, Edit, Delete, Collection, Document, Key } from '@element-plus/icons-vue'
+import { Folder, FolderOpened, FolderAdd, Box, Plus, Refresh, Edit, Delete, Collection, Document, Key, View } from '@element-plus/icons-vue'
 import materialsService from '@/services/materials'
 import { formatDate } from '@/utils/dateUtils'
 
@@ -225,7 +282,8 @@ export default {
     Delete,
     Collection,
     Document,
-    Key
+    Key,
+    View
   },
   setup() {
     const categories = ref([])
@@ -235,6 +293,9 @@ export default {
     const submitting = ref(false)
     const categoryFormRef = ref(null)
     const materialCount = ref(0)
+    // 查看详情
+    const viewDrawerVisible = ref(false)
+    const viewData = ref(null)
     
     const categoryForm = ref({
       name: '',
@@ -317,6 +378,17 @@ export default {
       }
     }
 
+    // 查看详情
+    const openViewDrawer = (row) => {
+      viewData.value = { ...row }
+      viewDrawerVisible.value = true
+    }
+
+    const handleViewEdit = () => {
+      viewDrawerVisible.value = false
+      editCategory(viewData.value)
+    }
+
     const submitCategory = async () => {
       if (!categoryFormRef.value) return
       
@@ -382,7 +454,12 @@ export default {
       deleteCategory,
       submitCategory,
       resetForm,
-      loadCategories
+      loadCategories,
+      // 查看详情
+      viewDrawerVisible,
+      viewData,
+      openViewDrawer,
+      handleViewEdit
     }
   },
   watch: {

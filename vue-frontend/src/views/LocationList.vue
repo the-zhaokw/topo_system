@@ -198,9 +198,13 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="操作" width="150" align="center" fixed="right">
+          <el-table-column label="操作" width="200" align="center" fixed="right">
             <template #default="{ row }">
               <div class="action-buttons">
+                <el-button type="success" link size="small" @click="openViewDrawer(row)" class="action-btn">
+                  <el-icon><View /></el-icon>
+                  查看
+                </el-button>
                 <el-button type="primary" link size="small" @click="openEditDialog(row)" class="action-btn">
                   <el-icon><Edit /></el-icon>
                   编辑
@@ -287,6 +291,71 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 查看详情抽屉 -->
+    <el-drawer
+      v-model="viewDrawerVisible"
+      title="库位详情"
+      direction="rtl"
+      size="480px"
+      class="view-drawer"
+    >
+      <template v-if="viewData">
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Location /></el-icon>
+            基本信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="ID">
+              <span class="id-badge">{{ viewData.id }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="所属仓库">
+              {{ viewData.warehouse_name || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="库位编码">
+              <span class="code-text">{{ viewData.code }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="库位名称">
+              <span class="highlight-text">{{ viewData.name }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="区域">
+              {{ viewData.area || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="分区">
+              {{ viewData.zone || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="货架">
+              {{ viewData.rack || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="层">
+              {{ viewData.level || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="容量">
+              {{ viewData.capacity || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag :type="viewData.status === 'occupied' ? 'warning' : 'success'" effect="light">
+                {{ viewData.status === 'occupied' ? '已占用' : '空闲' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="备注">
+              {{ viewData.remarks || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="创建时间">
+              {{ formatDate(viewData.created_at) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="viewDrawerVisible = false">关闭</el-button>
+          <el-button type="primary" @click="handleViewEdit">编辑</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
@@ -297,7 +366,7 @@ import materialsService from '@/services/materials'
 import { format } from 'date-fns'
 import { parseUTCDate, formatDate } from '@/utils/dateUtils'
 import {
-  Location, Plus, Filter, Search, Refresh, List, Edit, Delete,
+  Location, Plus, Filter, Search, Refresh, List, Edit, Delete, View,
   Grid, Box, Check, TrendCharts, OfficeBuilding, MapLocation,
   FirstAidKit
 } from '@element-plus/icons-vue'
@@ -315,6 +384,10 @@ const total = ref(0)
 
 // 表单引用
 const locationFormRef = ref(null)
+
+// 查看详情
+const viewDrawerVisible = ref(false)
+const viewData = ref(null)
 
 // 搜索表单
 const searchForm = reactive({
@@ -476,6 +549,15 @@ const deleteLocation = async (id) => {
   } catch (error) {
     ElMessage.error('删除库位失败: ' + error.message)
   }
+}
+
+const openViewDrawer = (row) => {
+  viewData.value = { ...row }
+  viewDrawerVisible.value = true
+}
+const handleViewEdit = () => {
+  viewDrawerVisible.value = false
+  openEditDialog(viewData.value)
 }
 
 // 重置表单

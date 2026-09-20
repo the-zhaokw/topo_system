@@ -319,13 +319,24 @@
             <el-row :gutter="16">
               <el-col :xs="24" :sm="12" :md="8" v-for="article in articles" :key="article.id">
                 <el-card class="article-card" :class="{ 'is-pinned': article.is_pinned }" shadow="hover">
+                  <!-- 封面图 -->
+                  <div class="card-cover">
+                    <template v-if="article.cover_image">
+                      <img :src="normalizeCoverImage(article.cover_image)" :alt="article.title" />
+                    </template>
+                    <template v-else>
+                      <div class="card-cover-placeholder">
+                        <el-icon :size="36"><Picture /></el-icon>
+                      </div>
+                    </template>
+                    <el-tag v-if="article.is_pinned" type="danger" size="small" effect="dark" class="cover-pinned-tag">置顶</el-tag>
+                  </div>
                   <div class="card-header">
                     <div class="card-title-wrapper">
                       <el-link type="primary" class="card-title" @click="viewArticle(article)">
                         {{ article.title }}
                       </el-link>
                       <div class="card-badges">
-                        <el-tag v-if="article.is_pinned" type="danger" size="small" effect="dark">置顶</el-tag>
                         <el-tag v-if="article.status === 'draft'" type="info" size="small">草稿</el-tag>
                       </div>
                     </div>
@@ -412,7 +423,7 @@ import { useUserStore } from '@/stores/user'
 import {
   Plus, Refresh, Search, Document, CircleCheck, EditPen,
   User, Star, Clock, Top, List, Grid, View, ChatDotRound,
-  ArrowDown, Folder, Reading
+  ArrowDown, Folder, Reading, Picture
 } from '@element-plus/icons-vue'
 import ArticleForm from '@/components/knowledge/ArticleForm.vue'
 import LiquidGlassCard from '@/components/common/LiquidGlassCard.vue'
@@ -781,6 +792,15 @@ const getUserAvatar = (avatar) => {
     return avatar
   }
   return `${API_BASE_URL}${avatar}`
+}
+
+// 规范化封面图片 URL（后端存的是相对路径，dev 走代理，生产补全后端地址）
+const normalizeCoverImage = (cover) => {
+  if (!cover) return ''
+  if (cover.startsWith('http://') || cover.startsWith('https://') || cover.startsWith('data:')) {
+    return cover
+  }
+  return `${API_BASE_URL}${cover}`
 }
 
 // 初始化
@@ -1417,6 +1437,56 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(226, 232, 240, 0.6);
   overflow: hidden;
+  padding-top: 0;
+}
+
+/* 让封面图突破 el-card__body 的顶部 padding */
+.article-card :deep(.el-card__body) {
+  padding-top: 0;
+}
+
+/* 封面图 */
+.card-cover {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  flex-shrink: 0;
+}
+
+.card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.article-card:hover .card-cover img {
+  transform: scale(1.05);
+}
+
+.card-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ecfeff 100%);
+  color: rgba(56, 189, 248, 0.5);
+}
+
+.card-cover-placeholder .el-icon {
+  color: rgba(56, 189, 248, 0.4);
+}
+
+.cover-pinned-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(245, 108, 108, 0.4);
 }
 
 .article-card:hover {
@@ -1436,6 +1506,7 @@ onMounted(() => {
 }
 
 .card-header {
+  margin-top: 14px;
   margin-bottom: 12px;
 }
 

@@ -1847,7 +1847,8 @@ class MaterialReportResource(Resource):
         from enhanced_app import app
         with app.app_context():
             db = get_db()
-            Material, MaterialCategory, Inventory, Warehouse, _, _, _, _ = get_models()
+            # get_models() 返回顺序: MaterialCategory, Material, Warehouse, Location, Inventory, SerialNumber, InventoryTransaction, MaterialRelationship
+            MaterialCategory, Material, Warehouse, _, Inventory, _, _, _ = get_models()
             
             # 获取查询参数
             category_id = request.args.get('category_id')

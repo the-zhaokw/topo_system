@@ -61,17 +61,62 @@ def format_datetime(dt, fmt='%Y-%m-%d %H:%M:%S'):
 def parse_datetime(date_string, fmt='%Y-%m-%d %H:%M:%S'):
     """
     解析日期时间字符串
-    
+
     Args:
         date_string: 时间字符串
         fmt: 格式化字符串
-        
+
     Returns:
         datetime: 解析后的datetime对象
     """
     if not date_string:
         return None
     return datetime.strptime(date_string, fmt)
+
+
+def parse_iso_date(date_string):
+    """
+    解析 ISO 8601 日期时间字符串（兼容前端 el-date-picker 序列化结果）
+
+    支持形如：
+      - 2026-09-25
+      - 2026-09-25 10:00:00
+      - 2026-09-25T10:00:00
+      - 2026-09-25T10:00:00.000Z
+
+    Args:
+        date_string: ISO 时间字符串
+
+    Returns:
+        datetime: 去掉时区信息的 naive datetime（按本地时间落库）；入参为空时返回 None
+    """
+    if not date_string:
+        return None
+    if isinstance(date_string, datetime):
+        dt = date_string
+        return dt.replace(tzinfo=None) if dt.tzinfo else dt
+
+    s = str(date_string).strip()
+    # 末尾 Z 表示 UTC，fromisoformat 不支持，先替换为 +00:00
+    if s.endswith('Z'):
+        s = s[:-1] + '+00:00'
+    try:
+        dt = datetime.fromisoformat(s)
+    except ValueError:
+        # 兜底：仅日期或常见格式
+        for fmt in ('%Y-%m-%d', '%Y/%m/%d', '%Y-%m-%d %H:%M:%S', '%Y/%m/%d %H:%M:%S'):
+            try:
+                dt = datetime.strptime(s, fmt)
+                break
+            except ValueError:
+                continue
+        else:
+            raise ValueError(f'无法解析日期时间字符串: {date_string}')
+
+    if dt.tzinfo is not None:
+        # 统一转换为北京时间后再去掉时区信息落库
+        dt = dt.astimezone(CHINA_TZ).replace(tzinfo=None)
+    return dt
 
 
 # 初始化时区

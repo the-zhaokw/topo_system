@@ -276,7 +276,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import api from '@/services/api'
 import { Document, Refresh, DocumentChecked, Loading, CircleCheck, Timer, Money, PieChart, Collection, Warning, MapLocation, WarningFilled, View } from '@element-plus/icons-vue'
 
 const loading = ref(false)
@@ -427,8 +427,8 @@ const formatAmountShort = (amount) => {
 const fetchStatistics = async () => {
   loading.value = true
   try {
-    const response = await axios.get('/api/contracts/statistics')
-    statistics.value = response.data
+    const response = await api.get('/contracts/statistics')
+    statistics.value = response
   } catch (error) {
     ElMessage.error('获取统计数据失败')
   } finally {
@@ -439,8 +439,8 @@ const fetchStatistics = async () => {
 const fetchExportControl = async () => {
   exportLoading.value = true
   try {
-    const response = await axios.get('/api/contracts/export-control')
-    exportControlContracts.value = response.data.export_control_contracts
+    const response = await api.get('/contracts/export-control')
+    exportControlContracts.value = response.export_control_contracts
   } catch (error) {
     ElMessage.error('获取出口管制合同失败')
   } finally {

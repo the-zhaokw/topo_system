@@ -167,8 +167,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right" align="center">
+          <el-table-column label="操作" width="200" fixed="right" align="center">
             <template #default="scope">
+              <el-button type="success" link size="small" @click="openViewDrawer(scope.row)" class="action-btn">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
               <el-button type="primary" link size="small" @click="openEditDialog(scope.row)" class="action-btn">
                 <el-icon><Edit /></el-icon>
                 编辑
@@ -231,13 +235,63 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 查看详情抽屉 -->
+    <el-drawer
+      v-model="viewDrawerVisible"
+      title="序列号详情"
+      direction="rtl"
+      size="480px"
+      class="view-drawer"
+    >
+      <template v-if="viewData">
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Ticket /></el-icon>
+            基本信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="序列号">
+              <span class="code-badge">{{ viewData.serial_number }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="物料编码">
+              {{ viewData.material_info?.material_code || viewData.material_code || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="物料名称">
+              <span class="highlight-text">{{ viewData.material_info?.name || viewData.material_name || '-' }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="当前状态">
+              <el-tag :type="getStatusTagType(viewData.current_status)" effect="light">
+                {{ getStatusText(viewData.current_status) }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="当前位置">
+              {{ viewData.current_location || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="备注">
+              {{ viewData.remarks || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="创建时间">
+              {{ formatDate(viewData.created_at) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="viewDrawerVisible = false">关闭</el-button>
+          <el-button type="primary" @click="handleViewEdit">编辑</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Ticket, Collection, Check, Box, Delete, Filter, Search, Refresh, List, Edit } from '@element-plus/icons-vue'
+import { Plus, Ticket, Collection, Check, Box, Delete, Filter, Search, Refresh, List, Edit, View } from '@element-plus/icons-vue'
 import materialsService from '@/services/materials'
 import { parseUTCDate } from '@/utils/dateUtils'
 
@@ -245,6 +299,10 @@ import { parseUTCDate } from '@/utils/dateUtils'
 const loading = ref(false)
 const dialogVisible = ref(false)
 const dialogTitle = computed(() => form.id ? '编辑序列号' : '新增序列号')
+
+// 查看详情
+const viewDrawerVisible = ref(false)
+const viewData = ref(null)
 
 // 表单数据
 const form = reactive({
@@ -439,6 +497,16 @@ const deleteSerialNumber = async (id) => {
       ElMessage.error('删除序列号失败: ' + error.message)
     }
   }
+}
+
+// 查看详情
+const openViewDrawer = (row) => {
+  viewData.value = { ...row }
+  viewDrawerVisible.value = true
+}
+const handleViewEdit = () => {
+  viewDrawerVisible.value = false
+  openEditDialog(viewData.value)
 }
 
 // 搜索处理

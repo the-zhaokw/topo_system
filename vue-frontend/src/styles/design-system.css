@@ -1385,3 +1385,89 @@
 .el-table .el-table__body-wrapper .el-select {
   cursor: pointer;
 }
+
+/* ============================================
+   查看详情抽屉通用样式
+   ============================================ */
+.view-drawer :deep(.el-drawer__header) {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  color: white;
+  margin-bottom: 0;
+  padding: 18px 24px;
+}
+
+.view-drawer :deep(.el-drawer__title) {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.view-drawer :deep(.el-drawer__close-btn) {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.view-drawer :deep(.el-drawer__body) {
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+.view-section {
+  margin-bottom: 24px;
+}
+
+.view-section:last-child {
+  margin-bottom: 0;
+}
+
+.view-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #7dd3fc;
+}
+
+.view-section-title .el-icon {
+  color: #0ea5e9;
+  font-size: 18px;
+}
+
+.view-descriptions {
+  --el-descriptions-table-border: rgba(226, 232, 240, 0.8);
+}
+
+.view-descriptions :deep(.el-descriptions__label) {
+  width: 110px;
+  font-weight: 500;
+  color: #64748b;
+  background: rgba(241, 245, 249, 0.6) !important;
+}
+
+.view-descriptions :deep(.el-descriptions__content) {
+  color: #1e293b;
+}
+
+.highlight-text {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.view-drawer .drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  background: rgba(248, 250, 252, 0.8);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.view-drawer :deep(.el-drawer__body) {
+  padding-bottom: 80px;
+}

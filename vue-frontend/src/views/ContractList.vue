@@ -385,12 +385,13 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { useRouter, useRoute } from 'vue-router'
+import api from '@/services/api'
 import { Document, Plus, Filter, Search, Refresh, List, View, Edit, Delete, DocumentChecked, CircleCheck, SuccessFilled, Money } from '@element-plus/icons-vue'
 import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
+const route = useRoute()
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -566,9 +567,9 @@ const fetchContracts = async () => {
     Object.keys(params).forEach(key => {
       if (!params[key]) delete params[key]
     })
-    const response = await axios.get('/api/contracts/', { params })
-    contracts.value = response.data.contracts
-    pagination.total = response.data.total
+    const response = await api.get('/contracts/', { params })
+    contracts.value = response.contracts
+    pagination.total = response.total
   } catch (error) {
     ElMessage.error('获取合同列表失败')
   } finally {
@@ -671,10 +672,10 @@ const handleSubmit = async () => {
       submitLoading.value = true
       try {
         if (isEdit.value) {
-          await axios.put(`/api/contracts/${form.id}`, form)
+          await api.put(`/contracts/${form.id}`, form)
           ElMessage.success('更新成功')
         } else {
-          await axios.post('/api/contracts/', form)
+          await api.post('/contracts/', form)
           ElMessage.success('创建成功')
         }
         dialogVisible.value = false
@@ -693,7 +694,7 @@ const handleDelete = async (row) => {
     await ElMessageBox.confirm('确定要删除这条合同吗？', '提示', {
       type: 'warning'
     })
-    await axios.delete(`/api/contracts/${row.id}`)
+    await api.delete(`/contracts/${row.id}`)
     ElMessage.success('删除成功')
     fetchContracts()
   } catch (error) {
@@ -703,8 +704,20 @@ const handleDelete = async (row) => {
   }
 }
 
-onMounted(() => {
-  fetchContracts()
+onMounted(async () => {
+  await fetchContracts()
+  // 从合同详情页"编辑"按钮跳转过来：自动打开编辑弹窗
+  const editId = route.query.edit
+  if (editId) {
+    try {
+      const response = await api.get(`/contracts/${editId}`)
+      if (response.contract) {
+        handleEdit(response.contract)
+      }
+    } catch (error) {
+      ElMessage.error('获取合同信息失败，无法打开编辑')
+    }
+  }
 })
 </script>
 

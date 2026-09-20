@@ -150,9 +150,13 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center" fixed="right">
+          <el-table-column label="操作" width="200" align="center" fixed="right">
             <template #default="{ row }">
               <div class="action-buttons">
+                <el-button type="success" link size="small" @click="openViewDrawer(row)" class="action-btn">
+                  <el-icon><View /></el-icon>
+                  查看
+                </el-button>
                 <el-button type="primary" link size="small" @click="editWarehouse(row)" class="action-btn">
                   <el-icon><Edit /></el-icon>
                   编辑
@@ -238,6 +242,67 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 查看详情抽屉 -->
+    <el-drawer
+      v-model="viewDrawerVisible"
+      title="仓库详情"
+      direction="rtl"
+      size="480px"
+      class="view-drawer"
+    >
+      <template v-if="viewData">
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><OfficeBuilding /></el-icon>
+            基本信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="ID">
+              <span class="id-badge">{{ viewData.id }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="仓库编码">
+              <span class="code-text">{{ viewData.code }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="仓库名称">
+              <span class="highlight-text">{{ viewData.name }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="仓库类型">
+              <el-tag :type="getWarehouseTypeTag(viewData.type)" effect="light">
+                {{ getWarehouseTypeText(viewData.type) }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="地址">
+              {{ viewData.address || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="联系人">
+              {{ viewData.contact_person || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="联系电话">
+              {{ viewData.contact_phone || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="描述">
+              {{ viewData.description || '暂无描述' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag :type="viewData.is_active ? 'success' : 'danger'" effect="light">
+                {{ viewData.is_active ? '启用' : '停用' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="创建时间">
+              {{ formatDate(viewData.created_at) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="viewDrawerVisible = false">关闭</el-button>
+          <el-button type="primary" @click="handleViewEdit">编辑</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
@@ -249,7 +314,7 @@ import { formatDate } from '@/utils/dateUtils'
 import {
   Plus, OfficeBuilding, Check, Close, Box,
   List, House, Location, User, Edit, Delete, Key,
-  Collection, Goods, RefreshLeft, Phone
+  Collection, Goods, RefreshLeft, Phone, View
 } from '@element-plus/icons-vue'
 
 export default {
@@ -257,7 +322,7 @@ export default {
   components: {
     Plus, OfficeBuilding, Check, Close, Box,
     List, House, Location, User, Edit, Delete, Key,
-    Collection, Goods, RefreshLeft, Phone
+    Collection, Goods, RefreshLeft, Phone, View
   },
   setup() {
     const warehouses = ref([])
@@ -277,6 +342,10 @@ export default {
       description: '',
       is_active: true
     })
+
+    // 查看详情
+    const viewDrawerVisible = ref(false)
+    const viewData = ref(null)
 
     const rules = {
       code: [
@@ -355,6 +424,16 @@ export default {
       }
     }
 
+    // 查看详情
+    const openViewDrawer = (row) => {
+      viewData.value = { ...row }
+      viewDrawerVisible.value = true
+    }
+    const handleViewEdit = () => {
+      viewDrawerVisible.value = false
+      editWarehouse(viewData.value)
+    }
+
     const submitWarehouse = async () => {
       if (!warehouseFormRef.value) return
       
@@ -412,6 +491,8 @@ export default {
       submitting,
       warehouseFormRef,
       warehouseForm,
+      viewDrawerVisible,
+      viewData,
       rules,
       totalCount,
       activeCount,
@@ -422,6 +503,8 @@ export default {
       getWarehouseTypeTag,
       editWarehouse,
       deleteWarehouse,
+      openViewDrawer,
+      handleViewEdit,
       submitWarehouse,
       resetForm
     }

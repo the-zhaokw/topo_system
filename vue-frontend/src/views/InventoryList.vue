@@ -209,6 +209,14 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="100" align="center" fixed="right">
+            <template #default="{ row }">
+              <el-button type="success" link size="small" @click="openViewDrawer(row)" class="action-btn">
+                <el-icon><View /></el-icon>
+                查看
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
 
         <!-- 分页 -->
@@ -302,13 +310,93 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 查看详情抽屉 -->
+    <el-drawer
+      v-model="viewDrawerVisible"
+      title="库存详情"
+      direction="rtl"
+      size="480px"
+      class="view-drawer"
+    >
+      <template v-if="viewData">
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Box /></el-icon>
+            物料信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="物料编码">
+              <span class="id-badge">{{ viewData.material_code }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="物料名称">
+              <span class="highlight-text">{{ viewData.material_name }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="规格型号">
+              {{ viewData.specification || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><Box /></el-icon>
+            库位信息
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="仓库">
+              <el-tag effect="light">{{ viewData.warehouse_name }}</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="库位编码">
+              <span class="code-text">{{ viewData.location_code }}</span>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <div class="view-section">
+          <div class="view-section-title">
+            <el-icon><DataAnalysis /></el-icon>
+            库存数据
+          </div>
+          <el-descriptions :column="1" border class="view-descriptions">
+            <el-descriptions-item label="库存数量">
+              <span :class="{ 'warning-text': viewData.quantity < viewData.safety_stock }" style="font-size:18px;font-weight:bold">
+                {{ viewData.quantity }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="安全库存">
+              {{ viewData.safety_stock }}
+            </el-descriptions-item>
+            <el-descriptions-item label="最大库存">
+              {{ viewData.max_stock }}
+            </el-descriptions-item>
+            <el-descriptions-item label="库存状态">
+              <el-tag 
+                :type="getStockStatusTag(viewData.quantity, viewData.safety_stock, viewData.max_stock)" 
+                effect="light">
+                {{ getStockStatusText(viewData.quantity, viewData.safety_stock, viewData.max_stock) }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="最后交易时间">
+              {{ formatDate(viewData.last_transaction_date) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="viewDrawerVisible = false">关闭</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Box, Plus, Warning, Download, Upload, Filter, Search, Refresh, List, Switch } from '@element-plus/icons-vue'
+import { Box, Plus, Warning, Download, Upload, Filter, Search, Refresh, List, Switch, View, DataAnalysis } from '@element-plus/icons-vue'
 import materialsService from '@/services/materials'
 import { formatDate } from '@/utils/dateUtils'
 
@@ -324,7 +412,9 @@ export default {
     Search,
     Refresh,
     List,
-    Switch
+    Switch,
+    View,
+    DataAnalysis
   },
   setup() {
     const inventory = ref([])
@@ -336,6 +426,9 @@ export default {
     const showTransactionDialog = ref(false)
     const submitting = ref(false)
     const transactionFormRef = ref(null)
+    // 查看详情
+    const viewDrawerVisible = ref(false)
+    const viewData = ref(null)
     
     const searchForm = ref({
       material_id: null,
@@ -531,6 +624,12 @@ export default {
       loadInventory()
     }
 
+    // 查看详情
+    const openViewDrawer = (row) => {
+      viewData.value = { ...row }
+      viewDrawerVisible.value = true
+    }
+
     onMounted(() => {
       loadStats()
       loadMaterials()
@@ -563,7 +662,11 @@ export default {
       resetTransactionForm,
       loadInventory,
       handleSizeChange,
-      handleCurrentChange
+      handleCurrentChange,
+      // 查看详情
+      viewDrawerVisible,
+      viewData,
+      openViewDrawer
     }
   },
   watch: {

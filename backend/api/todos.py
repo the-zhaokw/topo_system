@@ -17,6 +17,7 @@ def get_models():
         db, User, Bug, BugStatus, Project,
         LeaveApplication, OvertimeApplication, AttendanceException,
         Contract, ContractApproval, ContractDelivery, ContractRisk, ContractPayment,
+        ContractReview, ContractReviewStep,
         RequirementDocument, RequirementItem, RequirementReview, RequirementReviewStep,
         TestCase, TestSuite, Notification
     )
@@ -37,6 +38,8 @@ def get_models():
         'ContractDelivery': ContractDelivery,
         'ContractRisk': ContractRisk,
         'ContractPayment': ContractPayment,
+        'ContractReview': ContractReview,
+        'ContractReviewStep': ContractReviewStep,
         'RequirementDocument': RequirementDocument,
         'RequirementItem': RequirementItem,
         'RequirementReview': RequirementReview,
@@ -187,6 +190,69 @@ def _get_test_case_review_todos(models, current_user_id, db_session):
     return result
 
 
+def _get_contract_review_todos(models, current_user_id, db_session):
+    """基于 ContractReviewStep 直接查当前用户需要审批的合同审批节点
+
+    真相来源：ContractReview.status=pending 且 Step.status=pending 且
+    step_order == review.current_step 且 reviewer_id=当前用户。
+    """
+    ContractReview = models['ContractReview']
+    ContractReviewStep = models['ContractReviewStep']
+    Contract = models['Contract']
+    User = models['User']
+
+    result = []
+    seen_keys = set()
+
+    pending_steps = db_session.query(ContractReviewStep).join(
+        ContractReview, ContractReviewStep.review_id == ContractReview.id
+    ).filter(
+        ContractReviewStep.reviewer_id == current_user_id,
+        ContractReviewStep.status == 'pending',
+        ContractReview.status == 'pending',
+        ContractReviewStep.step_order == ContractReview.current_step
+    ).all()
+
+    for step in pending_steps:
+        review = step.review
+        contract = db_session.get(Contract, review.contract_id) if review else None
+        if not contract:
+            continue
+        initiator = db_session.get(User, review.initiator_id)
+        key = f"contract_review_step_{step.id}"
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+
+        initiator_name = '未知'
+        if initiator:
+            initiator_name = (
+                f"{initiator.first_name or ''} {initiator.last_name or ''}".strip()
+                or initiator.username or '未知'
+            )
+
+        result.append({
+            'id': f'contract_review_{step.id}',
+            'step_id': step.id,
+            'review_id': review.id,
+            'contract_id': contract.id,
+            'contract_no': contract.contract_no,
+            'category': 'approval',
+            'type': 'contract_review',
+            'type_name': '合同审批',
+            'title': f"合同审批: {contract.title}",
+            'applicant_name': initiator_name,
+            'creator_name': initiator_name,
+            'status': 'pending',
+            'priority': 'high',
+            'deadline': review.deadline.isoformat() if review.deadline else None,
+            'created_at': review.created_at.isoformat() if review.created_at else None,
+            'link': f'/contracts/{contract.id}'
+        })
+
+    return result
+
+
 @todos_bp.route('/summary', methods=['GET'])
 @jwt_required()
 def get_todo_summary():
@@ -257,6 +323,8 @@ def get_todo_summary():
             models['ContractApproval'].status == 'pending',
             models['ContractApproval'].approver_id == current_user_id
         ).count()
+        # 新版多级合同审批（ContractReviewStep）待办
+        contract_count += len(_get_contract_review_todos(models, current_user_id, db.session))
         summary['approvals']['contract'] = contract_count
         
         summary['approvals']['total'] = leave_count + overtime_count + exception_count + contract_count
@@ -458,7 +526,10 @@ def get_approval_todos():
                     },
                     'link': f'/contracts/{contract.id}'
                 })
-        
+
+        # 新版多级合同审批：当前用户处于待审批节点
+        approvals.extend(_get_contract_review_todos(models, current_user_id, db.session))
+
         approvals.sort(key=lambda x: x['created_at'] or '', reverse=True)
         
         return jsonify({
@@ -892,6 +963,9 @@ def get_all_todos():
         # 测试用例评审：以 TestCaseReviewStep 为真相源
         for rev_todo in _get_test_case_review_todos(models, current_user_id, db.session):
             all_todos.append(rev_todo)
+
+        # 新版多级合同审批：以 ContractReviewStep 为真相源
+        all_todos.extend(_get_contract_review_todos(models, current_user_id, db.session))
         
         pending_deliveries = models['ContractDelivery'].query.filter(
             models['ContractDelivery'].status == 'pending'

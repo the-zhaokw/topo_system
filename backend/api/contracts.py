@@ -1232,10 +1232,222 @@ class ContractSearchEnhancedResource(Resource):
             }
 
 
+class ContractReviewResource(Resource):
+    """合同审批流程 API（新：contract_reviews 模型）"""
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'post': [require_contract_perm('contract:approve')],
+    }
+
+    def _get_models(self):
+        from enhanced_app import db, Contract, ContractReview, ContractReviewStep, User
+        return db, Contract, ContractReview, ContractReviewStep, User
+
+    def get(self, contract_id):
+        """获取合同的所有审批实例"""
+        db, Contract, ContractReview, _, _ = self._get_models()
+        contract = db.session.get(Contract, contract_id)
+        if not contract:
+            return {'error': '合同不存在'}, 404
+        reviews = ContractReview.query.filter_by(contract_id=contract_id).order_by(ContractReview.created_at.desc()).all()
+        return {'reviews': [r.to_dict() for r in reviews]}
+
+    def post(self, contract_id):
+        """发起新的审批实例"""
+        db, Contract, ContractReview, ContractReviewStep, User = self._get_models()
+        current_user_id = get_jwt_identity()
+        contract = db.session.get(Contract, contract_id)
+        if not contract:
+            return {'error': '合同不存在'}, 404
+
+        data = request.get_json() or {}
+        reviewer_ids = data.get('reviewers') or []
+        deadline_str = data.get('deadline')
+        comment = data.get('comment', '')
+
+        if not reviewer_ids:
+            return {'error': '请指定至少一名审批人'}, 400
+
+        # 同一合同不允许存在多个进行中的审批流程
+        existing = ContractReview.query.filter_by(contract_id=contract_id, status='pending').first()
+        if existing:
+            return {'error': '该合同已有进行中的审批流程，请勿重复发起'}, 400
+
+        deadline = None
+        if deadline_str:
+            from utils.time_utils import parse_iso_date
+            try:
+                deadline = parse_iso_date(deadline_str)
+            except Exception:
+                pass
+
+        # 发起审批实例
+        review = ContractReview(
+            contract_id=contract_id,
+            initiator_id=current_user_id,
+            status='pending',
+            current_step=1,
+            deadline=deadline,
+            comment=comment,
+        )
+        db.session.add(review)
+        db.session.flush()
+
+        # 创建审批节点（每个 reviewer 一个节点，顺序按传入顺序）
+        for idx, rid in enumerate(reviewer_ids, start=1):
+            step = ContractReviewStep(
+                review_id=review.id,
+                step_order=idx,
+                name=f'第{idx}步审批',
+                reviewer_id=int(rid),
+                status='pending',
+            )
+            db.session.add(step)
+
+        # 发起成功后，合同进入待审核状态
+        contract.status = 'pending_review'
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {'error': f'发起审批失败: {str(e)}'}, 500
+
+        return {'success': True, 'review': review.to_dict(), 'message': '审批流程已发起'}, 201
+
+
+class _ReviewActionMixin:
+    """审批动作公共逻辑"""
+
+    method_decorators = [require_contract_perm('contract:approve')]
+
+    def _get_models(self):
+        from enhanced_app import db, Contract, ContractReview, ContractReviewStep
+        return db, Contract, ContractReview, ContractReviewStep
+
+
+class ContractReviewApproveResource(_ReviewActionMixin, Resource):
+    """通过审批节点"""
+
+    def post(self, review_id):
+        db, Contract, ContractReview, ContractReviewStep = self._get_models()
+        current_user_id = get_jwt_identity()
+        review = db.session.get(ContractReview, review_id)
+        if not review:
+            return {'error': '审批实例不存在'}, 404
+
+        step = ContractReviewStep.query.filter_by(
+            review_id=review_id, step_order=review.current_step,
+            reviewer_id=int(current_user_id), status='pending',
+        ).first()
+        if not step:
+            return {'error': '当前节点不是你审批，或已处理过'}, 400
+
+        step.status = 'approved'
+        step.comment = (request.get_json() or {}).get('comment', '')
+        step.acted_at = now_china().replace(tzinfo=None)
+
+        next_step = ContractReviewStep.query.filter_by(
+            review_id=review_id, step_order=review.current_step + 1,
+        ).first()
+        if next_step:
+            review.current_step += 1
+        else:
+            review.status = 'approved'
+            review.completed_at = now_china().replace(tzinfo=None)
+            # 全部节点审批通过，合同正式生效（执行中）
+            contract = db.session.get(Contract, review.contract_id)
+            if contract:
+                contract.status = 'active'
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {'error': f'审批失败: {str(e)}'}, 500
+        return {'success': True, 'review': review.to_dict(), 'message': '审批已通过'}
+
+
+class ContractReviewRejectResource(_ReviewActionMixin, Resource):
+    """驳回审批"""
+
+    def post(self, review_id):
+        db, Contract, ContractReview, ContractReviewStep = self._get_models()
+        current_user_id = get_jwt_identity()
+        review = db.session.get(ContractReview, review_id)
+        if not review:
+            return {'error': '审批实例不存在'}, 404
+
+        step = ContractReviewStep.query.filter_by(
+            review_id=review_id, step_order=review.current_step,
+            reviewer_id=int(current_user_id), status='pending',
+        ).first()
+        if not step:
+            return {'error': '当前节点不是你审批，或已处理过'}, 400
+
+        data = request.get_json() or {}
+        comment = data.get('comment', '').strip()
+        if not comment:
+            return {'error': '驳回原因不能为空'}, 400
+
+        step.status = 'rejected'
+        step.comment = comment
+        step.acted_at = now_china().replace(tzinfo=None)
+        review.status = 'rejected'
+        review.completed_at = now_china().replace(tzinfo=None)
+        # 驳回后合同退回草稿状态
+        contract = db.session.get(Contract, review.contract_id)
+        if contract:
+            contract.status = 'draft'
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {'error': f'驳回失败: {str(e)}'}, 500
+        return {'success': True, 'review': review.to_dict(), 'message': '已驳回'}
+
+
+class ContractReviewCancelResource(_ReviewActionMixin, Resource):
+    """撤销审批"""
+
+    def post(self, review_id):
+        db, Contract, ContractReview, ContractReviewStep = self._get_models()
+        current_user_id = get_jwt_identity()
+        review = db.session.get(ContractReview, review_id)
+        if not review:
+            return {'error': '审批实例不存在'}, 404
+
+        if review.initiator_id != int(current_user_id):
+            return {'error': '只有发起人可以撤销审批'}, 403
+        if review.status != 'pending':
+            return {'error': '当前状态不可撤销'}, 400
+
+        review.status = 'cancelled'
+        review.completed_at = now_china().replace(tzinfo=None)
+        ContractReviewStep.query.filter_by(review_id=review_id, status='pending').update({'status': 'cancelled'})
+        # 撤销后合同退回草稿状态
+        contract = db.session.get(Contract, review.contract_id)
+        if contract:
+            contract.status = 'draft'
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {'error': f'撤销失败: {str(e)}'}, 500
+        return {'success': True, 'review': review.to_dict(), 'message': '审批已撤销'}
+
+
 contracts_api.add_resource(ContractListResource, '/')
 contracts_api.add_resource(ContractDetailResource, '/<int:contract_id>')
 contracts_api.add_resource(ContractClauseResource, '/<int:contract_id>/clauses')
 contracts_api.add_resource(ContractApprovalResource, '/<int:contract_id>/approvals')
+contracts_api.add_resource(ContractReviewResource, '/<int:contract_id>/reviews')
+contracts_api.add_resource(ContractReviewApproveResource, '/reviews/<int:review_id>/approve')
+contracts_api.add_resource(ContractReviewRejectResource, '/reviews/<int:review_id>/reject')
+contracts_api.add_resource(ContractReviewCancelResource, '/reviews/<int:review_id>/cancel')
 contracts_api.add_resource(ContractDeliveryResource, '/<int:contract_id>/deliveries', '/<int:contract_id>/deliveries/<int:delivery_id>')
 contracts_api.add_resource(ContractChangeResource, '/<int:contract_id>/changes')
 contracts_api.add_resource(ContractRiskResource, '/<int:contract_id>/risks', '/<int:contract_id>/risks/<int:risk_id>')

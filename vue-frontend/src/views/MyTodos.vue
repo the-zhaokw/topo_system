@@ -539,7 +539,7 @@ import {
   ArrowLeft, Refresh, Bell, Stamp, List, Document, Warning,
   WarningFilled, CircleClose, FolderOpened, Check, Close, Cpu, ChatLineRound
 } from '@element-plus/icons-vue'
-import { apiService } from '@/services/api'
+import api, { apiService } from '@/services/api'
 import { parseUTCDate } from '@/utils/dateUtils'
 
 const router = useRouter()
@@ -745,6 +745,7 @@ const viewDetail = (row) => {
       approvalDialogVisible.value = true
       break
     case 'contract':
+    case 'contract_review':
       router.push(`/contracts/${row.contract_id || row.id}`)
       break
     case 'to_resolve':
@@ -865,6 +866,16 @@ const submitApproval = async (action) => {
           comment: approvalForm.value.comment
         })
       }
+    } else if (row.type === 'contract_review') {
+      // 新版多级合同审批：使用 review_id 调用对应节点动作
+      if (!row.review_id) {
+        ElMessage.warning('缺少审批流程信息，无法操作')
+        return
+      }
+      const url = action === 'approve'
+        ? `/contracts/reviews/${row.review_id}/approve`
+        : `/contracts/reviews/${row.review_id}/reject`
+      await api.post(url, { comment: approvalForm.value.comment })
     } else {
       ElMessage.warning('暂不支持此类型审批')
       return
@@ -1012,7 +1023,8 @@ const getApprovalTypeTag = (type) => {
     leave: 'success',
     overtime: 'warning',
     attendance_exception: 'info',
-    contract: 'primary'
+    contract: 'primary',
+    contract_review: 'primary'
   }
   return map[type] || ''
 }
