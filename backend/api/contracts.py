@@ -5,11 +5,10 @@
 """
 
 import os
-import uuid
+import re
 from flask import Blueprint, request, jsonify, current_app, send_file
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from werkzeug.utils import secure_filename
 from sqlalchemy import or_, func
 from datetime import datetime, timezone, timedelta
 from utils.time_utils import now_china
@@ -38,6 +37,37 @@ def get_contract_models():
     from enhanced_app import Contract, ContractClause, ContractApproval, ContractDelivery, ContractChange, ContractRisk, ContractPayment, ContractAttachment
     from enhanced_app import db
     return db, Contract, ContractClause, ContractApproval, ContractDelivery, ContractChange, ContractRisk, ContractPayment, ContractAttachment
+
+
+# 文件名中各操作系统不允许的字符（保留中文等 Unicode 字符与扩展名）
+_INVALID_FILENAME_CHARS = re.compile(r'[\\/:*?"<>|\x00-\x1f]')
+
+
+def sanitize_attachment_filename(filename):
+    """清洗上传文件名：保留中文与原始扩展名，仅替换文件系统非法字符。
+
+    与 werkzeug.secure_filename 不同，本函数不会删除非 ASCII（中文）字符，
+    也不会丢失扩展名（如纯中文名 .docx 经 secure_filename 会仅剩 "docx"）。
+    """
+    name = os.path.basename(str(filename or '')).strip()
+    name = _INVALID_FILENAME_CHARS.sub('_', name)
+    name = name.strip(' .')  # 去掉首尾的点/空格，规避 Windows 隐藏文件等问题
+    return name or 'unnamed'
+
+
+def build_unique_disk_path(save_dir, filename):
+    """在 save_dir 内为 filename 生成不冲突的磁盘绝对路径。
+
+    重名时在扩展名前追加 _1、_2 …，返回 (绝对路径, 最终磁盘文件名)。
+    """
+    base, ext = os.path.splitext(filename)
+    candidate = filename
+    counter = 1
+    while os.path.exists(os.path.join(save_dir, candidate)):
+        candidate = f"{base}_{counter}{ext}"
+        counter += 1
+    return os.path.join(save_dir, candidate), candidate
+
 
 contracts_bp = Blueprint('contracts', __name__, url_prefix='/contracts')
 contracts_api = Api(contracts_bp)
@@ -861,19 +891,18 @@ class ContractAttachmentResource(Resource):
                 os.makedirs(save_dir, exist_ok=True)
 
                 original_name = uploaded.filename
-                safe_name = secure_filename(original_name) or 'file'
-                file_ext = os.path.splitext(safe_name)[1]
-                unique_name = f"{uuid.uuid4().hex}_{safe_name}" if file_ext else f"{uuid.uuid4().hex}_{safe_name}"
-                disk_path = os.path.join(save_dir, unique_name)
+                # 磁盘保留原始文件名（含中文与扩展名），仅清洗非法字符；重名自动避让
+                disk_name = sanitize_attachment_filename(original_name)
+                disk_path, disk_name = build_unique_disk_path(save_dir, disk_name)
                 uploaded.save(disk_path)
 
                 # 相对 UPLOAD_FOLDER 的存储路径，下载时再拼回磁盘绝对路径
-                rel_path = os.path.join('contracts', unique_name)
+                rel_path = os.path.join('contracts', disk_name)
                 attachment = ContractAttachment(
                     contract_id=contract_id,
                     file_name=original_name,
                     file_path=rel_path,
-                    file_type=uploaded.mimetype or file_ext.lstrip('.'),
+                    file_type=uploaded.mimetype or os.path.splitext(disk_name)[1].lstrip('.'),
                     file_size=os.path.getsize(disk_path),
                     attachment_type=attachment_type,
                     description=description,
