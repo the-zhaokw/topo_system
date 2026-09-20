@@ -1,0 +1,54 @@
+[
+  {
+    "desc": "userService.toString",
+    "destination": "userService",
+    "operation": "toString",
+    "args": [],
+    "size": 84,
+    "strings": [
+      "com.cloudtopo.draco.user.service.UserRemoteService@1c50acf"
+    ],
+    "decoded": {
+      "raw_length": 84,
+      "version": 0,
+      "headers": 0,
+      "bodies": 1,
+      "body_details": [
+        {
+          "target": "/onResult",
+          "body_length": 4294967295,
+          "strings": [
+            "com.cloudtopo.draco.user.service.UserRemoteService@1c50acf"
+          ],
+          "numbers": []
+        }
+      ]
+    }
+  },
+  {
+    "desc": "orgService.toString",
+    "destination": "organizationService",
+    "operation": "toString",
+    "args": [],
+    "size": 92,
+    "strings": [
+      "com.cloudtopo.draco.user.service.OrganizationRemoteService@19fddf4"
+    ],
+    "decoded": {
+      "raw_length": 92,
+      "version": 0,
+      "headers": 0,
+      "bodies": 1,
+      "body_details": [
+        {
+          "target": "/onResult",
+          "body_length": 4294967295,
+          "strings": [
+            "com.cloudtopo.draco.user.service.OrganizationRemoteService@19fddf4"
+          ],
+          "numbers": []
+        }
+      ]
+    }
+  }
+]

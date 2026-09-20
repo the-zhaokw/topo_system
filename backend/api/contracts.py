@@ -4,9 +4,12 @@
 专为通信设备企业定制
 """
 
-from flask import Blueprint, request, jsonify, current_app
+import os
+import uuid
+from flask import Blueprint, request, jsonify, current_app, send_file
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.utils import secure_filename
 from sqlalchemy import or_, func
 from datetime import datetime, timezone, timedelta
 from utils.time_utils import now_china
@@ -832,29 +835,141 @@ class ContractAttachmentResource(Resource):
         app = get_app()
         current_user_id = get_jwt_identity()
         db, Contract, _, _, _, _, _, _, ContractAttachment = get_contract_models()
-        
+
         with app.app_context():
             contract = db.session.get(Contract, contract_id)
             if not contract:
                 return {'error': '合同不存在'}, 404
-            
-            data = request.get_json()
-            
-            attachment = ContractAttachment(
-                contract_id=contract_id,
-                file_name=data.get('file_name'),
-                file_path=data.get('file_path'),
-                file_type=data.get('file_type'),
-                file_size=data.get('file_size'),
-                attachment_type=data.get('attachment_type'),
-                description=data.get('description'),
-                uploaded_by=current_user_id
-            )
-            
+
+            attachment_type = request.form.get('attachment_type', 'other')
+            description = request.form.get('description', '')
+
+            # 兼容 multipart/form-data 文件上传
+            uploaded = request.files.get('file')
+            if uploaded is not None:
+                if uploaded.filename == '':
+                    return {'error': '文件名为空'}, 400
+                # 50MB 大小限制（与前端一致）
+                if request.content_length and request.content_length > 50 * 1024 * 1024:
+                    return {'error': '文件大小不能超过 50MB'}, 400
+
+                upload_folder = current_app.config.get(
+                    'UPLOAD_FOLDER',
+                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
+                )
+                save_dir = os.path.join(upload_folder, 'contracts')
+                os.makedirs(save_dir, exist_ok=True)
+
+                original_name = uploaded.filename
+                safe_name = secure_filename(original_name) or 'file'
+                file_ext = os.path.splitext(safe_name)[1]
+                unique_name = f"{uuid.uuid4().hex}_{safe_name}" if file_ext else f"{uuid.uuid4().hex}_{safe_name}"
+                disk_path = os.path.join(save_dir, unique_name)
+                uploaded.save(disk_path)
+
+                # 相对 UPLOAD_FOLDER 的存储路径，下载时再拼回磁盘绝对路径
+                rel_path = os.path.join('contracts', unique_name)
+                attachment = ContractAttachment(
+                    contract_id=contract_id,
+                    file_name=original_name,
+                    file_path=rel_path,
+                    file_type=uploaded.mimetype or file_ext.lstrip('.'),
+                    file_size=os.path.getsize(disk_path),
+                    attachment_type=attachment_type,
+                    description=description,
+                    uploaded_by=current_user_id
+                )
+            else:
+                # 兼容 JSON 方式（仅登记元数据，无实体文件）
+                data = request.get_json(silent=True) or {}
+                attachment = ContractAttachment(
+                    contract_id=contract_id,
+                    file_name=data.get('file_name'),
+                    file_path=data.get('file_path'),
+                    file_type=data.get('file_type'),
+                    file_size=data.get('file_size'),
+                    attachment_type=data.get('attachment_type', 'other'),
+                    description=data.get('description', ''),
+                    uploaded_by=current_user_id
+                )
+
             db.session.add(attachment)
             db.session.commit()
-            
+
             return {'attachment': attachment.to_dict(), 'message': '附件上传成功'}, 201
+
+
+class ContractAttachmentDetailResource(Resource):
+    """合同单个附件：在线查看 / 下载 / 删除"""
+
+    method_decorators = {
+        'get': [require_contract_perm('contract:view')],
+        'delete': [require_contract_perm('contract:delete')],
+    }
+
+    def _get_attachment(self, db, Contract, ContractAttachment, contract_id, attachment_id):
+        contract = db.session.get(Contract, contract_id)
+        if not contract:
+            return None, None
+        attachment = db.session.query(ContractAttachment).filter_by(
+            id=attachment_id, contract_id=contract_id
+        ).first()
+        return contract, attachment
+
+    def get(self, contract_id, attachment_id):
+        db = get_db()
+        app = get_app()
+        db, Contract, _, _, _, _, _, _, ContractAttachment = get_contract_models()
+
+        with app.app_context():
+            _, attachment = self._get_attachment(
+                db, Contract, ContractAttachment, contract_id, attachment_id)
+            if not attachment:
+                return {'error': '附件不存在'}, 404
+
+            upload_folder = current_app.config.get(
+                'UPLOAD_FOLDER',
+                os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
+            )
+            disk_path = os.path.join(upload_folder, attachment.file_path or '')
+            if not attachment.file_path or not os.path.exists(disk_path):
+                return {'error': '附件文件不存在或已被移除'}, 404
+
+            as_download = request.args.get('mode') == 'download'
+            return send_file(
+                disk_path,
+                as_attachment=as_download,
+                download_name=attachment.file_name,
+                mimetype=attachment.file_type or None
+            )
+
+    def delete(self, contract_id, attachment_id):
+        db = get_db()
+        app = get_app()
+        db, Contract, _, _, _, _, _, _, ContractAttachment = get_contract_models()
+
+        with app.app_context():
+            _, attachment = self._get_attachment(
+                db, Contract, ContractAttachment, contract_id, attachment_id)
+            if not attachment:
+                return {'error': '附件不存在'}, 404
+
+            # 删除物理文件（忽略不存在等异常）
+            if attachment.file_path:
+                upload_folder = current_app.config.get(
+                    'UPLOAD_FOLDER',
+                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
+                )
+                disk_path = os.path.join(upload_folder, attachment.file_path)
+                try:
+                    if os.path.exists(disk_path):
+                        os.remove(disk_path)
+                except OSError:
+                    pass
+
+            db.session.delete(attachment)
+            db.session.commit()
+            return {'success': True, 'message': '附件已删除'}
 
 
 class ContractStatisticsResource(Resource):
@@ -1453,6 +1568,7 @@ contracts_api.add_resource(ContractChangeResource, '/<int:contract_id>/changes')
 contracts_api.add_resource(ContractRiskResource, '/<int:contract_id>/risks', '/<int:contract_id>/risks/<int:risk_id>')
 contracts_api.add_resource(ContractPaymentResource, '/<int:contract_id>/payments', '/<int:contract_id>/payments/<int:payment_id>')
 contracts_api.add_resource(ContractAttachmentResource, '/<int:contract_id>/attachments')
+contracts_api.add_resource(ContractAttachmentDetailResource, '/<int:contract_id>/attachments/<int:attachment_id>')
 contracts_api.add_resource(ContractStatisticsResource, '/statistics')
 contracts_api.add_resource(ContractExportControlResource, '/export-control')
 contracts_api.add_resource(ContractIPManagementResource, '/ip-management')

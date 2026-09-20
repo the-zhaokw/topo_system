@@ -1,0 +1,4 @@
+<caches>
+  <module name="draco_module" version="22474" file="/html/portlet/ext/draco/modules/draco_module.swf" match="^html/client/topo$"/>
+  <module name="definition" version="22474" file="/html/client/schema.def"/>
+</caches>

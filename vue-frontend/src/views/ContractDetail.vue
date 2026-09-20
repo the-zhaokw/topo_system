@@ -1047,9 +1047,8 @@ const submitAttachment = async () => {
 
   attachmentSubmitting.value = true
   try {
-    await api.post(`/contracts/${contractId}/attachments`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    // 不要手动设置 Content-Type：FormData 由浏览器自动补全 multipart/form-data; boundary=...
+    await api.post(`/contracts/${contractId}/attachments`, formData)
     ElMessage.success('上传成功')
     showAttachmentDialog.value = false
     fetchAttachments()
