@@ -907,10 +907,13 @@ const filterByStat = (statType) => {
   filters.issue_type = ''
   filters.assignee = ''
   filters.assigned_to_me = false
+  // 必须清空 filter_type，否则先点"待我处理的/待领取的"后再切卡片，残留条件会叠加导致筛选无效
+  filters.filter_type = ''
 
   switch (statType) {
     case 'openBugs':
-      filters.status = 'new,assigned,in_progress,fixed,reopened'
+      // 与卡片统计口径保持一致（后端 all_open：未关闭的全部状态）
+      filters.filter_type = 'all_open'
       break
     case 'assignedToMe':
       filters.filter_type = 'my_handling'

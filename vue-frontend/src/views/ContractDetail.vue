@@ -57,7 +57,7 @@
 
       <el-tab-pane label="交付管理" name="delivery">
         <div class="tab-header">
-          <el-button type="primary" @click="showDeliveryDialog = true">添加交付记录</el-button>
+          <el-button type="primary" @click="() => { resetDeliveryForm(); showDeliveryDialog = true }">添加交付记录</el-button>
         </div>
         <el-table :data="deliveries" stripe v-loading="deliveryLoading">
           <el-table-column prop="delivery_no" label="交付编号" width="150" />
@@ -77,9 +77,21 @@
             </template>
           </el-table-column>
           <el-table-column prop="location" label="位置" show-overflow-tooltip />
-          <el-table-column label="操作" width="120">
+          <el-table-column label="操作" width="180" fixed="right">
             <template #default="{ row }">
-              <el-button link type="primary" @click="updateDeliveryStatus(row)">更新状态</el-button>
+              <el-button link type="primary" @click="openEditDelivery(row)">编辑</el-button>
+              <el-dropdown trigger="click" @command="(cmd) => changeDeliveryStatus(row, cmd)">
+                <el-button link type="warning">
+                  改变状态<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="s in deliveryStatusOptions" :key="s.value" :command="s.value" :disabled="row.status === s.value">
+                      {{ s.label }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -87,7 +99,7 @@
 
       <el-tab-pane label="付款计划" name="payment">
         <div class="tab-header">
-          <el-button type="primary" @click="showPaymentDialog = true">添加付款计划</el-button>
+          <el-button type="primary" @click="() => { resetPaymentForm(); showPaymentDialog = true }">添加付款计划</el-button>
         </div>
         <el-table :data="payments" stripe v-loading="paymentLoading">
           <el-table-column prop="payment_no" label="付款编号" width="150" />
@@ -110,29 +122,22 @@
             </template>
           </el-table-column>
           <el-table-column prop="invoice_no" label="发票号" width="120" />
-        </el-table>
-      </el-tab-pane>
-
-      <el-tab-pane label="变更记录" name="changes">
-        <div class="tab-header">
-          <el-button type="primary" @click="showChangeDialog = true">发起变更</el-button>
-        </div>
-        <el-table :data="changes" stripe v-loading="changeLoading">
-          <el-table-column prop="change_no" label="变更编号" width="150" />
-          <el-table-column prop="change_type" label="变更类型" width="120" />
-          <el-table-column prop="change_description" label="变更描述" show-overflow-tooltip />
-          <el-table-column label="金额变更" width="150">
+          <el-table-column label="操作" width="180" fixed="right">
             <template #default="{ row }">
-              {{ formatAmount(row.original_value, 'CNY') }} → {{ formatAmount(row.new_value, 'CNY') }}
+              <el-button link type="primary" @click="openEditPayment(row)">编辑</el-button>
+              <el-dropdown trigger="click" @command="(cmd) => changePaymentStatus(row, cmd)">
+                <el-button link type="warning">
+                  改变状态<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="s in paymentStatusOptions" :key="s.value" :command="s.value" :disabled="row.status === s.value">
+                      {{ s.label }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
-          </el-table-column>
-          <el-table-column prop="status" label="状态" width="100">
-            <template #default="{ row }">
-              <el-tag :type="getChangeStatusTag(row.status)">{{ getChangeStatusName(row.status) }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="created_at" label="申请日期" width="120">
-            <template #default="{ row }">{{ formatDate(row.created_at) }}</template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
@@ -286,7 +291,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <el-dialog v-model="showDeliveryDialog" title="添加交付记录" width="500px">
+    <el-dialog v-model="showDeliveryDialog" :title="deliveryEditingId ? '编辑交付记录' : '添加交付记录'" width="560px">
       <el-form :model="deliveryForm" label-width="100px">
         <el-form-item label="站点名称">
           <el-input v-model="deliveryForm.site_name" />
@@ -303,23 +308,37 @@
         <el-form-item label="计划日期">
           <el-date-picker v-model="deliveryForm.planned_date" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%" />
         </el-form-item>
+        <el-form-item label="实际日期">
+          <el-date-picker v-model="deliveryForm.actual_date" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%" />
+        </el-form-item>
         <el-form-item label="位置">
           <el-input v-model="deliveryForm.location" />
         </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="deliveryForm.status" style="width: 100%">
+            <el-option v-for="s in deliveryStatusOptions" :key="s.value" :label="s.label" :value="s.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="deliveryForm.notes" type="textarea" :rows="2" />
+        </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showDeliveryDialog = false">取消</el-button>
+        <el-button @click="closeDeliveryDialog">取消</el-button>
         <el-button type="primary" @click="submitDelivery">确定</el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showPaymentDialog" title="添加付款计划" width="500px">
+    <el-dialog v-model="showPaymentDialog" :title="paymentEditingId ? '编辑付款计划' : '添加付款计划'" width="560px">
       <el-form :model="paymentForm" label-width="100px">
         <el-form-item label="付款阶段">
-          <el-input v-model="paymentForm.payment_stage" />
+          <el-input v-model="paymentForm.payment_stage" placeholder="如：预付款、发货款、验收款" />
         </el-form-item>
         <el-form-item label="计划金额">
           <el-input-number v-model="paymentForm.planned_amount" :min="0" :precision="2" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="实际金额">
+          <el-input-number v-model="paymentForm.actual_amount" :min="0" :precision="2" style="width: 100%" />
         </el-form-item>
         <el-form-item label="币种">
           <el-select v-model="paymentForm.currency" style="width: 100%">
@@ -331,42 +350,27 @@
         <el-form-item label="计划日期">
           <el-date-picker v-model="paymentForm.planned_date" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="付款方式">
-          <el-input v-model="paymentForm.payment_method" />
+        <el-form-item label="实际日期">
+          <el-date-picker v-model="paymentForm.actual_date" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%" />
         </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showPaymentDialog = false">取消</el-button>
-        <el-button type="primary" @click="submitPayment">确定</el-button>
-      </template>
-    </el-dialog>
-
-    <el-dialog v-model="showChangeDialog" title="发起变更" width="500px">
-      <el-form :model="changeForm" label-width="100px">
-        <el-form-item label="变更类型">
-          <el-select v-model="changeForm.change_type" style="width: 100%">
-            <el-option label="数量变更" value="quantity_change" />
-            <el-option label="价格变更" value="price_change" />
-            <el-option label="交付时间变更" value="delivery_change" />
-            <el-option label="技术变更" value="technical_change" />
+        <el-form-item label="付款方式">
+          <el-input v-model="paymentForm.payment_method" placeholder="如：银行转账、信用证" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="paymentForm.status" style="width: 100%">
+            <el-option v-for="s in paymentStatusOptions" :key="s.value" :label="s.label" :value="s.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="变更描述">
-          <el-input v-model="changeForm.change_description" type="textarea" :rows="3" />
+        <el-form-item label="发票号">
+          <el-input v-model="paymentForm.invoice_no" />
         </el-form-item>
-        <el-form-item label="原值">
-          <el-input-number v-model="changeForm.original_value" :min="0" :precision="2" style="width: 100%" />
-        </el-form-item>
-        <el-form-item label="新值">
-          <el-input-number v-model="changeForm.new_value" :min="0" :precision="2" style="width: 100%" />
-        </el-form-item>
-        <el-form-item label="影响评估">
-          <el-input v-model="changeForm.impact_assessment" type="textarea" :rows="2" />
+        <el-form-item label="备注">
+          <el-input v-model="paymentForm.notes" type="textarea" :rows="2" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showChangeDialog = false">取消</el-button>
-        <el-button type="primary" @click="submitChange">确定</el-button>
+        <el-button @click="closePaymentDialog">取消</el-button>
+        <el-button type="primary" @click="submitPayment">确定</el-button>
       </template>
     </el-dialog>
 
@@ -485,7 +489,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  Promotion, CircleCheckFilled, CircleCloseFilled, Loading, Clock, Check, Close
+  Promotion, CircleCheckFilled, CircleCloseFilled, Loading, Clock, Check, Close, ArrowDown
 } from '@element-plus/icons-vue'
 import api from '@/services/api'
 import { parseUTCDate } from '@/utils/dateUtils'
@@ -558,21 +562,18 @@ const getStepClass = (review, step) => {
 }
 
 const deliveries = ref([])
-const changes = ref([])
 const risks = ref([])
 const payments = ref([])
 const attachments = ref([])
 
 const deliveryLoading = ref(false)
 const paymentLoading = ref(false)
-const changeLoading = ref(false)
 const riskLoading = ref(false)
 const approvalLoading = ref(false)
 const attachmentLoading = ref(false)
 
 const showDeliveryDialog = ref(false)
 const showPaymentDialog = ref(false)
-const showChangeDialog = ref(false)
 const showRiskDialog = ref(false)
 const showAttachmentDialog = ref(false)
 const showInitiateDialog = ref(false)
@@ -580,30 +581,80 @@ const attachmentSubmitting = ref(false)
 const attachmentUploadRef = ref(null)
 const attachmentSelectedFile = ref(null)
 
+const deliveryEditingId = ref(null)  // null=新增，有值=编辑
+const deliveryStatusOptions = [
+  { value: 'pending', label: '待处理' },
+  { value: 'in_production', label: '生产中' },
+  { value: 'shipped', label: '已发货' },
+  { value: 'in_transit', label: '运输中' },
+  { value: 'customs_clearance', label: '清关中' },
+  { value: 'installation', label: '安装中' },
+  { value: 'commissioning', label: '调试中' },
+  { value: 'acceptance_testing', label: '验收中' },
+  { value: 'accepted', label: '已验收' },
+  { value: 'rejected', label: '已拒绝' }
+]
+
 const deliveryForm = reactive({
   site_name: '',
   site_code: '',
   equipment_type: '',
   quantity: 0,
   planned_date: null,
-  location: ''
+  actual_date: null,
+  location: '',
+  status: 'pending',
+  notes: ''
 })
+
+// 重置交付表单
+const resetDeliveryForm = () => {
+  deliveryEditingId.value = null
+  deliveryForm.site_name = ''
+  deliveryForm.site_code = ''
+  deliveryForm.equipment_type = ''
+  deliveryForm.quantity = 0
+  deliveryForm.planned_date = null
+  deliveryForm.actual_date = null
+  deliveryForm.location = ''
+  deliveryForm.status = 'pending'
+  deliveryForm.notes = ''
+}
+
+const paymentEditingId = ref(null)  // null=新增，有值=编辑
+const paymentStatusOptions = [
+  { value: 'pending', label: '待付款' },
+  { value: 'paid', label: '已付款' },
+  { value: 'overdue', label: '逾期' }
+]
 
 const paymentForm = reactive({
   payment_stage: '',
   planned_amount: 0,
+  actual_amount: 0,
   currency: 'CNY',
   planned_date: null,
-  payment_method: ''
+  actual_date: null,
+  payment_method: '',
+  status: 'pending',
+  invoice_no: '',
+  notes: ''
 })
 
-const changeForm = reactive({
-  change_type: '',
-  change_description: '',
-  original_value: 0,
-  new_value: 0,
-  impact_assessment: ''
-})
+// 重置付款表单
+const resetPaymentForm = () => {
+  paymentEditingId.value = null
+  paymentForm.payment_stage = ''
+  paymentForm.planned_amount = 0
+  paymentForm.actual_amount = 0
+  paymentForm.currency = 'CNY'
+  paymentForm.planned_date = null
+  paymentForm.actual_date = null
+  paymentForm.payment_method = ''
+  paymentForm.status = 'pending'
+  paymentForm.invoice_no = ''
+  paymentForm.notes = ''
+}
 
 const riskForm = reactive({
   risk_type: '',
@@ -709,15 +760,6 @@ const getPaymentStatusTag = (status) => {
   return map[status] || ''
 }
 
-const getChangeStatusName = (status) => {
-  const map = { pending: '待审批', approved: '已批准', rejected: '已拒绝' }
-  return map[status] || status
-}
-const getChangeStatusTag = (status) => {
-  const map = { pending: 'warning', approved: 'success', rejected: 'danger' }
-  return map[status] || ''
-}
-
 const getApprovalStatusName = (status) => {
   const map = { pending: '待审批', approved: '已批准', rejected: '已拒绝' }
   return map[status] || status
@@ -768,18 +810,6 @@ const fetchPayments = async () => {
     ElMessage.error('获取付款计划失败')
   } finally {
     paymentLoading.value = false
-  }
-}
-
-const fetchChanges = async () => {
-  changeLoading.value = true
-  try {
-    const response = await api.get(`/contracts/${contractId}/changes`)
-    changes.value = response.changes
-  } catch (error) {
-    ElMessage.error('获取变更记录失败')
-  } finally {
-    changeLoading.value = false
   }
 }
 
@@ -934,46 +964,134 @@ const handleEdit = () => {
 }
 
 const submitDelivery = async () => {
+  if (!deliveryForm.site_name || !deliveryForm.site_name.trim()) {
+    ElMessage.warning('请填写站点名称')
+    return
+  }
   try {
-    await api.post(`/contracts/${contractId}/deliveries`, deliveryForm)
-    ElMessage.success('添加成功')
-    showDeliveryDialog.value = false
+    if (deliveryEditingId.value) {
+      // 编辑模式
+      await api.put(`/contracts/${contractId}/deliveries/${deliveryEditingId.value}`, deliveryForm)
+      ElMessage.success('交付记录更新成功')
+    } else {
+      // 新增模式
+      await api.post(`/contracts/${contractId}/deliveries`, deliveryForm)
+      ElMessage.success('交付记录添加成功')
+    }
+    closeDeliveryDialog()
     fetchDeliveries()
   } catch (error) {
-    ElMessage.error('添加失败')
+    ElMessage.error(deliveryEditingId.value ? '更新失败' : '添加失败')
   }
 }
 
-const updateDeliveryStatus = async (row) => {
-  const status = row.status === 'pending' ? 'accepted' : 'pending'
+// 打开编辑交付弹窗（字段回填）
+const openEditDelivery = (row) => {
+  deliveryEditingId.value = row.id
+  deliveryForm.site_name = row.site_name || ''
+  deliveryForm.site_code = row.site_code || ''
+  deliveryForm.equipment_type = row.equipment_type || ''
+  deliveryForm.quantity = row.quantity || 0
+  deliveryForm.planned_date = row.planned_date || null
+  deliveryForm.actual_date = row.actual_date || null
+  deliveryForm.location = row.location || ''
+  deliveryForm.status = row.status || 'pending'
+  deliveryForm.notes = row.notes || ''
+  showDeliveryDialog.value = true
+}
+
+// 关闭交付弹窗并重置
+const closeDeliveryDialog = () => {
+  showDeliveryDialog.value = false
+  resetDeliveryForm()
+}
+
+// 快速改变交付状态
+const changeDeliveryStatus = async (row, newStatus) => {
+  const oldLabel = getDeliveryStatusName(row.status)
+  const newLabel = getDeliveryStatusName(newStatus)
   try {
-    await api.put(`/contracts/${contractId}/deliveries/${row.id}`, { status })
-    ElMessage.success('状态更新成功')
+    await ElMessageBox.confirm(
+      `确认将交付记录「${row.delivery_no}」的状态从「${oldLabel}」变更为「${newLabel}」？`,
+      '状态变更确认',
+      { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }
+    )
+  } catch (e) {
+    return
+  }
+  try {
+    await api.put(`/contracts/${contractId}/deliveries/${row.id}`, { status: newStatus })
+    ElMessage.success(`状态已更新为「${newLabel}」`)
     fetchDeliveries()
   } catch (error) {
-    ElMessage.error('更新失败')
+    ElMessage.error('状态更新失败')
   }
 }
 
 const submitPayment = async () => {
+  // 基础校验
+  if (!paymentForm.payment_stage || !paymentForm.payment_stage.trim()) {
+    ElMessage.warning('请填写付款阶段')
+    return
+  }
   try {
-    await api.post(`/contracts/${contractId}/payments`, paymentForm)
-    ElMessage.success('添加成功')
-    showPaymentDialog.value = false
+    if (paymentEditingId.value) {
+      // 编辑模式
+      await api.put(`/contracts/${contractId}/payments/${paymentEditingId.value}`, paymentForm)
+      ElMessage.success('付款计划更新成功')
+    } else {
+      // 新增模式
+      await api.post(`/contracts/${contractId}/payments`, paymentForm)
+      ElMessage.success('付款计划添加成功')
+    }
+    closePaymentDialog()
     fetchPayments()
   } catch (error) {
-    ElMessage.error('添加失败')
+    ElMessage.error(paymentEditingId.value ? '更新失败' : '添加失败')
   }
 }
 
-const submitChange = async () => {
+// 打开编辑付款计划弹窗（字段回填）
+const openEditPayment = (row) => {
+  paymentEditingId.value = row.id
+  paymentForm.payment_stage = row.payment_stage || ''
+  paymentForm.planned_amount = row.planned_amount || 0
+  paymentForm.actual_amount = row.actual_amount || 0
+  paymentForm.currency = row.currency || 'CNY'
+  paymentForm.planned_date = row.planned_date || null
+  paymentForm.actual_date = row.actual_date || null
+  paymentForm.payment_method = row.payment_method || ''
+  paymentForm.status = row.status || 'pending'
+  paymentForm.invoice_no = row.invoice_no || ''
+  paymentForm.notes = row.notes || ''
+  showPaymentDialog.value = true
+}
+
+// 关闭付款计划弹窗并重置
+const closePaymentDialog = () => {
+  showPaymentDialog.value = false
+  resetPaymentForm()
+}
+
+// 快速改变付款状态
+const changePaymentStatus = async (row, newStatus) => {
+  const oldLabel = getPaymentStatusName(row.status)
+  const newLabel = getPaymentStatusName(newStatus)
   try {
-    await api.post(`/contracts/${contractId}/changes`, changeForm)
-    ElMessage.success('变更申请已提交')
-    showChangeDialog.value = false
-    fetchChanges()
+    await ElMessageBox.confirm(
+      `确认将付款计划「${row.payment_no}」的状态从「${oldLabel}」变更为「${newLabel}」？`,
+      '状态变更确认',
+      { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }
+    )
+  } catch (e) {
+    return
+  }
+  try {
+    await api.put(`/contracts/${contractId}/payments/${row.id}`, { status: newStatus })
+    ElMessage.success(`状态已更新为「${newLabel}」`)
+    fetchPayments()
   } catch (error) {
-    ElMessage.error('提交失败')
+    ElMessage.error('状态更新失败')
   }
 }
 
@@ -1139,7 +1257,6 @@ onMounted(() => {
   fetchContract()
   fetchDeliveries()
   fetchPayments()
-  fetchChanges()
   fetchRisks()
   fetchReviews()
   fetchAttachments()

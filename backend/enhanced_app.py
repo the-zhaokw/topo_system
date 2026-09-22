@@ -3462,7 +3462,9 @@ class KnowledgeAttachment(db.Model):
             'article_id': self.article_id,
             'filename': self.filename,
             'file_size': self.file_size,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'url': f'/api/knowledge/articles/{self.article_id}/attachments/{self.id}',
+            'inline_url': f'/api/knowledge/articles/{self.article_id}/attachments/{self.id}?inline=1'
         }
 
 

@@ -416,8 +416,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
@@ -433,6 +433,7 @@ import { parseUTCDate } from '@/utils/dateUtils'
 const API_BASE_URL = import.meta.env.DEV ? '' : 'http://172.18.36.249:5000'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 
 const isAdmin = computed(() => {
@@ -809,6 +810,17 @@ onMounted(() => {
   loadStats()
   loadCategories()
   loadTags()
+  // 从文章详情页点击"编辑"跳入时，自动打开编辑弹窗
+  if (route.query.edit) {
+    editArticle({ id: route.query.edit })
+  }
+})
+
+// 从详情页带 edit 参数进入时，弹窗关闭（保存/取消/点X）后返回文章详情页
+watch(editVisible, (visible) => {
+  if (!visible && route.query.edit) {
+    router.replace(`/knowledge/articles/${route.query.edit}`)
+  }
 })
 </script>
 

@@ -135,15 +135,56 @@
                   :key="att.id"
                   class="attachment-item"
                 >
-                  <div class="attachment-icon-wrapper">
+                  <div class="attachment-icon-wrapper" :style="{ background: getAttachmentIconBg(att.filename) }">
                     <el-icon class="attachment-icon"><Document /></el-icon>
                   </div>
-                  <span class="attachment-name">{{ att.filename }}</span>
-                  <span class="attachment-size">{{ formatFileSize(att.file_size) }}</span>
-                  <el-button type="primary" link size="small" @click="downloadAttachment(att)" class="download-btn">
-                    <el-icon><Download /></el-icon>
-                    下载
-                  </el-button>
+                  <div class="attachment-info">
+                    <span class="attachment-name">{{ att.filename }}</span>
+                    <span class="attachment-meta">{{ formatFileSize(att.file_size) }} · {{ getFileExtLabel(att.filename) }}</span>
+                  </div>
+                  <div class="attachment-actions">
+                    <el-button
+                      v-if="canInlinePreview(att.filename)"
+                      type="primary"
+                      link
+                      size="small"
+                      @click="previewAttachment(att)"
+                      class="preview-btn"
+                    >
+                      <el-icon><ZoomIn /></el-icon>
+                      预览
+                    </el-button>
+                    <el-button
+                      type="primary"
+                      link
+                      size="small"
+                      @click="downloadAttachment(att)"
+                      class="download-btn"
+                    >
+                      <el-icon><Download /></el-icon>
+                      下载
+                    </el-button>
+                    <el-popconfirm
+                      v-if="canEdit"
+                      title="确定要删除这个附件吗？"
+                      confirm-button-text="删除"
+                      cancel-button-text="取消"
+                      confirm-button-type="danger"
+                      @confirm="deleteAttachment(att)"
+                    >
+                      <template #reference>
+                        <el-button
+                          type="danger"
+                          link
+                          size="small"
+                          class="delete-btn"
+                        >
+                          <el-icon><Delete /></el-icon>
+                          删除
+                        </el-button>
+                      </template>
+                    </el-popconfirm>
+                  </div>
                 </div>
               </div>
             </div>
@@ -202,6 +243,74 @@
     <el-empty v-else description="文章不存在或已被删除" class="custom-empty animate-fade-in-up">
       <el-button type="primary" @click="goBack" class="btn-gradient">返回知识库</el-button>
     </el-empty>
+
+    <!-- 附件预览对话框 -->
+    <el-dialog
+      v-model="previewDialogVisible"
+      :title="previewFileName"
+      width="85%"
+      top="5vh"
+      class="attachment-preview-dialog"
+      destroy-on-close
+      @closed="cleanupPreview"
+    >
+      <div class="preview-container">
+        <!-- 图片预览 -->
+        <img
+          v-if="previewFileType === 'image'"
+          :src="previewFileBlobUrl"
+          :alt="previewFileName"
+          class="preview-image"
+        />
+        <!-- PDF 预览 -->
+        <iframe
+          v-else-if="previewFileType === 'pdf'"
+          :src="previewFileBlobUrl"
+          class="preview-frame"
+          frameborder="0"
+        />
+        <!-- 文本 / 代码预览：深色主题等宽字体 + 语法高亮 -->
+        <pre
+          v-else-if="previewFileType === 'text'"
+          class="preview-text"
+          ><code>{{ previewTextContent }}</code></pre>
+        <!-- 视频预览 -->
+        <video
+          v-else-if="previewFileType === 'video'"
+          :src="previewFileBlobUrl"
+          controls
+          class="preview-video"
+        ></video>
+        <!-- 音频预览 -->
+        <audio
+          v-else-if="previewFileType === 'audio'"
+          :src="previewFileBlobUrl"
+          controls
+          class="preview-audio"
+        ></audio>
+        <!-- 不支持预览的类型（Office 等） -->
+        <div v-else class="preview-unsupported">
+          <el-icon class="unsupported-icon"><Document /></el-icon>
+          <p>该文件类型暂不支持浏览器内在线预览</p>
+          <p class="unsupported-tip">点击下方按钮下载后本地查看（Word / Excel / PPT）</p>
+          <el-button type="primary" @click="downloadAttachment(previewingAttachment)">
+            <el-icon><Download /></el-icon>
+            下载文件
+          </el-button>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="previewDialogVisible = false">关闭</el-button>
+        <el-button
+          v-if="previewingAttachment && canInlinePreview(previewingAttachment.filename)"
+          type="primary"
+          @click="downloadAttachment(previewingAttachment)"
+        >
+          <el-icon><Download /></el-icon>
+          下载
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -214,7 +323,7 @@ import { useUserStore } from '@/stores/user'
 import { parseUTCDate } from '@/utils/dateUtils'
 import {
   ArrowLeft, User, Folder, Clock, View, Star, StarFilled,
-  ChatDotRound, Paperclip, Edit, Share, Download, Document
+  ChatDotRound, Paperclip, Edit, Share, Download, Document, ZoomIn, Delete
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -229,6 +338,23 @@ const article = ref(null)
 const comments = ref([])
 const newComment = ref('')
 const isLiked = ref(false)
+
+// 附件预览状态
+const previewDialogVisible = ref(false)
+const previewFileName = ref('')
+const previewFileType = ref('')
+const previewFileBlobUrl = ref('')
+const previewTextContent = ref('')
+const previewingAttachment = ref(null)
+
+// 清理预览资源
+const cleanupPreview = () => {
+  if (previewFileBlobUrl.value) {
+    window.URL.revokeObjectURL(previewFileBlobUrl.value)
+    previewFileBlobUrl.value = ''
+  }
+  previewTextContent.value = ''
+}
 
 const isAdmin = computed(() => {
   const user = userStore.currentUser
@@ -314,15 +440,150 @@ const submitComment = async () => {
   }
 }
 
-// 下载附件
-const downloadAttachment = (att) => {
-  if (!article.value?.id) return
-  window.open(`${API_BASE_URL}/api/knowledge/articles/${article.value.id}/attachments/${att.id}`)
+// 删除附件（仅作者 / 超级管理员可删）
+const deleteAttachment = async (att) => {
+  if (!att?.id || !article.value?.id) return
+  try {
+    const res = await apiRequest(`/api/knowledge/articles/${article.value.id}/attachments/${att.id}`, {
+      method: 'DELETE'
+    })
+    if (res.success) {
+      // 从本地数组里删掉，无需重新拉整页
+      const idx = article.value.attachments?.findIndex(a => a.id === att.id)
+      if (idx > -1) article.value.attachments.splice(idx, 1)
+      ElMessage.success(`已删除附件「${att.filename}」`)
+    } else {
+      ElMessage.error(res.error || '删除失败')
+    }
+  } catch (error) {
+    console.error('删除附件失败:', error)
+    ElMessage.error(error.message || '删除失败')
+  }
+}
+
+// 下载附件（带 JWT token，避免 401）
+const downloadAttachment = async (att) => {
+  if (!att?.id) return
+  try {
+    const token = localStorage.getItem('token')
+    const url = `${API_BASE_URL}/api/knowledge/articles/${att.article_id || article.value?.id}/attachments/${att.id}`
+    const response = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
+    if (!response.ok) throw new Error('下载失败')
+    const blob = await response.blob()
+    const downloadUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = att.filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(downloadUrl)
+    ElMessage.success('下载成功')
+  } catch (error) {
+    console.error('下载附件失败:', error)
+    ElMessage.error('下载失败')
+  }
+}
+
+// 获取文件扩展名（小写，不含点）
+const getFileExtension = (filename) => {
+  if (!filename) return ''
+  const parts = filename.split('.')
+  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : ''
+}
+
+// 判断文件类型：image / pdf / text / video / audio / office / other
+const getFileType = (filename) => {
+  const ext = getFileExtension(filename)
+  const imageExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'svg', 'ico']
+  if (imageExts.includes(ext)) return 'image'
+  if (ext === 'pdf') return 'pdf'
+  // 文本类（浏览器原生可读）
+  const textExts = ['txt', 'md', 'markdown', 'csv', 'json', 'xml', 'yaml', 'yml',
+                    'ini', 'conf', 'cfg', 'log', 'lua', 'py', 'js', 'ts',
+                    'html', 'htm', 'css', 'sql', 'sh', 'bat', 'ps1', 'java',
+                    'c', 'cpp', 'h', 'go', 'rs', 'rb', 'php', 'r', 'toml',
+                    'properties', 'gitignore']
+  if (textExts.includes(ext)) return 'text'
+  // 视频类
+  const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'flv', 'wmv']
+  if (videoExts.includes(ext)) return 'video'
+  // 音频类
+  const audioExts = ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a']
+  if (audioExts.includes(ext)) return 'audio'
+  // Office（浏览器原生不支持预览，需走外部服务）
+  if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) return 'office'
+  return 'other'
+}
+
+// 是否支持浏览器内联预览（图片/PDF/文本/视频/音频）
+const canInlinePreview = (filename) => {
+  const type = getFileType(filename)
+  return ['image', 'pdf', 'text', 'video', 'audio'].includes(type)
+}
+
+// 获取扩展名标签（大写）
+const getFileExtLabel = (filename) => {
+  const ext = getFileExtension(filename)
+  return ext ? ext.toUpperCase() : '未知'
+}
+
+// 根据扩展名返回图标背景色
+const getAttachmentIconBg = (filename) => {
+  const type = getFileType(filename)
+  switch (type) {
+    case 'image':  return 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
+    case 'pdf':    return 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)'
+    case 'text':   return 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)'   // 靛蓝（代码/文本）
+    case 'video':  return 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)'   // 粉
+    case 'audio':  return 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)'   // 绿
+    case 'office': return 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'   // 蓝（MS Office 主色）
+    default:       return 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)'
+  }
+}
+
+// 预览附件（文本类拉 text()，图片/PDF/音视频走 blob URL）
+const previewAttachment = async (att) => {
+  if (!att?.id) return
+  // 清理上一次预览的 blob URL / 文本
+  cleanupPreview()
+
+  previewingAttachment.value = att
+  previewFileName.value = att.filename
+  previewFileType.value = getFileType(att.filename)
+  previewDialogVisible.value = true
+
+  if (!canInlinePreview(att.filename)) return
+
+  try {
+    const token = localStorage.getItem('token')
+    const url = `${API_BASE_URL}/api/knowledge/articles/${att.article_id || article.value?.id}/attachments/${att.id}?inline=1`
+    const response = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
+    if (!response.ok) throw new Error('加载预览失败')
+
+    // 文本类：直接取 text()，避免大文件被当作二进制
+    if (previewFileType.value === 'text') {
+      previewTextContent.value = await response.text()
+      return
+    }
+    // 图片 / PDF / 视频 / 音频：blob URL
+    const blob = await response.blob()
+    previewFileBlobUrl.value = window.URL.createObjectURL(blob)
+  } catch (error) {
+    console.error('预览附件失败:', error)
+    ElMessage.error('加载预览失败')
+    previewDialogVisible.value = false
+  }
 }
 
 // 编辑文章
 const editArticle = () => {
-  router.push(`/knowledge/articles/${article.value.id}/edit`)
+  // 复用知识库主页的编辑弹窗，携带 edit 参数由主页自动打开
+  router.push(`/knowledge?edit=${article.value.id}`)
 }
 
 // 点赞
@@ -967,6 +1228,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .attachment-icon {
@@ -974,20 +1236,153 @@ onMounted(() => {
   color: #0ea5e9;
 }
 
-.attachment-name {
+.attachment-info {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attachment-name {
   color: #1e293b;
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.attachment-size {
+.attachment-meta {
   color: #94a3b8;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
-.download-btn {
+.attachment-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.preview-btn,
+.download-btn,
+.delete-btn {
   font-weight: 500;
+}
+
+.preview-btn .el-icon,
+.download-btn .el-icon,
+.delete-btn .el-icon {
+  margin-right: 2px;
+}
+
+/* 附件预览对话框样式 */
+.attachment-preview-dialog :deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  border-radius: 16px 16px 0 0;
+  padding: 18px 24px;
+}
+
+.attachment-preview-dialog :deep(.el-dialog__title) {
+  color: white;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 40px);
+}
+
+.attachment-preview-dialog :deep(.el-dialog__headerbtn .el-dialog__close) {
+  color: white;
+}
+
+.preview-container {
+  min-height: 300px;
+  max-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.preview-frame {
+  width: 100%;
+  height: 70vh;
+  border: none;
+}
+
+/* 文本 / 代码预览：深色主题 + 等宽字体 + 横向滚动 */
+.preview-text {
+  width: 100%;
+  height: 70vh;
+  margin: 0;
+  padding: 20px 24px;
+  background: #0f172a;                    /* slate-900 深色 */
+  color: #e2e8f0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow: auto;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  tab-size: 2;
+}
+.preview-text code {
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  white-space: inherit;
+}
+
+/* 视频预览：宽高自适应，居中显示 */
+.preview-video {
+  max-width: 100%;
+  max-height: 70vh;
+  background: #000;
+  border-radius: 8px;
+}
+
+/* 音频预览：水平撑满 */
+.preview-audio {
+  width: 100%;
+  padding: 24px;
+}
+
+.preview-unsupported {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: #64748b;
+}
+
+.unsupported-icon {
+  font-size: 64px;
+  color: #94a3b8;
+}
+
+.preview-unsupported p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.unsupported-tip {
+  font-size: 13px !important;
+  color: #94a3b8 !important;
 }
 
 /* 评论区 */

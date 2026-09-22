@@ -30,6 +30,125 @@ logger = logging.getLogger(__name__)
 knowledge_bp = Blueprint('knowledge', __name__, url_prefix='/knowledge')
 
 
+def _safe_storage_name(original_name):
+    """生成保留中文原文件名的磁盘安全文件名。
+
+    secure_filename 会剥离所有非 ASCII 字符，导致中文名丢失；
+    这里仅处理路径穿越与 Windows 非法字符，完整保留中文与常用符号。
+    极端情况下（清洗后为空）回退为 原文件名 + 时间戳。
+    """
+    import re
+    import time
+
+    # 只取文件名部分，防止 ../../etc 之类的路径穿越
+    name = os.path.basename((original_name or '').replace('\\', '/')).strip()
+
+    # 移除 Windows 磁盘文件名非法字符及控制字符
+    name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '_', name)
+
+    # Windows 不允许文件名以点或空格结尾
+    name = name.rstrip('. ')
+
+    # Windows 保留设备名（CON、PRN、AUX、NUL、COM1~9、LPT1~9），加下划线前缀规避
+    stem = name.split('.')[0].upper()
+    reserved = {'CON', 'PRN', 'AUX', 'NUL'} | {f'COM{i}' for i in range(1, 10)} | {f'LPT{i}' for i in range(1, 10)}
+    if stem in reserved:
+        name = f'_{name}'
+
+    # 文件名过长时截断（保留扩展名），Windows 单段上限约 255 字符
+    if len(name) > 200:
+        base, ext = os.path.splitext(name)
+        name = base[:200 - len(ext)] + ext
+
+    # 清洗后为空（如原文件名全是非法字符），用时间戳兜底
+    if not name:
+        name = f'file_{int(time.time())}'
+
+    return name
+
+
+def _resolve_unique_path(target_dir, filename):
+    """在指定目录下生成不冲突的文件名，重名时加 _1, _2 ... 后缀。
+
+    返回 (actual_save_path, actual_filename)，actual_filename 是实际落盘时用的名字。
+    """
+    os.makedirs(target_dir, exist_ok=True)
+    base, ext = os.path.splitext(filename)
+    candidate = filename
+    counter = 1
+    while os.path.exists(os.path.join(target_dir, candidate)):
+        candidate = f"{base}_{counter}{ext}"
+        counter += 1
+    return os.path.join(target_dir, candidate), candidate
+
+
+def _sync_attachments(article, frontend_list):
+    """前端传来附件列表后，与数据库对齐，增/删 KnowledgeAttachment 记录。
+
+    前端 attachments 元素形如：{id?, filename, file_path(/uploads/knowledge/xxx.png), file_size?}
+    - 有 id 且 db 中存在：保留
+    - 无 id 或 id 在 db 中不存在：新增（从 file_path 推出 storage_name 和磁盘路径）
+    - db 中有但前端没传 id 过来：删除
+    """
+    if frontend_list is None:
+        return
+    frontend_list = frontend_list or []
+
+    existing = KnowledgeAttachment.query.filter_by(article_id=article.id).all()
+    existing_map = {a.id: a for a in existing}
+
+    # 先处理：前端传来的新附件 → 新增
+    for att in frontend_list:
+        att_id = att.get('id')
+        if att_id and att_id in existing_map:
+            # 已存在，保留
+            continue
+        # 新增
+        frontend_path = att.get('file_path', '')  # 形如 /uploads/knowledge/xxx.png
+        filename = att.get('filename', '')
+        file_size = att.get('file_size')
+
+        # 从 URL 推出 storage_name
+        storage_name = os.path.basename(frontend_path) or _safe_storage_name(filename) or f'att_{uuid.uuid4().hex}'
+
+        # 拼磁盘绝对路径
+        upload_root = current_app.config.get(
+            'UPLOAD_FOLDER',
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
+        )
+        disk_path = os.path.join(upload_root, 'knowledge', storage_name)
+
+        if not os.path.exists(disk_path):
+            # 文件已不存在，跳过
+            logger.warning(f"附件磁盘文件不存在，跳过创建记录: {disk_path}")
+            continue
+
+        new_att = KnowledgeAttachment(
+            article_id=article.id,
+            filename=filename or storage_name,
+            storage_name=storage_name,
+            file_path=disk_path,
+            file_size=file_size
+        )
+        db.session.add(new_att)
+
+    # 前端 id 集合（仅包含真实 db id，前端 Date.now() 那种假 id 不在 existing_map 里）
+    frontend_real_ids = {
+        att.get('id') for att in frontend_list
+        if att.get('id') and att.get('id') in existing_map
+    }
+
+    # db 有但前端没传 → 删除
+    for db_id, db_att in existing_map.items():
+        if db_id not in frontend_real_ids:
+            try:
+                if os.path.exists(db_att.file_path):
+                    os.remove(db_att.file_path)
+            except Exception:
+                pass
+            db.session.delete(db_att)
+
+
 def get_audit_logger():
     """延迟获取审计日志函数"""
     from enhanced_app import create_audit_log
@@ -685,6 +804,8 @@ def create_article():
             status=data.get('status', 'draft')
         )
         db.session.add(article)
+        # 同步附件
+        _sync_attachments(article, data.get('attachments'))
         db.session.commit()
 
         audit_log = get_audit_logger()
@@ -1117,18 +1238,13 @@ def upload_file():
         upload_dir = os.path.join(upload_folder, 'knowledge')
         os.makedirs(upload_dir, exist_ok=True)
 
-        # 生成唯一文件名，保留原始扩展名
-        file_ext = os.path.splitext(file.filename)[1]
-        safe_name = secure_filename(file.filename) or 'file'
-        unique_filename = f"{uuid.uuid4().hex}_{safe_name}"
-        if file_ext and not unique_filename.lower().endswith(file_ext.lower()):
-            unique_filename = f"{uuid.uuid4().hex}{file_ext}"
-
-        file_path = os.path.join(upload_dir, unique_filename)
+        # 磁盘物理文件名 = 用户上传时的原文件名（保留中文），重名时自动加 _1, _2 后缀
+        safe_name = _safe_storage_name(file.filename)
+        file_path, storage_name = _resolve_unique_path(upload_dir, safe_name)
         file.save(file_path)
 
         # 返回相对路径，由 enhanced_app 的 /uploads/<path> 路由提供静态访问
-        url = f"/uploads/knowledge/{unique_filename}"
+        url = f"/uploads/knowledge/{storage_name}"
 
         return jsonify({
             'success': True,
@@ -1136,7 +1252,7 @@ def upload_file():
             'url': url,
             'data': {
                 'url': url,
-                'filename': file.filename,
+                'filename': file.filename,   # 用户上传的原名字（下载时用）
                 'file_size': os.path.getsize(file_path)
             }
         })
@@ -1164,18 +1280,22 @@ def upload_attachment(art_id):
         if file.filename == '':
             return jsonify({'success': False, 'error': '文件名为空'}), 400
 
-        upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', 'knowledge')
-        os.makedirs(upload_dir, exist_ok=True)
+        # 使用与通用上传一致的 upload_dir（读 app config，回退到默认）
+        upload_folder = current_app.config.get(
+            'UPLOAD_FOLDER',
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
+        )
+        upload_dir = os.path.join(upload_folder, 'knowledge')
 
-        file_ext = os.path.splitext(file.filename)[1]
-        unique_filename = f"{uuid.uuid4().hex}{file_ext}"
-        file_path = os.path.join(upload_dir, unique_filename)
+        # 磁盘物理文件名 = 用户上传时的原文件名（保留中文），重名时自动加 _1, _2 后缀
+        safe_name = _safe_storage_name(file.filename)
+        file_path, storage_name = _resolve_unique_path(upload_dir, safe_name)
         file.save(file_path)
 
         attachment = KnowledgeAttachment(
             article_id=art_id,
-            filename=file.filename,
-            storage_name=unique_filename,
+            filename=file.filename,   # 用户上传的原名字（下载时用）
+            storage_name=storage_name,  # 磁盘实际文件名
             file_path=file_path,
             file_size=os.path.getsize(file_path)
         )
@@ -1203,7 +1323,7 @@ def upload_attachment(art_id):
 @knowledge_bp.route('/articles/<int:art_id>/attachments/<int:att_id>', methods=['GET'])
 @jwt_required()
 def download_attachment(art_id, att_id):
-    """下载附件"""
+    """下载或内联预览附件（inline=1 时浏览器内打开）"""
     try:
         article = KnowledgeArticle.query.get(art_id)
         if not article:
@@ -1216,7 +1336,13 @@ def download_attachment(art_id, att_id):
         if not os.path.exists(attachment.file_path):
             return jsonify({'success': False, 'error': '文件不存在'}), 404
 
-        return send_file(attachment.file_path, as_attachment=True, download_name=attachment.filename)
+        # inline=1 时浏览器内联预览（适用于图片、PDF 等），否则强制下载
+        inline = request.args.get('inline', '0') == '1'
+        return send_file(
+            attachment.file_path,
+            as_attachment=not inline,
+            download_name=attachment.filename if not inline else None
+        )
     except Exception as e:
         logger.error(f"下载附件错误：{str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -1284,6 +1410,8 @@ def get_article(art_id):
         
         result = article.to_dict(include_content=True)
         result['is_favorited'] = is_favorited
+        # 附加附件列表，供前端展示与预览
+        result['attachments'] = [att.to_dict() for att in article.attachments]
 
         return jsonify({
             'success': True,
@@ -1377,6 +1505,8 @@ def update_article(art_id):
             article.author_name = current_user.username if current_user else '未知'
             logger.info(f"update_article: non-admin user, forced author_id={article.author_id}, author_name={article.author_name}")
 
+        # 同步附件（新增或删除）
+        _sync_attachments(article, data.get('attachments'))
         db.session.commit()
         logger.info(f"update_article: after commit - author_id={article.author_id}, author_name={article.author_name}")
 

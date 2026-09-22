@@ -158,7 +158,9 @@
           </el-table-column>
           <el-table-column prop="title" label="合同名称" min-width="200" show-overflow-tooltip>
             <template #default="{ row }">
-              <span class="contract-title">{{ row.title }}</span>
+              <el-button type="primary" link @click="router.push(`/contracts/${row.id}`)" class="contract-title-link">
+                {{ row.title }}
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column prop="contract_type" label="合同类型" width="140">
@@ -1105,9 +1107,9 @@ onMounted(async () => {
   font-weight: 500;
 }
 
-.contract-title {
+.contract-title-link {
   font-weight: 600;
-  color: #1e293b;
+  padding: 0;
 }
 
 .type-tag,

@@ -877,7 +877,8 @@ const filterByStat = (statType) => {
 
   switch (statType) {
     case 'openBugs':
-      filters.status = 'new,assigned,in_progress,fixed,reopened'
+      // 与卡片统计口径保持一致（后端 all_open：未关闭的全部状态）
+      filters.filter_type = 'all_open'
       break
     case 'assignedToMe':
       filters.filter_type = 'my_handling'

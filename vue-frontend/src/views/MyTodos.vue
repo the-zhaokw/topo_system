@@ -393,9 +393,18 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="contract_title" label="关联合同" width="150" show-overflow-tooltip>
+          <el-table-column prop="contract_title" label="关联合同" width="180" show-overflow-tooltip>
             <template #default="{ row }">
-              <div class="contract-title">{{ row.contract_title }}</div>
+              <el-button
+                type="primary"
+                link
+                @click="row.link ? router.push(row.link) : null"
+                class="contract-link"
+                :title="`跳转至合同详情：${row.contract_title}`"
+              >
+                <el-icon><Link /></el-icon>
+                {{ row.contract_title }}
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态" width="100" align="center">
@@ -537,7 +546,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   ArrowLeft, Refresh, Bell, Stamp, List, Document, Warning,
-  WarningFilled, CircleClose, FolderOpened, Check, Close, Cpu, ChatLineRound
+  WarningFilled, CircleClose, FolderOpened, Check, Close, Cpu, ChatLineRound, Link
 } from '@element-plus/icons-vue'
 import api, { apiService } from '@/services/api'
 import { parseUTCDate } from '@/utils/dateUtils'
@@ -1630,10 +1639,17 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* 合同标题 */
-.contract-title {
+/* 合同链接 */
+.contract-link {
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+}
+
+.contract-link .el-icon {
   font-size: 13px;
-  color: #64748b;
 }
 
 /* 标题链接 */
