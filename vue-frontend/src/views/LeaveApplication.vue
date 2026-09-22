@@ -236,6 +236,7 @@
                 format="YYYY-MM-DD"
                 value-format="YYYY-MM-DD"
                 style="width: 100%"
+                @change="autoCalcEditDays"
               />
             </el-form-item>
           </el-col>
@@ -249,6 +250,7 @@
                 format="YYYY-MM-DD"
                 value-format="YYYY-MM-DD"
                 style="width: 100%"
+                @change="autoCalcEditDays"
               />
             </el-form-item>
           </el-col>
@@ -257,12 +259,14 @@
         <el-form-item label="请假天数" prop="days">
           <el-input-number
             v-model="editForm.days"
-            :min="1"
+            :min="0.5"
+            :step="0.5"
+            :precision="1"
             :max="365"
             controls-position="right"
             style="width: 120px"
           />
-          <div class="days-hint">系统将根据请假时间自动计算天数</div>
+          <div class="days-hint">选择日期后自动计算，可手动调整（0.5表示半天）</div>
         </el-form-item>
 
         <el-form-item label="紧急情况" prop="emergency_flag">
@@ -664,13 +668,28 @@ const viewApplication = (application) => {
   detailDialog.visible = true
 }
 
+// 编辑弹窗中根据起止日期自动计算请假天数（含首尾两天）
+const autoCalcEditDays = () => {
+  if (!editForm.start_date || !editForm.end_date) return
+  // 兼容 YYYY-MM-DD 与 ISO 两种格式
+  const s = String(editForm.start_date).slice(0, 10)
+  const e = String(editForm.end_date).slice(0, 10)
+  const [sy, sm, sd] = s.split('-').map(Number)
+  const [ey, em, ed] = e.split('-').map(Number)
+  const start = new Date(sy, sm - 1, sd)
+  const end = new Date(ey, em - 1, ed)
+  if (end < start) return
+  editForm.days = Math.round((end - start) / 86400000) + 1
+}
+
 // 编辑申请
 const editApplication = (application) => {
   // 填充编辑表单
   editForm.id = application.id
   editForm.leave_type = application.leave_type
-  editForm.start_date = application.start_date
-  editForm.end_date = application.end_date
+  // 归一化为 YYYY-MM-DD，兼容接口返回的 ISO 格式
+  editForm.start_date = application.start_date ? String(application.start_date).slice(0, 10) : ''
+  editForm.end_date = application.end_date ? String(application.end_date).slice(0, 10) : ''
   editForm.days = application.days
   editForm.reason = application.reason
   editForm.approver_id = application.approver_id
@@ -689,16 +708,12 @@ const handleEditSubmit = async () => {
     
     editDialog.loading = true
     try {
-      // 计算实际天数
-      const startDate = new Date(editForm.start_date)
-      const endDate = new Date(editForm.end_date)
-      const actualDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1
-      
-      // 准备提交数据
+      // 准备提交数据（天数由日期联动自动计算，用户也可手动调整为半天等）
       const submitData = {
         leave_type: editForm.leave_type,
         start_date: editForm.start_date,
         end_date: editForm.end_date,
+        days: editForm.days,
         reason: editForm.reason,
         approver_id: editForm.approver_id,
         emergency_flag: editForm.emergency_flag,

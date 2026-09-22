@@ -150,7 +150,7 @@
             
             <el-descriptions :column="2" border class="custom-descriptions">
               <el-descriptions-item label="ID">
-                <span class="id-badge">{{ bug.id }}</span>
+                {{ bug.id }}
               </el-descriptions-item>
               <el-descriptions-item label="状态">
                 <el-tag :type="getStatusType(bug.status)" size="small" effect="light" class="status-badge" :class="`status-${bug.status}`">
@@ -206,8 +206,14 @@
               <el-descriptions-item label="重新打开次数">{{ bug.reopened_count || 0 }}</el-descriptions-item>
               <el-descriptions-item label="预计工时">{{ bug.estimated_hours ? bug.estimated_hours + ' 小时' : '-' }}</el-descriptions-item>
               <el-descriptions-item label="实际工时">{{ bug.actual_hours ? bug.actual_hours + ' 小时' : '-' }}</el-descriptions-item>
-              <el-descriptions-item label="关联测试用例">{{ bug.test_case_id || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="相关Bug">{{ bug.related_bug_id || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="关联测试用例">
+                <span v-if="bug.test_case_id" class="clickable-link" @click="goToTestCase(bug.test_case_id)">{{ bug.test_case_id }}</span>
+                <div v-else>-</div>
+              </el-descriptions-item>
+              <el-descriptions-item label="相关Bug">
+                <span v-if="bug.related_bug_id" class="clickable-link" @click="goToRelatedBug(bug.related_bug_id)">{{ bug.related_bug_id }}</span>
+                <div v-else>-</div>
+              </el-descriptions-item>
             </el-descriptions>
           </el-card>
           
@@ -568,7 +574,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
@@ -1617,6 +1623,20 @@ const goToProject = (projectId) => {
   }
 }
 
+// 跳转到相关Bug详情
+const goToRelatedBug = (bugId) => {
+  if (bugId) {
+    router.push(`/bugs/${bugId}`)
+  }
+}
+
+// 跳转到关联测试用例详情（独立路由，仅需用例ID）
+const goToTestCase = (caseId) => {
+  if (caseId) {
+    router.push(`/test-cases/${caseId}`)
+  }
+}
+
 // 跳转到用户详情
 const goToUser = (userId) => {
   if (userId) {
@@ -1628,6 +1648,15 @@ onMounted(async () => {
   await systemTimeService.ensureSynced()
   fetchBugDetail()
   fetchActivities()
+})
+
+// 相关Bug跳转时路由ID变化但组件实例被复用，需手动重新加载数据
+watch(bugId, (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    fetchBugDetail()
+    fetchActivities()
+    nextTick(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
+  }
 })
 </script>
 

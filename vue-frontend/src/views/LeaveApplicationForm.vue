@@ -60,6 +60,7 @@
                   format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
                   style="width: 100%"
+                  @change="autoCalcDays"
                 />
               </el-form-item>
             </el-col>
@@ -73,6 +74,7 @@
                   format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
                   style="width: 100%"
+                  @change="autoCalcDays"
                 />
               </el-form-item>
             </el-col>
@@ -86,7 +88,7 @@
               :precision="1"
               placeholder="请假天数"
             />
-            <span class="days-hint">天（0.5表示半天）</span>
+            <span class="days-hint">天（0.5表示半天，选择日期后自动计算，可手动调整）</span>
           </el-form-item>
 
           <el-form-item label="紧急情况" prop="emergency_flag">
@@ -250,6 +252,18 @@ const form = reactive({
 
 // 文件上传URL
 const uploadUrl = '/api/upload'
+
+// 根据起止日期自动计算请假天数（含首尾两天的自然日数）
+const autoCalcDays = () => {
+  if (!form.start_date || !form.end_date) return
+  // 直接解析 YYYY-MM-DD，避免 new Date 按 UTC 解析造成的时差误差
+  const [sy, sm, sd] = form.start_date.split('-').map(Number)
+  const [ey, em, ed] = form.end_date.split('-').map(Number)
+  const start = new Date(sy, sm - 1, sd)
+  const end = new Date(ey, em - 1, ed)
+  if (end < start) return
+  form.days = Math.round((end - start) / 86400000) + 1
+}
 
 // 表单验证规则
 const rules = computed(() => ({

@@ -1146,6 +1146,7 @@ class LeaveApplication(db.Model):
             'start_date': self.start_date.isoformat() if self.start_date else None,
             'end_date': self.end_date.isoformat() if self.end_date else None,
             'leave_type': self.leave_type,
+            'days': self.days,
             'reason': self.reason,
             'status': self.status.value if hasattr(self.status, 'value') else str(self.status),
             'approver_id': self.approver_id,
