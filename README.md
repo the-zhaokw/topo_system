@@ -2,6 +2,17 @@
 
 一个功能完整的TOPO系统（组织架构管理与工作协同平台），基于Flask后端和Vue.js前端，集成了项目管理、Bug跟踪、物料管理、考勤管理、任务管理、合同管理、配送跟踪、需求管理、测试管理、用户权限管理、知识库、个人工作计划、风险管理、模块权限控制等综合功能。
 
+## 文档导航
+
+| 文档 | 说明 |
+|------|------|
+| [docs/SETUP.md](docs/SETUP.md) | 开发环境搭建与调试（本地 VS Code / 远程 VS Code Server） |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | 生产部署、Nginx、systemd、备份恢复、Docker、HTTPS 配置 |
+| [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) | 完整 REST API 接口文档 |
+| [docs/database_schema.md](docs/database_schema.md) | 数据库表结构与关系设计 |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | 最终用户操作手册 |
+| [docs/DEMO_AND_TRAINING.md](docs/DEMO_AND_TRAINING.md) | 系统演示脚本与用户培训材料 |
+
 ## 系统功能
 
 ### 核心功能模块
@@ -815,6 +826,7 @@ topo_system/
 ├── chenxiao/                 # 官网（Next.js）
 ├── instance/                 # 数据库文件目录
 ├── logs/                     # 顶层日志目录
+├── docs/                     # 项目文档（环境搭建/部署/接口/数据库/用户手册/演示培训）
 └── README.md                # 项目说明文档
 ```
 

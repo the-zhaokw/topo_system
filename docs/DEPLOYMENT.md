@@ -1,5 +1,7 @@
 # 部署说明
 
+> **合并说明**：本文档由原 `DEPLOYMENT.md` 与原 `HTTPS_SETUP.md` 合并而成，原 HTTPS 配置文档的全部内容已并入「10. HTTPS 配置（HTTPS Setup Guide）」章节（原 `HTTPS_SETUP.md` 将不再单独保留）。
+
 本文档详细说明TOPO系统的生产环境部署流程。
 
 ## 系统概述
@@ -339,6 +341,150 @@ source ../venv/bin/activate
 python migrate_database.py
 ```
 
+### 10. HTTPS 配置（HTTPS Setup Guide）
+
+> 本节内容由原 `HTTPS_SETUP.md` 合并而来，英文原文保持不变，仅补充中文对照标题。
+
+**TOPO System Development HTTPS Setup Guide**
+
+#### 方案 1：本地开发使用 mkcert（Option 1: Using mkcert for Local Development, Recommended for Dev）
+
+##### 步骤 1：安装 mkcert（Step 1: Install mkcert）
+```bash
+# On Windows (using Chocolatey)
+choco install mkcert
+
+# On macOS
+brew install mkcert
+
+# On Linux
+sudo apt install libnss3-tools
+brew install mkcert
+```
+
+##### 步骤 2：生成证书（Step 2: Generate certificates）
+```bash
+# In the project root
+cd d:\topo_system
+
+# Create a certificates directory
+mkdir certs
+
+# Generate certificate for localhost
+mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost.pem "172.18.36.249" "localhost" "127.0.0.1"
+```
+
+##### 步骤 3：更新 vite.config.js（Step 3: Update vite.config.js）
+```javascript
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src')
+    }
+  },
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+    strictPort: true,
+    https: {
+      key: './certs/localhost-key.pem',
+      cert: './certs/localhost.pem'
+    },
+    proxy: {
+      '/api': {
+        target: 'https://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/auth': {
+        target: 'https://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/uploads': {
+        target: 'https://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
+  // ... rest of config
+})
+```
+
+##### 步骤 4：让 Flask 支持 HTTPS（Step 4: Update Flask to support HTTPS）
+In run_app.py, modify the app.run() to use SSL:
+```python
+import ssl
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.load_cert_chain('./certs/localhost.pem', './certs/localhost-key.pem')
+
+# Then in socketio.run or app.run:
+socketio.run(app, debug=False, host='0.0.0.0', port=5000, use_reloader=False, ssl_context=context)
+```
+
+---
+
+#### 方案 2：使用 Nginx 进行生产部署（Option 2: Production Deployment with Nginx）
+
+##### 前置条件（Prerequisites）
+1. SSL Certificate (Let's Encrypt recommended)
+2. Nginx installed
+
+##### 步骤（Steps）
+1. Copy nginx.https.conf to /etc/nginx/sites-available/
+2. Edit the certificate paths
+3. Symlink to sites-enabled
+4. Test and reload nginx
+
+> 注：`nginx.https.conf` 文件位于仓库根目录 `D:\topo_system\nginx.https.conf`。
+
+---
+
+#### 方案 3：使用 Docker 进行开发（Option 3: Using Docker for Development）
+
+Create docker-compose.yml:
+```yaml
+version: '3.8'
+services:
+  frontend:
+    build: ./vue-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=/api
+    volumes:
+      - ./certs:/app/certs
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./certs:/app/certs
+```
+
+---
+
+#### 重要说明（Important Notes）
+
+1. **Blob URLs**: The error `blob: http://172.18.36.249:3000/...` occurs because:
+   - The page is served over HTTP
+   - Blob URLs inherit the parent's insecure context
+   - Solution: Always serve over HTTPS
+
+2. **WebSocket**: If using Socket.IO, the ws:// connection also needs to be wss:// when on HTTPS
+
+3. **For production**: Always use valid certificates (Let's Encrypt is free)
+
+4. **CORS**: If you have CORS issues after enabling HTTPS, update your Flask CORS configuration to allow the https:// origin
+
 ## 故障排除
 
 ### 常见问题
@@ -596,3 +742,4 @@ services:
 
 **版本**: v1.6.0
 **最后更新**: 2026-06
+**合并说明**: 本文档于本次整理中由 `DEPLOYMENT.md` 与原 `HTTPS_SETUP.md` 合并生成。
