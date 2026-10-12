@@ -2,7 +2,7 @@
   <el-dialog
     :model-value="visible"
     :title="null"
-    width="640px"
+    width="1152px"
     :with-header="false"
     :close-on-click-modal="false"
     :close-on-press-escape="true"
@@ -1344,9 +1344,9 @@ const commentTree = computed(() => {
       roots.push(node)
     }
   })
-  // 顶级按 created_at 升序（旧的在前），回复也按升序
-  roots.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-  roots.forEach((r) => r.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)))
+  // 顶级按 created_at 降序（新的在前），回复也按降序
+  roots.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  roots.forEach((r) => r.replies.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)))
   return roots
 })
 function startEditComment(c) {
