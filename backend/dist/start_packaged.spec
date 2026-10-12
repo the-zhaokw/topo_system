@@ -26,7 +26,7 @@ a = Analysis(
         (os.path.join(backend_dir, 'websocket_notifications.py'), '.'),
         (os.path.join(backend_dir, 'logging_config.py'), '.'),
         (os.path.join(backend_dir, 'logging_decorators.py'), '.'),
-        (os.path.join(backend_dir, 'state_machine.py'), '.'),
+        (os.path.join(backend_dir, 'archive', 'state_machine.py'), '.'),
         ('init_on_install.py', '.'),
     ],
     hiddenimports=[

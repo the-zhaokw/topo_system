@@ -802,10 +802,11 @@ topo_system/
 │   ├── run_app.py            # 应用启动脚本
 │   ├── enhanced_app.py       # Flask应用（含模型/蓝图注册）
 │   ├── restful_api.py        # RESTful API统一入口
-│   ├── websocket_server.py   # WebSocket服务
 │   ├── websocket_notifications.py # WebSocket通知
 │   ├── logging_config.py     # 日志配置
-│   └── state_machine.py      # Bug状态机
+│   ├── logging_decorators.py # 日志装饰器
+│   ├── archive/              # 归档脚本（逆向爬虫、一次性修复/调试脚本，不参与运行）
+│   └── app.py                # Flask 实例与扩展初始化
 ├── vue-frontend/             # 前端Vue应用
 │   ├── src/                  # 源代码
 │   │   ├── components/       # 通用组件
